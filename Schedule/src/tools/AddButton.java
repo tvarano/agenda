@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import input.InputMain;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -26,6 +27,7 @@ public class AddButton extends JButton implements ActionListener
    public AddButton(int slot, JComponent parentPanel) {
       super("Add "+slot+" Period");
       addActionListener(this);
+      setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       setSlot(slot);
       parentIsInput = parentPanel instanceof InputMain;

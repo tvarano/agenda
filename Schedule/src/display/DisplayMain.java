@@ -1,5 +1,6 @@
 package display;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import information.*;
 import ioFunctions.OrderUtility;
 import ioFunctions.Reader;
 import managers.PanelManager;
+import managers.UIHandler;
 import tools.ToolBar;
 
 //Thomas Varano
@@ -41,6 +43,7 @@ public class DisplayMain extends JPanel implements ActionListener
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       testSituation = true;
+      setBackground(UIHandler.toolBarColor);
       setParentManager(parentManager);
       try {
          if (testSituation) {
@@ -155,7 +158,10 @@ public class DisplayMain extends JPanel implements ActionListener
       repaint();
       setUpdating(false);
    }
-
+   
+   public ActionListener changeView() {
+      return parentManager.changeView(true);
+   }
    
    public Dimension getMinimumSize() {
       return new Dimension(MIN_W,MIN_H);
@@ -206,10 +212,7 @@ public class DisplayMain extends JPanel implements ActionListener
 
    @Override
    public void actionPerformed(ActionEvent e) {
-      if (e.getSource() instanceof Timer) 
-         update();
-      else if (e.getSource() instanceof JButton) 
-         parentManager.startInput(mainSched);
+      update();
    }
    
 }

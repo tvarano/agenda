@@ -48,6 +48,7 @@ public class ClassInputSlot extends JPanel implements ActionListener, FocusListe
    public ClassInputSlot(ClassPeriod c, Container parentPanel) {
       if (c == null) c = new ClassPeriod();
       debug = false;
+      setBackground(UIHandler.background);
       setName(c.getSlot() + "input slot");
       setSlotNumber(c.getSlot());
       hasLab = false; 

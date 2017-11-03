@@ -28,12 +28,12 @@ import tools.ToolBar;
 //Thomas Varano
 //Aug 31, 2017
 
-public class InputMain extends JPanel implements ActionListener
+public class InputMain extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final int INIT_AMT_CL = 7;
-   private ArrayList<Lab> labs = new ArrayList<Lab>();
-   private ArrayList<ClassInputSlot> slots = new ArrayList<ClassInputSlot>();
+   private ArrayList<Lab> labs;
+   private ArrayList<ClassInputSlot> slots;
    private PanelManager parentManager;
    private boolean hasZeroPeriod, hasManager, error, debug;
    private int amtClasses;
@@ -42,6 +42,9 @@ public class InputMain extends JPanel implements ActionListener
    
    public InputMain(PanelManager parentManager) {
       debug = false;
+      labs = new ArrayList<Lab>();
+      slots = new ArrayList<ClassInputSlot>();
+      setBackground(UIHandler.toolBarColor);
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       this.parentManager = parentManager;
       hasManager = (parentManager != null);
@@ -116,7 +119,7 @@ public class InputMain extends JPanel implements ActionListener
       button.setActionCommand("cancel");
       button.setCursor(hand);
       button.setToolTipText("Exit Without Saving");
-      button.addActionListener(this);
+      button.addActionListener(changeView());
       p.add(button);
       
       button = new JButton("Submit");
@@ -124,7 +127,7 @@ public class InputMain extends JPanel implements ActionListener
       button.setSelected(true);
       button.setCursor(hand);
       button.setActionCommand("submit");
-      button.addActionListener(this);
+      button.addActionListener(saveAndChangeView());
       p.add(button);
       return p;
    }
@@ -216,6 +219,24 @@ public class InputMain extends JPanel implements ActionListener
             slots.add((ClassInputSlot) c[i]);
          }
       }
+   }
+   
+   public ActionListener changeView() {
+      return new ActionListener() {
+         @Override
+          public void actionPerformed(ActionEvent e) {
+               close();
+          } 
+       };
+   }
+   
+   public ActionListener saveAndChangeView() {
+      return new ActionListener() {
+         @Override
+          public void actionPerformed(ActionEvent e) {
+               saveAndClose();
+          } 
+       };
    }
    
    private boolean canCreate() {
@@ -315,13 +336,4 @@ public class InputMain extends JPanel implements ActionListener
          }
       });
    }
-
-   @Override
-   public void actionPerformed(ActionEvent e) {
-      if (((AbstractButton) e.getSource()).getActionCommand().equals("submit"))
-         saveAndClose();
-      else if (((AbstractButton) e.getSource()).getActionCommand().equals("cancel"))
-         close();
-   }
-   
 }

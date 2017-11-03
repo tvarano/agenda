@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -26,6 +27,8 @@ public class SouthernCurrentClassPane extends JPanel
    
    public SouthernCurrentClassPane(ClassPeriod c, Schedule s, CurrentClassPane parent) {
       setClassPeriod(c); setSchedule(s); setParentPanel(parent); setCurrentSlot(c.getSlot());
+      setBackground(UIHandler.background);
+      
       setLayout(new GridLayout(1,2));
       eastInfo = new ClassInfoPane(c);
       eastInfo.setThinConstraints(true);
@@ -34,12 +37,14 @@ public class SouthernCurrentClassPane extends JPanel
       westList.setParentPane(this);
       westList.setSelectedValue(s.get(currentSlot), true); 
       JScrollPane scroll = new JScrollPane(westList);
-      scroll.setBorder(BorderFactory.createTitledBorder("Today's Schedule"));
+//      scroll.setBorder(BorderFactory.createTitledBorder("Today's Schedule"));
+      scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
       scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       add(scroll);
       
       scroll = new JScrollPane(eastInfo);
-      scroll.setBorder(BorderFactory.createTitledBorder("Current Class Info"));
+//      scroll.setBorder(BorderFactory.createTitledBorder("Current Class Info"));
+      scroll.setBorder(UIHandler.getTitledBorder("Current Class Info"));
       add(scroll);
       
       westList.setSelectable(false);

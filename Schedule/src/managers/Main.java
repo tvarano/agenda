@@ -20,11 +20,6 @@ public class Main extends JPanel
    
    public Main() { 
 	   UIHandler.init();
-	   try {
-		Thread.sleep(50);
-	} catch (InterruptedException e) {
-		e.printStackTrace();
-	}
 	   manager = new PanelManager(this, (JFrame)getParent());
 	   manager.setCurrentPane(false);
    }

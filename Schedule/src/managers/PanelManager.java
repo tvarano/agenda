@@ -1,5 +1,7 @@
 package managers;
 import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JTextField;
@@ -18,7 +20,6 @@ public class PanelManager
    private JFrame f;
    private DisplayMain display;
    private InputMain input;
-   public static final JTextField disclaimer = new JTextField("ALPHA BUILD. REPORT ERRORS.");
    public PanelManager(Main parent, JFrame f) {
       setF(f); setParent(parent);
       display = new DisplayMain(this);  display.setName("display");
@@ -26,6 +27,7 @@ public class PanelManager
       parent.setLayout(new CardLayout());
       parent.add(display, display.getName());
       parent.add(input, input.getName());
+      UIHandler.putValues();
    }
    
    public void setCurrentPane(boolean inputting) {
@@ -39,6 +41,15 @@ public class PanelManager
       display.stop();
       input.setBeginningSchedule(s);
       setCurrentPane(true);
+   }
+   
+   public ActionListener changeView(boolean inputting) {
+      return new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            setCurrentPane(inputting);
+         }
+      };
    }
    
    public void finishInputting() {

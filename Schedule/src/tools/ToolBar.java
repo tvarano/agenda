@@ -1,16 +1,16 @@
 package tools;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 import constants.Rotation;
+import display.DisplayMain;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Description]
@@ -31,6 +31,7 @@ public class ToolBar extends JToolBar implements ActionListener
    }
    
    private ToolBar create(boolean inputting) {
+      setBackground(UIHandler.background);
       if (inputting)
          return createToolBarInput();
       return createToolBarDisplay();
@@ -53,8 +54,7 @@ public class ToolBar extends JToolBar implements ActionListener
       add(b);
       JButton i = new JButton("Input Schedule");
       i.setCursor(new Cursor(Cursor.HAND_CURSOR));
-      i.addActionListener((ActionListener) parentPanel);
-//      i.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+      i.addActionListener(((DisplayMain) parentPanel).changeView());
       add(i);
       return this;
    }

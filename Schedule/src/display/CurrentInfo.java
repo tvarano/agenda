@@ -12,6 +12,7 @@ import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
 import information.Time;
+import managers.UIHandler;
 
 public class CurrentInfo extends JTextPane{
       private static final long serialVersionUID = 1L;
@@ -24,6 +25,8 @@ public class CurrentInfo extends JTextPane{
       public CurrentInfo(ClassPeriod c, JPanel parentPanel) {
          super();
          debug = false;
+         setOpaque(false);
+         setForeground(UIHandler.foreground);
          setParentPanel(parentPanel);  setClassPeriod(c);
          if (hasParent)
             setName(parentPanel.getName()+" current info");

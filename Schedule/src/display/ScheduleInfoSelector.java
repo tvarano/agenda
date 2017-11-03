@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import information.Schedule;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -25,6 +26,8 @@ public class ScheduleInfoSelector extends JPanel
    
    public ScheduleInfoSelector(Schedule todaySched, Schedule mainSched, JPanel parent) {
       debug = false;
+      setBackground(UIHandler.background);
+      
       if (debug) System.out.println("CLASSES\n"+todaySched.classString(true));
       setParentPane(parent);
       todayList = new ScheduleList(todaySched, false); todayList.setParentPane(this); todayList.setName("Today's Rotation");
@@ -33,11 +36,13 @@ public class ScheduleInfoSelector extends JPanel
       mainList.setAutoscrolls(true);
       setTodaySched(todaySched); setMainSched(mainSched);
       if (debug) System.out.println("AFTER "+todaySched.classString(true));
+      
       setLayout(new GridLayout(2,1));
       scheduleTabs = createTabbedPane();
+      scheduleTabs.setOpaque(false);
       info = new ClassInfoPane(todaySched.getClasses()[0]);
       add(scheduleTabs);
-      info.setBorder(BorderFactory.createTitledBorder("Select Class For Info"));
+      info.setBorder(UIHandler.getTitledBorder("Select Class For Info"));
       add(info);
       setName("eastPane");
       if (debug) System.out.println(getName()+" initialized");

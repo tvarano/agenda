@@ -9,6 +9,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.border.Border;
 
+import managers.UIHandler;
+
 //Thomas Varano
 //[Program Descripion]
 //Sep 22, 2017
@@ -25,6 +27,7 @@ public class InstanceButton extends JButton implements ActionListener
       super(key);
       enacted = false;
       setName("instanceButton "+key);
+      setForeground(UIHandler.foreground);
       unEnactedBorder = BorderFactory.createRaisedSoftBevelBorder(); 
       enactedBorder = BorderFactory.createLoweredSoftBevelBorder();
       addActionListener(this);

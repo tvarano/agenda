@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import constants.Rotation;
 import constants.RotationConstants;
 import display.DisplayMain;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -28,7 +29,7 @@ public class RotationButton extends JButton implements ActionListener
       super(" "+text+" ");
       debug = false;
       setParentPanel(parentPanel);
-//      setBorder(BorderFactory.createLineBorder(Color.GRAY));
+      setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       addActionListener(this);
       if (text == TODAY_R) {

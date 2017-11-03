@@ -11,6 +11,7 @@ import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
 import information.Time;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -25,6 +26,8 @@ public class ClassInfoPane extends JTextPane
    public ClassInfoPane(ClassPeriod c) {
       super();
       debug = false;
+      setBackground(UIHandler.background);
+      setForeground(UIHandler.foreground);
       setName("unNamedInfoPane");
       this.setEditable(false);
       this.setClassPeriod(c);
