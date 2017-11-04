@@ -25,6 +25,7 @@ public class UIHandler {
 	}
 	
 	public static void putValues() {
+	   UIManager.put("List.selectionBackground", toolBarColor);
 //	   UIManager.put("ToolBar.background", background);
 //	   UIManager.put("Panel.background", background);
 //	   UIManager.put("TabbedPane.background", background);
@@ -33,14 +34,16 @@ public class UIHandler {
 	}
 	
 	public static void setColors() {
+	   Color noir = new Color(Integer.decode("#1d2731"));
+	   Color gris = new Color(40,40,40);
 	   Color carbon = new Color(Integer.decode("#a9a9a9"));
 	   Color sky = new Color(Integer.decode("#caebf2"));
 	   Color watermelon = new Color(Integer.decode("#ff3b3f"));
 	   
 	   toolBarColor = watermelon;
 	   background = sky;
-	   foreground = carbon;
-	   titleBorderColor = background;
+	   foreground = gris;
+	   titleBorderColor = carbon;
 	}
 	
 	public static Color mutateColor(Color o, int diff) {
@@ -80,7 +83,7 @@ public class UIHandler {
 	
 	public static Border getTitledBorder(String title) {
 //	   return BorderFactory.createBevelBorder(0);
-	  return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 5),
+	  return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 2),
 //	   return BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
 	        title, TitledBorder.LEFT, TitledBorder.ABOVE_TOP);
 	  //also font

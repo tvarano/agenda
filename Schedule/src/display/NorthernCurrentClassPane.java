@@ -9,6 +9,7 @@ import javax.swing.JTextField;
 
 import information.ClassPeriod;
 import information.Time;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -27,6 +28,7 @@ public class NorthernCurrentClassPane extends JPanel
    public NorthernCurrentClassPane(ClassPeriod c, CurrentClassPane parent) {
       if (debug)
          System.out.println("northParent: "+parent);
+      setBackground(UIHandler.background);
       inSchool = (c == null);
       setClassPeriod(c); setParentPane(parent); setName(parent.getName()+" north pane");
       time = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());

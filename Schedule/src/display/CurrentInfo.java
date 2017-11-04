@@ -26,6 +26,7 @@ public class CurrentInfo extends JTextPane{
          super();
          debug = false;
          setOpaque(false);
+         setBackground(UIHandler.background);
          setForeground(UIHandler.foreground);
          setParentPanel(parentPanel);  setClassPeriod(c);
          if (hasParent)
