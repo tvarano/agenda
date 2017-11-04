@@ -19,6 +19,7 @@ public class UIHandler {
 	
 	public static void init() { 
 	   debug = true;
+	   font = new Font("Prestige Elite Std.", Font.PLAIN, 12);
 	   setLAF();
 	   setColors();
 	   putValues();

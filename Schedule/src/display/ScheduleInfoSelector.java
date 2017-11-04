@@ -41,6 +41,7 @@ public class ScheduleInfoSelector extends JPanel
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
       info = new ClassInfoPane(todaySched.getClasses()[0]);
+      info.setOpaque(false);
       add(scheduleTabs);
       info.setBorder(UIHandler.getTitledBorder("Select Class For Info"));
       add(info);

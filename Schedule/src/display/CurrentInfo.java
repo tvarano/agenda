@@ -137,7 +137,7 @@ public class CurrentInfo extends JTextPane{
       
       private void createText() {
          findAndSetSituation();
-         if (debug) System.out.println("sitch"+situation);
+         if (debug) System.out.println(getName() + "situation="+situation);
          setText("");
          String[] uneditedText = getTextInput();
          String styles[] = getStyles();
@@ -158,7 +158,7 @@ public class CurrentInfo extends JTextPane{
                getStyle(StyleContext.DEFAULT_STYLE);
          if (debug) System.out.println(doc);
          
-         StyleConstants.setFontFamily(def, "Georgia");
+         StyleConstants.setFontFamily(def, UIHandler.font.getFamily());
          Style regular = doc.addStyle("regular", def);
          
          if (debug) System.out.println("font:"+regular.getAttribute(StyleConstants.FontFamily));
