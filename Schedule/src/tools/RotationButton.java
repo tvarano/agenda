@@ -29,6 +29,7 @@ public class RotationButton extends JButton implements ActionListener
       super(" "+text+" ");
       debug = false;
       setParentPanel(parentPanel);
+      setOpaque(false);
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       addActionListener(this);

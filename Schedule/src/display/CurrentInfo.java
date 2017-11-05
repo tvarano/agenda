@@ -160,6 +160,7 @@ public class CurrentInfo extends JTextPane{
          
          StyleConstants.setFontFamily(def, UIHandler.font.getFamily());
          Style regular = doc.addStyle("regular", def);
+         StyleConstants.setFontSize(regular, 16);
          
          if (debug) System.out.println("font:"+regular.getAttribute(StyleConstants.FontFamily));
          

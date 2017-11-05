@@ -44,7 +44,7 @@ public class InputMain extends JPanel
       debug = false;
       labs = new ArrayList<Lab>();
       slots = new ArrayList<ClassInputSlot>();
-      setBackground(UIHandler.toolBarColor);
+      setBackground(UIHandler.tertiary);
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       this.parentManager = parentManager;
       hasManager = (parentManager != null);

@@ -13,20 +13,20 @@ import javax.swing.plaf.metal.OceanTheme;
 
 //Thomas Varano
 public class UIHandler {
-	public static Color foreground, background, titleBorderColor, toolBarColor;
+	public static Color foreground, background, titleBorderColor, secondary, tertiary, titleColor, textArea;
 	public static Font font;
 	private static boolean debug;
 	
 	public static void init() { 
 	   debug = true;
-	   font = new Font("Prestige Elite Std.", Font.PLAIN, 12);
+	   font = new Font("Times New Roman", Font.PLAIN, 16);
 	   setLAF();
 	   setColors();
 	   putValues();
 	}
 	
 	public static void putValues() {
-	   UIManager.put("List.selectionBackground", toolBarColor);
+	   UIManager.put("List.selectionBackground", tertiary);
 //	   UIManager.put("ToolBar.background", background);
 //	   UIManager.put("Panel.background", background);
 //	   UIManager.put("TabbedPane.background", background);
@@ -41,8 +41,11 @@ public class UIHandler {
 	   Color sky = new Color(Integer.decode("#caebf2"));
 	   Color watermelon = new Color(Integer.decode("#ff3b3f"));
 	   
-	   toolBarColor = watermelon;
+	   titleColor = noir;
+	   tertiary = watermelon;
+	   textArea = mutateColor(sky, 20);
 	   background = sky;
+	   secondary = carbon;
 	   foreground = gris;
 	   titleBorderColor = carbon;
 	}
@@ -60,25 +63,27 @@ public class UIHandler {
 	}
 	
 	public static void setLAF() {
-	   try {
+      
+      for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+         if ("Nimbus".equals(info.getName())) {
+            try {
+               UIManager.setLookAndFeel(info.getClassName());
+            } catch (ClassNotFoundException | InstantiationException
+                  | IllegalAccessException
+                  | UnsupportedLookAndFeelException e) {
+               e.printStackTrace();
+            }
+            break;
+         }
+         if (debug)
+            System.out.println("UI DONE");
+      }
+      try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
          MetalLookAndFeel.setCurrentTheme(new OceanTheme());       
       } catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e1) {
          e1.printStackTrace();
-      }
-      
-      for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-         if ("Nimbus".equals(info.getName())) {
-          try {
-            UIManager.setLookAndFeel(info.getClassName());
-         } catch (ClassNotFoundException | InstantiationException
-               | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-         }
-           break;
-      }
-      if (debug) System.out.println("UI DONE");
       }
 	}
 	
@@ -86,7 +91,7 @@ public class UIHandler {
 //	   return BorderFactory.createBevelBorder(0);
 	  return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 2),
 //	   return BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
-	        title, TitledBorder.LEFT, TitledBorder.ABOVE_TOP);
+	        title, TitledBorder.LEFT, TitledBorder.ABOVE_TOP, font, titleColor);
 	  //also font
 	}
 }

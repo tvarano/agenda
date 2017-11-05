@@ -40,11 +40,13 @@ public class SouthernCurrentClassPane extends JPanel
 //      scroll.setBorder(BorderFactory.createTitledBorder("Today's Schedule"));
       scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
       scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scroll.setOpaque(false);
       add(scroll);
       
       scroll = new JScrollPane(eastInfo);
 //      scroll.setBorder(BorderFactory.createTitledBorder("Current Class Info"));
       scroll.setBorder(UIHandler.getTitledBorder("Current Class Info"));
+      scroll.setOpaque(false);
       add(scroll);
       
       westList.setSelectable(false);

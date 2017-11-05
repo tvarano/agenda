@@ -43,7 +43,7 @@ public class DisplayMain extends JPanel implements ActionListener
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       testSituation = true;
-      setBackground(UIHandler.toolBarColor);
+      setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
       try {
          if (testSituation) {

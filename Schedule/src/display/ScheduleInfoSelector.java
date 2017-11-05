@@ -61,7 +61,7 @@ public class ScheduleInfoSelector extends JPanel
       else
          System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
       String infoTitle = (info.getClassPeriod() == null) ? "ERROR" : info.getClassPeriod().getTrimmedName() + " Info";
-      info.setBorder(BorderFactory.createTitledBorder(infoTitle));
+      info.setBorder(UIHandler.getTitledBorder(infoTitle));
    }
    
    public void pushTodaySchedule(Schedule s) {

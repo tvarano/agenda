@@ -26,9 +26,10 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
       super();
       this.schedule = schedule.clone();
       setName(schedule.getName() + " list"); setShowNames(showNames); setSelectable(true);
-      setBackground(UIHandler.background);
-      this.setModel(new DefaultListModel<ClassPeriod>());
-      this.addListSelectionListener(this);
+      setBackground(UIHandler.secondary);
+      setFont(UIHandler.font.deriveFont(getFont().getSize()));
+      setModel(new DefaultListModel<ClassPeriod>());
+      addListSelectionListener(this);
       if (debug) System.out.println(getName()+ " SHOWNAMES="+showNames);
       cloneAndSetClasses();
       if (debug) System.out.println(getName()+"size"+getModel().getSize());

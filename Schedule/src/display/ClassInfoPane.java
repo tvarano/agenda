@@ -26,7 +26,7 @@ public class ClassInfoPane extends JTextPane
    public ClassInfoPane(ClassPeriod c) {
       super();
       debug = false;
-      setBackground(UIHandler.background);
+      setBackground(UIHandler.textArea);
       setForeground(UIHandler.foreground);
       setName("unNamedInfoPane");
       this.setEditable(false);

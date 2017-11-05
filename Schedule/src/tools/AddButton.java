@@ -27,6 +27,7 @@ public class AddButton extends JButton implements ActionListener
    public AddButton(int slot, JComponent parentPanel) {
       super("Add "+slot+" Period");
       addActionListener(this);
+      setOpaque(false);
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       setSlot(slot);
