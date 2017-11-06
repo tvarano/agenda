@@ -214,5 +214,4 @@ public class DisplayMain extends JPanel implements ActionListener
    public void actionPerformed(ActionEvent e) {
       update();
    }
-   
 }

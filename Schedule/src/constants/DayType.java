@@ -17,7 +17,6 @@ public enum DayType
          new Time[]{new Time(9,27), new Time(11,00), new Time(11,51), new Time(13,22), new Time(14,53)},
          new Time(11,27)
    ),
-   //FIXME wrong times after this
    HALF_DAY(new Time[] {new Time(8,00), new Time(8,35), new Time(9,12), new Time(9,47), new Time(10,22), new Time(10,56), 
          new Time(11,30)},
          new Time[] {new Time(8,31), new Time(9,8), new Time(9,43), new Time(10,18), new Time(10,52), new Time(11,26), 

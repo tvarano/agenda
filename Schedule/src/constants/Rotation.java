@@ -64,6 +64,8 @@ public enum Rotation
          case R1 : return DELAY_R1;
          case R3 : return DELAY_R3;
          case R4 : return DELAY_R4;
+         case ODD_BLOCK : return DELAY_ODD;
+         case EVEN_BLOCK : return DELAY_EVEN;
          default : return DELAY_R1;
       }
    }
@@ -80,17 +82,17 @@ public enum Rotation
    private static int[] getSlotRotation (int rotationDay) {
       final int lunch = RotationConstants.LUNCH;
       switch (rotationDay) {
-         case RotationConstants.R1 :
+         case RotationConstants.R1 : case RotationConstants.DELAY_R1 :
             return new int[]{1, 2, 3, 4, lunch, 5, 6, 7};
          case RotationConstants.R2 :
             return new int[]{2, 3, 4, 1, lunch, 5, 6, 7};
-         case RotationConstants.R3 :
+         case RotationConstants.R3 : case RotationConstants.DELAY_R3 : 
             return new int[]{3, 4, 1, 2, lunch, 6, 7, 5};
-         case RotationConstants.R4 :
+         case RotationConstants.R4 : case RotationConstants.DELAY_R4 : 
             return new int[]{4, 1, 2, 3, lunch, 7, 5, 6};
-         case RotationConstants.ODD_BL :
+         case RotationConstants.ODD_BL : case RotationConstants.DELAY_ODD : 
             return new int[]{3, 1, lunch, 5, 7};
-         case RotationConstants.EVEN_BL :
+         case RotationConstants.EVEN_BL : case RotationConstants.DELAY_EVEN :
             return new int[]{2, 4, lunch,
                   RotationConstants.PASCACK, 6};
          case RotationConstants.HALF_R1 : 
@@ -99,17 +101,6 @@ public enum Rotation
             return new int[] {3,4,1,2,6,7,5};
          case RotationConstants.HALF_R4 :
             return new int[] {4,1,2,3,7,5,6};
-            
-         case RotationConstants.DELAY_R1 :
-            return new int[]{1, 2, 3, lunch, 4, 5, 6, 7};
-         case RotationConstants.DELAY_R3 :
-            return new int[]{3, 4, 1, 2, lunch, 6, 7, 5};
-         case RotationConstants.DELAY_R4 :
-            return new int[]{4, 1, 2, 3, lunch, 7, 5, 6};
-         case RotationConstants.DELAY_ODD :
-            return new int[]{3, 1, lunch, 5, 7};
-         case RotationConstants.DELAY_EVEN :
-            return new int[]{2, 4, lunch, RotationConstants.PASCACK, 6};
          default :
             return new int[0];
       }

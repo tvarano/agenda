@@ -1,5 +1,4 @@
 package tools;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -30,6 +29,7 @@ public class ToolBar extends JToolBar implements ActionListener
       setBackground(UIHandler.tertiary);
       setFont(UIHandler.font);
       setFloatable(false);
+      setOpaque(true);
       setMargin(new Insets(7,5,0,0));
    }
    
@@ -56,8 +56,8 @@ public class ToolBar extends JToolBar implements ActionListener
       b.setParentBar(this);
       add(b);
       JButton i = new JButton("Input Schedule");
-      i.setOpaque(false);
       i.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      i.setOpaque(false);
       i.addActionListener(((DisplayMain) parentPanel).changeView());
       add(i);
       return this;

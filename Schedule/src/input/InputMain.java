@@ -35,7 +35,7 @@ public class InputMain extends JPanel
    private ArrayList<Lab> labs;
    private ArrayList<ClassInputSlot> slots;
    private PanelManager parentManager;
-   private boolean hasZeroPeriod, hasManager, error, debug;
+   private boolean hasZeroPeriod, hasManager, error, debug, saved;
    private int amtClasses;
    private ClassInputSlot pascack;
    private Schedule beginningSchedule;
@@ -72,6 +72,8 @@ public class InputMain extends JPanel
       addPascack(s.getPascackPreferences());
       add(createBottomPanel());
    }
+   
+   
    
    public void addLab(int slot) {
       if (debug) System.out.println("input adding lab " + slot);
@@ -282,14 +284,18 @@ public class InputMain extends JPanel
       // write
       Schedule s = new Schedule(classes, labs.toArray(new Lab[labs.size()]));
       s.setPascackPreferences(pascack.createClass());
-      if (debug) System.out.println(s.getClasses()[0]);
       writer.write(s);
       if (debug) System.out.println("wrote" + s);
+      saved = true;
    }
    
    public void close() {
-      if (hasManager)
-         parentManager.finishInputting();
+      if (hasManager) {
+         if (saved)
+            parentManager.finishInputting();
+         else 
+            parentManager.closeInput();
+      }
       else 
          ((JFrame)getParent().getParent().getParent().getParent()).dispose();
    }

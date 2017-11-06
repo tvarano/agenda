@@ -30,10 +30,10 @@ public class ClassInputSlot extends JPanel implements ActionListener, FocusListe
    private static final long serialVersionUID = 1L;
    private static final int gap = 5;
    private static final int WIDTH = 615, F_HEIGHT = 25;
-   //SUBTRACT OVERALL 25 PIXELS
-   private static final Dimension NAME_SIZE = new Dimension(90, F_HEIGHT);
-   private static final Dimension TEACH_SIZE = new Dimension(115, F_HEIGHT);
-   private static final Dimension ROOM_SIZE = new Dimension(37, F_HEIGHT);
+
+   private static final Dimension NAME_SIZE = new Dimension(120, F_HEIGHT);
+   private static final Dimension TEACH_SIZE = new Dimension(140, F_HEIGHT);
+   private static final Dimension ROOM_SIZE = new Dimension(40, F_HEIGHT);
    private int slotNumber;
    private Container parentPanel;
    private JCheckBox labBox;
@@ -76,7 +76,7 @@ public class ClassInputSlot extends JPanel implements ActionListener, FocusListe
       l.putConstraint(SpringLayout.WEST, labelLeft, gap*2, SpringLayout.WEST, this);
       setNorthBound(labelLeft);
       
-      JLabel currentLabel = new JLabel("Class Name");             // class name prompt
+      JLabel currentLabel = new JLabel("Class Name:");            // class name prompt
       addLabel(currentLabel, labelLeft, l, index);
       
       JTextField currentField = new JTextField(c.getName());      //class name field

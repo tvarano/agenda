@@ -47,7 +47,10 @@ public class PanelManager
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            setCurrentPane(inputting);
+            if (inputting)
+               startInput(display.getMainSched());
+            else
+               finishInputting();
          }
       };
    }
@@ -57,6 +60,10 @@ public class PanelManager
       setCurrentPane(false);
    }
    
+   public void closeInput() {
+      display.resume();
+      setCurrentPane(false);
+   }
    public Main getParent() {
       return parent;
    }

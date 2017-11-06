@@ -35,7 +35,7 @@ public class Main extends JPanel
       int frameToPaneAdjustment = 22;
       frame.getContentPane().add(new Main());
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.setMinimumSize(new Dimension(MIN_W, MIN_H+frameToPaneAdjustment));
+      frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
       frame.pack();
       frame.setLocationRelativeTo(null);
       frame.setVisible(true);   

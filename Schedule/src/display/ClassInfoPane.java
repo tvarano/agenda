@@ -26,7 +26,7 @@ public class ClassInfoPane extends JTextPane
    public ClassInfoPane(ClassPeriod c) {
       super();
       debug = false;
-      setBackground(UIHandler.textArea);
+      setBackground(UIHandler.quaternary);
       setForeground(UIHandler.foreground);
       setName("unNamedInfoPane");
       this.setEditable(false);
@@ -87,6 +87,7 @@ public class ClassInfoPane extends JTextPane
 
       Style regular = doc.addStyle("regular", def);
       StyleConstants.setFontFamily(def, UIHandler.font.getFamily());
+      StyleConstants.setFontSize(regular, 16);
       
       Style s = doc.addStyle("italic", regular);
       StyleConstants.setItalic(s, true);

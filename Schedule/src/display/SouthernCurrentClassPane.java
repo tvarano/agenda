@@ -32,21 +32,25 @@ public class SouthernCurrentClassPane extends JPanel
       setLayout(new GridLayout(1,2));
       eastInfo = new ClassInfoPane(c);
       eastInfo.setThinConstraints(true);
+      eastInfo.setToolTipText("Info for Your Current Class");
+      
       westList = new ScheduleList(s, true);
       westList.setName("southPane todayList");
       westList.setParentPane(this);
       westList.setSelectedValue(s.get(currentSlot), true); 
+      westList.setToolTipText("Today's Schedule With Your Current Class");
+      
       JScrollPane scroll = new JScrollPane(westList);
-//      scroll.setBorder(BorderFactory.createTitledBorder("Today's Schedule"));
       scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
+      scroll.setToolTipText(westList.getToolTipText());
       scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       scroll.setOpaque(false);
       add(scroll);
       
       scroll = new JScrollPane(eastInfo);
-//      scroll.setBorder(BorderFactory.createTitledBorder("Current Class Info"));
       scroll.setBorder(UIHandler.getTitledBorder("Current Class Info"));
       scroll.setOpaque(false);
+      scroll.setToolTipText(eastInfo.getToolTipText());
       add(scroll);
       
       westList.setSelectable(false);

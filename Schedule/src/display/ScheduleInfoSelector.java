@@ -6,6 +6,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.TitledBorder;
 
 import information.Schedule;
 import managers.UIHandler;
@@ -41,10 +42,12 @@ public class ScheduleInfoSelector extends JPanel
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
       info = new ClassInfoPane(todaySched.getClasses()[0]);
-      info.setOpaque(false);
       add(scheduleTabs);
-      info.setBorder(UIHandler.getTitledBorder("Select Class For Info"));
-      add(info);
+      scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
+      JScrollPane infoScroll = new JScrollPane(info);
+      infoScroll.setBorder(UIHandler.getTitledBorder(todaySched.getClasses()[0].getTrimmedName() + " Info"));
+      infoScroll.setOpaque(false);
+      add(infoScroll);
       setName("eastPane");
       if (debug) System.out.println(getName()+" initialized");
    }
@@ -72,17 +75,15 @@ public class ScheduleInfoSelector extends JPanel
       JTabbedPane retval = new JTabbedPane();
       
       JScrollPane scroll = new JScrollPane(todayList); scroll.setName(todayList.getName());
-      retval.addTab(scroll.getName(), null, scroll, "Today's Order of Classes");
+      retval.addTab(scroll.getName(), null, scroll, "Select a class for its info");
       retval.setMnemonicAt(0, KeyEvent.VK_1);
       
       scroll = new JScrollPane(mainList); scroll.setName(mainList.getName());
-      retval.addTab(scroll.getName(), null, scroll, "Your R1 Schedule");
+      retval.addTab(scroll.getName(), null, scroll, "Select a class for its info");
       retval.setMnemonicAt(1, KeyEvent.VK_2);
       
       return retval;
    }
-   
-   
    
    public Schedule getTodaySched() {
       return todaySched;

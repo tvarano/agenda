@@ -60,8 +60,7 @@ public class RotationButton extends JButton implements ActionListener
    }
    @Override
    public void actionPerformed(ActionEvent e) {
-      if (debug)
-         System.out.println(getName()+"clicked");
+      if (debug) System.out.println(getName()+"clicked");
       DisplayMain parentPane;
       ToolBar parentBar;
       if (getParent().getParent() instanceof DisplayMain) {
@@ -77,8 +76,7 @@ public class RotationButton extends JButton implements ActionListener
             else {
                parentPane.setTodayR(r);
             }
-            if (debug)
-               System.out.println("set rotation to + "+r);
+            if (debug)  System.out.println("set rotation to + "+r);
          }
       }
       else System.err.println(getName()+" parent incorrect");

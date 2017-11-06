@@ -28,7 +28,7 @@ public class OrderUtility
       if (statusU) System.out.println("**********\nordering class array...");
       if (debug) printData(r, unOrderedArray);
       int extraClasses = unOrderedArray.length - Rotation.R1.getTimes().length;
-      ClassPeriod[] newArray = new ClassPeriod[r.getTimes().length+extraClasses];
+      ClassPeriod[] newArray = new ClassPeriod[r.getTimes().length + extraClasses];
       int[] order = Rotation.getSlotRotation(r);
       
       //check for zero period, etc.
@@ -50,10 +50,13 @@ public class OrderUtility
          if (debug) System.out.println("order run "+i);
          for (int o = arrayStart; o < unOrderedArray.length; o++) {
             if (order[i] == unOrderedArray[o].getSlot()) {
-               newArray[newArrayIndex] = new ClassPeriod(unOrderedArray[o].getSlot(), unOrderedArray[o].getName(),
-                     r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime(), 
-                     unOrderedArray[o].getTeacher(), unOrderedArray[o].getRoomNumber());
-               
+               newArray[newArrayIndex] = new ClassPeriod(
+                     unOrderedArray[o].getSlot(), unOrderedArray[o].getName(),
+                     r.getTimes()[rotationIndex].getStartTime(),
+                     r.getTimes()[rotationIndex].getEndTime(),
+                     unOrderedArray[o].getTeacher(),
+                     unOrderedArray[o].getRoomNumber());
+
                if (debug) {
                   System.out.println("new array["+newArrayIndex+"] set to old["+o);
                   System.out.println("\tindex is; "+unOrderedArray[o].getSlot());
