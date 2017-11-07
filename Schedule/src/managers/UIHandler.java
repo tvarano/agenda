@@ -27,7 +27,6 @@ public class UIHandler {
 	
 	public static void putValues() {
 	   UIManager.put("List.selectionBackground", tertiary);
-	   UIManager.put("TextField.background", quaternary);
 	}
 	
 	public static void setColors() {
@@ -35,7 +34,7 @@ public class UIHandler {
 	   Color gris = new Color(40,40,40);
 	   Color carbon = new Color(Integer.decode("#a9a9a9"));
 	   Color sky = new Color(Integer.decode("#caebf2"));
-	   Color watermelon = new Color(Integer.decode("#ff3b3f"));
+	   Color watermelon = new Color(Integer.decode("#ff6a5c"));
 	   Color neutral = new Color(Integer.decode("#efefef"));
 	   
 	   titleColor = noir;
@@ -60,19 +59,6 @@ public class UIHandler {
 	}
 	
 	public static void setLAF() {
-      
-//      for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-//         if ("Nimbus".equals(info.getName())) {
-//            try {
-//               UIManager.setLookAndFeel(info.getClassName());
-//            } catch (ClassNotFoundException | InstantiationException
-//                  | IllegalAccessException
-//                  | UnsupportedLookAndFeelException e) {
-//               e.printStackTrace();
-//            }
-//            break;
-//         }
-//      }
       try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
          MetalLookAndFeel.setCurrentTheme(new OceanTheme());       
