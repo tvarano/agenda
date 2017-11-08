@@ -16,7 +16,7 @@ import information.Schedule;
 /**
  * @deprecated this is replaced by {@link Reader}
  * @author varanoth
- *
+ * @see {@link Reader}
  */
 public class OldReader
 {

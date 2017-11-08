@@ -16,7 +16,7 @@ import managers.Main;
 /**
  * @deprecated this is replaced by {@link SchedWriter}
  * @author varanoth
- *
+ * @see {@link SchedWriter}
  */
 public class OldWriter 
 {
