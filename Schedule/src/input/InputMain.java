@@ -1,4 +1,5 @@
 package input;
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.GridLayout;
@@ -6,12 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import constants.ErrorID;
@@ -34,6 +33,7 @@ public class InputMain extends JPanel
    public static final int INIT_AMT_CL = 7;
    private ArrayList<Lab> labs;
    private ArrayList<ClassInputSlot> slots;
+   private JPanel center;
    private PanelManager parentManager;
    private boolean hasZeroPeriod, hasManager, error, debug, saved;
    private int amtClasses;
@@ -42,10 +42,13 @@ public class InputMain extends JPanel
    
    public InputMain(PanelManager parentManager) {
       debug = false;
+      center = new JPanel();
+      center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
       labs = new ArrayList<Lab>();
       slots = new ArrayList<ClassInputSlot>();
       setBackground(UIHandler.tertiary);
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      setLayout(new BorderLayout());
       this.parentManager = parentManager;
       hasManager = (parentManager != null);
       init(INIT_AMT_CL);
@@ -54,26 +57,26 @@ public class InputMain extends JPanel
    
    public void init(int amtSlots) {
       if (debug) System.out.println("INPUTFRAME construted empty");
-      add(new ToolBar(true, this));
+      add(new ToolBar(true, this), BorderLayout.NORTH);
       initSlots(amtSlots);
       amtClasses = amtSlots;
       addPascack(null);
-      add(createBottomPanel());
+      add(center, BorderLayout.CENTER);
+      add(createBottomPanel(), BorderLayout.SOUTH);
    }
    
    public void init(Schedule s) {
       if (debug) System.out.println("INPUTFRAME constructed with classes");
-      add(new ToolBar(true, this));
+      add(new ToolBar(true, this), BorderLayout.NORTH);
       amtClasses = s.getClasses().length;
       if (s.getLabs() != null && s.getLabs().length != 0)
          initSlots(s.getClasses(), s.getLabs());
       else
          initSlots(s.getClasses());
       addPascack(s.getPascackPreferences());
-      add(createBottomPanel());
+      add(center, BorderLayout.CENTER);
+      add(createBottomPanel(), BorderLayout.SOUTH);
    }
-   
-   
    
    public void addLab(int slot) {
       if (debug) System.out.println("input adding lab " + slot);
@@ -87,15 +90,16 @@ public class InputMain extends JPanel
    
    private void addSlot(int slotIndex) {
       ClassInputSlot s = new ClassInputSlot(slotIndex, this);
-      int addIndex = (hasZeroPeriod) ? slotIndex + 1 : slotIndex;
-      slots.add(addIndex - 1, s);
-      addImpl(s, null, addIndex);
+      int addIndex = (hasZeroPeriod) ? slotIndex : slotIndex-1;
+      slots.add(addIndex, s);
+//      center.addImpl(s, null, addIndex);
+      center.add(s, addIndex);
    }
    
    private ClassInputSlot addSlot(ClassPeriod c) {
       if (debug) System.out.println("INPUT added "+c.getInfo());
       slots.add(new ClassInputSlot(c, this));
-      return (ClassInputSlot) add(slots.get(slots.size()-1));
+      return (ClassInputSlot) center.add(slots.get(slots.size()-1));
    }
    
    private void addPascack(ClassPeriod pref) {
@@ -216,7 +220,7 @@ public class InputMain extends JPanel
 
    public void reWriteSlotsArray() {
       slots.removeAll(slots);
-      Component[] c = getComponents();
+      Component[] c = center.getComponents();
       
       for (int i = 0; i < c.length; i++) {
          if (c[i] instanceof ClassInputSlot) {
@@ -244,7 +248,7 @@ public class InputMain extends JPanel
    }
    
    private boolean canCreate() {
-      for (Component c : getComponents())
+      for (Component c : center.getComponents())
          if (c instanceof ClassInputSlot) 
             if (!((ClassInputSlot) c).checkCanCreate())
                return false;
@@ -253,7 +257,7 @@ public class InputMain extends JPanel
    private void save() {
       if (debug) System.out.println("SAVING SCHED");
       SchedWriter writer = new SchedWriter();
-      Component[] c = getComponents();
+      Component[] c = center.getComponents();
       ClassPeriod[] classes = new ClassPeriod[amtClasses+1];
       if (!canCreate()) {
          cannotCreate();
@@ -310,12 +314,13 @@ public class InputMain extends JPanel
    }
    
    public void removeAndReOrder(Component c) {
-      remove(c);
+      center.remove(c);
       slots.remove(c);
-      for (Component a : getComponents())
+      for (Component a : center.getComponents())
          a.repaint();
       setSize(getSize());
       revalidate();
+      center.revalidate();
    }
    
    public Schedule getBeginningSchedule() {
@@ -323,7 +328,7 @@ public class InputMain extends JPanel
    }
    public void setBeginningSchedule(Schedule s) {
       this.beginningSchedule = s;
-      removeAll();
+      center.removeAll();
       init(s);
    }
    

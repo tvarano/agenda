@@ -28,7 +28,6 @@ public class ToolBar extends JToolBar implements ActionListener
       create(inputting);
       setName("ToolBar");
       setBackground(UIHandler.tertiary);
-      setBackground(Color.BLUE);
       setFloatable(false);
       setOpaque(true);
       setMargin(new Insets(7,5,0,0));
