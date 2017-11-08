@@ -45,6 +45,19 @@ public class DisplayMain extends JPanel implements ActionListener
       testSituation = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
+      initTime();
+      
+      setLayout(new BorderLayout());
+      initComponents();
+     
+      addComponents();
+      update();
+      requestFocus();
+      timer = new Timer(5000, this);
+      timer.start();
+   }
+   
+   private void initTime() {
       try {
          if (testSituation) {
             currentTime = new Time(10,00);
@@ -59,14 +72,6 @@ public class DisplayMain extends JPanel implements ActionListener
          e.printStackTrace();
          ErrorID.showError(e, false);
       }
-      setLayout(new BorderLayout());
-      initComponents();
-     
-      addComponents();
-      update();
-      requestFocus();
-      timer = new Timer(5000, this);
-      timer.start();
    }
    
    private void initComponents() {

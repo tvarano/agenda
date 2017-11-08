@@ -1,6 +1,10 @@
 package display;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -35,6 +39,18 @@ public class CurrentInfo extends JTextPane{
             setName("Current Info Pane");
          repaintText();
          setEditable(false);
+      }
+      
+      @Override
+      protected void paintComponent(Graphics g) {
+         Graphics2D g2 = (Graphics2D) g;
+         try {
+            g2.drawImage(ImageIO.read(ClassLoader.getSystemResource("tools/notebook.png")), 0,0,getWidth(), getHeight(), null);
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+         super.paintComponent(g);
+
       }
       
       /**

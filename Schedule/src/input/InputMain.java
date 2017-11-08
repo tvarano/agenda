@@ -119,6 +119,7 @@ public class InputMain extends JPanel
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
       JButton button = new JButton("Cancel");
       button.setActionCommand("cancel");
+      button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
       button.setToolTipText("Exit Without Saving");
       button.addActionListener(changeView());
@@ -127,6 +128,7 @@ public class InputMain extends JPanel
       button = new JButton("Submit");
       button.setToolTipText("Save Your Schedule");
       button.setSelected(true);
+      button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
       button.setActionCommand("submit");
       button.addActionListener(saveAndChangeView());
