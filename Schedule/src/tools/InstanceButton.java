@@ -27,6 +27,7 @@ public class InstanceButton extends JButton implements ActionListener
       super(key);
       enacted = false;
       setName("instanceButton "+key);
+      setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setOpaque(false);
       unEnactedBorder = BorderFactory.createRaisedSoftBevelBorder(); 

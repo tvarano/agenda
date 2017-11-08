@@ -19,7 +19,7 @@ public class UIHandler {
 	
 	public static void init() { 
 	   debug = true;
-	   font = new Font("Times New Roman", Font.PLAIN, 16);
+	   font = new Font("Georgia", Font.PLAIN, 16);
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -27,6 +27,7 @@ public class UIHandler {
 	
 	public static void putValues() {
 	   UIManager.put("List.selectionBackground", tertiary);
+	   UIManager.put("ToolTip.font", getToolTipFont());
 	}
 	
 	public static void setColors() {
@@ -37,12 +38,12 @@ public class UIHandler {
 	   Color watermelon = new Color(Integer.decode("#ff6a5c"));
 	   Color neutral = new Color(Integer.decode("#efefef"));
 	   
-	   titleColor = noir;
-	   tertiary = watermelon;
+	   foreground = gris;
 	   background = neutral;
 	   secondary = carbon;
+	   tertiary = watermelon;
 	   quaternary = sky;
-	   foreground = gris;
+	   titleColor = noir;
 	   titleBorderColor = carbon;
 	}
 	
@@ -74,7 +75,31 @@ public class UIHandler {
             title, justification, position, font, titleColor);
 	}
 	
+	private static Font getBold(float size) {
+	   return font.deriveFont(size).deriveFont(Font.BOLD);
+	}
+	
 	public static Border getTitledBorder(String title) {
 	   return getTitledBorder(title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP);
+	}
+	
+	public static Font getInputLabelFont() {
+	   return getBold(14F);
+	}
+	
+	public static Font getInputFieldFont() {
+	   return getInputLabelFont().deriveFont(Font.PLAIN);
+	}
+	
+	public static Font getTabFont() {
+	   return getButtonFont();
+	}
+	
+	public static Font getButtonFont() {
+	   return getBold(12F);
+	}
+	
+	public static Font getToolTipFont() {
+	   return font.deriveFont(13F);
 	}
 }

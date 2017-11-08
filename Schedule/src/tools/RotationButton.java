@@ -1,10 +1,8 @@
 package tools;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -30,6 +28,7 @@ public class RotationButton extends JButton implements ActionListener
       debug = false;
       setParentPanel(parentPanel);
       setOpaque(false);
+      setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       addActionListener(this);

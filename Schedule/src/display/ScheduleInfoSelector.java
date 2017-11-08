@@ -2,7 +2,7 @@ package display;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
-import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -64,7 +64,7 @@ public class ScheduleInfoSelector extends JPanel
       else
          System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
       String infoTitle = (info.getClassPeriod() == null) ? "ERROR" : info.getClassPeriod().getTrimmedName() + " Info";
-      info.setBorder(UIHandler.getTitledBorder(infoTitle));
+      ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));
    }
    
    public void pushTodaySchedule(Schedule s) {
@@ -75,13 +75,14 @@ public class ScheduleInfoSelector extends JPanel
       JTabbedPane retval = new JTabbedPane();
       
       JScrollPane scroll = new JScrollPane(todayList); scroll.setName(todayList.getName());
-      retval.addTab(scroll.getName(), null, scroll, "Select a class for its info");
+      retval.addTab(scroll.getName(), null, scroll, "Today's Rotation of Classes");
       retval.setMnemonicAt(0, KeyEvent.VK_1);
       
       scroll = new JScrollPane(mainList); scroll.setName(mainList.getName());
-      retval.addTab(scroll.getName(), null, scroll, "Select a class for its info");
+      retval.addTab(scroll.getName(), null, scroll, "Standard R1 Schedule");
       retval.setMnemonicAt(1, KeyEvent.VK_2);
       
+      retval.setFont(UIHandler.getTabFont());
       return retval;
    }
    

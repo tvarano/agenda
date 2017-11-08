@@ -28,6 +28,7 @@ public class AddButton extends JButton implements ActionListener
       super("Add "+slot+" Period");
       addActionListener(this);
       setOpaque(false);
+      setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       setSlot(slot);

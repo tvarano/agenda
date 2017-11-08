@@ -1,5 +1,7 @@
 package tools;
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,10 +29,16 @@ public class ToolBar extends JToolBar implements ActionListener
       create(inputting);
       setName("ToolBar");
       setBackground(UIHandler.tertiary);
-      setFont(UIHandler.font);
       setFloatable(false);
       setOpaque(true);
       setMargin(new Insets(7,5,0,0));
+   }
+   
+   @Override
+   protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
+      Graphics2D g2 = (Graphics2D) g;
+      
    }
    
    private ToolBar create(boolean inputting) {
@@ -55,11 +63,12 @@ public class ToolBar extends JToolBar implements ActionListener
       b = new InstanceButton(InstanceButton.HALF);
       b.setParentBar(this);
       add(b);
-      JButton i = new JButton("Input Schedule");
-      i.setCursor(new Cursor(Cursor.HAND_CURSOR));
-      i.setOpaque(false);
-      i.addActionListener(((DisplayMain) parentPanel).changeView());
-      add(i);
+      JButton input = new JButton("Input Schedule");
+      input.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      input.setOpaque(false);
+      input.setFont(UIHandler.getButtonFont());
+      input.addActionListener(((DisplayMain) parentPanel).changeView());
+      add(input);
       return this;
    }
    

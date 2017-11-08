@@ -64,8 +64,8 @@ public class ClassInfoPane extends JTextPane
             tab + classLength
       };
       String[] styles = {
-            "plain", 
-            "plain",
+            "regular", 
+            "regular",
             "bold",
             "italic"
       };
