@@ -24,8 +24,8 @@ public enum Rotation
    DELAY_R1 (getSchedule(RotationConstants.DELAY_R1), DayType.DELAYED_OPEN, RotationConstants.DELAY_R1),
    DELAY_R3 (getSchedule(RotationConstants.DELAY_R3), DayType.DELAYED_OPEN, RotationConstants.DELAY_R3),
    DELAY_R4 (getSchedule(RotationConstants.DELAY_R4), DayType.DELAYED_OPEN, RotationConstants.DELAY_R4),
-   DELAY_ODD (getSchedule(RotationConstants.DELAY_ODD), DayType.DELAY_BLOCK, RotationConstants.DELAY_ODD),
-   DELAY_EVEN (getSchedule(RotationConstants.DELAY_EVEN), DayType.DELAY_BLOCK, RotationConstants.DELAY_EVEN)
+   DELAY_ODD (getSchedule(RotationConstants.DELAY_ODD), DayType.DELAY_ODD, RotationConstants.DELAY_ODD),
+   DELAY_EVEN (getSchedule(RotationConstants.DELAY_EVEN), DayType.DELAY_EVEN, RotationConstants.DELAY_EVEN)
    ;
       
    private final int lunchSlot;
@@ -38,8 +38,7 @@ public enum Rotation
    private Rotation(ClassPeriod[] times, DayType dt, int index) {
          this.times = times; this.labSwitch = dt.getLabSwitch(); this.dayType = dt;
          this.index = index; lunchSlot = calcLunchSlot(); 
-         if (debug)
-            System.out.println("rotation "+index+" created");
+         if (debug) System.out.println("rotation "+index+" created");
    }
    
    public static int[] getSlotRotation (Rotation r) {
@@ -57,26 +56,6 @@ public enum Rotation
    
    public static Rotation getFromIndex(int rotationIndex) {
       return values()[rotationIndex-1];
-   }
-   
-   public static Rotation toDelay(Rotation r) {
-      switch (r) {
-         case R1 : return DELAY_R1;
-         case R3 : return DELAY_R3;
-         case R4 : return DELAY_R4;
-         case ODD_BLOCK : return DELAY_ODD;
-         case EVEN_BLOCK : return DELAY_EVEN;
-         default : return DELAY_R1;
-      }
-   }
-   
-   public static Rotation toHalf(Rotation r) {
-      switch (r) {
-         case R1 : return HALF_R1;
-         case R3 : return HALF_R3;
-         case R4 : return HALF_R4;
-         default : return HALF_R1;
-      }
    }
    
    private static int[] getSlotRotation (int rotationDay) {

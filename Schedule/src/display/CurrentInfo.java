@@ -41,18 +41,6 @@ public class CurrentInfo extends JTextPane{
          setEditable(false);
       }
       
-      @Override
-      protected void paintComponent(Graphics g) {
-         Graphics2D g2 = (Graphics2D) g;
-         try {
-            g2.drawImage(ImageIO.read(ClassLoader.getSystemResource("tools/notebook.png")), 0,0,getWidth(), getHeight(), null);
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
-         super.paintComponent(g);
-
-      }
-      
       /**
        * CAREFUL method is much heavier than default repaint
        * @see #createText()

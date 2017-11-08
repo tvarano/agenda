@@ -41,4 +41,24 @@ public abstract class RotationConstants
       return retval;
    }
    
+   public static Rotation toDelay(Rotation r) {
+      switch (r) {
+         case R1 : return Rotation.DELAY_R1;
+         case R3 : return Rotation.DELAY_R3;
+         case R4 : return Rotation.DELAY_R4;
+         case ODD_BLOCK : return Rotation.DELAY_ODD;
+         case EVEN_BLOCK : return Rotation.DELAY_EVEN;
+         default : return Rotation.DELAY_R1;
+      }
+   }
+   
+   public static Rotation toHalf(Rotation r) {
+      switch (r) {
+         case R1 : return Rotation.HALF_R1;
+         case R3 : return Rotation.HALF_R3;
+         case R4 : return Rotation.HALF_R4;
+         default : return Rotation.HALF_R1;
+      }
+   }
+   
 }

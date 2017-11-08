@@ -13,7 +13,8 @@ import javax.swing.SwingUtilities;
 public class Main extends JPanel
 {
    private static final long serialVersionUID = 1L;
-   public static final String APP_NAME = "Tommy's adventure";
+   public static final String APP_NAME = "Agenda";
+   public static final String BUILD = "1.0 (Alpha)";
    private static final int MIN_W = 730, MIN_H = 313;
    public static final int PREF_W = MIN_W+1, PREF_H = 460;
    private PanelManager manager;
@@ -31,7 +32,7 @@ public class Main extends JPanel
       return new Dimension(PREF_W, PREF_H);
    }
    private static void createAndShowGUI() {
-      JFrame frame = new JFrame(APP_NAME);
+      JFrame frame = new JFrame(APP_NAME + " " + BUILD);
       int frameToPaneAdjustment = 22;
       frame.getContentPane().add(new Main());
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

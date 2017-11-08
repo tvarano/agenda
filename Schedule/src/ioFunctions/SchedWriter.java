@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 
 import constants.ErrorID;
 import information.Schedule;
+import managers.Main;
 
 //Thomas Varano
 //[Program Descripion]
@@ -16,8 +17,8 @@ public class SchedWriter
    private ObjectOutputStream outStream;
    private FileOutputStream fileStream;
    public static final String FILE_ROUTE = 
-//         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
-   System.getProperty("user.home")+"/Documents/SerialTestDocument.txt";
+         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
+//   System.getProperty("user.home")+"/Documents/SerialTestDocument.txt";
    private boolean debug;
    
    public SchedWriter() {

@@ -69,9 +69,9 @@ public class RotationButton extends JButton implements ActionListener
          if (getParent() instanceof ToolBar) {
             parentBar = (ToolBar)getParent();
             if (parentBar.isDelayed())
-               parentPane.setTodayR(Rotation.toDelay(r));
+               parentPane.setTodayR(RotationConstants.toDelay(r));
             else if (parentBar.isHalf())
-               parentPane.setTodayR(Rotation.toHalf(r));
+               parentPane.setTodayR(RotationConstants.toHalf(r));
             else {
                parentPane.setTodayR(r);
             }

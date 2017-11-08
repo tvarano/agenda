@@ -21,10 +21,15 @@ public enum DayType
          new Time(11,30)},
          new Time[] {new Time(8,31), new Time(9,8), new Time(9,43), new Time(10,18), new Time(10,52), new Time(11,26), 
                new Time(12,00)}), 
-   DELAYED_OPEN (NORMAL.getStartTimes(), NORMAL.getEndTimes(), new Time()), 
-   DELAY_BLOCK(DELAYED_OPEN.getStartTimes(), DELAYED_OPEN.getEndTimes(), new Time());
+   DELAYED_OPEN (new Time[] {new Time(9,30), new Time(10,9), new Time(10,50), new Time(11,29), new Time(12,8), new Time(12,59),
+            new Time(13,38), new Time(14,17)},
+         new Time[] {new Time(10,5), new Time(10,46), new Time(11,25), new Time(12,4), new Time(12,55), new Time(13,34),
+               new Time(14,13), new Time(14,53)}),
+   DELAY_ODD(new Time[] {new Time(9,30), new Time(10,39), new Time(11,48), new Time(12,39), new Time(13,48)},
+         new Time[] {new Time(10,35), new Time(11,44), new Time(12,35), new Time(13,44), new Time(14,53)}),
+   DELAY_EVEN(DELAY_ODD.getStartTimes(), DELAY_ODD.getEndTimes());
+   //TODO delay even block
    
-   public static final Time NO_LAB = new Time();
    private final Time[] startTimes, endTimes;
    private final Time labSwitch;
    
@@ -34,6 +39,10 @@ public enum DayType
    
    private DayType(Time[] startTimes, Time[] endTimes) {
       this(startTimes, endTimes, null);
+   }
+   
+   public boolean hasLab() {
+      return labSwitch == null;
    }
 
    public boolean equals(DayType otherDT) {
