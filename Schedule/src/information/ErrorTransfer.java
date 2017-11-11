@@ -1,130 +1,263 @@
 //Thomas Varano
 //[Program Descripion]
-//Oct 31, 2017
+//Nov 9, 2017
 
 package information;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class ErrorTransfer implements Transferable
+import constants.ErrorID;
+
+public class ErrorTransfer implements Transferable, Serializable
 {
-   private String text;
-   private Throwable throwObject;
-   private DataFlavor flavor; 
-   private StringThrowBundle bundle;
+   private static final long serialVersionUID = 9144653112308648565L;
+   private Throwable e;
+   private String id;
+   public static final String fileRoute = "Schedule/src/files/ErrorClipBoardTransfer.txt";
+
+   public ErrorTransfer(Throwable e, String id) {
+      setThrowable(e); setId(id);
+   }
    
-   public ErrorTransfer(String s, Throwable e) {
-      setText(s);
-      setThrowObject(e);
-      bundle = new StringThrowBundle(s, e);
-      flavor = new DataFlavor(StringThrowBundle.class, s);      
+   public String getSerializedData() {
+      Serializer.serializeDoc(this, fileRoute);
+      return readDocument();
    }
-
-   public String getText() {
-      return text;
+   
+   public void copy() {
+      Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+      systemClipboard.setContents(this, null);
+      writeToDoc();
    }
-   public void setText(String text) {
-      this.text = text;
+   
+   public void printStackTrace() {
+      e.printStackTrace();
    }
-   public Throwable getThrowObject() {
-      return throwObject;
+   
+   private static String readDocument() {
+      Scanner s;
+      try {
+         s = new Scanner(new File(fileRoute));
+      } catch (FileNotFoundException e) {
+         e.printStackTrace();
+         return "";
+      }
+      String retval = "";
+      final String newLn = "\r\n";
+      while (s.hasNextLine())
+         retval+=s.nextLine()+newLn;
+      s.close();
+      retval+="\f";
+      System.out.println("DOCUMENT "+retval);
+      return retval;
    }
-   public void setThrowObject(Throwable throwObject) {
-      this.throwObject = throwObject;
+   
+   public static ErrorTransfer deserialize(String s) {
+      return Serializer.deserializeDoc(fileRoute, ErrorTransfer.class);
    }
-
+   
+   public static void writeToDoc(String s) {
+      try {
+         BufferedWriter bw = new BufferedWriter(new FileWriter(fileRoute));
+         bw.write(s);
+         bw.close();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+   
+   public void writeToDoc() {
+      writeToDoc(getSerializedData());
+   }
+   
+   public static ErrorTransfer deserializeFromDocument() {
+      return Serializer.deserializeByte(readDocument(), ErrorTransfer.class);
+   }
+   
    @Override
    public DataFlavor[] getTransferDataFlavors() {
-      return new DataFlavor[] {DataFlavor.stringFlavor, flavor};
+      return new DataFlavor[] {DataFlavor.stringFlavor};
    }
-
+   
    @Override
    public boolean isDataFlavorSupported(DataFlavor flavor) {
-      if (flavor.equals(DataFlavor.stringFlavor))
-         return true;
-      return false;
+      return flavor.equals(DataFlavor.stringFlavor);
    }
-
+   
    @Override
    public Object getTransferData(DataFlavor flavor)
          throws UnsupportedFlavorException, IOException {
-      if (flavor.equals(DataFlavor.stringFlavor))
-         return bundle.getPrintText();
-      return null;
+      if (isDataFlavorSupported(flavor))
+         return getSerializedData();
+      else {
+         return null;
+      }
    }
    
-   public static class StringThrowBundle implements Serializable{
-
-      private static final long serialVersionUID = -5842582532220560337L;
-      private String s;
-      private Throwable e;
-      public StringThrowBundle(String s, Throwable e) {
-         setString(s);
-         setThrowable(e);
+   public String toString() {
+      return getClass().getName()+"["+e+" : "+id+"]";
+   }
+   
+   public Throwable getThrowable() {
+      return e;
+   }
+   public void setThrowable(Throwable e) {
+      this.e = e;
+   }
+   public String getId() {
+      return id;
+   }
+   public void setId(String id) {
+      this.id = id;
+   }
+   
+   protected static class Serializer {
+      
+      /**@deprecated
+       * @param obj
+       * @return
+       */
+      public static String serializeUTF(Object obj) {
+         OutputStream outAnon = new OutputStream() {
+            private StringBuilder sb = new StringBuilder();
+            @Override
+            public void write(int b) throws IOException {
+               sb.append((char)b);
+            } 
+            public String toString() {
+               return sb.toString();
+            }
+         };
+         try {
+            ObjectOutputStream out = new ObjectOutputStream(outAnon);
+            out.writeObject(obj);
+            return outAnon.toString();
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+         return null;
       }
       
-      public Throwable getThrowable() {
-         return e;
-      }
-      public void setThrowable(Throwable e) {
-         this.e = e;
-      }
-      public String getString() {
-         return s;
-      }
-      public void setString(String s) {
-         this.s = s;
-      }
-      public Object getPrintText() {
-         String fileRoute = "ErrorSerializeTransfer.txt";
-         String ret = "";
+      /** @deprecated nono
+       * @param str
+       * @param cls
+       * @return
+       */
+      public static <T> T deserializeUTF(String str, Class<T> cls) {
+         InputStream inUTF = null;
          try {
-            ObjectOutputStream print = new ObjectOutputStream(new FileOutputStream(fileRoute));
-            print.writeObject(this);
-            print.close();
-         } catch (IOException io) {
-            io.printStackTrace();
+            inUTF = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8.name()));
+         } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
          }
+         InputStream inAnon = new InputStream() {
+            int index;
+            @Override
+            public int read() throws IOException {
+//               if (index >= str.length())
+//                  return 0;
+               int ret = (int)str.charAt(index);
+               index++;
+//               return index;
+               return ret;
+            }
+         };
+         ObjectInputStream in;
          try {
-            Scanner s = new Scanner(new FileInputStream(fileRoute));
-            while (s.hasNextLine())
-               ret += "\n" + s.nextLine();
-            s.close();
-         } catch (FileNotFoundException fnf) {
-            fnf.printStackTrace();
+            in = new ObjectInputStream(inUTF);
+            return cls.cast(in.readObject());
+         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+//            System.out.println("yeah nice try");
+            return null;
          }
-         return ret;
       }
-      public void printInfo() {
-         System.out.println(s);
-         e.printStackTrace();
+      
+      
+      /**
+       * Serialize any object using byte array (opposed to UTF)
+       * @param obj
+       * @return
+       */
+      public static String serializeByte(Object obj) {
+          try {
+              ByteArrayOutputStream bo = new ByteArrayOutputStream();
+              ObjectOutputStream so = new ObjectOutputStream(bo);
+              so.writeObject(obj);
+              so.close();
+              // This encoding induces a bijection between byte[] and String (unlike UTF-8)
+              return bo.toString("ISO-8859-1");
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+          return null;
       }
-      private String toString(StackTraceElement e) {
-         String ret = "";
-         ret += "\tat " + e.getMethodName() + "(" + e.getClassName() + "." + e.getLineNumber()+")";
-         return ret;
+      /**
+       * Deserialize any object
+       * @param str
+       * @param cls
+       * @return
+       */
+      public static <T> T deserializeByte(String str, Class<T> cls) {
+          try {
+              // This encoding induces a bijection between byte[] and String (unlike UTF-8)
+             System.out.println("READING "+str);
+              byte b[] = str.getBytes("ISO-8859-1"); 
+              ByteArrayInputStream bi = new ByteArrayInputStream(b);
+              ObjectInputStream si = new ObjectInputStream(bi);
+              T retval = cls.cast(si.readObject());
+              si.close();
+              return retval;
+          } catch (Exception e) {
+              e.printStackTrace();
+              ErrorID.showPrintingError(e);
+          }
+          return null;
       }
-      public String toString() {
-         String ret = s + "\n";
-         ret += e;
-         for (StackTraceElement s : e.getStackTrace())
-            ret += toString(s) + "\n";
-         if (e.getCause() != null) {
-            ret += "caused by: " + e.getCause();
-            for (StackTraceElement s : e.getCause().getStackTrace())
-               ret += toString(s);
+      
+      
+      public static void serializeDoc(Object o, String fileRoute) {
+         File f = new File(fileRoute);
+         ObjectOutputStream out;
+         try {
+            out = new ObjectOutputStream(new FileOutputStream(f));
+            out.writeObject(o);
+         } catch (IOException e) {
+            e.printStackTrace();
          }
-         
-         return ret;
+      }
+      public static <T> T deserializeDoc(String fileRoute, Class<T> cls) {
+         File f = new File(fileRoute);
+         try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
+            Object r = in.readObject();
+            in.close();
+            return cls.cast(r);
+         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+         }
+         return null;
       }
    }
 }

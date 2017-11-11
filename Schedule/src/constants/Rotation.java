@@ -71,9 +71,11 @@ public enum Rotation
             return new int[]{4, 1, 2, 3, lunch, 7, 5, 6};
          case RotationConstants.ODD_BL : case RotationConstants.DELAY_ODD : 
             return new int[]{3, 1, lunch, 5, 7};
-         case RotationConstants.EVEN_BL : case RotationConstants.DELAY_EVEN :
+         case RotationConstants.EVEN_BL :
             return new int[]{2, 4, lunch,
                   RotationConstants.PASCACK, 6};
+         case RotationConstants.DELAY_EVEN : 
+            return new int[] {2,4,lunch,6};
          case RotationConstants.HALF_R1 : 
             return new int[] {1, 2, 3, 4, 5, 6, 7};
          case RotationConstants.HALF_R3 : 

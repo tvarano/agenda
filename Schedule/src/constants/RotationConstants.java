@@ -57,7 +57,8 @@ public abstract class RotationConstants
          case R1 : return Rotation.HALF_R1;
          case R3 : return Rotation.HALF_R3;
          case R4 : return Rotation.HALF_R4;
-         default : return Rotation.HALF_R1;
+         default : ErrorID.showRecoverableError(ErrorID.HALF_BLOCK_SELECTED); 
+            return Rotation.HALF_R1;
       }
    }
    

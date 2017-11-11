@@ -1,18 +1,15 @@
 package constants;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.StreamCorruptedException;
 
 import javax.swing.JOptionPane;
 
 import information.ClassPeriod;
 import information.ErrorTransfer;
 import managers.Main;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -23,13 +20,17 @@ public enum ErrorID {
    NULL_POINT("Internal Null Pointer Error"),
    FNF("File Not Found"),
    INITIALIZER("Exception in Initializer"),
+   SERIALIZE("Data Corruption in Reading / Writing Process"),
    
    FILE_TAMPER("There was an error with reading your schedule.\n"
                + "It has been reset to the default"),
    INPUT_ERROR("Input Error. Make sure all fields are filled correctly"), 
+   HALF_BLOCK_SELECTED("You selected a block half day, which does not exist.\n"
+         + "The rotation has been set to a half day R1."),
    OTHER();
 
    public static final String ERROR_NAME = Main.APP_NAME + " ERROR";
+   public static final String fileRoute = "Schedule/src/files/ErrorClipBoardTransfer.txt";
    private final String ID;
    private final String message;
 
@@ -61,7 +62,7 @@ public enum ErrorID {
             null, new String[]{"Info", "Close"}, "Close");
    }
 
-   public static void showGeneral(Throwable e, String ID) {
+   public static void showGeneral(Throwable e, String ID, boolean copy) {
       String newLn = "\n";
       int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE);
       if (choice == 0) {
@@ -73,17 +74,17 @@ public enum ErrorID {
          JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
-               null, new String[]{"Copy & Close", "Close"}, "Close");
-         if (choice == 0) {
-            Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            systemClipboard.setContents(new ErrorTransfer(importantText, e), null);
+               null, (copy) ? new String[]{"Copy & Close", "Close"} : new String[] {"Close"}, "Close");
+         if (choice == 0 && copy) {
+            ErrorTransfer t = new ErrorTransfer(e, importantText);
+            t.copy();
          }
       }
    }
 
    public static void showError(Throwable e, boolean recover) {
       String ID = getID(e);
-      showGeneral(e, ID);
+      showGeneral(e, ID, true);
       if (!recover)
          System.exit(0);
    }
@@ -93,7 +94,13 @@ public enum ErrorID {
             ">" + getType(e).getID();
    }
    
+   public static void showPrintingError(Throwable e) {
+      showGeneral(e, getID(e), false);
+   }
+   
    private static ErrorID getType(Throwable e) {
+      if (e instanceof StreamCorruptedException || e instanceof ClassNotFoundException)
+         return SERIALIZE;
       if (e instanceof NullPointerException)
          return NULL_POINT;
       if (e instanceof FileNotFoundException)
@@ -112,49 +119,39 @@ public enum ErrorID {
       return null;
    }
    
+ 
+   
+   
    public static Throwable deSerialize() {
-      String transferDoc = "ErrorSerializeTransfer.txt";
-      try {
-         ObjectInputStream in = new ObjectInputStream(new FileInputStream(transferDoc));
-         ErrorTransfer.StringThrowBundle ret = (ErrorTransfer.StringThrowBundle)in.readObject();
-         in.close();
-         return ret.getThrowable();
-      } catch (IOException e) {
-         e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-         e.printStackTrace();
-      }
-      return null;
+//      String transferDocRoute = "files/ErrorClipBoardTransfer.txt";
+//      try {
+//         ObjectInputStream in = new ObjectInputStream(new FileInputStream(transferDoc));
+//         ErrorTransfer.StringThrowBundle ret = (ErrorTransfer.StringThrowBundle)in.readObject();
+//         in.close();
+//         return ret.getThrowable();
+//      } catch (IOException e) {
+//         e.printStackTrace();
+//      } catch (ClassNotFoundException e) {
+//         e.printStackTrace();
+//      }
+//      return null;
+//      
+      return ErrorTransfer.deserializeFromDocument().getThrowable();
    }
-   
-   public static Throwable deSerialize(String s) {
-      String transferDoc = "ErrorSerializeTransfer.txt";
-      PrintWriter pw;
-      try {
-         pw = new PrintWriter(transferDoc);
-         pw.print(s);
-         ObjectInputStream in = new ObjectInputStream(new FileInputStream(transferDoc));
-         Throwable ret = (Throwable)in.readObject();
-         in.close();
-         return ret;
-      } catch (IOException e) {
-         e.printStackTrace();
-      } catch (ClassNotFoundException e) {
-         e.printStackTrace();
-      }
-      return null;
-   }
-   
 
    public static void main(String[] args) {
-//      ClassPeriod c = null;
-//      try {
-//         c.getName();
-//      } catch (NullPointerException e1) {
-//         e1.printStackTrace();
-//         System.out.println(e1.getStackTrace()[0].getLineNumber());
-//         showError(e1, false);
-//      }
-      deSerialize().printStackTrace();
+      UIHandler.init();
+      ClassPeriod c = null;
+      try {
+         c.getName();
+      } catch (NullPointerException e1) {
+         ErrorTransfer test = new ErrorTransfer(e1, getType(e1).getID());
+         test.copy();
+         System.out.println("SER DATA "+ test.getSerializedData());
+         System.out.println("\nSER TEST "+ ErrorTransfer.deserializeFromDocument());
+         
+         ErrorID.showError(e1, true);
+         System.out.println("\nSER TEST 2 "+ErrorTransfer.deserializeFromDocument());
+      }
    }
 }
