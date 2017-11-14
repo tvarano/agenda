@@ -14,7 +14,7 @@ public class Main extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.1 (Alpha)";
+   public static final String BUILD = "1.2 (Alpha)";
    private static final int MIN_W = 730, MIN_H = 313;
    public static final int PREF_W = MIN_W+1, PREF_H = 460;
    private PanelManager manager;

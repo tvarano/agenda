@@ -17,7 +17,8 @@ public class SchedWriter
    private ObjectOutputStream outStream;
    private FileOutputStream fileStream;
    public static final String FILE_ROUTE = 
-         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
+         "Schedule/src/files/ScheduleHold.txt";
+//         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
 //   System.getProperty("user.home")+"/Documents/SerialTestDocument.txt";
    private boolean debug;
    

@@ -46,9 +46,9 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    public void copy() {
+      writeToDoc();
       Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
       systemClipboard.setContents(this, null);
-      writeToDoc();
    }
    
    public void printStackTrace() {
@@ -78,6 +78,7 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    public static void writeToDoc(String s) {
+      System.out.println("WRITING "+s);
       try {
          BufferedWriter bw = new BufferedWriter(new FileWriter(fileRoute));
          bw.write(s);
@@ -116,7 +117,7 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    public String toString() {
-      return getClass().getName()+"["+e+" : "+id+"]";
+      return getClass().getName()+"["+e.getClass()+" : "+id+"]";
    }
    
    public Throwable getThrowable() {
@@ -133,7 +134,6 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    protected static class Serializer {
-      
       /**@deprecated
        * @param obj
        * @return
@@ -241,6 +241,7 @@ public class ErrorTransfer implements Transferable, Serializable
          File f = new File(fileRoute);
          ObjectOutputStream out;
          try {
+            System.out.println("WRITEO "+o);
             out = new ObjectOutputStream(new FileOutputStream(f));
             out.writeObject(o);
          } catch (IOException e) {

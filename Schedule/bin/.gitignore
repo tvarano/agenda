@@ -1,8 +1,9 @@
-/display/
-/ioFunctions/
-/input/
-/managers/
-/tools/
 /constants/
+/display/
 /files/
 /information/
+/input/
+/ioFunctions/
+/managers/
+/tools/
+/.DS_Store

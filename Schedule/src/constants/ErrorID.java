@@ -140,18 +140,28 @@ public enum ErrorID {
    }
 
    public static void main(String[] args) {
-      UIHandler.init();
-      ClassPeriod c = null;
-      try {
-         c.getName();
-      } catch (NullPointerException e1) {
-         ErrorTransfer test = new ErrorTransfer(e1, getType(e1).getID());
-         test.copy();
-         System.out.println("SER DATA "+ test.getSerializedData());
-         System.out.println("\nSER TEST "+ ErrorTransfer.deserializeFromDocument());
-         
-         ErrorID.showError(e1, true);
-         System.out.println("\nSER TEST 2 "+ErrorTransfer.deserializeFromDocument());
+      boolean create = true;
+      boolean read = true;
+      if (create) {
+         UIHandler.init();
+         ClassPeriod c = null;
+         try {
+            c.getName();
+         } catch (NullPointerException e1) {
+            if (read) {
+               ErrorTransfer test = new ErrorTransfer(e1, getType(e1).getID());
+               test.copy();
+               System.out.println("SER DATA "+ test.getSerializedData());
+               System.out.println("\nSER TEST "+ ErrorTransfer.deserializeFromDocument());
+            }
+            
+            ErrorID.showError(e1, true);
+            if (read)
+               System.out.println("\nSER TEST 2 "+ErrorTransfer.deserializeFromDocument());
+         }
+      }
+      else {
+         ErrorTransfer.deserializeFromDocument();
       }
    }
 }

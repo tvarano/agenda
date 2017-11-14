@@ -1,7 +1,6 @@
 package display;
 import java.awt.GridLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -16,6 +15,7 @@ import managers.UIHandler;
 
 public class SouthernCurrentClassPane extends JPanel
 {
+   private static final long serialVersionUID = 1L;
    private final int LIST_W = 100;
    private ClassPeriod classPeriod;
    private int currentSlot;
