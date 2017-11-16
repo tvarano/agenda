@@ -23,6 +23,7 @@ public class Reader {
    private void init() {
       try {
          reader = new ObjectInputStream(new FileInputStream(SchedWriter.FILE_ROUTE));
+         if (debug) System.out.println(new File(SchedWriter.FILE_ROUTE).getAbsolutePath());
       } catch (IOException e) {
          if (debug) e.printStackTrace();
          reWriteSched();
@@ -37,7 +38,7 @@ public class Reader {
          ret = (Schedule) reader.readObject();
       } catch (ClassNotFoundException | ClassCastException | IOException e) {
          reWriteSched();
-         ErrorID.showRecoverableError(ErrorID.FILE_TAMPER);
+         ErrorID.showUserError(ErrorID.FILE_TAMPER);
          return readSched();
       }
       try {

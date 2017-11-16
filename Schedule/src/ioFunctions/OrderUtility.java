@@ -1,8 +1,11 @@
 package ioFunctions;
+import java.time.LocalTime;
+
 import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
+import managers.Main;
 
 //Thomas Varano
 //[Program Descripion]
@@ -10,10 +13,10 @@ import information.Schedule;
 
 public class OrderUtility
 {
-   private static boolean debug = true, statusU = true;
+   private static boolean debug = false;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
-      if (statusU) System.out.println("ordering schedule: "+s.getName());
+      if (Main.statusU) System.out.println(LocalTime.now()+ " : ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);
       s.setPascackData();
@@ -25,7 +28,7 @@ public class OrderUtility
    }
    
    public static ClassPeriod[] reorderClasses(Rotation r, ClassPeriod[] unOrderedArray) {
-      if (statusU) System.out.println("**********\nordering class array...");
+      if (debug) System.out.println("**********\nordering class array...");
       if (debug) printData(r, unOrderedArray);
       int extraClasses = unOrderedArray.length - Rotation.R1.getTimes().length;
       ClassPeriod[] newArray = new ClassPeriod[r.getTimes().length + extraClasses];

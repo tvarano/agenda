@@ -57,8 +57,19 @@ public abstract class RotationConstants
          case R1 : return Rotation.HALF_R1;
          case R3 : return Rotation.HALF_R3;
          case R4 : return Rotation.HALF_R4;
-         default : ErrorID.showRecoverableError(ErrorID.HALF_BLOCK_SELECTED); 
+         default : ErrorID.showUserError(ErrorID.HALF_BLOCK_SELECTED); 
             return Rotation.HALF_R1;
+      }
+   }
+   
+   public static Rotation toNormal(Rotation r) {
+      switch (r) {
+         case HALF_R1 : case DELAY_R1 : return Rotation.R1;
+         case HALF_R3 : case DELAY_R3 : return Rotation.R3;
+         case HALF_R4 : case DELAY_R4 : return Rotation.R4;
+         case DELAY_ODD : return Rotation.ODD_BLOCK;
+         case DELAY_EVEN : return Rotation.EVEN_BLOCK;
+         default : return r;
       }
    }
    

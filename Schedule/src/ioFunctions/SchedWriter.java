@@ -17,9 +17,10 @@ public class SchedWriter
    private ObjectOutputStream outStream;
    private FileOutputStream fileStream;
    public static final String FILE_ROUTE = 
-         "Schedule/src/files/ScheduleHold.txt";
+         "files.ScheduleHold.txt";
 //         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
 //   System.getProperty("user.home")+"/Documents/SerialTestDocument.txt";
+   public static final String LOG_ROUTE = System.getProperty("user.home")+"/Desktop/AgendaLog.txt";
    private boolean debug;
    
    public SchedWriter() {
@@ -44,6 +45,7 @@ public class SchedWriter
    public void write(Schedule s) {
       if (s == null) {
          if (debug) System.err.println("written schedule is null");
+         //TODO why not recoverable?
          ErrorID.showError(new NullPointerException(), false);
          return;
       }
@@ -57,8 +59,8 @@ public class SchedWriter
    
    public void close() {
       try {
-      fileStream.close();
-      outStream.close();
+         fileStream.close();
+         outStream.close();
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }

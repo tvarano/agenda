@@ -2,6 +2,7 @@ package managers;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.time.LocalTime;
 
 import javax.swing.BorderFactory;
 import javax.swing.UIManager;
@@ -18,7 +19,7 @@ public class UIHandler {
 	private static boolean debug;
 	
 	public static void init() { 
-	   debug = true;
+	   debug = false;
 	   font = new Font("Georgia", Font.PLAIN, 16);
 	   setLAF();
 	   setColors();
@@ -28,6 +29,7 @@ public class UIHandler {
 	public static void putValues() {
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
+	   UIManager.put("Button.disabledText", secondary);
 	}
 	
 	public static void setColors() {
@@ -62,7 +64,8 @@ public class UIHandler {
 	public static void setLAF() {
       try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-         MetalLookAndFeel.setCurrentTheme(new OceanTheme());       
+         MetalLookAndFeel.setCurrentTheme(new OceanTheme());   
+         if (Main.statusU) System.out.println(LocalTime.now()+" : LAF set: "+UIManager.getLookAndFeel().getID());
       } catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e1) {
          e1.printStackTrace();

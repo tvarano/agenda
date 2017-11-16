@@ -3,11 +3,13 @@ package constants;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
+import java.time.LocalTime;
 
 import javax.swing.JOptionPane;
 
 import information.ClassPeriod;
 import information.ErrorTransfer;
+import ioFunctions.SchedWriter;
 import managers.Main;
 import managers.UIHandler;
 
@@ -33,6 +35,7 @@ public enum ErrorID {
    public static final String fileRoute = "Schedule/src/files/ErrorClipBoardTransfer.txt";
    private final String ID;
    private final String message;
+   private static boolean debug = true;
 
    private ErrorID(String message) {
       this.ID = Integer.toHexString((this.ordinal() + 1) * 10000);
@@ -47,7 +50,8 @@ public enum ErrorID {
       return ID;
    }
 
-   public static void showRecoverableError(ErrorID error) {
+   public static void showUserError(ErrorID error) {
+      if (Main.statusU) System.err.print(LocalTime.now() + " : User Error "+error+"\n");
       int choice = showInitialMessage(JOptionPane.WARNING_MESSAGE);
       if (choice == 0)
          JOptionPane.showMessageDialog(null,
@@ -56,8 +60,12 @@ public enum ErrorID {
    }
    
    private static int showInitialMessage(int messageType) {
+      String defMessage = "An error has occurred.\nClick \"Info\" for more information.";
+      String usrMessage = "A user "+defMessage.substring(3);
+      String message = (messageType == JOptionPane.ERROR_MESSAGE) ? 
+            defMessage : usrMessage;
       return JOptionPane.showOptionDialog(null,
-            "An error has occurred.\nClick \"Info\" for more information.",
+            message,
             ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, messageType,
             null, new String[]{"Info", "Close"}, "Close");
    }
@@ -67,10 +75,11 @@ public enum ErrorID {
       int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE);
       if (choice == 0) {
          String message = getType(e).message;
-         String internalMessage = (e.getMessage() == null) ? "" : e.getMessage();
+         String internalMessage = (e.getMessage() == null) ? "" : e.getMessage() + newLn;
          String causeMessage = (e.getCause() == null) ? "" : "Caused by: " + getID(e.getCause());
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
-         String text = "Details:\n" + message + newLn + newLn + importantText;
+         String prompt = "Go to" + newLn + SchedWriter.LOG_ROUTE + "\nFor your log data.";
+         String text = "Details:\n" + message + newLn + importantText + prompt;
          JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
@@ -83,6 +92,7 @@ public enum ErrorID {
    }
 
    public static void showError(Throwable e, boolean recover) {
+      if (Main.statusU) {System.err.print(LocalTime.now() + " : "); e.printStackTrace();}
       String ID = getID(e);
       showGeneral(e, ID, true);
       if (!recover)

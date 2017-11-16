@@ -211,7 +211,7 @@ public class InputMain extends JPanel
    private void cannotCreate() {
       error = !canCreate();
       if (debug) System.out.println("cannotCreate");
-      ErrorID.showRecoverableError(ErrorID.INPUT_ERROR);
+      ErrorID.showUserError(ErrorID.INPUT_ERROR);
    }
    
    private void resolve() {

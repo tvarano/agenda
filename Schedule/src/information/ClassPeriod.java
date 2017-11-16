@@ -169,8 +169,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return c.getName() == name 
             && c.getSlot() == slot &&
             c.getStartTime().equals(startTime) && c.getEndTime().equals(endTime) && 
-            c.getTeacher().equals(teacher)
-            ;
+            c.getTeacher().equals(teacher);
       }
 
    @Override
