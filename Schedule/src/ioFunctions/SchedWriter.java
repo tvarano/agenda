@@ -16,11 +16,13 @@ public class SchedWriter
 {
    private ObjectOutputStream outStream;
    private FileOutputStream fileStream;
-   public static final String FILE_ROUTE = 
-         "files.ScheduleHold.txt";
 //         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
 //   System.getProperty("user.home")+"/Documents/SerialTestDocument.txt";
-   public static final String LOG_ROUTE = System.getProperty("user.home")+"/Desktop/AgendaLog.txt";
+   
+   public static final String ENVELOPING_FOLDER = System.getProperty("user.home")+"/Desktop/Agenda/";
+   public static final String RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
+   public static final String LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
+   public static final String FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
    private boolean debug;
    
    public SchedWriter() {

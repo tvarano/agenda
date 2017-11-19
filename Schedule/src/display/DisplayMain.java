@@ -46,6 +46,7 @@ public class DisplayMain extends JPanel implements ActionListener
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
       initTime();
+      setTimeBar();
       
       setLayout(new BorderLayout());
       initComponents();
@@ -53,6 +54,7 @@ public class DisplayMain extends JPanel implements ActionListener
       addComponents();
       update();
       requestFocus();
+      setTimeBar();
       timer = new Timer(5000, this);
       timer.start();
    }
@@ -107,6 +109,10 @@ public class DisplayMain extends JPanel implements ActionListener
       initComponents();
       addComponents();
       resume();
+   }
+   
+   private void setTimeBar() {
+      //TODO setBar extend a menuBar gonna be annoying but if you want to set the time theres a lot to do
    }
    
    public void checkAndUpdateTime() {

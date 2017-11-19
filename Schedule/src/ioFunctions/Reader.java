@@ -1,8 +1,13 @@
 package ioFunctions;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.time.LocalTime;
+import java.util.Scanner;
 
 import constants.ErrorID;
 import constants.Lab;
@@ -10,6 +15,7 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
+import managers.Main;
 
 public class Reader {
    private ObjectInputStream reader;
@@ -130,6 +136,22 @@ public class Reader {
       if (debug) System.out.println("rewriting sched");
       SchedWriter w = new SchedWriter();
       w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
+   }
+   
+   public static void transferReadMe(File f) {
+      if (Main.statusU) Main.log("transferring readme");
+      try {
+         Scanner in = new Scanner(new File("README.md"));
+         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+         while (in.hasNextLine()) {
+            bw.write(in.nextLine()+"\r\n");
+         }
+         f.setWritable(false);
+         in.close();
+         bw.close();
+      } catch (IOException e) {
+         ErrorID.showError(e, true);
+      }
    }
    
    public static void main(String[] args) {

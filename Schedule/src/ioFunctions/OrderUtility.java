@@ -16,7 +16,7 @@ public class OrderUtility
    private static boolean debug = false;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
-      if (Main.statusU) System.out.println(LocalTime.now()+ " : ordering schedule: "+s.getName() + " to "+r);
+      if (Main.statusU) Main.log("ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);
       s.setPascackData();

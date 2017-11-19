@@ -51,7 +51,7 @@ public enum ErrorID {
    }
 
    public static void showUserError(ErrorID error) {
-      if (Main.statusU) System.err.print(LocalTime.now() + " : User Error "+error+"\n");
+      if (Main.statusU) Main.logError("User Error "+error+"\n");
       int choice = showInitialMessage(JOptionPane.WARNING_MESSAGE);
       if (choice == 0)
          JOptionPane.showMessageDialog(null,
@@ -71,6 +71,7 @@ public enum ErrorID {
    }
 
    public static void showGeneral(Throwable e, String ID, boolean copy) {
+      if (Main.statusU) {System.err.print(LocalTime.now() + " : "); e.printStackTrace();}
       String newLn = "\n";
       int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE);
       if (choice == 0) {
@@ -92,7 +93,6 @@ public enum ErrorID {
    }
 
    public static void showError(Throwable e, boolean recover) {
-      if (Main.statusU) {System.err.print(LocalTime.now() + " : "); e.printStackTrace();}
       String ID = getID(e);
       showGeneral(e, ID, true);
       if (!recover)
@@ -164,10 +164,12 @@ public enum ErrorID {
                System.out.println("SER DATA "+ test.getSerializedData());
                System.out.println("\nSER TEST "+ ErrorTransfer.deserializeFromDocument());
             }
-            
             ErrorID.showError(e1, true);
             if (read)
                System.out.println("\nSER TEST 2 "+ErrorTransfer.deserializeFromDocument());
+         }
+         catch (Exception e) {
+            showPrintingError(e);
          }
       }
       else {

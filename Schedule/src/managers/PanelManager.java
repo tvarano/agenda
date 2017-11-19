@@ -1,10 +1,11 @@
 package managers;
 import java.awt.CardLayout;
+import java.awt.Menu;
+import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 
 import display.DisplayMain;
 import information.Schedule;
@@ -17,17 +18,17 @@ import input.InputMain;
 public class PanelManager
 {
    private Main parent;
-   private JFrame f;
    private DisplayMain display;
    private InputMain input;
-   public PanelManager(Main parent, JFrame f) {
-      setF(f); setParent(parent);
+   private MenuBar bar;
+   public PanelManager(Main parent, MenuBar bar) { 
+      setParent(parent);
+      this.bar = bar;
       display = new DisplayMain(this);  display.setName("display");
       input = new InputMain(this);  input.setName("input");
       parent.setLayout(new CardLayout());
       parent.add(display, display.getName());
       parent.add(input, input.getName());
-      UIHandler.putValues();
    }
    
    public void setCurrentPane(boolean inputting) {
@@ -35,6 +36,15 @@ public class PanelManager
           ((CardLayout) parent.getLayout()).show(parent, input.getName());
       else 
          ((CardLayout) parent.getLayout()).show(parent, display.getName());
+   }
+   
+   public MenuBar getBar() {
+      return bar;
+   }
+   
+   public Menu getTimeMenu() {
+      System.out.println("BAR"+bar);
+      return bar.getMenu(0);
    }
    
    public void startInput(Schedule s) {
@@ -69,11 +79,5 @@ public class PanelManager
    }
    public void setParent(Main parent) {
       this.parent = parent;
-   }
-   public JFrame getF() {
-      return f;
-   }
-   public void setF(JFrame f) {
-      this.f = f;
    }
 }
