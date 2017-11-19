@@ -65,20 +65,23 @@ public class Main extends JPanel
    public Dimension getPreferredSize() {
       return new Dimension(PREF_W, PREF_H);
    }
-   private static void createAndShowGUI() {
-      //TODO answer is in threading 
-      long start = System.currentTimeMillis();
+   
+   private static void createLoadingScreen() {
       EventQueue.invokeLater(new Runnable() {
          public void run() {
             JFrame loadF = UIHandler.createEmptyLoad();
             UIHandler.createLoadingScreen(loadF);
          }
-      });
+      });  
+   }
+   private static void createAndShowGUI() {
+      //TODO answer is in threading 
+      long start = System.currentTimeMillis();
       EventQueue.invokeLater(new Runnable() {
          public void run() {
             JFrame frame = new JFrame(APP_NAME + " " + BUILD);
             int frameToPaneAdjustment = 22;
-            Main main = new  Main();
+            Main main = new Main();
             frame.getContentPane().add(main);
             frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
             bar = UIHandler.configureMenuBar(frame);
@@ -91,6 +94,8 @@ public class Main extends JPanel
       });
    }
    public static void main(String[] args) {
+      createLoadingScreen();
       createAndShowGUI();
+//      disposeLoad();
    }
 }
