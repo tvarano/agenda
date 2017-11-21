@@ -17,7 +17,6 @@ public enum Rotation
    R4 (getSchedule(RotationConstants.R4), DayType.NORMAL, RotationConstants.R4),
    ODD_BLOCK (getSchedule(RotationConstants.ODD_BL), DayType.BLOCK, RotationConstants.ODD_BL), 
    EVEN_BLOCK (getSchedule(RotationConstants.EVEN_BL), DayType.BLOCK, RotationConstants.EVEN_BL),
-   //TODO fix getSchedule 
    HALF_R1 (getSchedule(RotationConstants.HALF_R1), DayType.HALF_DAY, RotationConstants.HALF_R1),
    HALF_R3 (getSchedule(RotationConstants.HALF_R3), DayType.HALF_DAY, RotationConstants.HALF_R3),
    HALF_R4 (getSchedule(RotationConstants.HALF_R4), DayType.HALF_DAY, RotationConstants.HALF_R4),

@@ -1,7 +1,11 @@
 package ioFunctions;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Scanner;
 
 import constants.ErrorID;
 import constants.Lab;
@@ -9,6 +13,7 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
+import managers.Main;
 
 public class Reader {
    private ObjectInputStream reader;
@@ -22,6 +27,7 @@ public class Reader {
    private void init() {
       try {
          reader = new ObjectInputStream(new FileInputStream(SchedWriter.FILE_ROUTE));
+         if (debug) System.out.println(new File(SchedWriter.FILE_ROUTE).getAbsolutePath());
       } catch (IOException e) {
          if (debug) e.printStackTrace();
          reWriteSched();
@@ -36,7 +42,7 @@ public class Reader {
          ret = (Schedule) reader.readObject();
       } catch (ClassNotFoundException | ClassCastException | IOException e) {
          reWriteSched();
-         ErrorID.showRecoverableError(ErrorID.FILE_TAMPER);
+         ErrorID.showUserError(ErrorID.FILE_TAMPER);
          return readSched();
       }
       try {
@@ -45,7 +51,9 @@ public class Reader {
          e.printStackTrace();
       }
       close();
-      return formatSchedule(ret);
+      ret = formatSchedule(ret);
+      if (Main.statusU) Main.log(ret.getName()+" read");
+      return ret;
    }
    
    public Schedule formatSchedule(Schedule in) {
@@ -70,8 +78,6 @@ public class Reader {
          try {
             ret[index].setTimeTemplate(template[tempIndex]);
          } catch(ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            System.err.println("PROBLEM READING");
             ErrorID.showError(e, false);
          }
          tempIndex++;
@@ -128,6 +134,22 @@ public class Reader {
       if (debug) System.out.println("rewriting sched");
       SchedWriter w = new SchedWriter();
       w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
+   }
+   
+   public static void transferReadMe(File f) {
+      if (Main.statusU) Main.log("transferring readme");
+      try {
+         Scanner in = new Scanner(new File("README.md"));
+         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+         while (in.hasNextLine()) {
+            bw.write(in.nextLine()+"\r\n");
+         }
+         f.setWritable(false);
+         in.close();
+         bw.close();
+      } catch (IOException e) {
+         ErrorID.showError(e, true);
+      }
    }
    
    public static void main(String[] args) {

@@ -78,7 +78,6 @@ public class Schedule implements Serializable
       for (int i = 0; i <labs.length; i++) {
          if (labs[i].getRotation().equals(r)) {
             if (debug) System.out.println(getName()+" lunch:"+get(RotationConstants.LUNCH).getInfo());
-            else System.out.println("HOLUP "+getName());
             get(RotationConstants.LUNCH).setName("Lunch (Lab)");
          }
          else if (i == labs.length-1)

@@ -1,7 +1,6 @@
 package display;
 import java.awt.Dimension;
 
-import javax.swing.JFrame;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
@@ -10,7 +9,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
-import information.Time;
+import managers.Main;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -50,8 +49,7 @@ public class ClassInfoPane extends JTextPane
       this.setText("");
       String newLine = "\n";
       String tab = (thinConstraints) ?"     ":"";
-      if (debug)
-         System.out.println(c);
+      if (debug) System.out.println(c);
       String teacher = (thinConstraints) ? "Teacher: " + c.getTrimmedTeacher() + newLine 
             : "Teacher: " + c.getTrimmedTeacher() + newLine;
       String classLength = (thinConstraints) ? 
@@ -77,7 +75,7 @@ public class ClassInfoPane extends JTextPane
                   styleDoc.getStyle(styles[i]));
          }
      } catch (BadLocationException e) {
-         System.err.println("Couldn't insert initial text into text pane.");
+         Main.logError("cannot insert styles in infoPane", e);
      }
    }
    
@@ -86,14 +84,18 @@ public class ClassInfoPane extends JTextPane
             getStyle(StyleContext.DEFAULT_STYLE);
 
       Style regular = doc.addStyle("regular", def);
-      StyleConstants.setFontFamily(def, UIHandler.font.getFamily());
+      if (Main.statusU) Main.log("first here");
+      StyleConstants.setFontFamily(regular, UIHandler.font.getFamily());
+      if (Main.statusU) Main.log("after");
       StyleConstants.setFontSize(regular, 16);
       
       Style s = doc.addStyle("italic", regular);
       StyleConstants.setItalic(s, true);
+      if (Main.statusU) Main.log("style here");
       
       s = doc.addStyle("bold", regular);
       StyleConstants.setBold(s, true);
+      if (Main.statusU) Main.log("style here");
    }
 
    public ClassPeriod getClassPeriod() {
@@ -113,11 +115,11 @@ public class ClassInfoPane extends JTextPane
       this.thinConstraints = thinConstraints;
    }
 
-   public static void main(String[] args) {
-      JFrame frame = new JFrame("InfoPaneTest");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.add(new ClassInfoPane(new ClassPeriod(2, "PeriodText", new Time(13,00), new Time(15,00))));
-      frame.pack();
-      frame.setVisible(true);
-   }
+//   public static void main(String[] args) {
+//      JFrame frame = new JFrame("InfoPaneTest");
+//      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//      frame.add(new ClassInfoPane(new ClassPeriod(2, "PeriodText", new Time(13,00), new Time(15,00))));
+//      frame.pack();
+//      frame.setVisible(true);
+//   }
 }

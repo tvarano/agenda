@@ -1,15 +1,27 @@
 package managers;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
+
+import ioFunctions.SchedWriter;
 
 //Thomas Varano
 public class UIHandler {
@@ -18,27 +30,119 @@ public class UIHandler {
 	private static boolean debug;
 	
 	public static void init() { 
-	   debug = true;
+	   debug = false;
 	   font = new Font("Georgia", Font.PLAIN, 16);
 	   setLAF();
 	   setColors();
 	   putValues();
 	}
 	
+   public static JPanel getLoadingPanel() {
+      JPanel retval = new JPanel() {
+         private static final long serialVersionUID = 1L;
+         
+         @Override
+         protected void paintComponent(Graphics g) {
+            System.out.println("CALLED PAINT");
+            setBackground(Color.BLUE);
+            super.paintComponent(g);
+         }
+         public Dimension getMinimumSize() {
+            return new Dimension(Main.MIN_W,Main.MIN_H);
+         }
+         public Dimension getPreferredSize() {
+            return new Dimension(Main.PREF_W, Main.PREF_H);
+         }
+      };
+      retval.setVisible(true);
+      retval.repaint();
+      return retval;
+   }
+	
+   public static JFrame createEmptyLoad() {
+      return new JFrame(Main.APP_NAME + " " + Main.BUILD);
+   }
+   
+	public static JFrame createLoadingScreen(JFrame f) {
+	   f.setTitle(Main.APP_NAME + " " + Main.BUILD);
+	   JPanel p = getLoadingPanel();
+	   f.getContentPane().add(p);
+	   f.setMinimumSize(new Dimension(Main.MIN_W, Main.MIN_H));
+	   f.pack();
+	   f.setLocationRelativeTo(null);
+	   f.setVisible(true);
+	   return f;
+	}
+	
 	public static void putValues() {
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
+	   UIManager.put("Button.disabledText", secondary);
+	   UIManager.put("OptionPane.font", getButtonFont());
+	}
+	
+	//TODO menu ideas... change color scheme, maybe font.
+	// have a help tab which would describe where the log is and my email
+	
+	
+	public synchronized static MenuBar configureMenuBar(JFrame frame) {
+      MenuBar bar = new MenuBar();
+      Menu m = new Menu("Time Left In Class: ");
+      bar.add(m);
+      
+      m = new Menu("Help");
+      MenuItem mi = new MenuItem("Error Help");
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, 
+                  "Error logging helps the efficiency and ease of use for \n"
+                  + "this program. Logs are kept at:\n"
+                  + SchedWriter.LOG_ROUTE + "\n"
+                  + "and keep internal information about the program as it runs.\n"
+                  + "If an error occurs, its message will be printed in the log.\n"
+                  + "The best thing to do is simply send the entire log when this\n"
+                  + "occurs. It gives the most information possible and will allow\n"
+                  + "for the error to be fixed most quickly.\n"
+                  + "Email the log to varanoth@pascack.org", 
+                  Main.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+         }
+      });
+      m.add(mi);
+      mi = new MenuItem("Sharing Protocol");
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, 
+                  "To share this application, please share the entire folder\n"
+                  + "this application came in. The program comes with a README\n"
+                  + "file, which will help users who do not have all the \n"
+                  + "necessary items on their computer for running this program.",
+                  Main.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+         }
+      });
+      m.add(mi);
+      bar.setHelpMenu(m);
+      m.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            System.out.println("CLICKED IT WORKDS");
+         }
+      });
+      frame.setMenuBar(bar);
+      if (debug) System.out.println("BARUI "+ bar);
+      return bar;
 	}
 	
 	public static void setColors() {
+	   Color text = new Color(40,40,40);
 	   Color noir = new Color(Integer.decode("#1d2731"));
-	   Color gris = new Color(40,40,40);
 	   Color carbon = new Color(Integer.decode("#a9a9a9"));
 	   Color sky = new Color(Integer.decode("#caebf2"));
 	   Color watermelon = new Color(Integer.decode("#ff6a5c"));
 	   Color neutral = new Color(Integer.decode("#efefef"));
 	   
-	   foreground = gris;
+	   foreground = text;
 	   background = neutral;
 	   secondary = carbon;
 	   tertiary = watermelon;
@@ -62,7 +166,8 @@ public class UIHandler {
 	public static void setLAF() {
       try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-         MetalLookAndFeel.setCurrentTheme(new OceanTheme());       
+         MetalLookAndFeel.setCurrentTheme(new OceanTheme());   
+         if (Main.statusU) Main.log("LAF set: "+UIManager.getLookAndFeel().getID());
       } catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e1) {
          e1.printStackTrace();

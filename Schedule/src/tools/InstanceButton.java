@@ -1,5 +1,4 @@
 package tools;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
@@ -9,6 +8,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.border.Border;
 
+import constants.Rotation;
+import constants.RotationConstants;
+import display.DisplayMain;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -28,6 +30,7 @@ public class InstanceButton extends JButton implements ActionListener
       enacted = false;
       setName("instanceButton "+key);
       setFont(UIHandler.getButtonFont());
+      setToolTipText("Alter Next Selection to "+key);
       setForeground(UIHandler.foreground);
       setOpaque(false);
       unEnactedBorder = BorderFactory.createRaisedSoftBevelBorder(); 
@@ -81,10 +84,18 @@ public class InstanceButton extends JButton implements ActionListener
       enacted = !enacted;
       setBorder(calcBorder());
       if (parentBar != null) {
-         if (getText().equalsIgnoreCase(DELAY))
+         DisplayMain mainParent = null;
+         if (parentBar.getParentPanel() instanceof DisplayMain)
+            mainParent = (DisplayMain) parentBar.getParentPanel();
+         if (getText().equalsIgnoreCase(DELAY)) {
             parentBar.setDelayed(enacted);
-         else if (getText().equalsIgnoreCase(HALF))
+            mainParent.setTodayR((enacted) ? RotationConstants.toDelay(mainParent.getTodayR())
+                  : RotationConstants.toNormal(mainParent.getTodayR()));
+         }
+         else if (getText().equalsIgnoreCase(HALF)) {
             parentBar.setHalf(enacted);
+            mainParent.setTodayR((enacted) ? RotationConstants.toHalf(mainParent.getTodayR())
+                  : RotationConstants.toNormal(mainParent.getTodayR()));         }
       }
       for (Component b : parentBar
             .getComponents()) {

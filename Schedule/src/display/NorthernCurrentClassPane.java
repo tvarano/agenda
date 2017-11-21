@@ -3,9 +3,7 @@ import java.time.LocalTime;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import information.ClassPeriod;
 import information.Time;

@@ -29,11 +29,17 @@ import java.util.Scanner;
 
 import constants.ErrorID;
 
+/**
+ * @deprecated use the embedded class
+ * @author varanoth
+ *
+ */
 public class ErrorTransfer implements Transferable, Serializable
 {
    private static final long serialVersionUID = 9144653112308648565L;
    private Throwable e;
    private String id;
+   private static boolean debug = false;
    public static final String fileRoute = "Schedule/src/files/ErrorClipBoardTransfer.txt";
 
    public ErrorTransfer(Throwable e, String id) {
@@ -46,9 +52,9 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    public void copy() {
+      writeToDoc();
       Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
       systemClipboard.setContents(this, null);
-      writeToDoc();
    }
    
    public void printStackTrace() {
@@ -69,7 +75,7 @@ public class ErrorTransfer implements Transferable, Serializable
          retval+=s.nextLine()+newLn;
       s.close();
       retval+="\f";
-      System.out.println("DOCUMENT "+retval);
+      if (debug) System.out.println("DOCUMENT "+retval);
       return retval;
    }
    
@@ -78,6 +84,7 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    public static void writeToDoc(String s) {
+      if (debug) System.out.println("WRITING "+s);
       try {
          BufferedWriter bw = new BufferedWriter(new FileWriter(fileRoute));
          bw.write(s);
@@ -116,7 +123,7 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    public String toString() {
-      return getClass().getName()+"["+e+" : "+id+"]";
+      return getClass().getName()+"["+e.getClass()+" : "+id+"]";
    }
    
    public Throwable getThrowable() {
@@ -133,7 +140,6 @@ public class ErrorTransfer implements Transferable, Serializable
    }
    
    protected static class Serializer {
-      
       /**@deprecated
        * @param obj
        * @return
@@ -222,7 +228,7 @@ public class ErrorTransfer implements Transferable, Serializable
       public static <T> T deserializeByte(String str, Class<T> cls) {
           try {
               // This encoding induces a bijection between byte[] and String (unlike UTF-8)
-             System.out.println("READING "+str);
+             if (debug) System.out.println("READING "+str);
               byte b[] = str.getBytes("ISO-8859-1"); 
               ByteArrayInputStream bi = new ByteArrayInputStream(b);
               ObjectInputStream si = new ObjectInputStream(bi);
@@ -241,6 +247,7 @@ public class ErrorTransfer implements Transferable, Serializable
          File f = new File(fileRoute);
          ObjectOutputStream out;
          try {
+            if (debug) System.out.println("WRITEO "+o);
             out = new ObjectOutputStream(new FileOutputStream(f));
             out.writeObject(o);
          } catch (IOException e) {
