@@ -9,6 +9,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
 
 import information.Schedule;
+import managers.Main;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -38,10 +39,14 @@ public class ScheduleInfoSelector extends JPanel
       setTodaySched(todaySched); setMainSched(mainSched);
       if (debug) System.out.println("AFTER "+todaySched.classString(true));
       
+      
       setLayout(new GridLayout(2,1));
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
+      if (Main.statusU) Main.log("INFOSEL 46ish");
+      //TODO found the reason why this is so broken right here
       info = new ClassInfoPane(todaySched.getClasses()[0]);
+      if (Main.statusU) Main.log("INFOSEL 49ish");
       add(scheduleTabs);
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
       JScrollPane infoScroll = new JScrollPane(info);

@@ -2,11 +2,9 @@ package ioFunctions;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.time.LocalTime;
 import java.util.Scanner;
 
 import constants.ErrorID;
@@ -53,7 +51,9 @@ public class Reader {
          e.printStackTrace();
       }
       close();
-      return formatSchedule(ret);
+      ret = formatSchedule(ret);
+      if (Main.statusU) Main.log(ret.getName()+" read");
+      return ret;
    }
    
    public Schedule formatSchedule(Schedule in) {
@@ -78,8 +78,6 @@ public class Reader {
          try {
             ret[index].setTimeTemplate(template[tempIndex]);
          } catch(ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            System.err.println("PROBLEM READING");
             ErrorID.showError(e, false);
          }
          tempIndex++;

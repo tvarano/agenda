@@ -51,11 +51,15 @@ public class Main extends JPanel
 	   manager.setCurrentPane(false);
    }
    
+   public static MenuBar getBar() {
+      return bar;
+   }
+   
    public static void log(String s) {
       System.out.println(LocalTime.now() + " : "+s);
    }
    
-   public static void logError(String s) {
+   public static void logError(String s, Throwable e) {
       System.err.println(LocalTime.now() + " : ERROR: "+s);
    }
    
@@ -66,25 +70,18 @@ public class Main extends JPanel
       return new Dimension(PREF_W, PREF_H);
    }
    
-   private static void createLoadingScreen() {
-      EventQueue.invokeLater(new Runnable() {
-         public void run() {
-            JFrame loadF = UIHandler.createEmptyLoad();
-            UIHandler.createLoadingScreen(loadF);
-         }
-      });  
-   }
    private static void createAndShowGUI() {
       //TODO answer is in threading 
       long start = System.currentTimeMillis();
       EventQueue.invokeLater(new Runnable() {
          public void run() {
+            JFrame loadF = UIHandler.createLoadingScreen(new JFrame());
             JFrame frame = new JFrame(APP_NAME + " " + BUILD);
             int frameToPaneAdjustment = 22;
+            bar = UIHandler.configureMenuBar(frame);
             Main main = new Main();
             frame.getContentPane().add(main);
             frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-            bar = UIHandler.configureMenuBar(frame);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.pack();
             frame.setLocationRelativeTo(null);
@@ -94,7 +91,8 @@ public class Main extends JPanel
       });
    }
    public static void main(String[] args) {
-      createLoadingScreen();
+      statusU = true;
+      if (statusU) log("Program Initialized");
       createAndShowGUI();
 //      disposeLoad();
    }

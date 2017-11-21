@@ -1,6 +1,5 @@
 package display;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,14 +7,19 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import constants.*;
-import information.*;
+import constants.ErrorID;
+import constants.Lab;
+import constants.Rotation;
+import constants.RotationConstants;
+import information.ClassPeriod;
+import information.Schedule;
+import information.Time;
 import ioFunctions.OrderUtility;
 import ioFunctions.Reader;
+import managers.Main;
 import managers.PanelManager;
 import managers.UIHandler;
 import tools.ToolBar;
@@ -42,21 +46,21 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = false;
+      testSituation = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
       initTime();
-      setTimeBar();
       
       setLayout(new BorderLayout());
+      if (Main.statusU) Main.log("DISP 53(ish)");
       initComponents();
      
       addComponents();
       update();
       requestFocus();
-      setTimeBar();
       timer = new Timer(5000, this);
       timer.start();
+      if (Main.statusU) Main.log("display main fully initialized");
    }
    
    private void initTime() {
@@ -82,8 +86,11 @@ public class DisplayMain extends JPanel implements ActionListener
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug) System.out.println("today lunch" + todaySched.get(RotationConstants.LUNCH).getInfo());
       todaySched.setLunchLab(todayR); 
+
       if (debug) System.out.println("today lunchAFTER" + todaySched.get(RotationConstants.LUNCH).getInfo());
       eastPane = new ScheduleInfoSelector(todaySched, mainSched, this);
+      if (Main.statusU) Main.log("DISP 91(ish)");
+
       westPane = new CurrentClassPane(new ClassPeriod(), todaySched, this);
       toolbar = new ToolBar(false, this);
       checkAndUpdateTime();
@@ -111,8 +118,22 @@ public class DisplayMain extends JPanel implements ActionListener
       resume();
    }
    
-   private void setTimeBar() {
-      //TODO setBar extend a menuBar gonna be annoying but if you want to set the time theres a lot to do
+   public static void setBarText(String s) {
+      Main.getBar().getMenu(0).setLabel(s);
+   }
+   
+   public static void setBarTime(Time timeLeft) {
+      String begin = "Time Left In Class: "; 
+      setBarText(begin + timeLeft.timeString());
+   }
+   
+   public void configureBarTime(ClassPeriod c) {
+      if (c != null) 
+         setBarTime(currentTime.getTimeUntil(c.getEndTime()));
+       else if (westPane.isInSchool())
+         setBarText("Next Class In: " + westPane.timeUntilNextClass().timeString());
+       else 
+          setBarText("Not In School");
    }
    
    public void checkAndUpdateTime() {
@@ -164,7 +185,8 @@ public class DisplayMain extends JPanel implements ActionListener
    public void update() {
       setUpdating(true);
       checkAndUpdateTime();
-      findCurrentClass();
+      ClassPeriod current = findCurrentClass();
+      configureBarTime(current);
       westPane.update();
       repaint();
       setUpdating(false);

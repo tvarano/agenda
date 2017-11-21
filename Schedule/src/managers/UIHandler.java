@@ -9,7 +9,6 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalTime;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -65,6 +64,7 @@ public class UIHandler {
    }
    
 	public static JFrame createLoadingScreen(JFrame f) {
+	   f.setTitle(Main.APP_NAME + " " + Main.BUILD);
 	   JPanel p = getLoadingPanel();
 	   f.getContentPane().add(p);
 	   f.setMinimumSize(new Dimension(Main.MIN_W, Main.MIN_H));
@@ -78,6 +78,7 @@ public class UIHandler {
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
 	   UIManager.put("Button.disabledText", secondary);
+	   UIManager.put("OptionPane.font", getButtonFont());
 	}
 	
 	//TODO menu ideas... change color scheme, maybe font.
@@ -87,7 +88,6 @@ public class UIHandler {
 	public synchronized static MenuBar configureMenuBar(JFrame frame) {
       MenuBar bar = new MenuBar();
       Menu m = new Menu("Time Left In Class: ");
-      m.add("ACTION1");
       bar.add(m);
       
       m = new Menu("Help");

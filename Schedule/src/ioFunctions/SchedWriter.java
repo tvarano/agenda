@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 
 import constants.ErrorID;
 import information.Schedule;
-import managers.Main;
 
 //Thomas Varano
 //[Program Descripion]

@@ -1,17 +1,20 @@
 package constants;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.StreamCorruptedException;
-import java.time.LocalTime;
 
 import javax.swing.JOptionPane;
 
-import information.ClassPeriod;
-import information.ErrorTransfer;
 import ioFunctions.SchedWriter;
 import managers.Main;
-import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -35,7 +38,7 @@ public enum ErrorID {
    public static final String fileRoute = "Schedule/src/files/ErrorClipBoardTransfer.txt";
    private final String ID;
    private final String message;
-   private static boolean debug = true;
+   private static boolean debug = false;
 
    private ErrorID(String message) {
       this.ID = Integer.toHexString((this.ordinal() + 1) * 10000);
@@ -51,7 +54,7 @@ public enum ErrorID {
    }
 
    public static void showUserError(ErrorID error) {
-      if (Main.statusU) Main.logError("User Error "+error+"\n");
+      if (Main.statusU) Main.logError("User Error "+error+"\n", null);
       int choice = showInitialMessage(JOptionPane.WARNING_MESSAGE);
       if (choice == 0)
          JOptionPane.showMessageDialog(null,
@@ -71,7 +74,8 @@ public enum ErrorID {
    }
 
    public static void showGeneral(Throwable e, String ID, boolean copy) {
-      if (Main.statusU) {System.err.print(LocalTime.now() + " : "); e.printStackTrace();}
+      if (Main.statusU) Main.logError(ID, e);
+      e.printStackTrace();
       String newLn = "\n";
       int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE);
       if (choice == 0) {
@@ -86,8 +90,7 @@ public enum ErrorID {
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
                null, (copy) ? new String[]{"Copy & Close", "Close"} : new String[] {"Close"}, "Close");
          if (choice == 0 && copy) {
-            ErrorTransfer t = new ErrorTransfer(e, importantText);
-            t.copy();
+            ErrorCopier.copy(ID, e);
          }
       }
    }
@@ -129,51 +132,88 @@ public enum ErrorID {
       return null;
    }
    
- 
-   
-   
-   public static Throwable deSerialize() {
-//      String transferDocRoute = "files/ErrorClipBoardTransfer.txt";
-//      try {
-//         ObjectInputStream in = new ObjectInputStream(new FileInputStream(transferDoc));
-//         ErrorTransfer.StringThrowBundle ret = (ErrorTransfer.StringThrowBundle)in.readObject();
-//         in.close();
-//         return ret.getThrowable();
-//      } catch (IOException e) {
-//         e.printStackTrace();
-//      } catch (ClassNotFoundException e) {
-//         e.printStackTrace();
-//      }
-//      return null;
-//      
-      return ErrorTransfer.deserializeFromDocument().getThrowable();
-   }
-
-   public static void main(String[] args) {
-      boolean create = true;
-      boolean read = true;
-      if (create) {
-         UIHandler.init();
-         ClassPeriod c = null;
-         try {
-            c.getName();
-         } catch (NullPointerException e1) {
-            if (read) {
-               ErrorTransfer test = new ErrorTransfer(e1, getType(e1).getID());
-               test.copy();
-               System.out.println("SER DATA "+ test.getSerializedData());
-               System.out.println("\nSER TEST "+ ErrorTransfer.deserializeFromDocument());
+   public static class ErrorCopier implements Transferable {
+      private Throwable e;
+      private String str;
+      
+      public ErrorCopier(String str, Throwable e) {
+         this.str = str;
+         this.e = e;
+      }
+      public ErrorCopier(String str) {
+         this(str, null);
+      }
+      
+      public static String getStackTrace(Throwable e) {
+         if (e == null)
+            return "";
+         OutputStream outAnon = new OutputStream() {
+            private StringBuilder sb = new StringBuilder();
+            @Override
+            public void write(int b) throws IOException {
+               sb.append((char)b);
+            } 
+            public String toString() {
+               return sb.toString();
             }
-            ErrorID.showError(e1, true);
-            if (read)
-               System.out.println("\nSER TEST 2 "+ErrorTransfer.deserializeFromDocument());
-         }
-         catch (Exception e) {
-            showPrintingError(e);
+         };
+         e.printStackTrace(new PrintStream(outAnon));
+         return outAnon.toString();
+      }
+      
+      public String getData() {
+         StringBuilder b = new StringBuilder();
+         b.append(str);
+         b.append("\n"+getStackTrace(e));
+         if (debug) System.out.println("copyer getting data: "+b.toString());
+         return b.toString();
+      }
+      
+      public static void copy(String str, Throwable e) {
+         if (debug) System.out.println("copying "+str+" : "+e);
+         Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+         systemClipboard.setContents(new ErrorCopier(str, e), null);
+         if (debug)
+            try {
+               System.out.println("copied: "+systemClipboard.getData(DataFlavor.stringFlavor));
+            } catch (UnsupportedFlavorException | IOException e1) {
+               e1.printStackTrace();
+            }
+      }
+      
+      public static void copy(String str) {
+         copy(str, null);
+      }
+      
+      @Override
+      public DataFlavor[] getTransferDataFlavors() {
+         return new DataFlavor[] {DataFlavor.stringFlavor};
+      }
+      
+      @Override
+      public boolean isDataFlavorSupported(DataFlavor flavor) {
+         return flavor.equals(DataFlavor.stringFlavor);
+      }
+      
+      @Override
+      public Object getTransferData(DataFlavor flavor)
+            throws UnsupportedFlavorException, IOException {
+         if (isDataFlavorSupported(flavor)) {
+            return getData();
+         } else {
+            return null;
          }
       }
-      else {
-         ErrorTransfer.deserializeFromDocument();
+      
+   }
+   
+   
+   public static void main(String[] args) {
+      ErrorCopier ec = null;
+      try {
+         ec.getData();
+      } catch (NullPointerException e) {
+         ErrorID.showError(e, true);
       }
    }
 }

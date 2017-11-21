@@ -29,6 +29,11 @@ import java.util.Scanner;
 
 import constants.ErrorID;
 
+/**
+ * @deprecated use the embedded class
+ * @author varanoth
+ *
+ */
 public class ErrorTransfer implements Transferable, Serializable
 {
    private static final long serialVersionUID = 9144653112308648565L;

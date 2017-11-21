@@ -1,10 +1,6 @@
 package display;
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -22,7 +18,7 @@ public class CurrentInfo extends JTextPane{
       private static final long serialVersionUID = 1L;
       private ClassPeriod c;
       private int situation;
-      private static final int NO_PARENT = 0, IN_BETWEEN = 1, NOT_IN_SCHOOL = 2, IN_CLASS = 3, ERROR = 5;
+      private static final int NO_PARENT = 0, IN_BETWEEN = 1, NOT_IN_SCHOOL = 2, IN_CLASS = 3;
       private NorthernCurrentClassPane parentPanel;
       private boolean hasParent, debug;
       
