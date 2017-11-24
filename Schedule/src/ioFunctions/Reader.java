@@ -26,8 +26,8 @@ public class Reader {
    
    private void init() {
       try {
-         reader = new ObjectInputStream(new FileInputStream(SchedWriter.FILE_ROUTE));
-         if (debug) System.out.println(new File(SchedWriter.FILE_ROUTE).getAbsolutePath());
+         reader = new ObjectInputStream(new FileInputStream(Agenda.FILE_ROUTE));
+         if (debug) System.out.println(new File(Agenda.FILE_ROUTE).getAbsolutePath());
       } catch (IOException e) {
          if (debug) e.printStackTrace();
          reWriteSched();

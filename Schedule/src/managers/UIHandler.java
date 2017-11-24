@@ -94,24 +94,19 @@ public class UIHandler {
 	
 	public static void putValues() {
 	   
-//	   UIManager.put("ScrollBarUI", UIManager.getDefaults().getUI(new JScrollBar()));
 //	   UIManager.put("ScrollBarUI", "managers.CustomScrollUI"); 
-	   UIManager.put("ScrollBar.width", 12);
+//	   UIManager.put("ScrollBar.width", 12);
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("List.selectionForeground", foreground);
 	   UIManager.put("List.foreground", foreground);
       UIManager.put("TabbedPane.selected", quaternary);
       UIManager.put("TabbedPane.selectHighlight", quaternary);
       UIManager.put("TabbedPane.foreground", foreground);
-//      UIManager.put("TabbedPane.focus", secondary);
       UIManager.put("TabbedPane.insets", secondary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
 	}
-	
-   
-	
 	
 	//TODO menu ideas... change color scheme, maybe font.
 	// have a help tab which would describe where the log is and my email
@@ -125,7 +120,7 @@ public class UIHandler {
             @Override
             public void actionPerformed(ActionEvent e) {
                try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(SchedWriter.RESOURCE_ROUTE+"theme.txt"));
+                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.RESOURCE_ROUTE+"theme.txt"));
                   bw.write(themeName);
                   bw.close();
                   if (JOptionPane.showOptionDialog(null,
@@ -151,7 +146,7 @@ public class UIHandler {
             @Override
             public void actionPerformed(ActionEvent e) {
                try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(SchedWriter.RESOURCE_ROUTE+"look.txt"));
+                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.RESOURCE_ROUTE+"look.txt"));
                   bw.write(look.getClassName());
                   bw.close();
                   if (JOptionPane.showOptionDialog(null,
@@ -250,7 +245,7 @@ public class UIHandler {
             JOptionPane.showMessageDialog(null, 
                   "Error logging helps the efficiency and ease of use for \n"
                   + "this program. Logs are kept at:\n"
-                  + SchedWriter.LOG_ROUTE + "\n"
+                  + Agenda.LOG_ROUTE + "\n"
                   + "and keep internal information about the program as it runs.\n"
                   + "If an error occurs, its message will be printed in the log.\n"
                   + "The best thing to do is simply send the entire log when this\n"
@@ -300,16 +295,15 @@ public class UIHandler {
    
    private static String readDoc(String fileName, int type) {
       try {
-         Scanner s = new Scanner(new File(SchedWriter.RESOURCE_ROUTE+fileName));
+         Scanner s = new Scanner(new File(Agenda.RESOURCE_ROUTE+fileName));
          String ret = s.nextLine();
          s.close();
          return ret;
          
       } catch (IOException e) {
-         ErrorID.showError(e, true);
          if (e instanceof FileNotFoundException) {
             try {
-               BufferedWriter bw = new BufferedWriter(new FileWriter(new File(SchedWriter.RESOURCE_ROUTE+fileName)));
+               BufferedWriter bw = new BufferedWriter(new FileWriter(new File(Agenda.RESOURCE_ROUTE+fileName)));
                if (type == THEME_ID)
                   bw.write(themes[0]);
                else if (type == LAF_ID)
@@ -320,7 +314,7 @@ public class UIHandler {
                }
                bw.close();
             } catch (IOException e1) {
-               ErrorID.showError(e1, true);
+               Agenda.setFileLocation();
             }
          }
          return themes[0];

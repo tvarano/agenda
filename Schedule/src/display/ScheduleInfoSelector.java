@@ -1,5 +1,4 @@
 package display;
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
@@ -7,7 +6,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 
 import information.Schedule;

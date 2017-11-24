@@ -40,7 +40,6 @@ public class AddButton extends JButton implements ActionListener
          setParentPanel((InputMain)parentPanel);
    }
    
-   
    public int getSlot() {
       return slot;
    }
@@ -60,7 +59,6 @@ public class AddButton extends JButton implements ActionListener
       }
    }
    
-
    //If you want a menu...
    public static class Menu extends JComboBox<String> implements ActionListener
    { 
@@ -114,11 +112,3 @@ public class AddButton extends JButton implements ActionListener
       test.setLocationRelativeTo(null);
    }
 }
-
-
-
-
-
-
-   
-   

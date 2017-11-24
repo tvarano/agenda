@@ -1,7 +1,6 @@
 package display;
 import java.awt.Color;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -11,7 +10,6 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
-import information.Time;
 import managers.UIHandler;
 
 public class CurrentInfo extends JTextPane{
