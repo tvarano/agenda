@@ -13,7 +13,7 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
-import managers.Main;
+import managers.Agenda;
 
 public class Reader {
    private ObjectInputStream reader;
@@ -52,7 +52,7 @@ public class Reader {
       }
       close();
       ret = formatSchedule(ret);
-      if (Main.statusU) Main.log(ret.getName()+" read");
+      if (Agenda.statusU) Agenda.log(ret.getName()+" read");
       return ret;
    }
    
@@ -137,7 +137,7 @@ public class Reader {
    }
    
    public static void transferReadMe(File f) {
-      if (Main.statusU) Main.log("transferring readme");
+      if (Agenda.statusU) Agenda.log("transferring readme");
       try {
          Scanner in = new Scanner(new File("README.md"));
          BufferedWriter bw = new BufferedWriter(new FileWriter(f));

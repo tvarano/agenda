@@ -50,6 +50,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
       debug = false;
       setFont(UIHandler.getInputLabelFont());
       setBackground(UIHandler.background);
+      setForeground(UIHandler.foreground);
       setName(c.getSlot() + "input slot");
       setSlotNumber(c.getSlot());
       hasLab = false; 
@@ -74,6 +75,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
       //label for the class slot
       JLabel labelLeft = new JLabel((slotNumber == RotationConstants.PASCACK) ? "P-" : slotNumber+"-"); 
       labelLeft.setFont(getFont());
+      labelLeft.setForeground(getForeground());
       add(labelLeft);
       l.putConstraint(SpringLayout.WEST, labelLeft, gap*2, SpringLayout.WEST, this);
       setNorthBound(labelLeft);
@@ -102,6 +104,9 @@ public class ClassInputSlot extends JPanel implements ActionListener
       labBox.setActionCommand("lab");
       labBox.addActionListener(this);
       labBox.setFont(getFont());
+      labBox.setOpaque(false);
+      labBox.setForeground(getForeground());
+      labBox.setBackground(getBackground());
       if (labFriendly) {
          add(labBox);
          l.putConstraint(SpringLayout.WEST, labBox, gap*2, SpringLayout.EAST, currentField);
@@ -111,7 +116,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
       
       if (removable) {
          JButton remove = new JButton("Remove");                     //button to remove
-         remove.setFont(getFont());
+         remove.setFont(UIHandler.getButtonFont());
          remove.setActionCommand("remove");
          remove.addActionListener(this);
          setNorthBound(remove);
@@ -157,6 +162,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
    
    private void addLabel(JLabel f, JComponent c, SpringLayout l, int index) {
       f.setFont(getFont());
+      f.setForeground(getForeground());
       add(f);   
 //      promptLabels[index] = f;
       l.putConstraint(SpringLayout.WEST, f, gap, SpringLayout.EAST, c);
@@ -239,22 +245,6 @@ public class ClassInputSlot extends JPanel implements ActionListener
       labFriendly = b;
       if (!labFriendly)
          remove(labBox);
-   }
-
-   private static void createAndShowGUI() {
-      JFrame frame = new JFrame("INFO SLOT TEST");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.getContentPane().add(new ClassInputSlot(0, frame.getContentPane()));
-      frame.pack();
-      frame.setLocationRelativeTo(null);
-      frame.setVisible(true);   
-   }
-   public static void main(String[] args) {
-      SwingUtilities.invokeLater(new Runnable() {
-         public void run() {
-            createAndShowGUI();
-         }
-      });
    }
 
    @Override

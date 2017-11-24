@@ -28,6 +28,7 @@ public class InstanceButton extends JButton implements ActionListener
    public InstanceButton(String key) {
       super(key);
       enacted = false;
+      setFocusable(false);
       setName("instanceButton "+key);
       setFont(UIHandler.getButtonFont());
       setToolTipText("Alter Next Selection to "+key);

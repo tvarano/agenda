@@ -1,7 +1,10 @@
 package tools;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -27,10 +30,13 @@ public class RotationButton extends JButton implements ActionListener
       super(" "+text+" ");
       debug = false;
       setParentPanel(parentPanel);
+      setBorderPainted(false);
+      setFocusable(false);
       setOpaque(false);
       setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
+      addMouseListener(UIHandler.buttonPaintListener(this));
       addActionListener(this);
       if (text == TODAY_R) {
          if (debug) System.out.println(text+" button parent:"+parentPanel);

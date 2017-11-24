@@ -1,5 +1,4 @@
 package tools;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -19,6 +18,7 @@ import managers.UIHandler;
 
 public class ToolBar extends JToolBar implements ActionListener
 {
+   private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
    private boolean inputting, delayed, half;
    private JPanel parentPanel;
@@ -26,23 +26,13 @@ public class ToolBar extends JToolBar implements ActionListener
    public ToolBar(boolean inputting, JPanel parentPanel) {
       setParentPanel(parentPanel);
       create(inputting);
+      setBorderPainted(false);
       setName("ToolBar");
       setBackground(UIHandler.tertiary);
       setFloatable(false);
       setOpaque(true);
       setMargin(new Insets(7,5,0,0));
    }
-   
-//   @Override
-//   protected void paintComponent(Graphics g) {
-//      super.paintComponent(g);
-//      Graphics2D g2 = (Graphics2D) g;
-//      try {
-//         g2.drawImage(ImageIO.read(ClassLoader.getSystemResource("tools/notebook.png")), 0,0,getWidth(), getHeight(), null);
-//      } catch (IOException e) {
-//         e.printStackTrace();
-//      }
-//   }
    
    private ToolBar create(boolean inputting) {
       setBackground(UIHandler.background);
@@ -67,9 +57,13 @@ public class ToolBar extends JToolBar implements ActionListener
       b.setParentBar(this);
       add(b);
       JButton input = new JButton("Input Schedule");
+      input.setForeground(UIHandler.foreground);
+      input.setFocusable(false);
+      input.setBorderPainted(false);
       input.setCursor(new Cursor(Cursor.HAND_CURSOR));
       input.setOpaque(false);
       input.setFont(UIHandler.getButtonFont());
+      input.addMouseListener(UIHandler.buttonPaintListener(input));
       input.addActionListener(((DisplayMain) parentPanel).changeView());
       add(input);
       return this;

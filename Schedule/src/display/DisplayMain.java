@@ -19,7 +19,7 @@ import information.Schedule;
 import information.Time;
 import ioFunctions.OrderUtility;
 import ioFunctions.Reader;
-import managers.Main;
+import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
 import tools.ToolBar;
@@ -40,19 +40,19 @@ public class DisplayMain extends JPanel implements ActionListener
    private CurrentClassPane westPane;
    private ToolBar toolbar;
    private ScheduleInfoSelector eastPane;
-   private boolean updating;
+   private boolean updating, showDisp, inSchool;
    private boolean debug, testSituation;
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
+      //TODO make sure the times sync up with the whole revamped update
       debug = false;
-      testSituation = true;
+      testSituation = false;
+      showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
       initTime();
-      
       setLayout(new BorderLayout());
-      if (Main.statusU) Main.log("DISP 53(ish)");
       initComponents();
      
       addComponents();
@@ -60,13 +60,13 @@ public class DisplayMain extends JPanel implements ActionListener
       requestFocus();
       timer = new Timer(5000, this);
       timer.start();
-      if (Main.statusU) Main.log("display main fully initialized");
+      if (Agenda.statusU) Agenda.log("display main fully initialized");
    }
    
    private void initTime() {
       try {
          if (testSituation) {
-            currentTime = new Time(10,00);
+            currentTime = new Time(23,50);
             today = DayOfWeek.WEDNESDAY;
             todayR = Rotation.getRotation(today);         
          } else {
@@ -84,12 +84,12 @@ public class DisplayMain extends JPanel implements ActionListener
       Reader r = new Reader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
-      if (debug) System.out.println("today lunch" + todaySched.get(RotationConstants.LUNCH).getInfo());
+      if (debug && todaySched.get(RotationConstants.LUNCH) != null)
+         System.out.println("today lunch" + todaySched.get(RotationConstants.LUNCH).getInfo());
       todaySched.setLunchLab(todayR); 
 
-      if (debug) System.out.println("today lunchAFTER" + todaySched.get(RotationConstants.LUNCH).getInfo());
+      if (debug) System.out.println("TODAY SCHED = "+todaySched);
       eastPane = new ScheduleInfoSelector(todaySched, mainSched, this);
-      if (Main.statusU) Main.log("DISP 91(ish)");
 
       westPane = new CurrentClassPane(new ClassPeriod(), todaySched, this);
       toolbar = new ToolBar(false, this);
@@ -104,11 +104,11 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void stop() {
-      timer.stop();
+      showDisp = false;
    }
    
    public void resume() {
-      timer.start();
+      showDisp = true;
    }
    
    public void reinitialize() {
@@ -119,7 +119,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public static void setBarText(String s) {
-      Main.getBar().getMenu(0).setLabel(s);
+      Agenda.getBar().getMenu(0).setLabel(s);
    }
    
    public static void setBarTime(Time timeLeft) {
@@ -130,8 +130,8 @@ public class DisplayMain extends JPanel implements ActionListener
    public void configureBarTime(ClassPeriod c) {
       if (c != null) 
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
-       else if (westPane.isInSchool())
-         setBarText("Next Class In: " + westPane.timeUntilNextClass().timeString());
+       else if (checkInSchool())
+         setBarText("Next Class In: " + timeUntilNextClass().timeString());
        else 
           setBarText("Not In School");
    }
@@ -141,7 +141,7 @@ public class DisplayMain extends JPanel implements ActionListener
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
-      if (currentTime.getHour24() == 23 && currentTime.getMinute() > 55)
+      if (currentTime.getHour24() == 0 && currentTime.getMinute() < 5)
             checkAndUpdateDate();
       westPane.pushCurrentTime(currentTime);
    }
@@ -155,6 +155,31 @@ public class DisplayMain extends JPanel implements ActionListener
       eastPane.pushTodaySchedule(todaySched);
    }
    
+   /**
+    * assumes the user is in between classes
+    * @return
+    */
+   public ClassPeriod findNextClass() {
+      if (inSchool)
+         return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
+      return null;
+   }
+   
+   public Time timeUntilNextClass() {
+      if (inSchool)
+         return currentTime.getTimeUntil(findNextClass().getStartTime());
+      return new Time();
+   }
+   
+   public Time timeUntilSchool() {
+      return currentTime.getTimeUntil(todaySched.getSchoolDay().getStartTime());
+   }
+   
+   public boolean checkInSchool() {
+      inSchool = todaySched.getSchoolDay().contains(currentTime);
+      return inSchool;
+   }
+
    public ClassPeriod findCurrentClass(){
       // searching labs
       for (Lab l : todaySched.getLabs())
@@ -187,8 +212,11 @@ public class DisplayMain extends JPanel implements ActionListener
       checkAndUpdateTime();
       ClassPeriod current = findCurrentClass();
       configureBarTime(current);
-      westPane.update();
-      repaint();
+      
+      if (showDisp) {
+         westPane.update();
+         repaint();
+      }
       setUpdating(false);
    }
    

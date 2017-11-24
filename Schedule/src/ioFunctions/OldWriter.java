@@ -7,7 +7,7 @@ import constants.Lab;
 import constants.Rotation;
 import information.ClassPeriod;
 import information.Schedule;
-import managers.Main;
+import managers.Agenda;
 
 //Thomas Varano
 //Aug 31, 2017
@@ -23,7 +23,7 @@ public class OldWriter
    private PrintWriter pw;
    //TODO app title change
    public static final String FILE_ROUTE = 
-         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
+         System.getProperty("user.home")+"/Documents/"+Agenda.APP_NAME+"Document.txt";
    private boolean test = false;
    private static boolean debug = true;
    private static boolean statusU = true;

@@ -2,8 +2,10 @@ package managers;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.MenuBar;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalTime;
 
@@ -19,29 +21,34 @@ import ioFunctions.SchedWriter;
 //Sep 20, 2017
 
 
-public class Main extends JPanel
+public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
    public static final String BUILD = "1.2.4 (Alpha)";
-   public static final int MIN_W = 730, MIN_H = 313;
-   public static final int PREF_W = MIN_W+1, PREF_H = 460;
+   public static final int MIN_W = 723, MIN_H = 313;
+   public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
+   private static JFrame parentFrame;
    private static MenuBar bar;
    public static boolean statusU;
    
-   public Main() { 
+   public Agenda() { 
       boolean logData = false;
-      statusU = true;
+      statusU = false;
       if (logData) {
          try {
-            if (new File(SchedWriter.RESOURCE_ROUTE).mkdirs())
+            if (new File(SchedWriter.RESOURCE_ROUTE).mkdirs()) {
                Reader.transferReadMe(new File(SchedWriter.ENVELOPING_FOLDER+"README.txt"));
+               BufferedWriter bw = new BufferedWriter(new FileWriter(SchedWriter.RESOURCE_ROUTE+"theme.txt"));
+               bw.write(UIHandler.themes[0]);
+               bw.close();
+            }
             File log = new File(SchedWriter.LOG_ROUTE);
             PrintStream logStream = new PrintStream(log);
             System.setOut(logStream);
             System.setErr(logStream);
-         } catch (FileNotFoundException e) {
+         } catch (IOException e) {
             ErrorID.showError(e, true);
          }
       }
@@ -75,25 +82,32 @@ public class Main extends JPanel
       long start = System.currentTimeMillis();
       EventQueue.invokeLater(new Runnable() {
          public void run() {
-            JFrame loadF = UIHandler.createLoadingScreen(new JFrame());
-            JFrame frame = new JFrame(APP_NAME + " " + BUILD);
+//            JFrame loadF = UIHandler.createLoadingScreen(new JFrame());
+            parentFrame = new JFrame(APP_NAME + " " + BUILD);
             int frameToPaneAdjustment = 22;
-            bar = UIHandler.configureMenuBar(frame);
-            Main main = new Main();
-            frame.getContentPane().add(main);
-            frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+            bar = UIHandler.configureMenuBar(parentFrame);
+            Agenda main = new Agenda();
+            parentFrame.getContentPane().add(main);
+            parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+            parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            parentFrame.pack();
+            parentFrame.setLocationRelativeTo(null);
+//            loadF.dispose();
+            parentFrame.setVisible(true);
             if (statusU) log("Program Initialized in "+ (System.currentTimeMillis() - start) + " millis");
          }
       });
    }
+   public static void restart() {
+      if (statusU) log("Program Restarted\n");
+      parentFrame.dispose();
+      bar = null;
+      main(null);
+   }
+   
    public static void main(String[] args) {
       statusU = true;
       if (statusU) log("Program Initialized");
       createAndShowGUI();
-//      disposeLoad();
    }
 }

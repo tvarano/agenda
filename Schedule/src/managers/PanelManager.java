@@ -15,11 +15,11 @@ import input.InputMain;
 
 public class PanelManager
 {
-   private Main parent;
+   private Agenda parent;
    private DisplayMain display;
    private InputMain input;
    private MenuBar bar;
-   public PanelManager(Main parent, MenuBar bar) { 
+   public PanelManager(Agenda parent, MenuBar bar) { 
       setParent(parent);
       this.bar = bar;
       display = new DisplayMain(this);  display.setName("display");
@@ -72,10 +72,10 @@ public class PanelManager
       display.resume();
       setCurrentPane(false);
    }
-   public Main getParent() {
+   public Agenda getParent() {
       return parent;
    }
-   public void setParent(Main parent) {
+   public void setParent(Agenda parent) {
       this.parent = parent;
    }
 }

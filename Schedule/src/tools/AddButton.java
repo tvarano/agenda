@@ -3,7 +3,6 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,18 +19,22 @@ import managers.UIHandler;
 
 public class AddButton extends JButton implements ActionListener
 {
+   private static final long serialVersionUID = 1L;
    private int slot;
    private InputMain parentPanel;
    private boolean parentIsInput;
 
    public AddButton(int slot, JComponent parentPanel) {
       super("Add "+slot+" Period");
-      addActionListener(this);
+      setBorderPainted(false);
+      setFocusable(false);
       setOpaque(false);
       setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       setSlot(slot);
+      addActionListener(this);
+      addMouseListener(UIHandler.buttonPaintListener(this));
       parentIsInput = parentPanel instanceof InputMain;
       if (parentIsInput)
          setParentPanel((InputMain)parentPanel);

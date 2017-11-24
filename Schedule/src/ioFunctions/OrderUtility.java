@@ -3,7 +3,7 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
-import managers.Main;
+import managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -14,7 +14,7 @@ public class OrderUtility
    private static boolean debug = false;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
-      if (Main.statusU) Main.log("ordering schedule: "+s.getName() + " to "+r);
+      if (Agenda.statusU) Agenda.log("ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);
       s.setPascackData();

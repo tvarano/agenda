@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -31,6 +32,7 @@ public class CurrentClassPane extends JPanel
       currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
       inSchool = (c == null);
       setClassPeriod(c); setSched(s); setParentPane(parent);
+      setBackground(UIHandler.background);
       sched.setShowName(true);
       if (debug) {
          System.out.println("classPane class:"+c);
@@ -42,15 +44,26 @@ public class CurrentClassPane extends JPanel
       add(northPane);
       add(southPane);
    }
-
+   
+   public boolean checkInSchool() {
+      inSchool = ((DisplayMain)parentPane).checkInSchool();
+      return inSchool;
+   }
+   
    /**
     * assumes the user is in between classes
     * @return
     */
    public ClassPeriod findNextClass() {
-      if (inSchool)
-         return sched.classAt(new Time(currentTime.getTotalMins()+5));
-      return null;
+      return ((DisplayMain)parentPane).findNextClass();
+   }
+   
+   public Time timeUntilNextClass() {
+      return ((DisplayMain)parentPane).timeUntilNextClass();
+   }
+   
+   public Time timeUntilSchool() {
+      return ((DisplayMain)parentPane).timeUntilSchool();
    }
    
    public ClassPeriod findPreviousClass() {
@@ -59,21 +72,7 @@ public class CurrentClassPane extends JPanel
       return null;
    }
    
-   public Time timeUntilNextClass() {
-      if (inSchool)
-         return currentTime.getTimeUntil(findNextClass().getStartTime());
-      return new Time();
-   }
-   
-   //TODO checkInSchool method
-   public boolean checkInSchool() {
-      inSchool = sched.getSchoolDay().contains(currentTime);
-      return inSchool;
-   }
-   
-   public Time timeUntilSchool() {
-      return currentTime.getTimeUntil(sched.getSchoolDay().getStartTime());
-   }
+
    public void update() {
       southPane.update();
       northPane.update();
@@ -88,7 +87,6 @@ public class CurrentClassPane extends JPanel
    }
    public void pushCurrentTime(Time t) {
       setCurrentTime(t);
-      checkInSchool();
       northPane.pushCurrentTime(t);
    }
    public void pushClassPeriod(ClassPeriod c) {
