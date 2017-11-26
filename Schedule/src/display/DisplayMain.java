@@ -45,7 +45,6 @@ public class DisplayMain extends JPanel implements ActionListener
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
-      //TODO make sure the times sync up with the whole revamped update
       debug = false;
       testSituation = false;
       showDisp = true;
@@ -103,12 +102,21 @@ public class DisplayMain extends JPanel implements ActionListener
       add(toolbar, BorderLayout.NORTH);
    }
    
+   public void hardStop() {
+	   timer.stop();
+   }
+   
    public void stop() {
       showDisp = false;
    }
    
    public void resume() {
       showDisp = true;
+   }
+   
+   public void hardResume() {
+	   showDisp = true;
+	   timer.start();
    }
    
    public void reinitialize() {

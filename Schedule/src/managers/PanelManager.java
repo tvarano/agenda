@@ -68,6 +68,12 @@ public class PanelManager
       setCurrentPane(false);
    }
    
+   public void dispose() {
+	   display.hardStop();
+	   display = null;
+	   input = null;
+   }
+   
    public void closeInput() {
       display.resume();
       setCurrentPane(false);

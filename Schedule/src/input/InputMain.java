@@ -19,6 +19,7 @@ import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
 import ioFunctions.SchedWriter;
+import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
 import tools.ToolBar;
@@ -67,6 +68,7 @@ public class InputMain extends JPanel
    
    public void init(Schedule s) {
       removeAll();
+      if (Agenda.statusU) Agenda.log("began input");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       add(new ToolBar(true, this), BorderLayout.NORTH);
       amtClasses = s.getClasses().length;
@@ -93,7 +95,6 @@ public class InputMain extends JPanel
       ClassInputSlot s = new ClassInputSlot(slotIndex, this);
       int addIndex = (hasZeroPeriod) ? slotIndex : slotIndex-1;
       slots.add(addIndex, s);
-//      center.addImpl(s, null, addIndex);
       center.add(s, addIndex);
    }
    

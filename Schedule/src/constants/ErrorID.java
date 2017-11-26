@@ -83,7 +83,7 @@ public enum ErrorID {
          String internalMessage = (e.getMessage() == null) ? "" : e.getMessage() + newLn;
          String causeMessage = (e.getCause() == null) ? "" : "Caused by: " + getID(e.getCause());
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
-         String prompt = "Go to" + newLn + Agenda.LOG_ROUTE + "\nFor your log data.";
+         String prompt = "Go to" + newLn + Agenda.FileHandler.LOG_ROUTE + "\nFor your log data.";
          String text = "Details:\n" + message + newLn + importantText + prompt;
          JOptionPane.showOptionDialog(null,
                text,

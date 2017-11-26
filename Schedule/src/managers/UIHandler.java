@@ -120,7 +120,7 @@ public class UIHandler {
             @Override
             public void actionPerformed(ActionEvent e) {
                try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.RESOURCE_ROUTE+"theme.txt"));
+                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
                   bw.write(themeName);
                   bw.close();
                   if (JOptionPane.showOptionDialog(null,
@@ -146,7 +146,7 @@ public class UIHandler {
             @Override
             public void actionPerformed(ActionEvent e) {
                try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.RESOURCE_ROUTE+"look.txt"));
+                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.RESOURCE_ROUTE+"look.txt"));
                   bw.write(look.getClassName());
                   bw.close();
                   if (JOptionPane.showOptionDialog(null,
@@ -168,6 +168,11 @@ public class UIHandler {
 	 */
 	public static final String[] themes = {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Bare"}; 
 
+	/**
+	 * asks if the user would wish to continue to pursue the action specified
+	 * @param action a string which specifies the action which will be taken
+	 * @return true if the user wishes to continue
+	 */
    private static boolean checkIntentions(String action) {
       return (JOptionPane.showOptionDialog(null,
             "You are about to:\n" + action
@@ -178,6 +183,7 @@ public class UIHandler {
    }
 
    public synchronized static MenuBar configureMenuBar(JFrame frame) {
+	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
       Menu m = new Menu("Time Left In Class: ");
       bar.add(m);
@@ -203,6 +209,22 @@ public class UIHandler {
             if (checkIntentions("Restart the applicaiton"))
                Agenda.restart();
          }
+      });
+      
+      mi = m.add(new MenuItem("Choose File Location"));
+      mi.addActionListener(new ActionListener() {
+    	  @Override
+    	  public void actionPerformed(ActionEvent e) {
+    		  if (checkIntentions("Move your folder and delete data. This requires a restart.")) {
+    			  String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
+    			  File oldDir = new File(oldLoc);
+    			  Agenda.close();
+    			  Agenda.FileHandler.setFileLocation();
+    			  //TODO files still in action. cannot delete. need to stop the program, close all readers, delete file, then reopen.
+    			  Agenda.FileHandler.deleteFile(oldDir);
+    			  Agenda.openFresh();
+    		  }
+    	  }
       });
       bar.add(m);
       
@@ -245,7 +267,7 @@ public class UIHandler {
             JOptionPane.showMessageDialog(null, 
                   "Error logging helps the efficiency and ease of use for \n"
                   + "this program. Logs are kept at:\n"
-                  + Agenda.LOG_ROUTE + "\n"
+                  + Agenda.FileHandler.LOG_ROUTE + "\n"
                   + "and keep internal information about the program as it runs.\n"
                   + "If an error occurs, its message will be printed in the log.\n"
                   + "The best thing to do is simply send the entire log when this\n"
@@ -270,8 +292,7 @@ public class UIHandler {
       bar.setHelpMenu(m);
       frame.setMenuBar(bar);
       if (debug) System.out.println("BARUI "+ bar);
-      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WikiTeX"); 
-      System.out.println(System.getProperty("com.apple.mrj.application.apple.menu.about.name"));
+      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Agenda"); 
       return bar;
 	}
    
@@ -295,7 +316,7 @@ public class UIHandler {
    
    private static String readDoc(String fileName, int type) {
       try {
-         Scanner s = new Scanner(new File(Agenda.RESOURCE_ROUTE+fileName));
+         Scanner s = new Scanner(new File(Agenda.FileHandler.RESOURCE_ROUTE+fileName));
          String ret = s.nextLine();
          s.close();
          return ret;
@@ -303,7 +324,7 @@ public class UIHandler {
       } catch (IOException e) {
          if (e instanceof FileNotFoundException) {
             try {
-               BufferedWriter bw = new BufferedWriter(new FileWriter(new File(Agenda.RESOURCE_ROUTE+fileName)));
+               BufferedWriter bw = new BufferedWriter(new FileWriter(new File(Agenda.FileHandler.RESOURCE_ROUTE+fileName)));
                if (type == THEME_ID)
                   bw.write(themes[0]);
                else if (type == LAF_ID)
@@ -314,7 +335,8 @@ public class UIHandler {
                }
                bw.close();
             } catch (IOException e1) {
-               Agenda.setFileLocation();
+               e1.printStackTrace();
+               Agenda.FileHandler.setFileLocation();
             }
          }
          return themes[0];

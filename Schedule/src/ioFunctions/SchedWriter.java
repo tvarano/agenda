@@ -25,7 +25,7 @@ public class SchedWriter
    private void init() {
       fileStream = null;
       try {
-         fileStream = new FileOutputStream(Agenda.FILE_ROUTE);
+         fileStream = new FileOutputStream(Agenda.FileHandler.FILE_ROUTE);
       } catch (FileNotFoundException e) {
          ErrorID.showError(e, false);
       }
