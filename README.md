@@ -9,6 +9,6 @@ Close the program. Go to System Preferences > Security & Privacy > General. Then
 You should see a message notifying you of the program in System Preferences and a button saying "Run Anyway"
 Click "Run Anyway," and the program should run properly. 
 
-If you have any errors, check the log (Documents/Agenda/Log.txt) and look through the messages. 
+If you have any errors, check the log (in the folder that you chose) and look through the messages. 
 
 email me with any questions, errors, and log lines at varanoth@pascack.org 

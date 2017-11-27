@@ -23,6 +23,10 @@ public class RotationButton extends JButton implements ActionListener
    private JPanel parentPanel;
    private boolean debug;
    
+   /**
+    * @param text
+    * @param parentPanel
+    */
    public RotationButton(String text, JPanel parentPanel) {
       super(" "+text+" ");
       debug = false;

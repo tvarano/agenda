@@ -49,7 +49,6 @@ public class UIHandler {
 	   debug = false;
 	   font = new Font("Georgia", Font.PLAIN, 16);
 	   fontFam = "Georgia";
-//	   setLAFOcean();
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -93,9 +92,6 @@ public class UIHandler {
 	}
 	
 	public static void putValues() {
-	   
-//	   UIManager.put("ScrollBarUI", "managers.CustomScrollUI"); 
-//	   UIManager.put("ScrollBar.width", 12);
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("List.selectionForeground", foreground);
 	   UIManager.put("List.foreground", foreground);
@@ -108,8 +104,6 @@ public class UIHandler {
 	   UIManager.put("OptionPane.font", getButtonFont());
 	}
 	
-	//TODO menu ideas... change color scheme, maybe font.
-	// have a help tab which would describe where the log is and my email
 	
 	private static class ThemeChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
@@ -218,11 +212,12 @@ public class UIHandler {
     		  if (checkIntentions("Move your folder and delete data. This requires a restart.")) {
     			  String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
     			  File oldDir = new File(oldLoc);
-    			  Agenda.close();
     			  Agenda.FileHandler.setFileLocation();
-    			  //TODO files still in action. cannot delete. need to stop the program, close all readers, delete file, then reopen.
-    			  Agenda.FileHandler.deleteFile(oldDir);
-    			  Agenda.openFresh();
+    			  Agenda.restartApplication(new Runnable() {
+    			     public void run() {
+    			        Agenda.FileHandler.deleteFile(oldDir);
+    			     }
+    			  });
     		  }
     	  }
       });
@@ -242,7 +237,7 @@ public class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, "Your Current Look Is:\n"+readDoc("look.txt", LAF_ID),
+            JOptionPane.showMessageDialog(null, "Your Current Look Is:\n"+UIManager.getLookAndFeel().getName(),
                   Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
@@ -378,7 +373,6 @@ public class UIHandler {
 	   for (String th : themes)
          if (str.equals(th))
             theme = str;
-	   //TODO account for themes
 	   Color text = null;
 	   if (theme.equals(themes[0])) {
 	      //default
