@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
-import ioFunctions.Reader;
+import ioFunctions.SchedReader;
 
 //Thomas Varano
 //[Program Descripion]
@@ -53,20 +53,29 @@ public class Agenda extends JPanel
     */
    @SuppressWarnings("resource")
    public void initialFileWork() {
+      //TODO does not work how to access this file 
+//      String classPath = System.getProperty("java.class.path");
+//      FileHandler.FOLDERROUTE = classPath.substring(classPath.indexOf(System.getProperty("user.home")), classPath.length()-3)+"src/FolderRoute.txt";
+      FileHandler.FOLDERROUTE = "FolderRoute.txt";
+      System.out.println(FileHandler.FOLDERROUTE);
       boolean logData = true;
       
       //if folder location is unassigned, assign it
-      try {
          String mainFolder = null;
          //if fileRoute doesn't exist...
-         if (!new Scanner(new File("FolderRoute.txt")).hasNextLine())
-            FileHandler.setFileLocation();
+//         if (!new Scanner(Agenda.class.getClassLoader().getResourceAsStream("/src/FolderRoute.txt")).hasNextLine())
+         // /schedule-new/Schedule/src/files/FolderRoute.txt
+         try {
+//            System.out.println(new Scanner(getClass().getResourceAsStream(FileHandler.FOLDERROUTE)));
+            if (!new Scanner(FileHandler.getFolderLocationFile()).hasNextLine())
+               FileHandler.setFileLocation();
+         } catch (Exception e1) {
+            ErrorID.showError(e1, false);
+         }
          //read file and set
          mainFolder = FileHandler.readFileLocation();
          FileHandler.initFileNames(mainFolder);
-      } catch (FileNotFoundException e) {
-         ErrorID.showError(e, true);
-      }
+         
       //ensure the user is correct
       FileHandler.checkAndFormatUser();
       
@@ -90,11 +99,15 @@ public class Agenda extends JPanel
       public static String RESOURCE_ROUTE;
       public static String LOG_ROUTE;
       public static String FILE_ROUTE;
-      public static String THEME_ROUTE, LAF_ROUTE;
+      public static String THEME_ROUTE, LAF_ROUTE, FOLDERROUTE;
       public static void setFileLocation() {
           writeFileLocation(askFileLocation());
           initFileNames(readFileLocation());
       }
+      public static File getFolderLocationFile() {
+         return new File(PanelManager.class.getResource(FOLDERROUTE).getFile());
+      }
+      
       public static String askFileLocation() {
          JFileChooser c = new JFileChooser(System.getProperty("user.home"));
          c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -110,8 +123,7 @@ public class Agenda extends JPanel
       
       public static String writeFileLocation(String s) {
          try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(
-                  new File("FolderRoute.txt")));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(getFolderLocationFile()));
             bw.write(s);
             bw.close();
          } catch (IOException e) {
@@ -123,8 +135,13 @@ public class Agenda extends JPanel
       public static String readFileLocation() {
          Scanner s = null;
          try {
-            s = new Scanner(new File("FolderRoute.txt"));
-         } catch (FileNotFoundException e) {
+//            s = new Scanner(Agenda.class.getResourceAsStream(FOLDERROUTE));
+            try {
+               s = new Scanner(getFolderLocationFile());
+            } catch (FileNotFoundException e) {
+               ErrorID.showError(e, false);
+            }
+         } catch (NullPointerException e) {
             e.printStackTrace();
          }
          String ret = s.nextLine();
@@ -143,14 +160,13 @@ public class Agenda extends JPanel
       
       public static void checkAndFormatUser() {
          if (System.getProperty("user.home").indexOf(ENVELOPING_FOLDER.substring(0, 12)) < 0) {
-            System.out.println("HERERHERHERHR THIS IS THE ERROR WHAT");
             setFileLocation();
          }
       }
       
       public static void createFiles() {
          if (new File(RESOURCE_ROUTE).mkdirs()) {
-               Reader.transferReadMe(
+               SchedReader.transferReadMe(
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;
                try {

@@ -14,12 +14,13 @@ import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
 import managers.Agenda;
+import managers.Agenda.FileHandler;
 
-public class Reader {
+public class SchedReader {
    private ObjectInputStream reader;
    private boolean debug;
    
-   public Reader() {
+   public SchedReader() {
       debug = false;
       init();
    }
@@ -139,7 +140,7 @@ public class Reader {
    public static void transferReadMe(File f) {
       if (Agenda.statusU) Agenda.log("transferring readme");
       try {
-         Scanner in = new Scanner(new File("README.md"));
+         Scanner in = new Scanner(Agenda.class.getResourceAsStream("/src/README.md"));
          BufferedWriter bw = new BufferedWriter(new FileWriter(f));
          while (in.hasNextLine()) {
             bw.write(in.nextLine()+"\r\n");
@@ -147,13 +148,8 @@ public class Reader {
          f.setWritable(false);
          in.close();
          bw.close();
-      } catch (IOException e) {
+      } catch (IOException | NullPointerException e) {
          ErrorID.showError(e, true);
       }
    }
-   
-   public static void main(String[] args) {
-      Reader r = new Reader();
-      System.out.println(r.readSched().getLabs());
-   } 
 }

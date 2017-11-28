@@ -18,7 +18,7 @@ import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
 import ioFunctions.OrderUtility;
-import ioFunctions.Reader;
+import ioFunctions.SchedReader;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
@@ -80,7 +80,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    private void initComponents() {
-      Reader r = new Reader();
+      SchedReader r = new SchedReader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug && todaySched.get(RotationConstants.LUNCH) != null)
