@@ -86,8 +86,8 @@ public class ClassInfoPane extends JTextPane
       
       Style regular = doc.addStyle("regular", def);
       StyleConstants.setBold(regular, false);
-      StyleConstants.setFontFamily(regular, UIHandler.fontFam);
-      StyleConstants.setFontSize(regular, 16);
+      StyleConstants.setFontFamily(regular, UIHandler.font.getFamily());
+      StyleConstants.setFontSize(regular, 14);
       
       Style s = doc.addStyle("italic", regular);
       StyleConstants.setItalic(s, true);

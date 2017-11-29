@@ -35,6 +35,7 @@ import javax.swing.plaf.metal.OceanTheme;
 import constants.ErrorID;
 import constants.RotationConstants;
 import ioFunctions.SchedWriter;
+import resources.ResourceAccess;
 
 //Thomas Varano
 public class UIHandler {
@@ -42,13 +43,14 @@ public class UIHandler {
    private static final int THEME_ID = 0, LAF_ID = 1;
    
 	public static Font font;
-	public static String fontFam;
+//	public static String fontFam;
 	private static boolean debug;
 	
 	public static void init() { 
 	   debug = false;
-	   font = new Font("Georgia", Font.PLAIN, 16);
-	   fontFam = "Georgia";
+	   font = new Font("Futura", Font.PLAIN, 16);
+	   //heavy proccess, bypassed
+//	   fontFam = "Futura";
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -102,6 +104,9 @@ public class UIHandler {
 	   UIManager.put("ToolTip.font", getToolTipFont());
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
+	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getImage("ErrorIcon.png"));
+	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getImage("WarningIcon.png"));
+	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getImage("InfoIcon.png"));
 	}
 	
 	
@@ -374,23 +379,8 @@ public class UIHandler {
          if (str.equals(th))
             theme = str;
 	   Color text = null;
-	   if (theme.equals(themes[0])) {
-	      //default
-	      text = new Color(40,40,40);
-      	   Color noir = new Color(Integer.decode("#1d2731"));
-      	   Color carbon = new Color(Integer.decode("#a9a9a9"));
-      	   Color sky = new Color(Integer.decode("#caebf2"));
-      	   Color watermelon = new Color(Integer.decode("#ff6a5c"));
-      	   Color neutral = new Color(Integer.decode("#efefef"));
-      	   
-      	   background = neutral;
-      	   secondary = carbon;
-      	   tertiary = watermelon;
-      	   quaternary = sky;
-      	   titleColor = noir;
-      	   titleBorderColor = carbon;
-	   } else if (theme.equals(themes[1])) {
-	      //night mode
+	   if (theme.equals(themes[1])) {
+	      // night mode
 	      text = new Color(238, 238, 238);
 	      Color noir = new Color(Integer.decode("#1d2731"));
 	      Color navy = new Color(25,40,55);
@@ -406,7 +396,7 @@ public class UIHandler {
 	      titleColor = royal;
 	      titleBorderColor = indigo;
 	   } else if (theme.equals(themes[2])) {
-	      //neutral
+	      // neutral
 	      Color noir = new Color(Integer.decode("#1d2731"));
 	      Color gray = new Color(Integer.decode("#757575"));
 	      Color carbon = new Color(Integer.decode("#a9a9a9"));
@@ -420,7 +410,7 @@ public class UIHandler {
 	      titleColor = noir;
 	      titleBorderColor = noir;
 	   } else if (theme.equals(themes[3])) {
-	     //muted
+	     // muted
 	      text = new Color(Integer.decode("#373737"));
 	      Color paleGold = new Color(Integer.decode("#c0b283"));
 	      Color silk = new Color(Integer.decode("#dcd0c0"));
@@ -433,7 +423,7 @@ public class UIHandler {
 	      titleColor = text;
 	      titleBorderColor = silk;
 	   } else if (theme.equals(themes[4])) {
-	      //colorful
+	      // colorful
 	      text = new Color(Integer.decode("#373737"));
 	      Color sky = new Color(Integer.decode("#7cdbd5"));
 	      Color brightCoral = new Color(Integer.decode("#f53240"));
@@ -446,8 +436,8 @@ public class UIHandler {
 	      quaternary = golden;
 	      titleColor = text;
 	      titleBorderColor = golden;
-	   } else if (theme.equals(themes[4])) {
-	      //minimal
+	   } else if (theme.equals(themes[5])) {
+	      // minimal
 	      text = Color.BLACK;
 	      Color tangerine = new Color(Integer.decode("#FFCCBC"));
 	      Color tropacana = new Color(Integer.decode("#FF8A65"));
@@ -458,10 +448,10 @@ public class UIHandler {
 	      tertiary = tropacana;
 	      quaternary = chalk;
 	      titleColor = text;
-	      titleBorderColor = tangerine;
-	   } else {
-	      //bare
-	      text = Color.BLACK;
+         titleBorderColor = tangerine;
+      } else if (theme.equals(themes[6])) {
+         // bare
+         text = Color.BLACK;
          Color neutral = new Color(Integer.decode("#efefef"));
          Color carbon = Color.LIGHT_GRAY;
 
@@ -471,8 +461,23 @@ public class UIHandler {
          quaternary = neutral;
          titleColor = text;
          titleBorderColor = carbon;
-	   }
-	   foreground = text;
+      } else {
+         // default
+         text = new Color(40, 40, 40);
+         Color noir = new Color(Integer.decode("#1d2731"));
+         Color carbon = new Color(Integer.decode("#a9a9a9"));
+         Color sky = new Color(Integer.decode("#caebf2"));
+         Color watermelon = new Color(Integer.decode("#ff6a5c"));
+         Color neutral = new Color(Integer.decode("#efefef"));
+
+         background = neutral;
+         secondary = carbon;
+         tertiary = watermelon;
+         quaternary = sky;
+         titleColor = noir;
+         titleBorderColor = carbon;
+         foreground = text;
+      }
 }
 	
 	public static void setLAFOcean() {
@@ -487,7 +492,7 @@ public class UIHandler {
       if (debug) System.out.println("UI DONE");
 	}
 	
-	public static void setLAF() {
+	public synchronized static void setLAF() {
 	   String name = readDoc("look.txt", LAF_ID);
 	   try {
          UIManager.setLookAndFeel(name);
@@ -515,7 +520,8 @@ public class UIHandler {
 	}
 	
 	public static Font getInputLabelFont() {
-	   return getBold(14F);
+//	   return getBold(14F);
+	   return font.deriveFont(15F);
 	}
 	
 	public static Font getInputFieldFont() {
@@ -527,7 +533,8 @@ public class UIHandler {
 	}
 	
 	public static Font getButtonFont() {
-	   return getBold(12F);
+//	   return getBold(12F);
+	   return font.deriveFont(13F);
 	}
 	
 	public static Font getToolTipFont() {

@@ -13,8 +13,8 @@ import java.io.StreamCorruptedException;
 
 import javax.swing.JOptionPane;
 
-import ioFunctions.SchedWriter;
 import managers.Agenda;
+import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -35,7 +35,6 @@ public enum ErrorID {
    OTHER();
 
    public static final String ERROR_NAME = Agenda.APP_NAME + " ERROR";
-   public static final String fileRoute = "Schedule/src/files/ErrorClipBoardTransfer.txt";
    private final String ID;
    private final String message;
    private static boolean debug = false;
@@ -207,6 +206,7 @@ public enum ErrorID {
    }
    
    public static void main(String[] args) {
+      UIHandler.init();
       ErrorCopier ec = null;
       try {
          ec.getData();
