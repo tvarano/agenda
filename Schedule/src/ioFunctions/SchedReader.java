@@ -142,7 +142,7 @@ public class SchedReader {
       try {
 //         String binPath = SchedReader.class.getResource("README.txt").getFile();
 //         Scanner in = new Scanner(new File(binPath.substring(0, binPath.indexOf("bin"))+"/src/ioFunctions/README.txt"));
-         Scanner in = new Scanner(new File(ResourceAccess.getResourceSrcPath("README.txt")));
+         Scanner in = new Scanner(ResourceAccess.getResource("README.txt"));
          BufferedWriter bw = new BufferedWriter(new FileWriter(f));
          while (in.hasNextLine()) {
             bw.write(in.nextLine()+"\r\n");

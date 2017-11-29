@@ -103,7 +103,7 @@ public class Agenda extends JPanel
          try {
 //            String binPath = PanelManager.class.getResource(FOLDERROUTE).getFile();
 //            return new File(binPath.substring(0, binPath.indexOf("bin"))+"/src/managers/FolderRoute.txt");
-            return new File(ResourceAccess.getResourceSrcPath("FolderRoute.txt"));
+            return ResourceAccess.getResource("FolderRoute.txt");
          } catch (NullPointerException e) {
             ErrorID.showError(e, false);
             return null;
