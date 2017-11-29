@@ -1,8 +1,8 @@
-# Agenda
+Agenda
 If you are unable to run the program, there are a few steps you might have to take.
 Sorry.
 
-First, you will get a security error, saying the application is by an unidentified developer. 
+First, you will get a security error, saying the application is by an unidentified developer.
 Go to System Preferences > Security & Privacy > General. Then run the program. 
 You should see a message notifying you of the program in System Preferences and a button saying "Run Anyway"
 Click "Run Anyway," and the program should run properly. 

@@ -14,7 +14,7 @@ import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
 import managers.Agenda;
-import managers.Agenda.FileHandler;
+import resources.ResourceAccess;
 
 public class SchedReader {
    private ObjectInputStream reader;
@@ -140,7 +140,9 @@ public class SchedReader {
    public static void transferReadMe(File f) {
       if (Agenda.statusU) Agenda.log("transferring readme");
       try {
-         Scanner in = new Scanner(Agenda.class.getResourceAsStream("/src/README.md"));
+//         String binPath = SchedReader.class.getResource("README.txt").getFile();
+//         Scanner in = new Scanner(new File(binPath.substring(0, binPath.indexOf("bin"))+"/src/ioFunctions/README.txt"));
+         Scanner in = new Scanner(new File(ResourceAccess.getResourceSrcPath("README.txt")));
          BufferedWriter bw = new BufferedWriter(new FileWriter(f));
          while (in.hasNextLine()) {
             bw.write(in.nextLine()+"\r\n");

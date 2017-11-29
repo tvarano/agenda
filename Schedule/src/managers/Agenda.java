@@ -12,6 +12,7 @@ import java.lang.management.ManagementFactory;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -20,6 +21,7 @@ import javax.swing.UIManager;
 
 import constants.ErrorID;
 import ioFunctions.SchedReader;
+import resources.ResourceAccess;
 
 //Thomas Varano
 //[Program Descripion]
@@ -30,13 +32,13 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.3.2ß";
+   public static final String BUILD = "1.2.4 ß ECLIPSE BUILD";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private static PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
-   public static boolean statusU;
+   public static boolean statusU, inEclipse;
    public static Runnable mainThread;
    
    public Agenda() { 
@@ -52,21 +54,14 @@ public class Agenda extends JPanel
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
    @SuppressWarnings("resource")
-   public void initialFileWork() {
-      //TODO does not work how to access this file 
-//      String classPath = System.getProperty("java.class.path");
-//      FileHandler.FOLDERROUTE = classPath.substring(classPath.indexOf(System.getProperty("user.home")), classPath.length()-3)+"src/FolderRoute.txt";
+   public synchronized void initialFileWork() {
       FileHandler.FOLDERROUTE = "FolderRoute.txt";
-      System.out.println(FileHandler.FOLDERROUTE);
       boolean logData = true;
       
       //if folder location is unassigned, assign it
          String mainFolder = null;
          //if fileRoute doesn't exist...
-//         if (!new Scanner(Agenda.class.getClassLoader().getResourceAsStream("/src/FolderRoute.txt")).hasNextLine())
-         // /schedule-new/Schedule/src/files/FolderRoute.txt
          try {
-//            System.out.println(new Scanner(getClass().getResourceAsStream(FileHandler.FOLDERROUTE)));
             if (!new Scanner(FileHandler.getFolderLocationFile()).hasNextLine())
                FileHandler.setFileLocation();
          } catch (Exception e1) {
@@ -105,7 +100,14 @@ public class Agenda extends JPanel
           initFileNames(readFileLocation());
       }
       public static File getFolderLocationFile() {
-         return new File(PanelManager.class.getResource(FOLDERROUTE).getFile());
+         try {
+//            String binPath = PanelManager.class.getResource(FOLDERROUTE).getFile();
+//            return new File(binPath.substring(0, binPath.indexOf("bin"))+"/src/managers/FolderRoute.txt");
+            return new File(ResourceAccess.getResourceSrcPath("FolderRoute.txt"));
+         } catch (NullPointerException e) {
+            ErrorID.showError(e, false);
+            return null;
+         }
       }
       
       public static String askFileLocation() {
@@ -131,18 +133,13 @@ public class Agenda extends JPanel
          }
          return s;
       }
-      
+
       public static String readFileLocation() {
          Scanner s = null;
          try {
-//            s = new Scanner(Agenda.class.getResourceAsStream(FOLDERROUTE));
-            try {
-               s = new Scanner(getFolderLocationFile());
-            } catch (FileNotFoundException e) {
-               ErrorID.showError(e, false);
-            }
-         } catch (NullPointerException e) {
-            e.printStackTrace();
+            s = new Scanner(getFolderLocationFile());
+         } catch (FileNotFoundException | NullPointerException e) {
+            ErrorID.showError(e, false);
          }
          String ret = s.nextLine();
          s.close();
@@ -164,7 +161,7 @@ public class Agenda extends JPanel
          }
       }
       
-      public static void createFiles() {
+      public synchronized static void createFiles() {
          if (new File(RESOURCE_ROUTE).mkdirs()) {
                SchedReader.transferReadMe(
                      new File(ENVELOPING_FOLDER + "README.txt"));
@@ -317,7 +314,7 @@ public class Agenda extends JPanel
          System.exit(0);
       } catch (Exception e) {
          // something went wrong
-         ErrorID.showError(new IOException("Error while trying to restart the application", e), false);
+         ErrorID.showError(new ExecutionException("Error while trying to restart the application", e), false);
       }
    }
    
