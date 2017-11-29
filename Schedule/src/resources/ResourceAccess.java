@@ -10,9 +10,11 @@ import java.io.IOException;
 import javax.swing.ImageIcon;
 
 import constants.ErrorID;
+import managers.Agenda;
 
 public final class ResourceAccess
 {
+   public static final File TEMP_PATH_CHECK = new File(System.getProperty("user.home")+"/Desktop/tempPathCheck.txt");
    public static File getResource(String localPath) {
       try {
          return new File(ResourceAccess.class.getResource(localPath).getFile());
