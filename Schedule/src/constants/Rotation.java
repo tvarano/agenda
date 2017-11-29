@@ -95,8 +95,11 @@ public enum Rotation
          case RotationConstants.HALF_R1 : case RotationConstants.HALF_R3 : case RotationConstants.HALF_R4 : 
             return DayType.HALF_DAY;
          case RotationConstants.DELAY_R1 : case RotationConstants.DELAY_R3 : case RotationConstants.DELAY_R4 : 
-         case RotationConstants.DELAY_ODD : case RotationConstants.DELAY_EVEN :
             return DayType.DELAYED_OPEN;
+         case RotationConstants.DELAY_ODD : 
+            return DayType.DELAY_ODD;
+         case RotationConstants.DELAY_EVEN : 
+            return DayType.DELAY_EVEN;
       }
       return null;
    }

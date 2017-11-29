@@ -2,6 +2,7 @@ package constants;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
+import managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -53,7 +54,8 @@ public final class RotationConstants
          case R4 : return Rotation.DELAY_R4;
          case ODD_BLOCK : return Rotation.DELAY_ODD;
          case EVEN_BLOCK : return Rotation.DELAY_EVEN;
-         default : return Rotation.DELAY_R1;
+         default : if (Agenda.statusU) Agenda.log("SOMETHING WENT WRONG WITH TO DELAY");
+         return Rotation.DELAY_R1;
       }
    }
    
