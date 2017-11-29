@@ -137,12 +137,11 @@ public class SchedReader {
       w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
    }
    
-   public static void transferReadMe(File f) {
+   public static void transfer(String localPath, File f) {
       if (Agenda.statusU) Agenda.log("transferring readme");
       try {
-//         String binPath = SchedReader.class.getResource("README.txt").getFile();
-//         Scanner in = new Scanner(new File(binPath.substring(0, binPath.indexOf("bin"))+"/src/ioFunctions/README.txt"));
-         Scanner in = new Scanner(ResourceAccess.getResource("README.txt"));
+         f.createNewFile();
+         Scanner in = new Scanner(ResourceAccess.getResource(localPath));
          BufferedWriter bw = new BufferedWriter(new FileWriter(f));
          while (in.hasNextLine()) {
             bw.write(in.nextLine()+"\r\n");

@@ -5,25 +5,21 @@
 package resources;
 
 import java.io.File;
+import java.io.InputStream;
 
 import javax.swing.ImageIcon;
 
 import constants.ErrorID;
+import managers.Agenda;
 
 public final class ResourceAccess
 {
-   public static final File TEMP_PATH_CHECK = new File(System.getProperty("user.home")+"/Desktop/tempPathCheck.txt");
-   public static File getResource(String localPath) {
-      return new File(getResourceBinPath(localPath));
+   public static InputStream getResource(String localPath) {
+      return ResourceAccess.class.getResourceAsStream(localPath);
    }
    
-   public static String getResourceBinPath(String localPath) {
-      try {
-         return ResourceAccess.class.getResource(localPath).getFile();
-      } catch (NullPointerException e) {
-         ErrorID.showError(e, true);
-         return null;
-      }
+   public static File getFolderLocationFile() {
+      return new File(Agenda.FileHandler.FOLDER_ROUTE);
    }
    
    public static ImageIcon getImage(String localPath) {

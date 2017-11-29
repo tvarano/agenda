@@ -34,6 +34,7 @@ import javax.swing.plaf.metal.OceanTheme;
 
 import constants.ErrorID;
 import constants.RotationConstants;
+import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
 import resources.ResourceAccess;
 
@@ -289,6 +290,17 @@ public class UIHandler {
                   Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
+      mi = m.add(new MenuItem("Installation Instructions"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            SchedReader.transfer("Installation Instructions.txt", 
+                  new File(System.getProperty("user.home") + "/Desktop/Installation Instructions.txt"));
+            JOptionPane.showMessageDialog(null, 
+                  "Installation instructions have been created on your desktop.",
+                        Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+         }
+      });
       bar.setHelpMenu(m);
       frame.setMenuBar(bar);
       if (debug) System.out.println("BARUI "+ bar);
@@ -476,8 +488,8 @@ public class UIHandler {
          quaternary = sky;
          titleColor = noir;
          titleBorderColor = carbon;
-         foreground = text;
       }
+	   foreground = text;
 }
 	
 	public static void setLAFOcean() {

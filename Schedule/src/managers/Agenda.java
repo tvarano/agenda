@@ -9,7 +9,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
+import java.net.URISyntaxException;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +34,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.2.4 ß ECLIPSE BUILD";
+   public static final String BUILD = "v1.3.4 ß";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private static PanelManager manager;
@@ -55,14 +57,16 @@ public class Agenda extends JPanel
     */
    @SuppressWarnings("resource")
    public synchronized void initialFileWork() {
-      FileHandler.FOLDERROUTE = "FolderRoute.txt";
+      
       boolean logData = true;
+      
+      FileHandler.ensureRouteFile();
       
       //if folder location is unassigned, assign it
          String mainFolder = null;
          //if fileRoute doesn't exist...
          try {
-            if (!new Scanner(FileHandler.getFolderLocationFile()).hasNextLine())
+            if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine())
                FileHandler.setFileLocation();
          } catch (Exception e1) {
             ErrorID.showError(e1, false);
@@ -94,22 +98,27 @@ public class Agenda extends JPanel
       public static String RESOURCE_ROUTE;
       public static String LOG_ROUTE;
       public static String FILE_ROUTE;
-      public static String THEME_ROUTE, LAF_ROUTE, FOLDERROUTE;
-      public static void setFileLocation() {
-          writeFileLocation(askFileLocation());
-          initFileNames(readFileLocation());
-      }
-      public static File getFolderLocationFile() {
+      public static String THEME_ROUTE, LAF_ROUTE;
+      public static final String FOLDER_ROUTE = System.getProperty("user.home")
+            + "/Applications/Agenda/AgendaInternalFileRoute.txt";
+      
+      public static void ensureRouteFile() {
          try {
-//            String binPath = PanelManager.class.getResource(FOLDERROUTE).getFile();
-//            return new File(binPath.substring(0, binPath.indexOf("bin"))+"/src/managers/FolderRoute.txt");
-            return ResourceAccess.getResource("FolderRoute.txt");
-         } catch (NullPointerException e) {
-            ErrorID.showError(e, false);
-            return null;
+            new File(System.getProperty("user.home") + "/Applications/Agenda/").mkdirs();
+            ResourceAccess.getFolderLocationFile().createNewFile();
+         } catch (IOException e2) {
+            ErrorID.showError(e2, false);
          }
       }
       
+      public static void setFileLocation() {
+         ResourceAccess.getFolderLocationFile().setWritable(true);
+         writeFileLocation(askFileLocation());
+         initFileNames(readFileLocation());
+         ResourceAccess.getFolderLocationFile().setWritable(false);
+
+      }
+
       public static String askFileLocation() {
          JFileChooser c = new JFileChooser(System.getProperty("user.home"));
          c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -125,7 +134,7 @@ public class Agenda extends JPanel
       
       public static String writeFileLocation(String s) {
          try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(getFolderLocationFile()));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(ResourceAccess.getFolderLocationFile()));
             bw.write(s);
             bw.close();
          } catch (IOException e) {
@@ -137,7 +146,7 @@ public class Agenda extends JPanel
       public static String readFileLocation() {
          Scanner s = null;
          try {
-            s = new Scanner(getFolderLocationFile());
+            s = new Scanner(ResourceAccess.getFolderLocationFile());
          } catch (FileNotFoundException | NullPointerException e) {
             ErrorID.showError(e, false);
          }
@@ -163,7 +172,7 @@ public class Agenda extends JPanel
       
       public synchronized static void createFiles() {
          if (new File(RESOURCE_ROUTE).mkdirs()) {
-               SchedReader.transferReadMe(
+               SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;
                try {
@@ -260,7 +269,7 @@ public class Agenda extends JPanel
     *            some custom code to be run before restarting
     * @throws IOException
     */
-   public static void restartApplication(Runnable runBeforeRestart) {
+   public static void restartAppCP(Runnable runBeforeRestart) {
       try {
          // java binary
          String java = System.getProperty("java.home") + "/bin/java";
@@ -276,7 +285,7 @@ public class Agenda extends JPanel
             }
          }
          // init the command to execute, add the vm args
-         final StringBuffer cmd = new StringBuffer("" + java + " " + vmArgsOneLine);
+         final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + vmArgsOneLine);
 
          // program main and program arguments
          String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
@@ -316,6 +325,43 @@ public class Agenda extends JPanel
          // something went wrong
          ErrorID.showError(new ExecutionException("Error while trying to restart the application", e), false);
       }
+   }
+   
+   /**
+    * restart using a jar.
+    */
+   public static void restartApplication(Runnable runBeforeRestart)
+   {
+     final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+     File currentJar = null;
+   try {
+      currentJar = new File(Agenda.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+   } catch (URISyntaxException e) {
+      ErrorID.showError(e, false);
+   }
+
+     /* is it a jar file? */
+     if(!currentJar.getName().endsWith(".jar")) {
+       return;
+     }
+
+     /* Build command: java -jar application.jar */
+     final ArrayList<String> command = new ArrayList<String>();
+     command.add(javaBin);
+     command.add("-jar");
+     command.add(currentJar.getPath());
+
+     final ProcessBuilder builder = new ProcessBuilder(command);
+     try {
+      builder.start();
+   } catch (IOException e) {
+      ErrorID.showError(e, false);
+   }
+     if (runBeforeRestart != null) {
+        runBeforeRestart.run();
+     }
+     if (statusU) log("restarting...");
+     System.exit(0);
    }
    
    public static void close() {
