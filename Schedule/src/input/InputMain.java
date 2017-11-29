@@ -11,7 +11,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import constants.ErrorID;
 import constants.Lab;
@@ -20,6 +19,7 @@ import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
 import ioFunctions.SchedWriter;
+import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
 import tools.ToolBar;
@@ -56,6 +56,7 @@ public class InputMain extends JPanel
    }
    
    public void init(int amtSlots) {
+      removeAll();
       if (debug) System.out.println("INPUTFRAME construted empty");
       add(new ToolBar(true, this), BorderLayout.NORTH);
       initSlots(amtSlots);
@@ -66,6 +67,8 @@ public class InputMain extends JPanel
    }
    
    public void init(Schedule s) {
+      removeAll();
+      if (Agenda.statusU) Agenda.log("began input");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       add(new ToolBar(true, this), BorderLayout.NORTH);
       amtClasses = s.getClasses().length;
@@ -92,7 +95,6 @@ public class InputMain extends JPanel
       ClassInputSlot s = new ClassInputSlot(slotIndex, this);
       int addIndex = (hasZeroPeriod) ? slotIndex : slotIndex-1;
       slots.add(addIndex, s);
-//      center.addImpl(s, null, addIndex);
       center.add(s, addIndex);
    }
    
@@ -119,6 +121,7 @@ public class InputMain extends JPanel
    
    private JPanel createBottomPanel() {
       JPanel p = new JPanel();
+      p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
       JButton button = new JButton("Cancel");
@@ -194,8 +197,9 @@ public class InputMain extends JPanel
    }
    
    private void setButtonEnabled(int indexInBar, boolean enabled) {
-      ((JButton) ((ToolBar) getComponent(0))
-            .getComponent(indexInBar)).setEnabled(enabled);
+      JButton b = ((JButton) ((ToolBar) getComponent(0))
+            .getComponent(indexInBar));
+      b.setEnabled(enabled);
    }
    
    public void removeClassInt(int slot) {
@@ -330,23 +334,5 @@ public class InputMain extends JPanel
       this.beginningSchedule = s;
       center.removeAll();
       init(s);
-   }
-   
-   private static void createAndShowGUI() {
-      JFrame frame = new JFrame("INFO SLOT TEST");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      InputMain s = new InputMain(null);
-      s.setBeginningSchedule(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
-      frame.getContentPane().add(s);
-      frame.pack();
-      frame.setLocationRelativeTo(null);
-      frame.setVisible(true);   
-   }
-   public static void main(String[] args) {
-      SwingUtilities.invokeLater(new Runnable() {
-         public void run() {
-            createAndShowGUI();
-         }
-      });
    }
 }

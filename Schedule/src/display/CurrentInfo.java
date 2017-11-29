@@ -1,7 +1,6 @@
 package display;
 import java.awt.Color;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
@@ -11,7 +10,6 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
-import information.Time;
 import managers.UIHandler;
 
 public class CurrentInfo extends JTextPane{
@@ -207,12 +205,5 @@ public class CurrentInfo extends JTextPane{
       }
       public boolean hasParent() {
          return hasParent;
-      }
-      public static void main(String[] args) {
-         JFrame frame = new JFrame("InfoPaneTest");
-         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         frame.add(new CurrentInfo(new ClassPeriod(2, "PeriodText", new Time(13,00), new Time(15,00)), null));
-         frame.pack();
-         frame.setVisible(true);
       }
    }

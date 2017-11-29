@@ -9,7 +9,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
-import managers.Main;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -75,27 +75,25 @@ public class ClassInfoPane extends JTextPane
                   styleDoc.getStyle(styles[i]));
          }
      } catch (BadLocationException e) {
-         Main.logError("cannot insert styles in infoPane", e);
+         Agenda.logError("cannot insert styles in infoPane", e);
      }
    }
    
    private void initStyles(StyledDocument doc) {
+      if (Agenda.statusU) Agenda.log("STYLES CREATED info 83");
       Style def = StyleContext.getDefaultStyleContext().
             getStyle(StyleContext.DEFAULT_STYLE);
-
+      
       Style regular = doc.addStyle("regular", def);
-      if (Main.statusU) Main.log("first here");
-      StyleConstants.setFontFamily(regular, UIHandler.font.getFamily());
-      if (Main.statusU) Main.log("after");
+      StyleConstants.setBold(regular, false);
+      StyleConstants.setFontFamily(regular, UIHandler.fontFam);
       StyleConstants.setFontSize(regular, 16);
       
       Style s = doc.addStyle("italic", regular);
       StyleConstants.setItalic(s, true);
-      if (Main.statusU) Main.log("style here");
       
       s = doc.addStyle("bold", regular);
       StyleConstants.setBold(s, true);
-      if (Main.statusU) Main.log("style here");
    }
 
    public ClassPeriod getClassPeriod() {

@@ -8,7 +8,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.border.Border;
 
-import constants.Rotation;
 import constants.RotationConstants;
 import display.DisplayMain;
 import managers.UIHandler;
@@ -28,6 +27,7 @@ public class InstanceButton extends JButton implements ActionListener
    public InstanceButton(String key) {
       super(key);
       enacted = false;
+      setFocusable(false);
       setName("instanceButton "+key);
       setFont(UIHandler.getButtonFont());
       setToolTipText("Alter Next Selection to "+key);
@@ -95,7 +95,8 @@ public class InstanceButton extends JButton implements ActionListener
          else if (getText().equalsIgnoreCase(HALF)) {
             parentBar.setHalf(enacted);
             mainParent.setTodayR((enacted) ? RotationConstants.toHalf(mainParent.getTodayR())
-                  : RotationConstants.toNormal(mainParent.getTodayR()));         }
+                  : RotationConstants.toNormal(mainParent.getTodayR()));
+            }
       }
       for (Component b : parentBar
             .getComponents()) {

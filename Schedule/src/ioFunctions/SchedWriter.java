@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 
 import constants.ErrorID;
 import information.Schedule;
+import managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -15,13 +16,6 @@ public class SchedWriter
 {
    private ObjectOutputStream outStream;
    private FileOutputStream fileStream;
-//         System.getProperty("user.home")+"/Documents/"+Main.APP_NAME+"Document.txt";
-//   System.getProperty("user.home")+"/Documents/SerialTestDocument.txt";
-   
-   public static final String ENVELOPING_FOLDER = System.getProperty("user.home")+"/Desktop/Agenda/";
-   public static final String RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
-   public static final String LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
-   public static final String FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
    private boolean debug;
    
    public SchedWriter() {
@@ -31,7 +25,7 @@ public class SchedWriter
    private void init() {
       fileStream = null;
       try {
-         fileStream = new FileOutputStream(FILE_ROUTE);
+         fileStream = new FileOutputStream(Agenda.FileHandler.FILE_ROUTE);
       } catch (FileNotFoundException e) {
          ErrorID.showError(e, false);
       }
@@ -65,16 +59,5 @@ public class SchedWriter
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
-   }
-   
-   public void transfer() {
-      write(new OldReader().readDefaultSchedule());
-   }
-   
-   public static void main(String[] args) {
-      SchedWriter w = new SchedWriter();
-      w.transfer();
-//      w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB0));
-      System.out.println("aight");
    }
 }

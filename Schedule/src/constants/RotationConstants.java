@@ -1,12 +1,13 @@
 package constants;
 import information.ClassPeriod;
+import information.Schedule;
 import information.Time;
 
 //Thomas Varano
 //[Program Descripion]
 //Sep 12, 2017
 
-public abstract class RotationConstants
+public final class RotationConstants
 {
    public static final int R1 = 1, R2 = 2, R3 = 3, R4 = 4, ODD_BL= 5, EVEN_BL = 6;
    public static final int HALF_R1 = 7, HALF_R3 = 8, HALF_R4 = 9, 
@@ -28,6 +29,10 @@ public abstract class RotationConstants
             return Rotation.getFromIndex(i+1);
       }
       return null;
+   }
+   
+   public static final Schedule defaultSchedule() {
+      return new Schedule(Rotation.R1.getTimes(), Lab.LAB1);
    }
    
    public static final ClassPeriod PERIOD_ZERO = new ClassPeriod(0, "Period 0", new Time(7,15), new Time(7,56)),

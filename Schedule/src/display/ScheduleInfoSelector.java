@@ -9,7 +9,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
 
 import information.Schedule;
-import managers.Main;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -43,14 +43,18 @@ public class ScheduleInfoSelector extends JPanel
       setLayout(new GridLayout(2,1));
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
-      if (Main.statusU) Main.log("INFOSEL 46ish");
-      //TODO found the reason why this is so broken right here
+      if (Agenda.statusU) Agenda.log("before classInfo select 47");
       info = new ClassInfoPane(todaySched.getClasses()[0]);
-      if (Main.statusU) Main.log("INFOSEL 49ish");
       add(scheduleTabs);
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
+//      info.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
+//      add(info);
+      if (Agenda.statusU) Agenda.log("after scroll select 52");
       JScrollPane infoScroll = new JScrollPane(info);
-      infoScroll.setBorder(UIHandler.getTitledBorder(todaySched.getClasses()[0].getTrimmedName() + " Info"));
+      if (Agenda.statusU) Agenda.log("after scroll select 52");
+      //TODO next heavy method
+      infoScroll.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
+      if (Agenda.statusU) Agenda.log("after add select 55");
       infoScroll.setOpaque(false);
       add(infoScroll);
       setName("eastPane");
@@ -80,13 +84,16 @@ public class ScheduleInfoSelector extends JPanel
       JTabbedPane retval = new JTabbedPane();
       
       JScrollPane scroll = new JScrollPane(todayList); scroll.setName(todayList.getName());
+      scroll.setBackground(todayList.getBackground());
       retval.addTab(scroll.getName(), null, scroll, "Today's Rotation of Classes");
       retval.setMnemonicAt(0, KeyEvent.VK_1);
       
       scroll = new JScrollPane(mainList); scroll.setName(mainList.getName());
+      scroll.setBackground(mainList.getBackground());
       retval.addTab(scroll.getName(), null, scroll, "Standard R1 Schedule");
       retval.setMnemonicAt(1, KeyEvent.VK_2);
       
+      retval.setBackground(UIHandler.background);
       retval.setFont(UIHandler.getTabFont());
       return retval;
    }

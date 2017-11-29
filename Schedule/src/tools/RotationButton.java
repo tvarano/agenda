@@ -23,14 +23,21 @@ public class RotationButton extends JButton implements ActionListener
    private JPanel parentPanel;
    private boolean debug;
    
+   /**
+    * @param text
+    * @param parentPanel
+    */
    public RotationButton(String text, JPanel parentPanel) {
       super(" "+text+" ");
       debug = false;
       setParentPanel(parentPanel);
+      setBorderPainted(false);
+      setFocusable(false);
       setOpaque(false);
       setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
+      addMouseListener(UIHandler.buttonPaintListener(this));
       addActionListener(this);
       if (text == TODAY_R) {
          if (debug) System.out.println(text+" button parent:"+parentPanel);
