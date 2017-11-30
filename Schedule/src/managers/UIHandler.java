@@ -227,6 +227,14 @@ public class UIHandler {
     		  }
     	  }
       });
+      
+      mi = m.add(new MenuItem("View Source Code"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            Agenda.FileHandler.openURI(Agenda.sourceCode);
+         }  
+      });
       bar.add(m);
       
       //---------------------------View Bar--------------------------

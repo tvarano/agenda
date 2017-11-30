@@ -1,4 +1,5 @@
 package managers;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.MenuBar;
@@ -9,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.3.4 ß";
+   public static final String BUILD = "v1.3.5 ß";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private static PanelManager manager;
@@ -42,6 +44,7 @@ public class Agenda extends JPanel
    private static MenuBar bar;
    public static boolean statusU, inEclipse;
    public static Runnable mainThread;
+   public static URI sourceCode;
    
    public Agenda() { 
       initialFileWork();
@@ -57,7 +60,11 @@ public class Agenda extends JPanel
     */
    @SuppressWarnings("resource")
    public synchronized void initialFileWork() {
-      
+      try {
+         sourceCode = new URI("https://github.com/tvarano54/schedule-new");
+      } catch (URISyntaxException e2) {
+         ErrorID.showError(e2, true);
+      }
       boolean logData = true;
       
       FileHandler.ensureRouteFile();
@@ -101,6 +108,18 @@ public class Agenda extends JPanel
       public static String THEME_ROUTE, LAF_ROUTE;
       public static final String FOLDER_ROUTE = System.getProperty("user.home")
             + "/Applications/Agenda/AgendaInternalFileRoute.txt";
+      
+      public static void openURI(URI uri) {
+         if (Desktop.isDesktopSupported()) {
+            try {
+               Desktop.getDesktop().browse(uri);
+            } catch (IOException e) {
+               ErrorID.showError(e, true);
+            }
+         } else {
+            ErrorID.showUserError(ErrorID.IO_EXCEPTION);
+         }
+      }
       
       public static void ensureRouteFile() {
          try {
