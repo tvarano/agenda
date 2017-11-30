@@ -53,12 +53,12 @@ public enum ErrorID {
    }
 
    public static void showUserError(ErrorID error) {
-      if (Agenda.statusU) Agenda.logError("User Error "+error+"\n", null);
-      int choice = showInitialMessage(JOptionPane.WARNING_MESSAGE);
-      if (choice == 0)
-         JOptionPane.showMessageDialog(null,
-               "Details:\n" + error.message + "\nErrorID: " + error.getID(),
-               ERROR_NAME, JOptionPane.WARNING_MESSAGE);
+      if (Agenda.statusU) Agenda.logError("User Error " + error + "\n", null);
+      JOptionPane
+            .showMessageDialog(null,
+                  "User Error.\nDetails:\n" + error.message + "\nErrorID: "
+                        + error.getID(),
+                  ERROR_NAME, JOptionPane.WARNING_MESSAGE);
    }
    
    private static int showInitialMessage(int messageType) {
