@@ -36,7 +36,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.3.6 ß";
+   public static final String BUILD = "v1.3.7 ß";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private static PanelManager manager;
@@ -304,18 +304,12 @@ public class Agenda extends JPanel
             }
          }
          // init the command to execute, add the vm args
-         final StringBuffer cmd = new StringBuffer("\"" + java + "\" " + vmArgsOneLine);
+         final StringBuffer cmd = new StringBuffer("" + java + " " + vmArgsOneLine);
 
          // program main and program arguments
          String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
-         // program main is a jar
-         if (mainCommand[0].endsWith(".jar")) {
-            // if it's a jar, add -jar mainJar
-            cmd.append("-jar " + new File(mainCommand[0]).getPath());
-         } else {
-            // else it's a .class, add the classpath and mainClass
-            cmd.append("-cp " + System.getProperty("java.class.path") + " " + mainCommand[0]);
-         }
+         // only running if its a classpath
+         cmd.append("-cp " + System.getProperty("java.class.path") + " " + mainCommand[0]);
          // finally add program arguments
          for (int i = 1; i < mainCommand.length; i++) {
             cmd.append(" ");
@@ -345,39 +339,38 @@ public class Agenda extends JPanel
          ErrorID.showError(new ExecutionException("Error while trying to restart the application", e), false);
       }
    }
-   
-   /**
-    * restart using a jar.
-    */
-   public static void restartApplication(Runnable runBeforeRestart)
-   {
-     final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-     File currentJar = null;
-   try {
-      currentJar = new File(Agenda.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-   } catch (URISyntaxException e) {
-      ErrorID.showError(e, false);
-   }
+  
+   public static void restartApplication(Runnable runBeforeRestart) {
+      final String javaBin = System.getProperty("java.home") + File.separator
+            + "bin" + File.separator + "java";
+      File currentJar = null;
+      try {
+         currentJar = new File(Agenda.class.getProtectionDomain()
+               .getCodeSource().getLocation().toURI());
+      } catch (URISyntaxException e) {
+         ErrorID.showError(e, false);
+      }
 
-     /* is it a jar file? */
-     if(!currentJar.getName().endsWith(".jar")) {
-       return;
-     }
+      // is it a jar file? if not, restart using the classpath way
+      if (!currentJar.getName().endsWith(".jar")) {
+         restartAppCP(runBeforeRestart);
+      }
 
-     /* Build command: java -jar application.jar */
-     final ArrayList<String> command = new ArrayList<String>();
+      // Build command: java -jar application.jar 
+      final ArrayList<String> command = new ArrayList<String>();
      command.add(javaBin);
      command.add("-jar");
-     command.add(currentJar.getPath());
+      command.add(currentJar.getPath());
 
-     final ProcessBuilder builder = new ProcessBuilder(command);
-     try {
-      builder.start();
-   } catch (IOException e) {
-      ErrorID.showError(e, false);
-   }
-     if (runBeforeRestart != null) {
-        runBeforeRestart.run();
+      final ProcessBuilder builder = new ProcessBuilder(command);
+      try {
+         builder.start();
+      } catch (IOException e) {
+         ErrorID.showError(e, false);
+      }
+      // run the custom code
+      if (runBeforeRestart != null) {
+         runBeforeRestart.run();
      }
      if (statusU) log("restarting...");
      System.exit(0);

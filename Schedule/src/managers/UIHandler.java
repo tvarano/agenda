@@ -17,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.instrument.IllegalClassFormatException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 import javax.swing.AbstractButton;
@@ -162,6 +164,28 @@ public class UIHandler {
          });
       }
    }
+	private static class LinkChooser extends MenuItem {
+      private static final long serialVersionUID = 1L;
+
+      public LinkChooser(String name, URI link) {
+	      super(name);
+	      addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               Agenda.FileHandler.openURI(link);
+            }
+	      });    
+	   }
+	}
+	
+	private static URI createURI(String path) {
+      try {
+         return new URI(path);
+      } catch (URISyntaxException e) {
+         ErrorID.showError(e, true);
+         return null;
+      }
+	}
 	
 	/**
 	 * the themes available for the application
@@ -265,8 +289,16 @@ public class UIHandler {
          if (!laf.getName().equals("Nimbus"))
             looks.add(new LookChooser(laf));
       bar.add(m);
+      //---------------------------Link Bar--------------------------
+      m = new Menu("Useful Links");
+      m.add(new LinkChooser("Canvas", createURI("https://pascack.instructure.com/")));
+      m.add(new LinkChooser("Genesis", createURI(
+            "https://students.pascack.k12.nj.us/genesis/parents?tab1=studentdata&tab2=studentsummary&studentid=808219&action=form")));
+      m.add(new LinkChooser("PHHS Home", createURI("https://hills.pascack.org/")));
+      m.add(new LinkChooser("Naviance", createURI("http://connection.naviance.com/phhs")));
+      m.add(new LinkChooser("Agenda Source", Agenda.sourceCode));
       
-      
+      bar.add(m);
       //---------------------------Help Bar--------------------------
       m = new Menu("Help");
       mi = m.add(new MenuItem("Error Help"));

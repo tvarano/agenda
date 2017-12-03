@@ -19,6 +19,7 @@ public class PanelManager
    private DisplayMain display;
    private InputMain input;
    private MenuBar bar;
+   private boolean inputting;
    public PanelManager(Agenda parent, MenuBar bar) { 
       setParent(parent);
       this.bar = bar;
@@ -30,10 +31,13 @@ public class PanelManager
    }
    
    public void setCurrentPane(boolean inputting) {
+      if (this.inputting == inputting)
+         return;
       if (inputting)
           ((CardLayout) parent.getLayout()).show(parent, input.getName());
       else 
          ((CardLayout) parent.getLayout()).show(parent, display.getName());
+      this.inputting = inputting;
    }
    
    public MenuBar getBar() {
@@ -46,6 +50,8 @@ public class PanelManager
    }
    
    public void startInput(Schedule s) {
+      if (inputting == true)
+         return;
       display.stop();
       input.setBeginningSchedule(s);
       setCurrentPane(true);
