@@ -563,9 +563,9 @@ public class UIHandler {
 	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);
 	}
 	
-	private static Font getBold(float size) {
-	   return font.deriveFont(size).deriveFont(Font.BOLD);
-	}
+//	private static Font getBold(float size) {
+//	   return font.deriveFont(size).deriveFont(Font.BOLD);
+//	}
 	
 	public static Border getTitledBorder(String title) {
 	   return getTitledBorder(title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP);
