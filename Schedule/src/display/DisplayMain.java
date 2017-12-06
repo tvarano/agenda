@@ -65,7 +65,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private void initTime() {
       try {
          if (testSituation) {
-            currentTime = new Time(23,50);
+            currentTime = new Time(10,50);
             today = DayOfWeek.WEDNESDAY;
             todayR = Rotation.getRotation(today);         
          } else {
@@ -251,6 +251,8 @@ public class DisplayMain extends JPanel implements ActionListener
       return todayR;
    }
    public void setTodayR(Rotation todayR) {
+      //TODO here get rid of sysout
+      System.out.println("-----------------NEW ROTATION---------------------");
       if (updating)
          return;
       if (debug) System.out.println("DISPLAY SETTING ROTATION TO "+ todayR);

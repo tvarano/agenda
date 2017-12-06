@@ -1,7 +1,5 @@
-/display/
-/information/
-/input/
 /ioFunctions/
 /managers/
-/resources/
-/tools/
+/display/
+/information/
+/constants/

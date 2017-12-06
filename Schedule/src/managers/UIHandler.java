@@ -23,6 +23,7 @@ import java.util.Scanner;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -100,6 +101,7 @@ public class UIHandler {
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("List.selectionForeground", foreground);
 	   UIManager.put("List.foreground", foreground);
+	   UIManager.put("List.disabledText", Color.red);
       UIManager.put("TabbedPane.selected", quaternary);
       UIManager.put("TabbedPane.selectHighlight", quaternary);
       UIManager.put("TabbedPane.foreground", foreground);
@@ -563,9 +565,9 @@ public class UIHandler {
 	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);
 	}
 	
-	private static Font getBold(float size) {
-	   return font.deriveFont(size).deriveFont(Font.BOLD);
-	}
+//	private static Font getBold(float size) {
+//	   return font.deriveFont(size).deriveFont(Font.BOLD);
+//	}
 	
 	public static Border getTitledBorder(String title) {
 	   return getTitledBorder(title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP);
