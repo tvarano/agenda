@@ -1,6 +1,4 @@
 package constants;
-import java.util.ArrayList;
-
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
