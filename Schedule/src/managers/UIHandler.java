@@ -41,7 +41,7 @@ import ioFunctions.SchedWriter;
 import resources.ResourceAccess;
 
 //Thomas Varano
-public class UIHandler {
+public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
    
@@ -595,16 +595,11 @@ public class UIHandler {
 	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);
 	}
 	
-//	private static Font getBold(float size) {
-//	   return font.deriveFont(size).deriveFont(Font.BOLD);
-//	}
-	
 	public static Border getTitledBorder(String title) {
 	   return getTitledBorder(title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP);
 	}
 	
 	public static Font getInputLabelFont() {
-//	   return getBold(14F);
 	   return font.deriveFont(15F);
 	}
 	
@@ -617,7 +612,6 @@ public class UIHandler {
 	}
 	
 	public static Font getButtonFont() {
-//	   return getBold(12F);
 	   return font.deriveFont(13F);
 	}
 	

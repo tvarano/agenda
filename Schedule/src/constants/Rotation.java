@@ -6,7 +6,6 @@ import information.ClassPeriod;
 import information.Time;
 
 //Thomas Varano
-//[Program Descripion]
 //Sep 3, 2017
 
 public enum Rotation
