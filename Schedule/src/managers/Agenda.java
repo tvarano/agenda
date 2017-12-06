@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -42,7 +43,7 @@ public class Agenda extends JPanel
    private static PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
-   public static boolean statusU, inEclipse;
+   public static boolean statusU, inEclipse, running;
    public static Runnable mainThread;
    public static URI sourceCode;
    
@@ -53,6 +54,7 @@ public class Agenda extends JPanel
       UIHandler.init();
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(false);
+      running = true;
    }
    
    /**
@@ -108,7 +110,7 @@ public class Agenda extends JPanel
       public static String THEME_ROUTE, LAF_ROUTE;
       public static final String FOLDER_ROUTE = System.getProperty("user.home")
             + "/Applications/Agenda/AgendaInternalFileRoute.txt";
-      
+      public static final String NO_LOCATION = "noLoc";
       public static void openURI(URI uri) {
          if (Desktop.isDesktopSupported()) {
             try {
@@ -128,14 +130,54 @@ public class Agenda extends JPanel
          } catch (IOException e2) {
             ErrorID.showError(e2, false);
          }
+      }     
+      
+      public static void openDesktopFile(String path) {
+         if (Desktop.isDesktopSupported()) {
+            try {
+               Desktop.getDesktop().open(new File(path));
+            } catch (IOException e1) {
+               ErrorID.showError(e1, true);
+            }
+        }
       }
       
-      public static void setFileLocation() {
+      public static void sendEmail() {
+         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to varanoth@pascack.org", 
+               Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
+               new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
+         if (choice == 2 || choice == -1) 
+            return;
+         else {
+            if (Desktop.isDesktopSupported()) {
+               try {
+                  if (choice == 0)
+                     Desktop.getDesktop().mail(new URI("mailto:varanoth@pascack.org?subject=Agenda%20Contact"));
+                  else
+                     Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
+               } catch (IOException | URISyntaxException e1) {
+                  ErrorID.showError(e1, true);
+               }
+            }
+         }
+      }
+      
+      /**
+       * sets the file location by asking the user and writing it to a file.
+       * @return true if and only if the function goes through cleanly.
+       */
+      public static boolean setFileLocation() {
          ResourceAccess.getFolderLocationFile().setWritable(true);
-         writeFileLocation(askFileLocation());
+         String fileLocation = askFileLocation();
+         if (fileLocation.equals(NO_LOCATION)) {
+            ResourceAccess.getFolderLocationFile().setWritable(false);
+            if (running) return false;
+            System.exit(0);
+         }
+         writeFileLocation(fileLocation);
          initFileNames(readFileLocation());
          ResourceAccess.getFolderLocationFile().setWritable(false);
-
+         return true;
       }
 
       public static String askFileLocation() {
@@ -146,8 +188,12 @@ public class Agenda extends JPanel
          do {
            choice = c.showSaveDialog(null);
          } while (choice != JFileChooser.APPROVE_OPTION && choice != JFileChooser.CANCEL_OPTION);
-         if (choice == JFileChooser.CANCEL_OPTION)
-           System.exit(0);
+         if (choice == JFileChooser.CANCEL_OPTION) {
+            if (running) {
+               return NO_LOCATION;
+            }
+            System.exit(0);
+         }
          return c.getSelectedFile().getAbsolutePath();
       }
       

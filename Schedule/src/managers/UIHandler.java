@@ -23,7 +23,6 @@ import java.util.Scanner;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -204,8 +203,7 @@ public class UIHandler {
             "You are about to:\n" + action
                   + ".\nAre you sure you want to do this?",
             Agenda.APP_NAME + " WARNING", JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE, null, new String[]{"Yes", "No"},
-            "No") == 0);
+            JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
    public synchronized static MenuBar configureMenuBar(JFrame frame) {
@@ -237,21 +235,41 @@ public class UIHandler {
          }
       });
       
+      mi = m.add(new MenuItem("View File Location"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            if (JOptionPane.showOptionDialog(null, "Your files are kept at:\n"+Agenda.FileHandler.ENVELOPING_FOLDER,
+                  Agenda.APP_NAME + " File Location", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                  new String[] {"View In Finder", "Close"}, "Close") == 0) {
+               Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.ENVELOPING_FOLDER);
+            }
+         }
+      });
+      
+      mi = m.add(new MenuItem("Open Log"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
+         }
+      });
+
       mi = m.add(new MenuItem("Choose File Location"));
       mi.addActionListener(new ActionListener() {
-    	  @Override
-    	  public void actionPerformed(ActionEvent e) {
-    		  if (checkIntentions("Move your folder and delete data. This requires a restart.")) {
-    			  String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-    			  File oldDir = new File(oldLoc);
-    			  Agenda.FileHandler.setFileLocation();
-    			  Agenda.restartApplication(new Runnable() {
-    			     public void run() {
-    			        Agenda.FileHandler.deleteFile(oldDir);
-    			     }
-    			  });
-    		  }
-    	  }
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
+            File oldDir = new File(oldLoc);
+            if (Agenda.FileHandler.setFileLocation()) {
+               Agenda.restartApplication(new Runnable() {
+                  public void run() {
+                     Agenda.FileHandler.deleteFile(oldDir);
+                  }
+               });
+            }
+
+         }
       });
       
       mi = m.add(new MenuItem("View Source Code"));
@@ -301,23 +319,29 @@ public class UIHandler {
       m.add(new LinkChooser("Agenda Source", Agenda.sourceCode));
       
       bar.add(m);
-      //---------------------------Help Bar--------------------------
+      // ---------------------------Help Bar--------------------------
       m = new Menu("Help");
       mi = m.add(new MenuItem("Error Help"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, 
+            int choice = JOptionPane.showOptionDialog(null,
                   "Error logging helps the efficiency and ease of use for \n"
-                  + "this program. Logs are kept at:\n"
-                  + Agenda.FileHandler.LOG_ROUTE + "\n"
-                  + "and keep internal information about the program as it runs.\n"
-                  + "If an error occurs, its message will be printed in the log.\n"
-                  + "The best thing to do is simply send the entire log when this\n"
-                  + "occurs. It gives the most information possible and will allow\n"
-                  + "for the error to be fixed most quickly.\n"
-                  + "Email the log to varanoth@pascack.org", 
-                  Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+                        + "this program. Logs are kept at:\n"
+                        + Agenda.FileHandler.LOG_ROUTE + "\n"
+                        + "and keep internal information about the program as it runs.\n"
+                        + "If an error occurs, its message will be printed in the log.\n"
+                        + "The best thing to do is simply send the entire log when this\n"
+                        + "occurs. It gives the most information possible and will allow\n"
+                        + "for the error to be fixed most quickly.\n"
+                        + "Email the log to varanoth@pascack.org",
+                  Agenda.APP_NAME, JOptionPane.DEFAULT_OPTION,
+                  JOptionPane.INFORMATION_MESSAGE, null,
+                  new String[]{"Close", "Open Log", "Send Email"}, "Close");
+            if (choice == 2)
+               Agenda.FileHandler.sendEmail();
+            else if (choice == 1)
+               Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
          }
       });
       mi = m.add(new MenuItem("Sharing Protocol"));
@@ -341,6 +365,13 @@ public class UIHandler {
             JOptionPane.showMessageDialog(null, 
                   "Installation instructions have been created on your desktop.",
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+         }
+      });
+      mi = m.add(new MenuItem("Contact"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            Agenda.FileHandler.sendEmail();
          }
       });
       bar.setHelpMenu(m);
