@@ -41,15 +41,7 @@ public final class RotationConstants
    public static Schedule getNamelessRotation(Schedule s, Rotation r) {
       Schedule retval = new Schedule();
       retval.setName(s.getName()+" (nameless Clone)");
-      ArrayList<ClassPeriod> classes = new ArrayList<ClassPeriod>();
-      if (s.hasZeroPeriod())
-         classes.add(PERIOD_ZERO);
-      for (ClassPeriod c : r.getTimes()) {
-         classes.add(c);
-      }
-      if (s.hasEightPeriod())
-         classes.add(PERIOD_EIGHT);
-      retval.setClasses(classes.toArray(new ClassPeriod[classes.size()]));
+      retval.setClasses(r.getTimes());
       return retval;
    }
    

@@ -1,4 +1,5 @@
 package display;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 
@@ -7,6 +8,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import constants.Rotation;
 import constants.RotationConstants;
@@ -22,6 +25,7 @@ public class ScheduleInfoSelector extends JPanel
 {
    private static final long serialVersionUID = 1L;
    private Schedule todaySched, mainSched;
+   private static final int PREF_W = 228;
    private ScheduleList todayList, mainList, todayNameless;
    private ClassInfoPane info;
    private boolean debug;
@@ -33,6 +37,8 @@ public class ScheduleInfoSelector extends JPanel
       setBackground(UIHandler.background);
       Rotation todayR = parent.getTodayR();
       
+      final Dimension minS = new Dimension(PREF_W, parent.getHeight());
+      setMinimumSize(minS);
       if (debug) System.out.println("CLASSES\n"+todaySched.classString(true));
       if (debug) System.out.println("TODAYR = "+todayR);
       setParentPane(parent);
@@ -47,7 +53,6 @@ public class ScheduleInfoSelector extends JPanel
       setTodaySched(todaySched); setMainSched(mainSched);
       if (debug) System.out.println("AFTER "+todaySched.classString(true));
       
-      
       setLayout(new GridLayout(2,1));
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
@@ -55,8 +60,6 @@ public class ScheduleInfoSelector extends JPanel
       info = new ClassInfoPane(todaySched.getClasses()[0]);
       add(scheduleTabs);
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
-//      info.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
-//      add(info);
       if (Agenda.statusU) Agenda.log("after scroll select 52");
       JScrollPane infoScroll = new JScrollPane(info);
       if (Agenda.statusU) Agenda.log("after scroll select 52");
@@ -86,8 +89,10 @@ public class ScheduleInfoSelector extends JPanel
       
       else
          System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
-      String infoTitle = (info.getClassPeriod() == null) ? "ERROR" : info.getClassPeriod().getTrimmedName() + " Info";
+      String infoTitle = (info.getClassPeriod() == null) ? "Select Class For Info"
+            : info.getClassPeriod().getTrimmedName() + " Info";
       ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));
+      parentPane.revalidate();
    }
    
    public void pushTodaySchedule(Schedule s) {
@@ -114,6 +119,12 @@ public class ScheduleInfoSelector extends JPanel
       
       retval.setBackground(UIHandler.background);
       retval.setFont(UIHandler.getTabFont());
+      retval.addChangeListener(new ChangeListener() {
+         @Override
+         public void stateChanged(ChangeEvent e) {
+            updatePeriod();
+         }  
+      });
       return retval;
    }
    
