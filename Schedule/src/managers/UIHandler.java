@@ -211,7 +211,6 @@ public class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
-      m.addSeparator();
       MenuItem mi = m.add(new MenuItem("Reset Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -229,6 +228,25 @@ public class UIHandler {
          public void actionPerformed(ActionEvent e) {
             if (checkIntentions("Restart the applicaiton"))
                Agenda.restart();
+         }
+      });
+      
+      m.addSeparator();
+      
+      mi = m.add(new MenuItem("Choose File Location"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
+            File oldDir = new File(oldLoc);
+            if (Agenda.FileHandler.setFileLocation()) {
+               Agenda.restartApplication(new Runnable() {
+                  public void run() {
+                     Agenda.FileHandler.deleteFile(oldDir);
+                  }
+               });
+            }
+            
          }
       });
       
@@ -252,22 +270,6 @@ public class UIHandler {
          }
       });
 
-      mi = m.add(new MenuItem("Choose File Location"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-            File oldDir = new File(oldLoc);
-            if (Agenda.FileHandler.setFileLocation()) {
-               Agenda.restartApplication(new Runnable() {
-                  public void run() {
-                     Agenda.FileHandler.deleteFile(oldDir);
-                  }
-               });
-            }
-
-         }
-      });
       
       mi = m.add(new MenuItem("View Source Code"));
       mi.addActionListener(new ActionListener() {
