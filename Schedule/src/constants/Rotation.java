@@ -123,6 +123,7 @@ public enum Rotation
          retval[i].setName(name); retval[i].setStartTime(
                dt.getStartTimes()[i]); 
          retval[i].setEndTime(dt.getEndTimes()[i]);
+         retval[i].calculateDuration();
       }
       return retval;
    }

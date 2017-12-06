@@ -1,4 +1,6 @@
 package constants;
+import java.util.ArrayList;
+
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
@@ -34,6 +36,21 @@ public final class RotationConstants
    
    public static final Schedule defaultSchedule() {
       return new Schedule(Rotation.R1.getTimes(), Lab.LAB1);
+   }
+   
+   public static Schedule getNamelessRotation(Schedule s, Rotation r) {
+      Schedule retval = new Schedule();
+      retval.setName(s.getName()+" (nameless Clone)");
+      ArrayList<ClassPeriod> classes = new ArrayList<ClassPeriod>();
+      if (s.hasZeroPeriod())
+         classes.add(PERIOD_ZERO);
+      for (ClassPeriod c : r.getTimes()) {
+         classes.add(c);
+      }
+      if (s.hasEightPeriod())
+         classes.add(PERIOD_EIGHT);
+      retval.setClasses(classes.toArray(new ClassPeriod[classes.size()]));
+      return retval;
    }
    
    public static final ClassPeriod PERIOD_ZERO = new ClassPeriod(0, "Period 0", new Time(7,15), new Time(7,56)),

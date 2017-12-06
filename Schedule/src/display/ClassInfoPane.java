@@ -20,7 +20,7 @@ public class ClassInfoPane extends JTextPane
 {
    private static final long serialVersionUID = 1L;
    private ClassPeriod c;
-   private boolean thinConstraints, debug;
+   private boolean thinConstraints, debug, showNames;
    
    public ClassInfoPane(ClassPeriod c) {
       super();
@@ -50,23 +50,42 @@ public class ClassInfoPane extends JTextPane
       String newLine = "\n";
       String tab = (thinConstraints) ?"     ":"";
       if (debug) System.out.println(c);
+      
       String teacher = (thinConstraints) ? "Teacher: " + c.getTrimmedTeacher() + newLine 
             : "Teacher: " + c.getTrimmedTeacher() + newLine;
       String classLength = (thinConstraints) ? 
             "Class Length:"+ newLine +c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes" : 
-         "Class Length: "+c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes";
-      String[] uneditedText = {
-            tab + "Rm. " + c.getTrimmedRoomNumber()+newLine, 
-            tab + teacher,
-            tab + c.getStartTime() + " - " + c.getEndTime()+newLine,
-            tab + classLength
-      };
-      String[] styles = {
-            "regular", 
-            "regular",
-            "bold",
+               "Class Length: "+c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes";
+      String times = c.getStartTime() + " - " + c.getEndTime();
+      
+      if (showNames) {
+         String[] uneditedText = {
+               tab + "Rm. " + c.getTrimmedRoomNumber()+newLine, 
+               tab + teacher,
+               tab + times +newLine,
+               tab + classLength
+         };
+         String[] styles = {
+               "regular", 
+               "regular",
+               "bold",
+               "italic"
+         };
+         putStyles(uneditedText, styles);
+      } else {
+         String[] uneditedText = {
+               tab + times + newLine,
+               tab + classLength
+         };
+         String[] styles = {
+            "bold", 
             "italic"
-      };
+         };
+         putStyles(uneditedText, styles);
+      }
+   }
+   
+   private void putStyles(String[] uneditedText, String[] styles) {
       StyledDocument styleDoc = getStyledDocument();
       initStyles(styleDoc);
       try {
@@ -104,20 +123,16 @@ public class ClassInfoPane extends JTextPane
       this.c = c;
       createClassDetailPane();
    }
-
    public boolean isThinConstraints() {
       return thinConstraints;
    }
-
    public void setThinConstraints(boolean thinConstraints) {
       this.thinConstraints = thinConstraints;
    }
-
-//   public static void main(String[] args) {
-//      JFrame frame = new JFrame("InfoPaneTest");
-//      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//      frame.add(new ClassInfoPane(new ClassPeriod(2, "PeriodText", new Time(13,00), new Time(15,00))));
-//      frame.pack();
-//      frame.setVisible(true);
-//   }
+   public void setShowNames(boolean showNames) {
+      this.showNames = showNames;
+   }
+   public boolean getShowNames() {
+      return showNames;
+   }
 }

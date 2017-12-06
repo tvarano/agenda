@@ -11,10 +11,11 @@ import managers.Agenda;
 
 public class OrderUtility
 {
-   private static boolean debug = false;
+   private static boolean debug = false, detailedDebug = false;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       if (Agenda.statusU) Agenda.log("ordering schedule: "+s.getName() + " to "+r);
+      if (debug) System.out.println("ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);
       s.setPascackData();
@@ -27,7 +28,7 @@ public class OrderUtility
    
    public static ClassPeriod[] reorderClasses(Rotation r, ClassPeriod[] unOrderedArray) {
       if (debug) System.out.println("**********\nordering class array...");
-      if (debug) printData(r, unOrderedArray);
+      if (detailedDebug) printData(r, unOrderedArray);
       int extraClasses = unOrderedArray.length - Rotation.R1.getTimes().length;
       ClassPeriod[] newArray = new ClassPeriod[r.getTimes().length + extraClasses];
       int[] order = Rotation.getSlotRotation(r);
@@ -48,7 +49,7 @@ public class OrderUtility
       
       //every other class
       for (int i = 0; i < order.length; i++) {
-         if (debug) System.out.println("order run "+i);
+         if (detailedDebug) System.out.println("order run "+i);
          for (int o = arrayStart; o < unOrderedArray.length; o++) {
             if (order[i] == unOrderedArray[o].getSlot()) {
                newArray[newArrayIndex] = new ClassPeriod(
@@ -58,7 +59,7 @@ public class OrderUtility
                      unOrderedArray[o].getTeacher(),
                      unOrderedArray[o].getRoomNumber());
 
-               if (debug) {
+               if (detailedDebug) {
                   System.out.println("new array["+newArrayIndex+"] set to old["+o);
                   System.out.println("\tindex is; "+unOrderedArray[o].getSlot());
                }
@@ -68,13 +69,13 @@ public class OrderUtility
             //TODO for now... make sure to have them write their own pascack.
          }
          if (order[i] == RotationConstants.PASCACK) {
-            if (debug) System.out.println("entering pascack...");
+            if (detailedDebug) System.out.println("entering pascack...");
             newArray[newArrayIndex] = RotationConstants.getPascack();
             newArrayIndex++;
             rotationIndex++;
          }
       }
-      if (debug) {
+      if (detailedDebug) {
          System.out.println("finished ordering... PRODUCT");
          printData(r, newArray);
       }

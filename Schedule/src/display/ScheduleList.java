@@ -6,8 +6,10 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import constants.ErrorID;
 import information.ClassPeriod;
 import information.Schedule;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -18,31 +20,31 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
 {
    private static final long serialVersionUID = 1L;
    private JPanel parentPane;
-   private boolean thickConstraints, selectable, showNames;
+   private boolean selectable;
+   private boolean thickConstraints, showNames;
    private boolean debug = false, debugNames = false;
    
    private Schedule schedule;
    public ScheduleList(Schedule schedule, boolean showNames) {
       super();
-      this.schedule = schedule.clone();
-      setName(schedule.getName() + " list"); setShowNames(showNames); setSelectable(true);
+      selectable = true;
+      setName(schedule.getName() + " list"); setShowNames(showNames);
       setBackground(UIHandler.secondary);
-      setFont(UIHandler.font.deriveFont(getFont().getSize()));
       setModel(new DefaultListModel<ClassPeriod>());
+      setSchedule(schedule);
+      setFont(UIHandler.font.deriveFont(getFont().getSize()));
       addListSelectionListener(this);
-      if (debug) System.out.println(getName()+ " SHOWNAMES="+showNames);
-      cloneAndSetClasses();
+      if (debugNames) System.out.println(getName()+ " SHOWNAMES="+showNames);
+      createList();
       if (debug) System.out.println(getName()+"size"+getModel().getSize());
    }
    
-   private void cloneAndSetClasses() {
-      if (debugNames) System.out.println(schedule.getName()+" cloned for "+getName());
-      schedule.setShowName(showNames);
-      createList();
-   }
-   
    private void createList() {
+      try {
       ((DefaultListModel<ClassPeriod>) getModel()).removeAllElements();
+      } catch (ClassCastException e) {
+         ErrorID.showError(e, false);
+      }
       for (ClassPeriod c : schedule.getClasses()) {
          if (debug) System.out.println(getName()+" added "+c);
          ((DefaultListModel<ClassPeriod>) getModel()).addElement(c);
@@ -66,13 +68,14 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
          }
          else {
             if (debug) System.out.println(getName()+": out of school");
-            setSelectedValue(schedule.getClasses()[0], true);
+            clearSelection();
          }
          if (debug) System.out.println("move class back to "+((SouthernCurrentClassPane) parentPane).getClassPeriod());
       }
       else {
-         if (debug) System.out.println(getName()+": out of school");
-         setSelectedValue(null, false);
+         if (debug) System.out.println(getName()+"error in scheduleListAutoSelect");
+         if (Agenda.statusU) Agenda.log("Error in autoSetSelection");
+         clearSelection();
       }
    }
    
@@ -80,8 +83,9 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
       return schedule;
    }
    public void setSchedule(Schedule schedule) {
+      if (debugNames) System.out.println(getName() + "THE NEW SCHEDULE HERE IS "+schedule.getName());
       this.schedule = schedule.clone();
-      cloneAndSetClasses();
+      createList();
    }
    public JPanel getParentPane() {
       return parentPane;
@@ -95,19 +99,20 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
    public void setThickConstraints(boolean thickConstraints) {
       this.thickConstraints = thickConstraints;
    }
-   public boolean isSelectable() {
-      return selectable;
-   }
-   public void setSelectable(boolean selectable) {
-      this.selectable = selectable;
-   }
    public boolean isShowNames() {
       return showNames;
    }
    public void setShowNames(boolean showNames) {
       this.showNames = showNames;
    }
-
+   public boolean getSelectable() {
+      return selectable;
+   }
+   public void setSelectable(boolean selectable) {
+      this.selectable = selectable;
+      setFocusable(selectable);
+   }
+   
    @Override
    public void valueChanged(ListSelectionEvent e) {
       if (debug) {

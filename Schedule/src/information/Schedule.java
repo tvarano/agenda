@@ -19,6 +19,7 @@ public class Schedule implements Serializable
    private static final long serialVersionUID = -3898901184816193456L;
    public static final int NORMAL_AMT_DAYS = 7;
    private ClassPeriod[] classes;
+   private boolean showName;
    private ClassPeriod schoolDay, pascackPreferences; 
    private Lab[] labs;
    private boolean debug;
@@ -59,6 +60,7 @@ public class Schedule implements Serializable
    public void init() {
       debug = false;
       pascackPreferences.setName("Pascack Pd");
+      setShowName(true);
       calculateSchoolDay();
       if (name == null)
          name = "unNamedSchedSize"+classes.length;
@@ -85,20 +87,20 @@ public class Schedule implements Serializable
       }
    }
    
-   public Schedule clone(boolean showName) {
+   public Schedule clone() {
       if (debug) System.out.println(name+" cloned. showName:"+showName);
       Schedule retval = new Schedule();
       retval.setClasses(classes);
-      setShowName(showName);
       retval.setLabs(getLabs());
       retval.setName(getName()+"(Clone)");
+      retval.setShowName(showName);
       retval.setPascackPreferences(pascackPreferences);
       return retval;
    }
    
-   public Schedule clone() {
-     return clone(true);
-   }
+//   public Schedule clone() {
+//     return clone(true);
+//   }
    
    public void setData(Schedule s) {
       setClasses(s.getClasses());
@@ -118,6 +120,13 @@ public class Schedule implements Serializable
       return ret;
    }
    
+   public boolean hasZeroPeriod() {
+      return indexOf(0) >= 0; 
+   }
+   public boolean hasEightPeriod() {
+      return indexOf(8) >= 0; 
+   }
+   
    public ClassPeriod get(String name) {
       for (ClassPeriod c : classes) 
          if (c.getName().equalsIgnoreCase(name))
@@ -129,7 +138,6 @@ public class Schedule implements Serializable
       for (ClassPeriod c : classes) {
          if (c == null)
             ErrorID.showError(new NullPointerException(), false);
-         if (debug) System.out.println(getName()+" searchign through" + c);
          if (c.getSlot() == slot) {
             return c;
          }
@@ -159,9 +167,14 @@ public class Schedule implements Serializable
    }
    
    public void setShowName(boolean showName) {
+      this.showName = showName;
       for (ClassPeriod c : classes) {
          c.setShowName(showName);
       }
+   }
+   
+   public boolean getShowName() {
+      return showName;
    }
    
    public String classString(boolean newLine) {

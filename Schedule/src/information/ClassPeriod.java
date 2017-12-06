@@ -63,9 +63,11 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public ClassPeriod(ClassPeriod anchor) {
       this(anchor.getSlot(), anchor.getName(), anchor.getStartTime(), anchor.getEndTime(), anchor.getTeacher(),
             anchor.getRoomNumber());
-      
    }
    
+   public void calculateDuration() {
+      duration = Time.calculateDuration(startTime, endTime);        
+   }
    public boolean contains(Time t) {
       return (t.getTotalMins() >= startTime.getTotalMins() && t.getTotalMins() < endTime.getTotalMins());
    }
