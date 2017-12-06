@@ -46,14 +46,11 @@ public class UIHandler {
    private static final int THEME_ID = 0, LAF_ID = 1;
    
 	public static Font font;
-//	public static String fontFam;
 	private static boolean debug;
 	
 	public static void init() { 
 	   debug = false;
 	   font = new Font("Futura", Font.PLAIN, 16);
-	   //heavy proccess, bypassed
-//	   fontFam = "Futura";
 	   setLAF();
 	   setColors();
 	   putValues();
