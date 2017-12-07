@@ -113,6 +113,8 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void stop() {
+      westPane.getSouthPane().getMemo().save();
+      writeMain();
       showDisp = false;
    }
    
@@ -179,7 +181,14 @@ public class DisplayMain extends JPanel implements ActionListener
       return null;
    }
    
-   public void setMemoClass(ClassPeriod c) {
+   public void setMemoClass(int slot) {
+      ClassPeriod c = mainSched.get(slot);
+      if (slot == RotationConstants.PASCACK) {
+         westPane.getSouthPane().setMemoClass(mainSched.getPascackPreferences());
+         return;
+      }
+      if (c == null)
+         return;
       westPane.getSouthPane().setMemoClass(mainSched.get(c.getSlot()));
    }
    

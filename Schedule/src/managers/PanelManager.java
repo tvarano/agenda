@@ -53,11 +53,11 @@ public class PanelManager
       return bar.getMenu(0);
    }
    
-   public void startInput(Schedule s) {
+   public void startInput() {
       if (inputting == true)
          return;
       display.stop();
-      input.setBeginningSchedule(s);
+      input.setBeginningSchedule(display.getMainSched());
       setCurrentPane(true);
    }
    
@@ -65,8 +65,9 @@ public class PanelManager
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (inputting)
-               startInput(display.getMainSched());
+            if (Agenda.statusU) Agenda.log("view changed. inputting = "+inputting);
+            if (inputting) 
+               startInput();
             else
                finishInputting();
          }

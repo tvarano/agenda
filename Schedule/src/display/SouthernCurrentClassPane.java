@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;

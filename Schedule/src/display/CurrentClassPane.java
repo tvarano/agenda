@@ -18,7 +18,7 @@ public class CurrentClassPane extends JPanel
 {
    private static final long serialVersionUID = 1L;
    private ClassInfoPane info;
-   private JPanel parentPane;
+   private DisplayMain parentPane;
    private Time currentTime;
    private NorthernCurrentClassPane northPane;
    private SouthernCurrentClassPane southPane;
@@ -27,7 +27,7 @@ public class CurrentClassPane extends JPanel
    private boolean inSchool; 
    private boolean debug = false;
    
-   public CurrentClassPane(ClassPeriod c, Schedule s, JPanel parent) {
+   public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");
       currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
       inSchool = (c == null);
@@ -133,10 +133,10 @@ public class CurrentClassPane extends JPanel
    public NorthernCurrentClassPane getNorthPane() {
       return northPane;
    }
-   public JPanel getParentPane() {
+   public DisplayMain getParentPane() {
       return parentPane;
    }
-   public void setParentPane(JPanel parent) {
+   public void setParentPane(DisplayMain parent) {
       this.parentPane = parent;
    }
    public Time getCurrentTime() {

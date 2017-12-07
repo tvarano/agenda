@@ -87,10 +87,14 @@ public class ScheduleInfoSelector extends JPanel
          if (debug) System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
          return;
       }
-         info.setShowNames(selected.isShowNames());
-         info.setClassPeriod(selected.getSelectedValue());
-         parentPane.setMemoClass(selected.getSelectedValue());
-      
+      information.ClassPeriod selectVal = selected.getSelectedValue();
+      info.setShowNames(selected.isShowNames());
+      info.setClassPeriod(selectVal);
+      if (selectVal == null)
+         parentPane.setMemoClass(-1);
+      else
+         parentPane.setMemoClass(selected.getSelectedValue().getSlot());
+
       String infoTitle = (info.getClassPeriod() == null) ? "Select Class For Info"
             : info.getClassPeriod().getTrimmedName() + " Info";
       ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));
@@ -117,7 +121,16 @@ public class ScheduleInfoSelector extends JPanel
       scroll = new JScrollPane(todayNameless); scroll.setName(todayNameless.getName());
       scroll.setBackground(todayNameless.getBackground());
       retval.addTab(scroll.getName(), null, scroll, "Rotation for Today");
-      retval.setMnemonicAt(1, KeyEvent.VK_3);
+      retval.setMnemonicAt(2, KeyEvent.VK_3);
+      
+      ScheduleList allC = new ScheduleList(RotationConstants.getAllClasses(mainSched), false);
+      allC.setParentPane(this);
+      scroll = new JScrollPane(allC);
+      scroll.setName("All Classes");
+      scroll.setBackground(todayNameless.getBackground());
+      retval.addTab(scroll.getName(), null, scroll, "All Classes");
+      retval.setMnemonicAt(3, KeyEvent.VK_4);
+      
       
       retval.setBackground(UIHandler.background);
       retval.setFont(UIHandler.getTabFont());

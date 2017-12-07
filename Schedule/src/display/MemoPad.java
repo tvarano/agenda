@@ -20,14 +20,21 @@ public class MemoPad extends JTextPane
    public MemoPad(ClassPeriod parentClass, SouthernCurrentClassPane parentPanel) {
       super();
       setBackground(UIHandler.quaternary);
+      setForeground(UIHandler.foreground);
+      setFont(UIHandler.font);
       setParentClass(parentClass); setParentPanel(parentPanel);
       this.setMinimumSize(new Dimension(100,100));
    }
 
+   public void save() {
+      if (this.parentClass != null)
+         this.parentClass.setMemo(getText());
+   }
+   
    private void checkAccessibility() {
       if (parentClass == null) {
-         setText("Sorry, cannot do memos for Pascack Period");
-         parentPanel.setMemoBorderTitle("Pascack Period");
+         setText("Sorry, cannot do memos for this class");
+         parentPanel.setMemoBorderTitle("UnDeclared Class");
          setEnabled(false);
       }
       else {
@@ -39,8 +46,7 @@ public class MemoPad extends JTextPane
       return parentClass;
    }
    public void setParentClass(ClassPeriod parentClass) {
-      if (this.parentClass != null)
-         this.parentClass.setMemo(getText());
+      save();
       this.parentClass = parentClass;
       checkAccessibility();
       repaint();
