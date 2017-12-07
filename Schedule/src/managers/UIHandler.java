@@ -211,7 +211,7 @@ public final class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
-      MenuItem mi = m.add(new MenuItem("Reset Schedule"));
+      MenuItem mi = m.add(new MenuItem("Clear Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
@@ -360,9 +360,9 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             SchedReader.transfer("Installation Instructions.txt", 
-                  new File(System.getProperty("user.home") + "/Desktop/Installation Instructions.txt"));
+                  new File(System.getProperty("user.home") + "/Desktop/README.txt"));
             JOptionPane.showMessageDialog(null, 
-                  "Installation instructions have been created on your desktop.",
+                  "Installation instructions (README.txt) have been created on your desktop.",
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });

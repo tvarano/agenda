@@ -14,7 +14,6 @@ import java.io.StreamCorruptedException;
 import javax.swing.JOptionPane;
 
 import managers.Agenda;
-import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -206,12 +205,6 @@ public enum ErrorID {
    }
    
    public static void main(String[] args) {
-      UIHandler.init();
-      ErrorCopier ec = null;
-      try {
-         ec.getData();
-      } catch (NullPointerException e) {
-         ErrorID.showError(e, true);
-      }
+      System.out.println(ErrorID.getError("7530"));
    }
 }

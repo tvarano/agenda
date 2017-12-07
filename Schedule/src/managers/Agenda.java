@@ -37,7 +37,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.5.1 ß";
+   public static final String BUILD = "v1.5.3 ß";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -75,27 +75,18 @@ public class Agenda extends JPanel
          ErrorID.showError(e2, true);
       }
       boolean logData = false;
-      
+
       FileHandler.ensureRouteFile();
-      
-      //if folder location is unassigned, assign it
-         String mainFolder = null;
-         //if fileRoute doesn't exist...
-         try {
-            if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine())
-               FileHandler.setFileLocation();
-         } catch (Exception e1) {
-            ErrorID.showError(e1, false);
-         }
-         //read file and set
-         mainFolder = FileHandler.readFileLocation();
-         FileHandler.initFileNames(mainFolder);
-         
-      //ensure the user is correct
-      FileHandler.checkAndFormatUser();
-      
-      //if you need, create your folder and initialize routes
-      FileHandler.createFiles();
+
+      // if fileRoute doesn't exist...
+      try {
+         if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine())
+            FileHandler.setFileLocation();
+      } catch (Exception e1) {
+         ErrorID.showError(e1, false);
+      }
+      //check parameters, draw routes, create files if needed 
+      FileHandler.initAndCreateFiles();
 
       if (logData) {
          try {
@@ -138,6 +129,18 @@ public class Agenda extends JPanel
             ErrorID.showError(e2, false);
          }
       }     
+      
+      public static void initAndCreateFiles() {
+      // read file and set
+         String mainFolder = readFileLocation();
+         initFileNames(mainFolder);
+
+         // ensure the user is correct
+         checkAndFormatUser();
+         
+         //if you need, create your folder and initialize routes
+         createFiles();
+      }
       
       public static void openDesktopFile(String path) {
          if (Desktop.isDesktopSupported()) {
