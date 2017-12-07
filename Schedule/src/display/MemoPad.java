@@ -25,7 +25,6 @@ public class MemoPad extends JTextPane
    }
 
    private void checkAccessibility() {
-//      if (parentClass.getSlot() == RotationConstants.PASCACK) {
       if (parentClass == null) {
          setText("Sorry, cannot do memos for Pascack Period");
          parentPanel.setMemoBorderTitle("Pascack Period");
@@ -44,7 +43,6 @@ public class MemoPad extends JTextPane
          this.parentClass.setMemo(getText());
       this.parentClass = parentClass;
       checkAccessibility();
-//      retrieveClassText();
       repaint();
    }
    public SouthernCurrentClassPane getParentPanel() {
