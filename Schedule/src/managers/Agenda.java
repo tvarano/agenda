@@ -40,7 +40,7 @@ public class Agenda extends JPanel
    public static final String BUILD = "v1.4.3 ß";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
-   private static PanelManager manager;
+   private PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
    public static boolean statusU, inEclipse, running;
@@ -54,6 +54,13 @@ public class Agenda extends JPanel
       UIHandler.init();
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(false);
+      parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+         @Override
+         public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            manager.getDisplay().writeMain();
+            System.exit(0);
+         }
+      });
       running = true;
    }
    
@@ -299,7 +306,7 @@ public class Agenda extends JPanel
       int frameToPaneAdjustment = 22;
       bar = UIHandler.configureMenuBar(parentFrame);
       parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-      parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       parentFrame.setVisible(true);
       parentFrame.setLocationRelativeTo(null);
       Agenda main = new Agenda();
@@ -420,16 +427,6 @@ public class Agenda extends JPanel
      }
      if (statusU) log("restarting...");
      System.exit(0);
-   }
-   
-   public static void close() {
-      parentFrame.dispose();
-      manager.dispose();
-      bar = null;
-   }
-   
-   public static void openFresh() {
-      main(null);
    }
 
    public static void main(String[] args) {

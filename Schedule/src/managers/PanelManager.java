@@ -44,6 +44,10 @@ public class PanelManager
       return bar;
    }
    
+   public DisplayMain getDisplay() {
+      return display;
+   }
+   
    public Menu getTimeMenu() {
       System.out.println("BAR"+bar);
       return bar.getMenu(0);

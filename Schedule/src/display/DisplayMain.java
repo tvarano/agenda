@@ -19,6 +19,7 @@ import information.Schedule;
 import information.Time;
 import ioFunctions.OrderUtility;
 import ioFunctions.SchedReader;
+import ioFunctions.SchedWriter;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
@@ -46,7 +47,7 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -69,7 +70,7 @@ public class DisplayMain extends JPanel implements ActionListener
             today = DayOfWeek.WEDNESDAY;
             todayR = Rotation.getRotation(today);         
          } else {
-            currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
+            currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
             todayR = Rotation.getRotation(today);
          }
@@ -104,6 +105,11 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public void hardStop() {
 	   timer.stop();
+   }
+   
+   public void writeMain() {
+      if (Agenda.statusU) Agenda.log("wrote main Schedule");
+      new SchedWriter().write(mainSched);
    }
    
    public void stop() {
@@ -148,7 +154,7 @@ public class DisplayMain extends JPanel implements ActionListener
       if (testSituation) 
          currentTime = currentTime.plus(1);
       else 
-         currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
+         currentTime = new Time(LocalTime.now());
       if (currentTime.getHour24() == 0 && currentTime.getMinute() < 5)
             checkAndUpdateDate();
       westPane.pushCurrentTime(currentTime);
@@ -171,6 +177,10 @@ public class DisplayMain extends JPanel implements ActionListener
       if (inSchool)
          return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
       return null;
+   }
+   
+   public void setMemoClass(ClassPeriod c) {
+      westPane.getSouthPane().setMemoClass(mainSched.get(c.getSlot()));
    }
    
    public Time timeUntilNextClass() {

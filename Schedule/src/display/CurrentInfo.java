@@ -1,5 +1,6 @@
 package display;
 import java.awt.Color;
+import java.time.LocalTime;
 
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -10,6 +11,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
+import information.Time;
 import managers.UIHandler;
 
 public class CurrentInfo extends JTextPane{
@@ -70,7 +72,10 @@ public class CurrentInfo extends JTextPane{
                   " hours and ",
                   parentPanel.getTimeLeft().getMinute()+"",
                   " minutes"+newLn,
-                  "In "+c.getRoomNumber()
+                  "In "+c.getRoomNumber()+newLn,
+                  newLn,
+                  c.getStartTime() + " - " + c.getEndTime()+"."+newLn,
+                  "The class is " + c.getDuration().getHour12()+ " hours, " +c.getDuration().getMinute() + " minutes long."
             };
          }
          if (situation == IN_BETWEEN) {
@@ -88,6 +93,8 @@ public class CurrentInfo extends JTextPane{
          if (situation == NOT_IN_SCHOOL) {
             return new String[] {
                   "You are not in school."+newLn,
+                  "School starts in ",
+                  new Time(LocalTime.now()).getTimeUntil(parentPanel.getParentPane().getSched().getSchoolDay().getStartTime()).timeString(),
                   "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
                         "email me at varanoth@pascack.org"
             };
@@ -108,7 +115,10 @@ public class CurrentInfo extends JTextPane{
                   "regular",
                   "h2",
                   "regular",
-                  "h3"
+                  "h3",
+                  "formatting",
+                  "bold",
+                  "regular"
             };
          }
          if (situation == IN_BETWEEN)
@@ -123,6 +133,8 @@ public class CurrentInfo extends JTextPane{
             };
          if (situation == NOT_IN_SCHOOL) {
             return new String[] {
+                  "h2",
+                  "regular",
                   "h2",
                   "regular"
             };
@@ -177,6 +189,9 @@ public class CurrentInfo extends JTextPane{
          
          s = doc.addStyle("bold", regular);
          StyleConstants.setBold(s, true);
+         
+         s = doc.addStyle("formatting", regular);
+         StyleConstants.setFontSize(s, 8);
          
          s = doc.addStyle("error", doc.getStyle("h1"));
          StyleConstants.setForeground(s, Color.RED);

@@ -145,4 +145,7 @@ public class CurrentClassPane extends JPanel
    public void setCurrentTime(Time currentTime) {
       this.currentTime = currentTime;
    }
+   public SouthernCurrentClassPane getSouthPane() {
+      return southPane;
+   }
 }

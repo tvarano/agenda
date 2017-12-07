@@ -591,6 +591,7 @@ public final class UIHandler {
             title, justification, position, font, titleColor);
 	}
 	
+	
 	public static Color getScrollColor() {
 	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);
 	}

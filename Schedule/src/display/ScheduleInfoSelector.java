@@ -11,6 +11,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import constants.ErrorID;
 import constants.Rotation;
 import constants.RotationConstants;
 import information.Schedule;
@@ -74,21 +75,22 @@ public class ScheduleInfoSelector extends JPanel
    
    public void updatePeriod() {
       if (debug) System.out.println(getName()+":update");
-      if (scheduleTabs.getSelectedComponent() instanceof ScheduleList) {
-         ScheduleList selected = (ScheduleList) scheduleTabs.getSelectedComponent();
-         info.setShowNames(selected.isShowNames());
-         info.setClassPeriod(selected.getSelectedValue());
-      }
+      ScheduleList selected = null;
+      if (scheduleTabs.getSelectedComponent() instanceof ScheduleList) 
+         selected = (ScheduleList) scheduleTabs.getSelectedComponent();
          
-      else if (scheduleTabs.getSelectedComponent() instanceof JScrollPane) {
-         ScheduleList selected = (ScheduleList) ((JScrollPane)scheduleTabs.getSelectedComponent())
+      else if (scheduleTabs.getSelectedComponent() instanceof JScrollPane)
+         selected = (ScheduleList) ((JScrollPane)scheduleTabs.getSelectedComponent())
                .getViewport().getView();
+      else {
+         ErrorID.showError(new NullPointerException("Cast incorrect for update in ScheduleInfo"), true);
+         if (debug) System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
+         return;
+      }
          info.setShowNames(selected.isShowNames());
          info.setClassPeriod(selected.getSelectedValue());
-      }
+         parentPane.setMemoClass(selected.getSelectedValue());
       
-      else
-         System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
       String infoTitle = (info.getClassPeriod() == null) ? "Select Class For Info"
             : info.getClassPeriod().getTrimmedName() + " Info";
       ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));

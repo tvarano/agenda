@@ -28,15 +28,16 @@ public class NorthernCurrentClassPane extends JPanel
          System.out.println("northParent: "+parent);
       setBackground(UIHandler.background);
       inSchool = (c == null);
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       setClassPeriod(c); setParentPane(parent); setName(parent.getName()+" north pane");
       time = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
       field = new CurrentInfo(c, this);
-      int gap = 20;
-      field.setBorder(BorderFactory.createEmptyBorder(gap/2, gap, gap, gap));
-      if (debug)
-         System.out.println("time: "+time);
-      setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+      
+      int gap = 5;
+      setBorder(BorderFactory.createEmptyBorder(gap*2, gap, gap, gap));
+      if (debug) System.out.println("time: "+time);
       add(field);
+      
       setVisible(true);
    }
    
@@ -65,6 +66,10 @@ public class NorthernCurrentClassPane extends JPanel
       field.pushClassPeriod(c);
       field.repaint();
    }
+   
+   public void setMemoClass(ClassPeriod c) {
+      
+   }
 
    public Time getTime() {
       return time;
@@ -86,6 +91,10 @@ public class NorthernCurrentClassPane extends JPanel
    }
    public boolean isInSchool() {
       return inSchool;
+   }
+
+   public ClassPeriod findNextClass() {
+      return parentPanel.findNextClass();
    }
    
 }

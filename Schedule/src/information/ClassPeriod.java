@@ -19,7 +19,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public static final String NO_ROOM = "000";
    public static final int DEF_STRING_LENGTH = 20;
    private int slot;
-   private String roomNumber;
+   private String roomNumber, memo;
    private boolean showName, canShowPeriod;
    private static boolean debug = false;
    private String name, teacher;
@@ -98,7 +98,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return (slot == -1 || name.equals(" ") || teacher.equals(NO_TEACH) || roomNumber == NO_ROOM);
    }
    public String toString() {
-      return (showName || !canShowPeriod) ? name : "Period "+slot;
+      return (showName || !canShowPeriod) ? getTrimmedName() : "Period "+slot;
    }
    
    public int getSlot() {
@@ -149,6 +149,16 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public void setTeacher(String teacher) {
       this.teacher = teacher;
    }
+   public String getMemo() {
+      if (memo == null)
+         return "";
+      return memo;
+   }
+
+   public void setMemo(String memo) {
+      this.memo = memo;
+   }
+
    public boolean isShowName() {
       return showName;
    }

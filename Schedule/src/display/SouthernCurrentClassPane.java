@@ -20,8 +20,8 @@ public class SouthernCurrentClassPane extends JPanel
    private ClassPeriod classPeriod;
    private int currentSlot;
    private Schedule s;
+   private MemoPad memo;
    private ScheduleList westList;
-   private ClassInfoPane eastInfo;
    private Time ct;
    private CurrentClassPane parentPanel;
    
@@ -30,9 +30,9 @@ public class SouthernCurrentClassPane extends JPanel
       setBackground(UIHandler.background);
       
       setLayout(new GridLayout(1,2));
-      eastInfo = new ClassInfoPane(c);
-      eastInfo.setThinConstraints(true);
-      eastInfo.setToolTipText("Info for Your Current Class");
+      
+      memo = new MemoPad(c, this);
+      memo.setEnabled(false);
       
       westList = new ScheduleList(s, true);
       westList.setName("southPane todayList");
@@ -47,10 +47,10 @@ public class SouthernCurrentClassPane extends JPanel
       scroll.setOpaque(false);
       add(scroll);
       
-      scroll = new JScrollPane(eastInfo);
-      scroll.setBorder(UIHandler.getTitledBorder("Current Class Info"));
+      scroll = new JScrollPane(memo);
+      scroll.setBorder(UIHandler.getTitledBorder("Select Class For Memo"));
+      scroll.setToolTipText(westList.getToolTipText());
       scroll.setOpaque(false);
-      scroll.setToolTipText(eastInfo.getToolTipText());
       add(scroll);
       
       westList.setSelectable(false);
@@ -78,7 +78,6 @@ public class SouthernCurrentClassPane extends JPanel
    
    public void updateListAndInfo() {
       westList.setSelectedValue(classPeriod, true);
-      eastInfo.setClassPeriod(classPeriod);
    }
    
    public void pushCurrentTime(Time t) {
@@ -94,7 +93,17 @@ public class SouthernCurrentClassPane extends JPanel
    public CurrentClassPane getParentPanel() {
       return parentPanel;
    }
+   public void setMemoClass(ClassPeriod c) {
+      setMemoBorderTitle(c);
+      memo.setParentClass(c);
+      memo.repaint();
+   }
    
+   public void setMemoBorderTitle(Object o) {
+      ((JScrollPane)memo.getParent().getParent()).setBorder(UIHandler.getTitledBorder(o + " Memo"));
+
+   }
+    
    public void setParentPanel(CurrentClassPane parent) {
       this.parentPanel = parent;
    }
@@ -103,9 +112,6 @@ public class SouthernCurrentClassPane extends JPanel
       return westList;
    }
    
-   public ClassInfoPane getEastInfo() {
-      return eastInfo;
-   }
    public void pushClassPeriod(ClassPeriod c) {
       setClassPeriod(c);
       updateListAndInfo();
@@ -115,7 +121,7 @@ public class SouthernCurrentClassPane extends JPanel
       setCurrentSlot(slot);
       pushClassPeriod(s.get(slot));
    }
-   
+
    private void setCurrentSlot(int slot) {
       this.currentSlot = slot;
    }
@@ -128,6 +134,9 @@ public class SouthernCurrentClassPane extends JPanel
    public void setClassPeriod(ClassPeriod classPeriod) {
       setCurrentSlot((classPeriod == null) ? -1 : classPeriod.getSlot());
       this.classPeriod = classPeriod;
+   }
+   public MemoPad getMemo() {
+      return memo;
    }
    public Schedule getSchedule() {
       return s;

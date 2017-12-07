@@ -36,9 +36,9 @@ public class ClassInfoPane extends JTextPane
    private void createClassDetailPane() {
       if (debug) System.out.println(getName() + "Parent"+getParent());
       if (c == null) {
-         if (getParent() instanceof CurrentClassPane) {
-            if (((CurrentClassPane) getParent()).isInSchool())
-               setText("In Between Classes. \nNext Class is:\n"+((CurrentClassPane) getParent()).findNextClass());
+         if (getParent() instanceof NorthernCurrentClassPane) {
+            if (((NorthernCurrentClassPane) getParent()).isInSchool())
+               setText("In Between Classes. \nNext Class is:\n"+((NorthernCurrentClassPane) getParent()).findNextClass());
             else
                setText("Not in school");
          }
@@ -99,7 +99,6 @@ public class ClassInfoPane extends JTextPane
    }
    
    private void initStyles(StyledDocument doc) {
-      if (Agenda.statusU) Agenda.log("STYLES CREATED info 83");
       Style def = StyleContext.getDefaultStyleContext().
             getStyle(StyleContext.DEFAULT_STYLE);
       
