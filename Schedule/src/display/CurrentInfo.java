@@ -94,7 +94,9 @@ public class CurrentInfo extends JTextPane{
             return new String[] {
                   "You are not in school."+newLn,
                   "School starts in ",
-                  new Time(LocalTime.now()).getTimeUntil(parentPanel.getParentPane().getSched().getSchoolDay().getStartTime()).timeString(),
+                  new Time(LocalTime.now()).getTimeUntil(
+                        parentPanel.getParentPane().getSched().getSchoolDay().getStartTime())
+                  .durationString()+newLn,
                   "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
                         "email me at varanoth@pascack.org"
             };

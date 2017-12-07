@@ -87,6 +87,10 @@ public class Time implements Comparable<Time>, Serializable
       return timeString() + " " + amString;
    }
    
+   public String durationString() {
+      return getHour12() + " hr, " + getMinute() + "min";
+   }
+   
    public String timeString() {
       String hourString = (afterNoon(hour24)) ? (hour24 - 12)+"" : hour24 + "";
       String minuteString = (minute < 10) ? "0"+minute : minute+"";
