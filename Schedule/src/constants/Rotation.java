@@ -161,7 +161,10 @@ public enum Rotation
    public DayType getDayType() {
       return dayType;
    }
-   
-
-   
+   public boolean isDelay() {
+      return dayType.equals(DayType.DELAYED_OPEN) || dayType.equals(DayType.DELAY_EVEN) || dayType.equals(DayType.DELAY_ODD);
+   }
+   public boolean isHalf() {
+      return dayType.equals(DayType.HALF_DAY);
+   }
 }

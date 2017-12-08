@@ -50,12 +50,12 @@ public class ClassInfoPane extends JTextPane
       String newLine = "\n";
       String tab = (thinConstraints) ?"     ":"";
       if (debug) System.out.println(c);
-      
+      String hour = (c.getDuration().getHour24() > 0) ? c.getDuration().getHour24()+" hour, " : "";
       String teacher = (thinConstraints) ? "Teacher: " + c.getTrimmedTeacher() + newLine 
             : "Teacher: " + c.getTrimmedTeacher() + newLine;
       String classLength = (thinConstraints) ? 
-            "Class Length:"+ newLine +c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes" : 
-               "Class Length: "+c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes";
+            "Class Length:"+ newLine +hour+c.getDuration().getMinute()+" minutes" : 
+               "Class Length: "+hour+c.getDuration().getMinute()+" minutes";
       String times = c.getStartTime() + " - " + c.getEndTime();
       
       if (showNames) {

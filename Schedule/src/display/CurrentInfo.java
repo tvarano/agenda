@@ -64,18 +64,20 @@ public class CurrentInfo extends JTextPane{
       public String[] getTextInput() {
          String newLn = "\n";
          if (situation == IN_CLASS) {
+            boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
+            String durationHour = (hour) ? c.getDuration().getHour12()+ " hour, " : "";
             return new String[] {
                   "You are in"+newLn,
                   c+newLn,
                   "For ",
-                  parentPanel.getTimeLeft().getHour24()+"",
-                  " hours and ",
+                  (hour) ? parentPanel.getTimeLeft().getHour24()+"" : "",
+                  (hour) ? " hour and " : "",
                   parentPanel.getTimeLeft().getMinute()+"",
                   " minutes"+newLn,
                   "In "+c.getRoomNumber()+newLn,
                   newLn,
                   c.getStartTime() + " - " + c.getEndTime()+"."+newLn,
-                  "The class is " + c.getDuration().getHour12()+ " hours, " +c.getDuration().getMinute() + " minutes long."
+                  "The class is " + durationHour +c.getDuration().getMinute() + " minutes long." 
             };
          }
          if (situation == IN_BETWEEN) {
@@ -83,8 +85,6 @@ public class CurrentInfo extends JTextPane{
                   "You are in between classes."+newLn,
                   parentPanel.getParentPane().findNextClass().getName(),
                   " is next" + newLn +"in ",
-                  parentPanel.getParentPane().timeUntilNextClass().getHour24()+"",
-                  " hours and ",
                   ""+parentPanel.getParentPane().timeUntilNextClass().getMinute(),
                   " minutes."
                   
@@ -128,8 +128,6 @@ public class CurrentInfo extends JTextPane{
                   "regular",
                   "h1",
                   "regular",
-                  "h2",
-                  "regular", 
                   "h2",
                   "regular"
             };

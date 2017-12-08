@@ -60,6 +60,8 @@ public class SchedReader {
    public Schedule formatSchedule(Schedule in) {
       Schedule retval = assignLabClassRooms(setTimes(checkSpecialPeriods(in)));
       retval.init();
+      for (ClassPeriod c : retval.getClasses())
+         c.calculateDuration();
       return retval;
    }
    

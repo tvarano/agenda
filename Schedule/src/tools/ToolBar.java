@@ -1,4 +1,5 @@
 package tools;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -10,6 +11,7 @@ import javax.swing.JToolBar;
 
 import constants.Rotation;
 import display.DisplayMain;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -25,7 +27,6 @@ public class ToolBar extends JToolBar implements ActionListener
 
    public ToolBar(boolean inputting, JPanel parentPanel) {
       setParentPanel(parentPanel);
-      create(inputting);
       setInputting(inputting);
       setBorderPainted(false);
       setName("ToolBar");
@@ -40,6 +41,20 @@ public class ToolBar extends JToolBar implements ActionListener
       if (inputting)
          return createToolBarInput();
       return createToolBarDisplay();
+   }
+   
+   public void repaint() {
+      if (!inputting) {
+         DisplayMain dm = (DisplayMain)parentPanel;
+         if (dm != null && dm.getTodayR() != null) {
+            setHalf(dm.getTodayR().isHalf());
+            setDelayed(dm.getTodayR().isDelay());
+         }
+      }
+      for (Component b : getComponents()) {
+         b.repaint();
+      }
+      super.repaint();
    }
    
    private ToolBar createToolBarDisplay() {
