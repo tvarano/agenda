@@ -20,6 +20,7 @@ import information.Time;
 import ioFunctions.OrderUtility;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
+import ioFunctions.WebReader;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
@@ -37,6 +38,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private Schedule mainSched, todaySched;
    private Rotation todayR;
    private DayOfWeek today;
+   private WebReader web;
    private Time currentTime;
    private CurrentClassPane westPane;
    private ToolBar toolbar;
@@ -51,6 +53,7 @@ public class DisplayMain extends JPanel implements ActionListener
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
+      web = new WebReader();
       initTime();
       setLayout(new BorderLayout());
       initComponents();
@@ -72,7 +75,7 @@ public class DisplayMain extends JPanel implements ActionListener
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
-            todayR = Rotation.getRotation(today);
+            todayR = web.readTodayRotation();
          }
       } catch (Throwable e) { 
          e.printStackTrace();
@@ -162,13 +165,14 @@ public class DisplayMain extends JPanel implements ActionListener
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now());
-      if (currentTime.getHour24() == 0 && currentTime.getMinute() < 5)
+      if (currentTime.getHour24() == 0 && currentTime.getMinute() < 2)
             checkAndUpdateDate();
       westPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
       today = LocalDate.now().getDayOfWeek();
+      todayR = web.readTodayRotation();
    }
    
    public void pushTodaySchedule() {

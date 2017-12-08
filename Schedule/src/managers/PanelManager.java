@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import display.DisplayMain;
-import information.Schedule;
 import input.InputMain;
 
 //Thomas Varano

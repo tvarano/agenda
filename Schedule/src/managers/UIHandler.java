@@ -222,6 +222,27 @@ public final class UIHandler {
             }
          }
       });
+      mi = m.add(new MenuItem("Clear Preferences"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            if (checkIntentions("Clear Preferences.\nThis Requires a restart")) {
+               BufferedWriter bw;
+               try {
+                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+                  bw.write(themes[0]);
+                  bw.close();
+                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.LAF_ROUTE));
+                  bw.write(UIManager.getSystemLookAndFeelClassName());
+                  bw.close();
+                  Agenda.restart();
+               } catch (IOException e1) {
+                  ErrorID.showError(e1, true);
+               }
+            }
+         }
+         
+      });
       mi = m.add(new MenuItem("Restart"));
       mi.addActionListener(new ActionListener() {
          @Override
