@@ -1,5 +1,4 @@
 //Thomas Varano
-//[Program Descripion]
 //Dec 7, 2017
 
 package ioFunctions;
