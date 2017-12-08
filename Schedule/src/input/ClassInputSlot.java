@@ -35,6 +35,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
    private int slotNumber;
    private Container parentPanel;
    private JCheckBox labBox;
+   private String memo;
    private boolean hasParent, hasLab, removable, labFriendly, debug;
    private JTextField[] promptFields;
    
@@ -59,6 +60,8 @@ public class ClassInputSlot extends JPanel implements ActionListener
       }
       else
          this.parentPanel = parentPanel;
+      setMemo(c.getMemo());
+      if (debug) System.out.println(getName() + "INPUT SLOT CREATED WITH MEMO: "+memo);
       labFriendly = true;
       int amtFields = 3;
       promptFields = new JTextField[amtFields];
@@ -202,6 +205,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
          }
          ClassPeriod retval = new ClassPeriod(slotNumber, promptFields[0].getText(), promptFields[1].getText(), 
                promptFields[2].getText());
+         retval.setMemo(memo);
          if (debug)
             System.out.println("created:"+retval.getInfo());
          return retval;
@@ -243,6 +247,14 @@ public class ClassInputSlot extends JPanel implements ActionListener
       labFriendly = b;
       if (!labFriendly)
          remove(labBox);
+   }
+
+   public String getMemo() {
+      return memo;
+   }
+
+   public void setMemo(String memo) {
+      this.memo = memo;
    }
 
    @Override

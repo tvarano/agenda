@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+
 import constants.Rotation;
 import constants.RotationConstants;
 import display.DisplayMain;
@@ -21,7 +22,7 @@ public class RotationButton extends JButton implements ActionListener
    public static final String TODAY_R = "~currentRotation$";
    private Rotation r;
    private JPanel parentPanel;
-   private boolean debug;
+   private boolean debug, overridingPower;
    
    /**
     * @param text
@@ -33,13 +34,14 @@ public class RotationButton extends JButton implements ActionListener
       setParentPanel(parentPanel);
       setBorderPainted(false);
       setFocusable(false);
-      setOpaque(false);
+//      setOpaque(false);
       setFont(UIHandler.getButtonFont());
       setForeground(UIHandler.foreground);
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       addMouseListener(UIHandler.buttonPaintListener(this));
       addActionListener(this);
       if (text == TODAY_R) {
+         overridingPower = true;
          if (debug) System.out.println(text+" button parent:"+parentPanel);
          if (parentPanel instanceof DisplayMain) {
             setText(" Today's Rotation ");
@@ -75,6 +77,10 @@ public class RotationButton extends JButton implements ActionListener
             return;
          if (getParent() instanceof ToolBar) {
             parentBar = (ToolBar)getParent();
+            if (overridingPower) {
+               parentBar.setHalf(r.isHalf());
+               parentBar.setDelayed(r.isDelay());
+            }
             if (parentBar.isDelayed())
                parentPane.setTodayR(RotationConstants.toDelay(r));
             else if (parentBar.isHalf())
@@ -82,6 +88,7 @@ public class RotationButton extends JButton implements ActionListener
             else {
                parentPane.setTodayR(r);
             }
+            parentBar.repaint();
             if (debug)  System.out.println("set rotation to + "+r);
          }
       }

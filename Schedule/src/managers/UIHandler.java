@@ -211,7 +211,7 @@ public final class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
-      MenuItem mi = m.add(new MenuItem("Reset Schedule"));
+      MenuItem mi = m.add(new MenuItem("Clear Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
@@ -221,6 +221,27 @@ public final class UIHandler {
                Agenda.restart();
             }
          }
+      });
+      mi = m.add(new MenuItem("Clear Preferences"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            if (checkIntentions("Clear Preferences.\nThis Requires a restart")) {
+               BufferedWriter bw;
+               try {
+                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+                  bw.write(themes[0]);
+                  bw.close();
+                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.LAF_ROUTE));
+                  bw.write(UIManager.getSystemLookAndFeelClassName());
+                  bw.close();
+                  Agenda.restart();
+               } catch (IOException e1) {
+                  ErrorID.showError(e1, true);
+               }
+            }
+         }
+         
       });
       mi = m.add(new MenuItem("Restart"));
       mi.addActionListener(new ActionListener() {
@@ -360,9 +381,9 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             SchedReader.transfer("Installation Instructions.txt", 
-                  new File(System.getProperty("user.home") + "/Desktop/Installation Instructions.txt"));
+                  new File(System.getProperty("user.home") + "/Desktop/README.txt"));
             JOptionPane.showMessageDialog(null, 
-                  "Installation instructions have been created on your desktop.",
+                  "Installation instructions (README.txt) have been created on your desktop.",
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
@@ -590,6 +611,7 @@ public final class UIHandler {
       return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 2),
             title, justification, position, font, titleColor);
 	}
+	
 	
 	public static Color getScrollColor() {
 	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);

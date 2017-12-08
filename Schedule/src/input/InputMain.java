@@ -34,6 +34,7 @@ public class InputMain extends JPanel
    private ArrayList<Lab> labs;
    private ArrayList<ClassInputSlot> slots;
    private JPanel center;
+   private ClassPeriod lunch;
    private PanelManager parentManager;
    private boolean hasZeroPeriod, hasManager, error, debug, saved;
    private int amtClasses;
@@ -76,6 +77,7 @@ public class InputMain extends JPanel
          initSlots(s.getClasses(), s.getLabs());
       else
          initSlots(s.getClasses());
+      setLunch(s.get(RotationConstants.LUNCH));
       addPascack(s.getPascackPreferences());
       add(center, BorderLayout.CENTER);
       add(createBottomPanel(), BorderLayout.SOUTH);
@@ -276,26 +278,31 @@ public class InputMain extends JPanel
             classes[classIndex] = ((ClassInputSlot) c[i]).createClass();
             
             if (classes[classIndex].getSlot() == 4) {
-               if (debug)
-                  System.out.println("filling lunch");
+               if (debug) System.out.println("filling lunch");
                classIndex++;
-               classes[classIndex] = Rotation.R1.get("Lunch");
+               if (lunch == null) {
+                  classes[classIndex] = Rotation.R1.get("Lunch");
+               }
+               else {
+                  classes[classIndex] = lunch;
+               }
             }
             classIndex++;
          }
       }
-      
       
       // just to print
       if (debug) {
          for (int i = 0; i < classes.length; i++) 
             System.out.println("clInput " +i+":" + classes[i]);
       }
+      
       // write
       Schedule s = new Schedule(classes, labs.toArray(new Lab[labs.size()]));
       s.setPascackPreferences(pascack.createClass());
       writer.write(s);
       if (debug) System.out.println("wrote" + s);
+      if (Agenda.statusU) Agenda.log("saved input");
       saved = true;
    }
    
@@ -308,6 +315,7 @@ public class InputMain extends JPanel
       }
       else 
          ((JFrame)getParent().getParent().getParent().getParent()).dispose();
+      if (Agenda.statusU) Agenda.log("closed input");
    }
    
    public void saveAndClose() {
@@ -334,5 +342,13 @@ public class InputMain extends JPanel
       this.beginningSchedule = s;
       center.removeAll();
       init(s);
+   }
+
+   public ClassPeriod getLunch() {
+      return lunch;
+   }
+
+   public void setLunch(ClassPeriod lunch) {
+      this.lunch = lunch;
    }
 }

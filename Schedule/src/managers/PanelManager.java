@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import display.DisplayMain;
-import information.Schedule;
 import input.InputMain;
 
 //Thomas Varano
@@ -44,16 +43,20 @@ public class PanelManager
       return bar;
    }
    
+   public DisplayMain getDisplay() {
+      return display;
+   }
+   
    public Menu getTimeMenu() {
       System.out.println("BAR"+bar);
       return bar.getMenu(0);
    }
    
-   public void startInput(Schedule s) {
+   public void startInput() {
       if (inputting == true)
          return;
       display.stop();
-      input.setBeginningSchedule(s);
+      input.setBeginningSchedule(display.getMainSched());
       setCurrentPane(true);
    }
    
@@ -61,8 +64,9 @@ public class PanelManager
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (inputting)
-               startInput(display.getMainSched());
+            if (Agenda.statusU) Agenda.log("view changed. inputting = "+inputting);
+            if (inputting) 
+               startInput();
             else
                finishInputting();
          }

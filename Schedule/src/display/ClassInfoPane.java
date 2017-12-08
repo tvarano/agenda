@@ -36,9 +36,9 @@ public class ClassInfoPane extends JTextPane
    private void createClassDetailPane() {
       if (debug) System.out.println(getName() + "Parent"+getParent());
       if (c == null) {
-         if (getParent() instanceof CurrentClassPane) {
-            if (((CurrentClassPane) getParent()).isInSchool())
-               setText("In Between Classes. \nNext Class is:\n"+((CurrentClassPane) getParent()).findNextClass());
+         if (getParent() instanceof NorthernCurrentClassPane) {
+            if (((NorthernCurrentClassPane) getParent()).isInSchool())
+               setText("In Between Classes. \nNext Class is:\n"+((NorthernCurrentClassPane) getParent()).findNextClass());
             else
                setText("Not in school");
          }
@@ -50,12 +50,12 @@ public class ClassInfoPane extends JTextPane
       String newLine = "\n";
       String tab = (thinConstraints) ?"     ":"";
       if (debug) System.out.println(c);
-      
+      String hour = (c.getDuration().getHour24() > 0) ? c.getDuration().getHour24()+" hour, " : "";
       String teacher = (thinConstraints) ? "Teacher: " + c.getTrimmedTeacher() + newLine 
             : "Teacher: " + c.getTrimmedTeacher() + newLine;
       String classLength = (thinConstraints) ? 
-            "Class Length:"+ newLine +c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes" : 
-               "Class Length: "+c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes";
+            "Class Length:"+ newLine +hour+c.getDuration().getMinute()+" minutes" : 
+               "Class Length: "+hour+c.getDuration().getMinute()+" minutes";
       String times = c.getStartTime() + " - " + c.getEndTime();
       
       if (showNames) {
@@ -99,7 +99,6 @@ public class ClassInfoPane extends JTextPane
    }
    
    private void initStyles(StyledDocument doc) {
-      if (Agenda.statusU) Agenda.log("STYLES CREATED info 83");
       Style def = StyleContext.getDefaultStyleContext().
             getStyle(StyleContext.DEFAULT_STYLE);
       

@@ -1,4 +1,6 @@
 package constants;
+import java.util.ArrayList;
+
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
@@ -36,6 +38,21 @@ public final class RotationConstants
       return new Schedule(Rotation.R1.getTimes(), Lab.LAB1);
    }
    
+   public static Schedule getAllClasses(Schedule s) {
+      Schedule retval = new Schedule();
+      retval.setName(s.getName() + "(all Classes)");
+      ArrayList<ClassPeriod> classes = new ArrayList<ClassPeriod>();
+      if (s.indexOf(0) >= 0)
+         classes.add(PERIOD_ZERO);
+      for (ClassPeriod c : Rotation.R1.getTimes())
+         classes.add(c);
+      if (s.indexOf(8) >= 0)
+         classes.add(PERIOD_EIGHT);
+      classes.add(PASCACK_PERIOD);
+      retval.setClasses(classes.toArray(new ClassPeriod[classes.size()]));
+      return retval;
+   }
+   
    public static Schedule getNamelessRotation(Schedule s, Rotation r) {
       Schedule retval = new Schedule();
       retval.setName(s.getName()+" (nameless Clone)");
@@ -71,6 +88,7 @@ public final class RotationConstants
          case R1 : return Rotation.HALF_R1;
          case R3 : return Rotation.HALF_R3;
          case R4 : return Rotation.HALF_R4;
+         case HALF_R1 : case HALF_R3 : case HALF_R4 : return r;
          default : ErrorID.showUserError(ErrorID.HALF_BLOCK_SELECTED); 
             return Rotation.HALF_R1;
       }

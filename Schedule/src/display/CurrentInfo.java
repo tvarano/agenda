@@ -1,5 +1,6 @@
 package display;
 import java.awt.Color;
+import java.time.LocalTime;
 
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -10,6 +11,7 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import information.ClassPeriod;
+import information.Time;
 import managers.UIHandler;
 
 public class CurrentInfo extends JTextPane{
@@ -62,15 +64,20 @@ public class CurrentInfo extends JTextPane{
       public String[] getTextInput() {
          String newLn = "\n";
          if (situation == IN_CLASS) {
+            boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
+            String durationHour = (hour) ? c.getDuration().getHour12()+ " hour, " : "";
             return new String[] {
                   "You are in"+newLn,
                   c+newLn,
                   "For ",
-                  parentPanel.getTimeLeft().getHour24()+"",
-                  " hours and ",
+                  (hour) ? parentPanel.getTimeLeft().getHour24()+"" : "",
+                  (hour) ? " hour and " : "",
                   parentPanel.getTimeLeft().getMinute()+"",
                   " minutes"+newLn,
-                  "In "+c.getRoomNumber()
+                  "In "+c.getRoomNumber()+newLn,
+                  newLn,
+                  c.getStartTime() + " - " + c.getEndTime()+"."+newLn,
+                  "The class is " + durationHour +c.getDuration().getMinute() + " minutes long." 
             };
          }
          if (situation == IN_BETWEEN) {
@@ -78,8 +85,6 @@ public class CurrentInfo extends JTextPane{
                   "You are in between classes."+newLn,
                   parentPanel.getParentPane().findNextClass().getName(),
                   " is next" + newLn +"in ",
-                  parentPanel.getParentPane().timeUntilNextClass().getHour24()+"",
-                  " hours and ",
                   ""+parentPanel.getParentPane().timeUntilNextClass().getMinute(),
                   " minutes."
                   
@@ -88,6 +93,10 @@ public class CurrentInfo extends JTextPane{
          if (situation == NOT_IN_SCHOOL) {
             return new String[] {
                   "You are not in school."+newLn,
+                  "School starts in ",
+                  new Time(LocalTime.now()).getTimeUntil(
+                        parentPanel.getParentPane().getSched().getSchoolDay().getStartTime())
+                  .durationString()+newLn,
                   "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
                         "email me at varanoth@pascack.org"
             };
@@ -108,7 +117,10 @@ public class CurrentInfo extends JTextPane{
                   "regular",
                   "h2",
                   "regular",
-                  "h3"
+                  "h3",
+                  "formatting",
+                  "bold",
+                  "regular"
             };
          }
          if (situation == IN_BETWEEN)
@@ -117,12 +129,12 @@ public class CurrentInfo extends JTextPane{
                   "h1",
                   "regular",
                   "h2",
-                  "regular", 
-                  "h2",
                   "regular"
             };
          if (situation == NOT_IN_SCHOOL) {
             return new String[] {
+                  "h2",
+                  "regular",
                   "h2",
                   "regular"
             };
@@ -177,6 +189,9 @@ public class CurrentInfo extends JTextPane{
          
          s = doc.addStyle("bold", regular);
          StyleConstants.setBold(s, true);
+         
+         s = doc.addStyle("formatting", regular);
+         StyleConstants.setFontSize(s, 8);
          
          s = doc.addStyle("error", doc.getStyle("h1"));
          StyleConstants.setForeground(s, Color.RED);

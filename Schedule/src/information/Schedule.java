@@ -60,6 +60,7 @@ public class Schedule implements Serializable
    public void init() {
       debug = false;
       pascackPreferences.setName("Pascack Pd");
+      pascackPreferences.setSlot(RotationConstants.PASCACK);
       setShowName(true);
       calculateSchoolDay();
       if (name == null)
@@ -97,10 +98,6 @@ public class Schedule implements Serializable
       retval.setPascackPreferences(pascackPreferences);
       return retval;
    }
-   
-//   public Schedule clone() {
-//     return clone(true);
-//   }
    
    public void setData(Schedule s) {
       setClasses(s.getClasses());

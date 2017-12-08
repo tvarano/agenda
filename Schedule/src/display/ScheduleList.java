@@ -113,6 +113,10 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
       setFocusable(selectable);
    }
    
+   public String toString() {
+      return getClass().getName() + "[" + getName() + " size = " + getSize() + "]";
+   }
+   
    @Override
    public void valueChanged(ListSelectionEvent e) {
       if (debug) {

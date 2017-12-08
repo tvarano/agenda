@@ -37,13 +37,13 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.4.3 ß";
+   public static final String BUILD = "v1.5.6 ß";
    public static final int MIN_W = 733, MIN_H = 313;
    public static final int PREF_W = MIN_W, PREF_H = 460;
-   private static PanelManager manager;
+   private PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
-   public static boolean statusU, inEclipse, running;
+   public static boolean statusU, inEclipse;
    public static Runnable mainThread;
    public static URI sourceCode;
    
@@ -54,7 +54,13 @@ public class Agenda extends JPanel
       UIHandler.init();
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(false);
-      running = true;
+      parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+         @Override
+         public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            manager.getDisplay().writeMain();
+            System.exit(0);
+         }
+      });
    }
    
    /**
@@ -68,27 +74,20 @@ public class Agenda extends JPanel
          ErrorID.showError(e2, true);
       }
       boolean logData = true;
-      
+
       FileHandler.ensureRouteFile();
-      
-      //if folder location is unassigned, assign it
-         String mainFolder = null;
-         //if fileRoute doesn't exist...
-         try {
-            if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine())
-               FileHandler.setFileLocation();
-         } catch (Exception e1) {
-            ErrorID.showError(e1, false);
+
+      // if fileRoute doesn't exist...
+      try {
+         if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine()) {
+            FileHandler.writeFileLocation(System.getProperty("user.home") + "/Documents");
+            FileHandler.setFileLocation();
          }
-         //read file and set
-         mainFolder = FileHandler.readFileLocation();
-         FileHandler.initFileNames(mainFolder);
-         
-      //ensure the user is correct
-      FileHandler.checkAndFormatUser();
-      
-      //if you need, create your folder and initialize routes
-      FileHandler.createFiles();
+      } catch (Exception e1) {
+         ErrorID.showError(e1, false);
+      }
+      //check parameters, draw routes, create files if needed 
+      FileHandler.initAndCreateFiles();
 
       if (logData) {
          try {
@@ -132,6 +131,18 @@ public class Agenda extends JPanel
          }
       }     
       
+      public static void initAndCreateFiles() {
+      // read file and set
+         String mainFolder = readFileLocation();
+         initFileNames(mainFolder);
+
+         // ensure the user is correct
+         checkAndFormatUser();
+         
+         //if you need, create your folder and initialize routes
+         createFiles();
+      }
+      
       public static void openDesktopFile(String path) {
          if (Desktop.isDesktopSupported()) {
             try {
@@ -167,12 +178,9 @@ public class Agenda extends JPanel
        * @return true if and only if the function goes through cleanly.
        */
       public static boolean setFileLocation() {
-         ResourceAccess.getFolderLocationFile().setWritable(true);
          String fileLocation = askFileLocation();
          if (fileLocation.equals(NO_LOCATION)) {
-            ResourceAccess.getFolderLocationFile().setWritable(false);
-            if (running) return false;
-            System.exit(0);
+            return false;
          }
          writeFileLocation(fileLocation);
          initFileNames(readFileLocation());
@@ -183,28 +191,31 @@ public class Agenda extends JPanel
       public static String askFileLocation() {
          JFileChooser c = new JFileChooser(System.getProperty("user.home"));
          c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-         c.setDialogTitle("Choose The Location for Internal Files");
+         c.setDialogTitle("Choose The Location for Internal Files (Default to Documents)");
          int choice;
          do {
            choice = c.showSaveDialog(null);
          } while (choice != JFileChooser.APPROVE_OPTION && choice != JFileChooser.CANCEL_OPTION);
          if (choice == JFileChooser.CANCEL_OPTION) {
-            if (running) {
-               return NO_LOCATION;
-            }
-            System.exit(0);
+            return NO_LOCATION;
          }
          return c.getSelectedFile().getAbsolutePath();
       }
       
       public static String writeFileLocation(String s) {
+         if (s.equals(NO_LOCATION))
+            return NO_LOCATION;
+         ResourceAccess.getFolderLocationFile().setWritable(true);
          try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(ResourceAccess.getFolderLocationFile()));
+            File folderLocationFile = ResourceAccess.getFolderLocationFile();
+            folderLocationFile.setExecutable(true);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(folderLocationFile));
             bw.write(s);
             bw.close();
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
+         ResourceAccess.getFolderLocationFile().setWritable(false);
          return s;
       }
 
@@ -283,7 +294,7 @@ public class Agenda extends JPanel
    }
    
    public static void logError(String s, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: "+s);
+      System.err.println(LocalTime.now() + " : ERROR: " + s + " : " + e.getMessage());
    }
    
    public Dimension getMinimumSize() {
@@ -299,7 +310,7 @@ public class Agenda extends JPanel
       int frameToPaneAdjustment = 22;
       bar = UIHandler.configureMenuBar(parentFrame);
       parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-      parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       parentFrame.setVisible(true);
       parentFrame.setLocationRelativeTo(null);
       Agenda main = new Agenda();
@@ -420,16 +431,6 @@ public class Agenda extends JPanel
      }
      if (statusU) log("restarting...");
      System.exit(0);
-   }
-   
-   public static void close() {
-      parentFrame.dispose();
-      manager.dispose();
-      bar = null;
-   }
-   
-   public static void openFresh() {
-      main(null);
    }
 
    public static void main(String[] args) {

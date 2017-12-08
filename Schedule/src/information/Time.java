@@ -1,5 +1,6 @@
 package information;
 import java.io.Serializable;
+import java.time.LocalTime;
 
 //Thomas Varano
 //Aug 31, 2017
@@ -31,6 +32,11 @@ public class Time implements Comparable<Time>, Serializable
       hour24 %= HOUR_IN_DAY;
       minute %= MIN_IN_HOUR;
       this.setHour24(hour24); this.setMinute(minute);
+      am = hour24 < 12;
+   }
+   
+   public Time(LocalTime lt) {
+      setHour24(lt.getHour()); setMinute(lt.getMinute());
       am = hour24 < 12;
    }
    
@@ -79,6 +85,10 @@ public class Time implements Comparable<Time>, Serializable
    public String toString() {
       String amString = (am) ? "AM" : "PM";
       return timeString() + " " + amString;
+   }
+   
+   public String durationString() {
+      return getHour12() + " hr, " + getMinute() + "min";
    }
    
    public String timeString() {

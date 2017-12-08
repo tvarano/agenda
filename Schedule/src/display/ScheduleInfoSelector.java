@@ -11,6 +11,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import constants.ErrorID;
 import constants.Rotation;
 import constants.RotationConstants;
 import information.Schedule;
@@ -74,21 +75,27 @@ public class ScheduleInfoSelector extends JPanel
    
    public void updatePeriod() {
       if (debug) System.out.println(getName()+":update");
-      if (scheduleTabs.getSelectedComponent() instanceof ScheduleList) {
-         ScheduleList selected = (ScheduleList) scheduleTabs.getSelectedComponent();
-         info.setShowNames(selected.isShowNames());
-         info.setClassPeriod(selected.getSelectedValue());
-      }
+      ScheduleList selected = null;
+      if (scheduleTabs.getSelectedComponent() instanceof ScheduleList) 
+         selected = (ScheduleList) scheduleTabs.getSelectedComponent();
          
-      else if (scheduleTabs.getSelectedComponent() instanceof JScrollPane) {
-         ScheduleList selected = (ScheduleList) ((JScrollPane)scheduleTabs.getSelectedComponent())
+      else if (scheduleTabs.getSelectedComponent() instanceof JScrollPane)
+         selected = (ScheduleList) ((JScrollPane)scheduleTabs.getSelectedComponent())
                .getViewport().getView();
-         info.setShowNames(selected.isShowNames());
-         info.setClassPeriod(selected.getSelectedValue());
+      else {
+         ErrorID.showError(new NullPointerException("Cast incorrect for update in ScheduleInfo"), true);
+         if (debug) System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
+         return;
       }
-      
+      information.ClassPeriod selectVal = selected.getSelectedValue();
+      if (Agenda.statusU) Agenda.log("class selection changed to: "+selectVal);
+      info.setShowNames(selected.isShowNames());
+      info.setClassPeriod(selectVal);
+      if (selectVal == null)
+         parentPane.setMemoClass(-1);
       else
-         System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
+         parentPane.setMemoClass(selected.getSelectedValue().getSlot());
+
       String infoTitle = (info.getClassPeriod() == null) ? "Select Class For Info"
             : info.getClassPeriod().getTrimmedName() + " Info";
       ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));
@@ -115,7 +122,16 @@ public class ScheduleInfoSelector extends JPanel
       scroll = new JScrollPane(todayNameless); scroll.setName(todayNameless.getName());
       scroll.setBackground(todayNameless.getBackground());
       retval.addTab(scroll.getName(), null, scroll, "Rotation for Today");
-      retval.setMnemonicAt(1, KeyEvent.VK_3);
+      retval.setMnemonicAt(2, KeyEvent.VK_3);
+      
+      ScheduleList allC = new ScheduleList(RotationConstants.getAllClasses(mainSched), false);
+      allC.setParentPane(this);
+      scroll = new JScrollPane(allC);
+      scroll.setName("All Classes");
+      scroll.setBackground(todayNameless.getBackground());
+      retval.addTab(scroll.getName(), null, scroll, "All Classes");
+      retval.setMnemonicAt(3, KeyEvent.VK_4);
+      
       
       retval.setBackground(UIHandler.background);
       retval.setFont(UIHandler.getTabFont());
