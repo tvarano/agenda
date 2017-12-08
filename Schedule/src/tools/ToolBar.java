@@ -26,6 +26,7 @@ public class ToolBar extends JToolBar implements ActionListener
    public ToolBar(boolean inputting, JPanel parentPanel) {
       setParentPanel(parentPanel);
       create(inputting);
+      setInputting(inputting);
       setBorderPainted(false);
       setName("ToolBar");
       setBackground(UIHandler.tertiary);
@@ -74,16 +75,6 @@ public class ToolBar extends JToolBar implements ActionListener
       removeAll();
       add(new AddButton(0, parentPanel));
       add(new AddButton(8, parentPanel));
-      //TODO remove sizeCheck
-//      JButton add = (JButton) add(new JButton("sizeCheck"));
-//      add.addActionListener(new ActionListener() {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//            System.out.println(parentPanel.getWidth()+","+parentPanel.getHeight());
-//         }
-//         
-//      });
-//      this.setAlignmentX(JToolBar.LEFT_ALIGNMENT);
       return this;
    }
 

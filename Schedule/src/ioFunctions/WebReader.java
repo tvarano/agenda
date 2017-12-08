@@ -22,7 +22,11 @@ public class WebReader
    private ArrayList<String> events, dates;
 
    public WebReader() {
-      if (Agenda.statusU) Agenda.log("website reading process begun");
+      init();
+   }
+   
+   public void init() {
+      if (Agenda.statusU) Agenda.log("website reader initialized");
       try {
          rotationDataSite = new URL("https://sites.google.com/pascack.k12.nj.us/agenda/home");
       } catch (MalformedURLException e) {
@@ -84,6 +88,7 @@ public class WebReader
                      RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
          }
       }
+      if (Agenda.statusU) Agenda.log("rotation read from day, not internet");
       return Rotation.getRotation(LocalDate.now().getDayOfWeek());
    }
   
