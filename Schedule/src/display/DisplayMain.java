@@ -49,7 +49,7 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = true;
+      testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);

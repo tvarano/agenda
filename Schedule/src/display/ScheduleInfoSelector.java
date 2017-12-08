@@ -75,7 +75,6 @@ public class ScheduleInfoSelector extends JPanel
    
    public void updatePeriod() {
       if (debug) System.out.println(getName()+":update");
-      if (Agenda.statusU) Agenda.log("class selection changed");
       ScheduleList selected = null;
       if (scheduleTabs.getSelectedComponent() instanceof ScheduleList) 
          selected = (ScheduleList) scheduleTabs.getSelectedComponent();
@@ -89,6 +88,7 @@ public class ScheduleInfoSelector extends JPanel
          return;
       }
       information.ClassPeriod selectVal = selected.getSelectedValue();
+      if (Agenda.statusU) Agenda.log("class selection changed to: "+selectVal);
       info.setShowNames(selected.isShowNames());
       info.setClassPeriod(selectVal);
       if (selectVal == null)

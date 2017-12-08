@@ -43,7 +43,7 @@ public class Agenda extends JPanel
    private PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
-   public static boolean statusU, inEclipse, running;
+   public static boolean statusU, inEclipse;
    public static Runnable mainThread;
    public static URI sourceCode;
    
@@ -61,7 +61,6 @@ public class Agenda extends JPanel
             System.exit(0);
          }
       });
-      running = true;
    }
    
    /**
@@ -74,14 +73,16 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = false;
+      boolean logData = true;
 
       FileHandler.ensureRouteFile();
 
       // if fileRoute doesn't exist...
       try {
-         if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine())
+         if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine()) {
+            FileHandler.writeFileLocation(System.getProperty("user.home") + "/Documents");
             FileHandler.setFileLocation();
+         }
       } catch (Exception e1) {
          ErrorID.showError(e1, false);
       }
@@ -177,12 +178,9 @@ public class Agenda extends JPanel
        * @return true if and only if the function goes through cleanly.
        */
       public static boolean setFileLocation() {
-         ResourceAccess.getFolderLocationFile().setWritable(true);
          String fileLocation = askFileLocation();
          if (fileLocation.equals(NO_LOCATION)) {
-            ResourceAccess.getFolderLocationFile().setWritable(false);
-            if (running) return false;
-            System.exit(0);
+            return false;
          }
          writeFileLocation(fileLocation);
          initFileNames(readFileLocation());
@@ -193,28 +191,31 @@ public class Agenda extends JPanel
       public static String askFileLocation() {
          JFileChooser c = new JFileChooser(System.getProperty("user.home"));
          c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-         c.setDialogTitle("Choose The Location for Internal Files");
+         c.setDialogTitle("Choose The Location for Internal Files (Default to Documents)");
          int choice;
          do {
            choice = c.showSaveDialog(null);
          } while (choice != JFileChooser.APPROVE_OPTION && choice != JFileChooser.CANCEL_OPTION);
          if (choice == JFileChooser.CANCEL_OPTION) {
-            if (running) {
-               return NO_LOCATION;
-            }
-            System.exit(0);
+            return NO_LOCATION;
          }
          return c.getSelectedFile().getAbsolutePath();
       }
       
       public static String writeFileLocation(String s) {
+         if (s.equals(NO_LOCATION))
+            return NO_LOCATION;
+         ResourceAccess.getFolderLocationFile().setWritable(true);
          try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(ResourceAccess.getFolderLocationFile()));
+            File folderLocationFile = ResourceAccess.getFolderLocationFile();
+            folderLocationFile.setExecutable(true);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(folderLocationFile));
             bw.write(s);
             bw.close();
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
+         ResourceAccess.getFolderLocationFile().setWritable(false);
          return s;
       }
 
