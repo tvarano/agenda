@@ -37,7 +37,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.5.7 ß";
+   public static final String BUILD = "v1.6.1 ß";
    public static final int MIN_W = 733, MIN_H = 360;
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
