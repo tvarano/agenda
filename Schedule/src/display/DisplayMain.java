@@ -175,7 +175,8 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public void checkAndUpdateDate() {
       today = LocalDate.now().getDayOfWeek();
-      todayR = web.readTodayRotation();
+      web.init();
+      setTodayR(web.readTodayRotation());
    }
    
    public void pushTodaySchedule() {
