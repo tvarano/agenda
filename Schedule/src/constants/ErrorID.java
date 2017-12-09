@@ -83,12 +83,15 @@ public enum ErrorID {
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
          String prompt = "Go to" + newLn + Agenda.FileHandler.LOG_ROUTE + "\nFor your log data.";
          String text = "Details:\n" + message + newLn + importantText + prompt;
-         JOptionPane.showOptionDialog(null,
+         int choice2 = JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
-               null, (copy) ? new String[]{"Copy & Close", "Close"} : new String[] {"Close"}, "Close");
-         if (choice == 0 && copy) {
+               null, (copy) ? new String[]{"Copy & Close", "Copy & Contact", "Close"} : new String[] {"Close"}, "Close");
+         if (choice2 == 0 && copy) {
             ErrorCopier.copy(ID, e);
+         } else if (choice2 == 1) {
+            ErrorCopier.copy(ID, e);
+            Agenda.FileHandler.sendEmail();
          }
       }
    }
@@ -206,5 +209,6 @@ public enum ErrorID {
    
    public static void main(String[] args) {
       System.out.println(ErrorID.getError("7530"));
+      ErrorID.showError(new Exception(), true);
    }
 }
