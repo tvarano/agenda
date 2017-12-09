@@ -18,6 +18,7 @@ public class OrderUtility
       if (debug) System.out.println("ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);
+      s.calculateSchoolDay();
       s.setPascackData();
       return s;
    }

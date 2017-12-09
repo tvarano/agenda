@@ -74,7 +74,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureRouteFile();
 

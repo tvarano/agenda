@@ -38,9 +38,9 @@ public class DisplayMain extends JPanel implements ActionListener
    private DayOfWeek today;
    private WebReader web;
    private Time currentTime;
-   private CurrentClassPane westPane;
+   private CurrentClassPane currentClassPane;
    private ToolBar toolbar;
-   private ScheduleInfoSelector eastPane;
+   private ScheduleInfoSelector infoSelector;
    private boolean updating, showDisp, inSchool;
    private boolean debug, testSituation;
    private Timer timer;
@@ -69,7 +69,8 @@ public class DisplayMain extends JPanel implements ActionListener
          if (testSituation) {
             currentTime = new Time(10,50);
             today = DayOfWeek.MONDAY;
-            todayR = Rotation.getRotation(today);         
+            todayR = Rotation.getRotation(today); 
+            
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
@@ -90,18 +91,19 @@ public class DisplayMain extends JPanel implements ActionListener
       todaySched.setLunchLab(todayR); 
 
       if (debug) System.out.println("TODAY SCHED = "+todaySched);
-      eastPane = new ScheduleInfoSelector(todaySched, mainSched, this);
+      infoSelector = new ScheduleInfoSelector(todaySched, mainSched, this);
 
-      westPane = new CurrentClassPane(new ClassPeriod(), todaySched, this);
+      currentClassPane = new CurrentClassPane(new ClassPeriod(), todaySched, this);
       toolbar = new ToolBar(false, this);
       checkAndUpdateTime();
-      westPane.setClassPeriod(findCurrentClass());
+      currentClassPane.setClassPeriod(findCurrentClass());
+      pushTodaySchedule();
    }
    
    private void addComponents() {
       add(toolbar, BorderLayout.NORTH);
-      add(eastPane, BorderLayout.SOUTH);
-      add(westPane, BorderLayout.CENTER);
+      add(infoSelector, BorderLayout.SOUTH);
+      add(currentClassPane, BorderLayout.CENTER);
    }
    
    public void hardStop() {
@@ -119,7 +121,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void stop() {
-      eastPane.getMemo().save();
+      infoSelector.getMemo().save();
       writeMain();
       showDisp = false;
    }
@@ -146,14 +148,17 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public static void setBarTime(Time timeLeft) {
       String begin = "Time Left In Class: "; 
-      setBarText(begin + timeLeft.timeString());
+      setBarText(begin + timeLeft.durationString());
    }
    
    public void configureBarTime(ClassPeriod c) {
-      if (c != null) 
+      if (c != null) {
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
+         if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+            setBarText("No School");
+      }
        else if (checkInSchool())
-         setBarText("Next Class In: " + timeUntilNextClass().timeString());
+         setBarText("Next Class In: " + timeUntilNextClass().durationString());
        else 
           setBarText("Not In School");
    }
@@ -165,7 +170,7 @@ public class DisplayMain extends JPanel implements ActionListener
          currentTime = new Time(LocalTime.now());
       if (currentTime.getHour24() == 0 && currentTime.getMinute() < 2)
             checkAndUpdateDate();
-      westPane.pushCurrentTime(currentTime);
+      currentClassPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
@@ -174,8 +179,8 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void pushTodaySchedule() {
-      westPane.pushTodaySchedule(todaySched);
-      eastPane.pushTodaySchedule(todaySched);
+      currentClassPane.pushTodaySchedule(todaySched);
+      infoSelector.pushTodaySchedule(todaySched);
    }
    
    /**
@@ -225,7 +230,7 @@ public class DisplayMain extends JPanel implements ActionListener
             if (debug) System.out.println("today's Lab info: "+l.getTimeAtLab().getInfo());
             if (l.getTimeAtLab().contains(currentTime)) {
                if (debug) System.out.println("DISPLAY SHOULD BE PRINTING LAB");
-               westPane.pushClassPeriod(l.getTimeAtLab());
+               currentClassPane.pushClassPeriod(l.getTimeAtLab());
                return l.getTimeAtLab();
             }
          }
@@ -236,12 +241,12 @@ public class DisplayMain extends JPanel implements ActionListener
          if (debug) System.out.println("display searching "+ c +"for time");
          if (c.contains(currentTime)) {
             if (debug) System.out.println("display pushing "+c.getInfo());
-            if (!c.equals(westPane.getClassPeriod()))
-               westPane.pushClassPeriod(c);
+            if (!c.equals(currentClassPane.getClassPeriod()))
+               currentClassPane.pushClassPeriod(c);
             return c;
          }
       }
-      westPane.pushClassPeriod(null);
+      currentClassPane.pushClassPeriod(null);
       return null;
    }
       
@@ -252,7 +257,7 @@ public class DisplayMain extends JPanel implements ActionListener
       configureBarTime(current);
       
       if (showDisp) {
-         westPane.update();
+         currentClassPane.update();
          repaint();
       }
       setUpdating(false);
