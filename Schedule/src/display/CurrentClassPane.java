@@ -1,9 +1,11 @@
 package display;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.time.LocalTime;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import information.ClassPeriod;
 import information.Schedule;
@@ -20,8 +22,9 @@ public class CurrentClassPane extends JPanel
    private ClassInfoPane info;
    private DisplayMain parentPane;
    private Time currentTime;
-   private NorthernCurrentClassPane northPane;
-   private SouthernCurrentClassPane southPane;
+   private PrimaryCurrentClassPane northPane;
+//   private SecondaryCurrentClassPane southPane;
+   private ScheduleList westList;
    private ClassPeriod classPeriod;
    private Schedule sched;
    private boolean inSchool; 
@@ -38,16 +41,47 @@ public class CurrentClassPane extends JPanel
          System.out.println("classPane class:"+c);
          System.out.println("classPane sched:"+getSched());
       }
-      setLayout(new GridLayout(2,1));
-      northPane = new NorthernCurrentClassPane(c, this);
-      southPane = new SouthernCurrentClassPane(c, s, this);
+//      setLayout(new GridLayout(1,2));
+      setLayout(new BorderLayout());
+      
+      
+      westList = new ScheduleList(s, true);
+      westList.setName("southPane todayList");
+      westList.setParentPane(this);
+      westList.setSelectedValue(s.get(c.getSlot()), true); 
+      westList.setToolTipText("Today's Schedule With Your Current Class");
+      westList.setSelectable(false);
+      
+      JScrollPane scroll = new JScrollPane(westList);
+      scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
+      scroll.setToolTipText(westList.getToolTipText());
+      scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+      scroll.setOpaque(false);
+      scroll.setSize(320, getHeight());
+      
+      
+      
+      northPane = new PrimaryCurrentClassPane(c, this);
+//      southPane = new SecondaryCurrentClassPane(c, s, this);
       add(northPane);
-      add(southPane);
+//      add(southPane, BorderLayout.EAST);
+      add(eastSide(scroll), BorderLayout.EAST);
    }
    
    public boolean checkInSchool() {
       inSchool = ((DisplayMain)parentPane).checkInSchool();
       return inSchool;
+   }
+   
+   public JPanel eastSide(JScrollPane scroll) {
+      JPanel retval = new JPanel();
+      retval.setLayout(new BorderLayout());
+      retval.add(scroll);
+      JPanel sizeFix = new JPanel();
+      sizeFix.setPreferredSize(new Dimension(200, 0));
+      retval.add(sizeFix, BorderLayout.SOUTH);
+      return retval;
    }
    
    /**
@@ -74,7 +108,7 @@ public class CurrentClassPane extends JPanel
    
 
    public void update() {
-      southPane.update();
+      westList.autoSetSelection();
       northPane.update();
       revalidate();
    }
@@ -94,7 +128,7 @@ public class CurrentClassPane extends JPanel
       setClassPeriod(c);
       checkInSchool();
       northPane.pushClassPeriod(c);
-      southPane.pushClassPeriod(c);
+//      southPane.pushClassPeriod(c);
          
    }
    
@@ -102,11 +136,11 @@ public class CurrentClassPane extends JPanel
       setClassPeriod(sched.get(slot));
       checkInSchool();
       northPane.pushCurrentSlot(slot);
-      southPane.pushCurrentSlot(slot);
+//      southPane.pushCurrentSlot(slot);
    }
    public void pushTodaySchedule(Schedule s) {
       setSched(s);
-      southPane.pushTodaySchedule(s);
+//      southPane.pushTodaySchedule(s);
    }   
    
    public boolean isInSchool() {
@@ -130,7 +164,7 @@ public class CurrentClassPane extends JPanel
    public ClassInfoPane getInfo() {
       return info;
    }
-   public NorthernCurrentClassPane getNorthPane() {
+   public PrimaryCurrentClassPane getNorthPane() {
       return northPane;
    }
    public DisplayMain getParentPane() {
@@ -145,7 +179,10 @@ public class CurrentClassPane extends JPanel
    public void setCurrentTime(Time currentTime) {
       this.currentTime = currentTime;
    }
-   public SouthernCurrentClassPane getSouthPane() {
-      return southPane;
+   public int getCurrentSlot() {
+      return classPeriod.getSlot();
    }
+//   public SecondaryCurrentClassPane getSouthPane() {
+//      return southPane;
+//   }
 }

@@ -1,5 +1,5 @@
 package display;
-import java.awt.GridLayout;
+import java.awt.Dimension;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,27 +13,26 @@ import managers.UIHandler;
 //[Program Descripion]
 //Sep 14, 2017
 
-public class SouthernCurrentClassPane extends JPanel
+/**
+ *@deprecated not needed at all. 
+ * @author varanoth
+ *
+ */
+public class SecondaryCurrentClassPane extends JPanel
 {
    private static final long serialVersionUID = 1L;
-   private final int LIST_W = 100;
+   private final int LIST_W = 230;
    private ClassPeriod classPeriod;
    private int currentSlot;
    private Schedule s;
-   private MemoPad memo;
    private ScheduleList westList;
    private Time ct;
    private CurrentClassPane parentPanel;
    
-   public SouthernCurrentClassPane(ClassPeriod c, Schedule s, CurrentClassPane parent) {
+   public SecondaryCurrentClassPane(ClassPeriod c, Schedule s, CurrentClassPane parent) {
       setClassPeriod(c); setSchedule(s); setParentPanel(parent); setCurrentSlot(c.getSlot());
       setBackground(UIHandler.background);
-      
-      setLayout(new GridLayout(1,2));
-      
-      memo = new MemoPad(c, this);
-      memo.setEnabled(false);
-      
+            
       westList = new ScheduleList(s, true);
       westList.setName("southPane todayList");
       westList.setParentPane(this);
@@ -44,18 +43,17 @@ public class SouthernCurrentClassPane extends JPanel
       scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
       scroll.setToolTipText(westList.getToolTipText());
       scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      scroll.setOpaque(false);
-      add(scroll);
-      
-      scroll = new JScrollPane(memo);
-      scroll.setBorder(UIHandler.getTitledBorder("Select Class For Memo"));
-      scroll.setToolTipText(westList.getToolTipText());
+      scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
       scroll.setOpaque(false);
       add(scroll);
       
       westList.setSelectable(false);
-      westList.setSize(LIST_W, westList.getHeight());
+//      westList.setPreferredSize(new Dimension(LIST_W, getHeight()));
    }
+   
+//   public Dimension getPreferredSize() {
+//      return new Dimension(LIST_W+30, getHeight());
+//   }
    
    public void update() {
       westList.autoSetSelection();
@@ -93,16 +91,6 @@ public class SouthernCurrentClassPane extends JPanel
    public CurrentClassPane getParentPanel() {
       return parentPanel;
    }
-   public void setMemoClass(ClassPeriod c) {
-      setMemoBorderTitle(c);
-      memo.setParentClass(c);
-      memo.repaint();
-   }
-   
-   public void setMemoBorderTitle(Object o) {
-      ((JScrollPane)memo.getParent().getParent()).setBorder(UIHandler.getTitledBorder(o + " Memo"));
-
-   }
     
    public void setParentPanel(CurrentClassPane parent) {
       this.parentPanel = parent;
@@ -134,9 +122,6 @@ public class SouthernCurrentClassPane extends JPanel
    public void setClassPeriod(ClassPeriod classPeriod) {
       setCurrentSlot((classPeriod == null) ? -1 : classPeriod.getSlot());
       this.classPeriod = classPeriod;
-   }
-   public MemoPad getMemo() {
-      return memo;
    }
    public Schedule getSchedule() {
       return s;

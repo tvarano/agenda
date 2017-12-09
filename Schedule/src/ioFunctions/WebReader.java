@@ -85,6 +85,9 @@ public class WebReader
             if (events.get(i).contains("Half Day"))
                return RotationConstants.toHalf(
                      RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
+            else if (events.get(i).contains("Delayed Open"))
+               return RotationConstants.toDelay(
+                     RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1))); 
          }
       }
       if (Agenda.statusU) Agenda.log("rotation read from day, not internet");

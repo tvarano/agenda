@@ -15,9 +15,9 @@ public class MemoPad extends JTextPane
 {
    private static final long serialVersionUID = 1L;
    private ClassPeriod parentClass;
-   private SouthernCurrentClassPane parentPanel;
+   private ScheduleInfoSelector parentPanel;
 
-   public MemoPad(ClassPeriod parentClass, SouthernCurrentClassPane parentPanel) {
+   public MemoPad(ClassPeriod parentClass, ScheduleInfoSelector parentPanel) {
       super();
       setBackground(UIHandler.quaternary);
       setForeground(UIHandler.foreground);
@@ -33,7 +33,7 @@ public class MemoPad extends JTextPane
    
    private void checkAccessibility() {
       if (parentClass == null) {
-         setText("Sorry, cannot do memos for this class");
+         setText("Class Not Selected");
          parentPanel.setMemoBorderTitle("UnDeclared Class");
          setEnabled(false);
       }
@@ -51,10 +51,10 @@ public class MemoPad extends JTextPane
       checkAccessibility();
       repaint();
    }
-   public SouthernCurrentClassPane getParentPanel() {
+   public ScheduleInfoSelector getParentPanel() {
       return parentPanel;
    }
-   public void setParentPanel(SouthernCurrentClassPane parentPanel) {
+   public void setParentPanel(ScheduleInfoSelector parentPanel) {
       this.parentPanel = parentPanel;
    }
 }

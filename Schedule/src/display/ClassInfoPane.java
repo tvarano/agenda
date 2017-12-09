@@ -36,9 +36,9 @@ public class ClassInfoPane extends JTextPane
    private void createClassDetailPane() {
       if (debug) System.out.println(getName() + "Parent"+getParent());
       if (c == null) {
-         if (getParent() instanceof NorthernCurrentClassPane) {
-            if (((NorthernCurrentClassPane) getParent()).isInSchool())
-               setText("In Between Classes. \nNext Class is:\n"+((NorthernCurrentClassPane) getParent()).findNextClass());
+         if (getParent() instanceof PrimaryCurrentClassPane) {
+            if (((PrimaryCurrentClassPane) getParent()).isInSchool())
+               setText("In Between Classes. \nNext Class is:\n"+((PrimaryCurrentClassPane) getParent()).findNextClass());
             else
                setText("Not in school");
          }

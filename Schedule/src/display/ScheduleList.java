@@ -57,8 +57,8 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
    }
 
    public void autoSetSelection() {
-      if (parentPane instanceof SouthernCurrentClassPane) {
-         SouthernCurrentClassPane parent = (SouthernCurrentClassPane) parentPane;
+      if (parentPane instanceof CurrentClassPane) {
+         CurrentClassPane parent = (CurrentClassPane) parentPane;
          if (parent.checkInSchool()) {
             if (parent.getClassPeriod() == null)
                setSelectedValue(schedule.get(parent.findNextClass().getSlot()), true);
@@ -70,7 +70,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
             if (debug) System.out.println(getName()+": out of school");
             clearSelection();
          }
-         if (debug) System.out.println("move class back to "+((SouthernCurrentClassPane) parentPane).getClassPeriod());
+         if (debug) System.out.println("move class back to "+((SecondaryCurrentClassPane) parentPane).getClassPeriod());
       }
       else {
          if (debug) System.out.println(getName()+"error in scheduleListAutoSelect");

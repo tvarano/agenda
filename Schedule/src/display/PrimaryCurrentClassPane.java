@@ -13,7 +13,7 @@ import managers.UIHandler;
 //[Program Descripion]
 //Sep 14, 2017
 
-public class NorthernCurrentClassPane extends JPanel
+public class PrimaryCurrentClassPane extends JPanel
 {
    private static final long serialVersionUID = 1L;
    private CurrentInfo field;
@@ -23,7 +23,7 @@ public class NorthernCurrentClassPane extends JPanel
    private boolean inSchool;
    private boolean debug = false;
    
-   public NorthernCurrentClassPane(ClassPeriod c, CurrentClassPane parent) {
+   public PrimaryCurrentClassPane(ClassPeriod c, CurrentClassPane parent) {
       if (debug)
          System.out.println("northParent: "+parent);
       setBackground(UIHandler.background);

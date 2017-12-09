@@ -1,6 +1,7 @@
 package display;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
@@ -32,8 +33,6 @@ import tools.ToolBar;
 public class DisplayMain extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;
-   private static final int PREF_W = 800, PREF_H = 600;
-   private static final int MIN_W = 400, MIN_H = 175;
    private PanelManager parentManager;
    private Schedule mainSched, todaySched;
    private Rotation todayR;
@@ -49,7 +48,7 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -101,9 +100,9 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    private void addComponents() {
-      add(eastPane, BorderLayout.EAST);
-      add(westPane, BorderLayout.CENTER);
       add(toolbar, BorderLayout.NORTH);
+      add(eastPane, BorderLayout.SOUTH);
+      add(westPane, BorderLayout.CENTER);
    }
    
    public void hardStop() {
@@ -121,7 +120,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void stop() {
-      westPane.getSouthPane().getMemo().save();
+      eastPane.getMemo().save();
       writeMain();
       showDisp = false;
    }
@@ -190,16 +189,20 @@ public class DisplayMain extends JPanel implements ActionListener
       return null;
    }
    
-   public void setMemoClass(int slot) {
-      ClassPeriod c = mainSched.get(slot);
-      if (slot == RotationConstants.PASCACK) {
-         westPane.getSouthPane().setMemoClass(mainSched.getPascackPreferences());
-         return;
-      }
-      if (c == null)
-         return;
-      westPane.getSouthPane().setMemoClass(mainSched.get(c.getSlot()));
+   public ClassPeriod classForMemo(int slot) {
+      return (slot == RotationConstants.PASCACK) ? mainSched.getPascackPreferences() : mainSched.get(slot);
    }
+   
+//   public void setMemoClass(int slot) {
+//      ClassPeriod c = mainSched.get(slot);
+//      if (slot == RotationConstants.PASCACK) {
+//         westPane.getSouthPane().setMemoClass(mainSched.getPascackPreferences());
+//         return;
+//      }
+//      if (c == null)
+//         return;
+//      westPane.getSouthPane().setMemoClass(mainSched.get(c.getSlot()));
+//   }
    
    public Time timeUntilNextClass() {
       if (inSchool)
@@ -261,10 +264,10 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public Dimension getMinimumSize() {
-      return new Dimension(MIN_W,MIN_H);
+      return new Dimension(Agenda.MIN_W,Agenda.MIN_H);
    }
    public Dimension getPreferredSize() {
-      return new Dimension(PREF_W, PREF_H);
+      return new Dimension(Agenda.PREF_W, Agenda.PREF_H);
    }
    public Schedule getMainSched() {
       return mainSched;
@@ -312,5 +315,6 @@ public class DisplayMain extends JPanel implements ActionListener
    @Override
    public void actionPerformed(ActionEvent e) {
       update();
+      System.out.println(getHeight());
    }
 }

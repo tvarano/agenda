@@ -19,7 +19,7 @@ public class CurrentInfo extends JTextPane{
       private ClassPeriod c;
       private int situation;
       private static final int NO_PARENT = 0, IN_BETWEEN = 1, NOT_IN_SCHOOL = 2, IN_CLASS = 3;
-      private NorthernCurrentClassPane parentPanel;
+      private PrimaryCurrentClassPane parentPanel;
       private boolean hasParent, debug;
       
       public CurrentInfo(ClassPeriod c, JPanel parentPanel) {
@@ -65,7 +65,7 @@ public class CurrentInfo extends JTextPane{
          String newLn = "\n";
          if (situation == IN_CLASS) {
             boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
-            String durationHour = (hour) ? c.getDuration().getHour12()+ " hour, " : "";
+            String durationHour = (c.getDuration().getHour24()) > 0 ? c.getDuration().getHour24()+ " hour, " : "";
             return new String[] {
                   "You are in"+newLn,
                   c+newLn,
@@ -76,7 +76,7 @@ public class CurrentInfo extends JTextPane{
                   " minutes"+newLn,
                   "In "+c.getRoomNumber()+newLn,
                   newLn,
-                  c.getStartTime() + " - " + c.getEndTime()+"."+newLn,
+                  c.getStartTime() + " - " + c.getEndTime()+".\t",
                   "The class is " + durationHour +c.getDuration().getMinute() + " minutes long." 
             };
          }
@@ -210,13 +210,13 @@ public class CurrentInfo extends JTextPane{
       public void setClassPeriod(ClassPeriod c) {
          this.c = c;
       }
-      public NorthernCurrentClassPane getParentPanel() {
+      public PrimaryCurrentClassPane getParentPanel() {
          return parentPanel;
       }
       public void setParentPanel(JPanel parentPanel) {
-         hasParent = (parentPanel instanceof NorthernCurrentClassPane);
+         hasParent = (parentPanel instanceof PrimaryCurrentClassPane);
          if (hasParent)
-            this.parentPanel = (NorthernCurrentClassPane)parentPanel;
+            this.parentPanel = (PrimaryCurrentClassPane)parentPanel;
       }
       public boolean hasParent() {
          return hasParent;
