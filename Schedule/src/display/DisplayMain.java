@@ -198,17 +198,6 @@ public class DisplayMain extends JPanel implements ActionListener
       return (slot == RotationConstants.PASCACK) ? mainSched.getPascackPreferences() : mainSched.get(slot);
    }
    
-//   public void setMemoClass(int slot) {
-//      ClassPeriod c = mainSched.get(slot);
-//      if (slot == RotationConstants.PASCACK) {
-//         westPane.getSouthPane().setMemoClass(mainSched.getPascackPreferences());
-//         return;
-//      }
-//      if (c == null)
-//         return;
-//      westPane.getSouthPane().setMemoClass(mainSched.get(c.getSlot()));
-//   }
-   
    public Time timeUntilNextClass() {
       if (inSchool)
          return currentTime.getTimeUntil(findNextClass().getStartTime());
