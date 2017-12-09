@@ -47,7 +47,7 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -68,7 +68,7 @@ public class DisplayMain extends JPanel implements ActionListener
       try {
          if (testSituation) {
             currentTime = new Time(10,50);
-            today = DayOfWeek.WEDNESDAY;
+            today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today);         
          } else {
             currentTime = new Time(LocalTime.now());

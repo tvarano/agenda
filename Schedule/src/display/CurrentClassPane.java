@@ -42,10 +42,14 @@ public class CurrentClassPane extends JPanel
       }
       setLayout(new BorderLayout());
       
-      list = new ScheduleList(s, true);
+      initAndAddComponents();
+   }
+   
+   private void initAndAddComponents() {
+      list = new ScheduleList(sched, true);
       list.setName("southPane todayList");
       list.setParentPane(this);
-      list.setSelectedValue(s.get(c.getSlot()), true); 
+      list.setSelectedValue(sched.get(classPeriod.getSlot()), true); 
       list.setToolTipText("Today's Schedule With Your Current Class");
       list.setSelectable(false);
       
@@ -57,7 +61,7 @@ public class CurrentClassPane extends JPanel
       scroll.setOpaque(false);
       scroll.setSize(320, getHeight());
       
-      info = new CurrentInfo(c, this);
+      info = new CurrentInfo(classPeriod, this);
       info.setVisible(true);
       int gap = 10;
       info.setBorder(BorderFactory.createEmptyBorder(gap, gap, gap, gap));
@@ -136,7 +140,6 @@ public class CurrentClassPane extends JPanel
    public void pushCurrentSlot(int slot) {
       pushClassPeriod(sched.get(slot));
       checkInSchool();
-//      northPane.pushCurrentSlot(slot);
    }
    public void pushTodaySchedule(Schedule s) {
       setSched(s);

@@ -84,12 +84,14 @@ public class WebReader
                if (Agenda.statusU) Agenda.log("ROTATION: "+events.get(i) + " read from internet");
                return RotationConstants.getRotation(events.get(i));
             }
+            if (events.get(i).contains("No School"))
+               return Rotation.NO_SCHOOL;
             if (events.get(i).contains("Half Day")) {
                if (Agenda.statusU) Agenda.log("ROTATION: half "+events.get(i) + " read from internet");
                return RotationConstants.toHalf(
                      RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
             }
-            else if (events.get(i).contains("Delayed Open")) {
+            if (events.get(i).contains("Delayed Open")) {
                if (Agenda.statusU) Agenda.log("ROTATION: delayed "+events.get(i) + " read from internet");
                return RotationConstants.toDelay(
                      RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));

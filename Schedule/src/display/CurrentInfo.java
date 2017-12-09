@@ -10,6 +10,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Time;
 import managers.UIHandler;
@@ -67,6 +68,10 @@ public class CurrentInfo extends JTextPane{
          if (situation == IN_CLASS) {
             boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
             String durationHour = (c.getDuration().getHour24()) > 0 ? c.getDuration().getHour24()+ " hour, " : "";
+            if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+               return new String[] {
+                     "There is no school today."
+               };
             return new String[] {
                   "You are in"+newLn,
                   c+newLn,
@@ -110,7 +115,9 @@ public class CurrentInfo extends JTextPane{
       
       public String[] getStyles() {
          if (situation == IN_CLASS) {
-            return new String[] {
+            if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+               return new String[] {"h1"};
+             return new String[] {
                   "regular",
                   "h1",
                   "regular",

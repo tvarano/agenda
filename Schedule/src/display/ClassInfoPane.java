@@ -36,18 +36,11 @@ public class ClassInfoPane extends JTextPane
    
    private void createClassDetailPane() {
       if (debug) System.out.println(getName() + "Parent"+getParent());
+      this.setText("");
       if (c == null) {
-         if (getParent() instanceof CurrentClassPane) {
-            if (((CurrentClassPane) getParent()).isInSchool())
-               setText("In Between Classes. \nNext Class is:\n"+((CurrentClassPane) getParent()).findNextClass());
-            else
-               setText("Not in school");
-         }
-         else 
-            setText("Class not selected");
+         putStyles(new String[] {"Class Not Selected"}, new String[] {"regular"});
          return;
       }
-      this.setText("");
       String newLine = "\n";
       String tab = (thinConstraints) ?"     ":"";
       if (debug) System.out.println(c);

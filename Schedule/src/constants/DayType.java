@@ -38,7 +38,8 @@ public enum DayType
    ),
    DELAY_EVEN(new Time[] {new Time(9,30), new Time(11,2), new Time(12,34), new Time(13,25)},
          new Time[] {new Time(10,58), new Time(12,30), new Time(13,21), new Time(14,53)}
-   );
+   ),
+   NO_SCHOOL(new Time[] {new Time()}, new Time[] {new Time()});
    
    private final Time[] startTimes, endTimes;
    private final Time labSwitch;
