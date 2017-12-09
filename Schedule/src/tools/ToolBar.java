@@ -11,7 +11,6 @@ import javax.swing.JToolBar;
 
 import constants.Rotation;
 import display.DisplayMain;
-import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
