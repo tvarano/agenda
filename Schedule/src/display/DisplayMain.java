@@ -1,7 +1,6 @@
 package display;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
@@ -48,7 +47,7 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = true;
+      testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -315,6 +314,5 @@ public class DisplayMain extends JPanel implements ActionListener
    @Override
    public void actionPerformed(ActionEvent e) {
       update();
-      System.out.println(getHeight());
    }
 }

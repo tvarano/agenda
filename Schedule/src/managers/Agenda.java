@@ -58,6 +58,7 @@ public class Agenda extends JPanel
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
             manager.getDisplay().writeMain();
+            log("program closed");
             System.exit(0);
          }
       });

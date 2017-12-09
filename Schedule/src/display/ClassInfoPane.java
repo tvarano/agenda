@@ -31,14 +31,15 @@ public class ClassInfoPane extends JTextPane
       this.setEditable(false);
       this.setClassPeriod(c);
       this.setMinimumSize(new Dimension(60,60));
+      initStyles(getStyledDocument());
    }
    
    private void createClassDetailPane() {
       if (debug) System.out.println(getName() + "Parent"+getParent());
       if (c == null) {
-         if (getParent() instanceof PrimaryCurrentClassPane) {
-            if (((PrimaryCurrentClassPane) getParent()).isInSchool())
-               setText("In Between Classes. \nNext Class is:\n"+((PrimaryCurrentClassPane) getParent()).findNextClass());
+         if (getParent() instanceof CurrentClassPane) {
+            if (((CurrentClassPane) getParent()).isInSchool())
+               setText("In Between Classes. \nNext Class is:\n"+((CurrentClassPane) getParent()).findNextClass());
             else
                setText("Not in school");
          }
@@ -87,7 +88,6 @@ public class ClassInfoPane extends JTextPane
    
    private void putStyles(String[] uneditedText, String[] styles) {
       StyledDocument styleDoc = getStyledDocument();
-      initStyles(styleDoc);
       try {
          for (int i=0; i < uneditedText.length; i++) {
             styleDoc.insertString(styleDoc.getLength(), uneditedText[i],

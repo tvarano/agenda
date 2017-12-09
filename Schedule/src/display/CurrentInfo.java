@@ -19,7 +19,7 @@ public class CurrentInfo extends JTextPane{
       private ClassPeriod c;
       private int situation;
       private static final int NO_PARENT = 0, IN_BETWEEN = 1, NOT_IN_SCHOOL = 2, IN_CLASS = 3;
-      private PrimaryCurrentClassPane parentPanel;
+      private CurrentClassPane parentPanel;
       private boolean hasParent, debug;
       
       public CurrentInfo(ClassPeriod c, JPanel parentPanel) {
@@ -29,6 +29,7 @@ public class CurrentInfo extends JTextPane{
          setBackground(UIHandler.background);
          setForeground(UIHandler.foreground);
          setParentPanel(parentPanel);  setClassPeriod(c);
+         initStyles();
          if (hasParent)
             setName(parentPanel.getName()+" current info");
          else
@@ -95,7 +96,7 @@ public class CurrentInfo extends JTextPane{
                   "You are not in school."+newLn,
                   "School starts in ",
                   new Time(LocalTime.now()).getTimeUntil(
-                        parentPanel.getParentPane().getSched().getSchoolDay().getStartTime())
+                        parentPanel.getParentPane().getMainSched().getSchoolDay().getStartTime())
                   .durationString()+newLn,
                   "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
                         "email me at varanoth@pascack.org"
@@ -151,7 +152,7 @@ public class CurrentInfo extends JTextPane{
          setText("");
          String[] uneditedText = getTextInput();
          String styles[] = getStyles();
-         StyledDocument styleDoc = initStyles();
+         StyledDocument styleDoc = getStyledDocument();
          try {
             for (int i=0; i < uneditedText.length; i++) {
                styleDoc.insertString(styleDoc.getLength(), uneditedText[i],
@@ -210,13 +211,13 @@ public class CurrentInfo extends JTextPane{
       public void setClassPeriod(ClassPeriod c) {
          this.c = c;
       }
-      public PrimaryCurrentClassPane getParentPanel() {
+      public CurrentClassPane getParentPanel() {
          return parentPanel;
       }
       public void setParentPanel(JPanel parentPanel) {
-         hasParent = (parentPanel instanceof PrimaryCurrentClassPane);
+         hasParent = (parentPanel instanceof CurrentClassPane);
          if (hasParent)
-            this.parentPanel = (PrimaryCurrentClassPane)parentPanel;
+            this.parentPanel = (CurrentClassPane)parentPanel;
       }
       public boolean hasParent() {
          return hasParent;

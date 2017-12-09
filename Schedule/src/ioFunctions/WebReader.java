@@ -80,17 +80,23 @@ public class WebReader
          if (indexes.length == 0)
             return Rotation.getRotation(LocalDate.now().getDayOfWeek());
          for (Integer i : indexes) {
-            if (RotationConstants.getRotation(events.get(i)) != null)
+            if (RotationConstants.getRotation(events.get(i)) != null) {
+               if (Agenda.statusU) Agenda.log("ROTATION: "+events.get(i) + " read from internet");
                return RotationConstants.getRotation(events.get(i));
-            if (events.get(i).contains("Half Day"))
+            }
+            if (events.get(i).contains("Half Day")) {
+               if (Agenda.statusU) Agenda.log("ROTATION: half "+events.get(i) + " read from internet");
                return RotationConstants.toHalf(
                      RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
-            else if (events.get(i).contains("Delayed Open"))
+            }
+            else if (events.get(i).contains("Delayed Open")) {
+               if (Agenda.statusU) Agenda.log("ROTATION: delayed "+events.get(i) + " read from internet");
                return RotationConstants.toDelay(
-                     RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1))); 
+                     RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
+            }
          }
       }
-      if (Agenda.statusU) Agenda.log("rotation read from day, not internet");
+      if (Agenda.statusU) Agenda.log("ROTATION: read from day, not internet");
       return Rotation.getRotation(LocalDate.now().getDayOfWeek());
    }
   
@@ -134,11 +140,5 @@ public class WebReader
 
    public ArrayList<String> getDates() {
       return dates;
-   }
-
-   
-   public static void main(String[] args) {
-      WebReader w = new WebReader();
-      System.out.println(w.readTodayRotation());
    }
 }

@@ -70,7 +70,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
             if (debug) System.out.println(getName()+": out of school");
             clearSelection();
          }
-         if (debug) System.out.println("move class back to "+((SecondaryCurrentClassPane) parentPane).getClassPeriod());
+         if (debug) System.out.println("move class back to "+((CurrentClassPane) parentPane).getClassPeriod());
       }
       else {
          if (debug) System.out.println(getName()+"error in scheduleListAutoSelect");
