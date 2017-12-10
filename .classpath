@@ -2,5 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="Schedule/src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/varanoth/Desktop/Java Files/Referenced Libraries (jar:zip)/gdata-calendar-2.0.jar"/>
+	<classpathentry kind="lib" path="/Users/varanoth/Desktop/Java Files/Referenced Libraries (jar:zip)/gdata-core.jar"/>
 	<classpathentry kind="output" path="Schedule/bin"/>
 </classpath>
