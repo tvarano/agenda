@@ -51,8 +51,14 @@ public enum ErrorID {
       return ID;
    }
 
+   public static class UserError extends Exception {
+      private static final long serialVersionUID = 1L;
+      public UserError(String message) {
+        super(message);
+      }
+   }
    public static void showUserError(ErrorID error) {
-      if (Agenda.statusU) Agenda.logError("User Error " + error + "\n", null);
+      if (Agenda.statusU) Agenda.logError("User Error " + error + " : ", new UserError(error.message));
       JOptionPane
             .showMessageDialog(null,
                   "User Error.\nDetails:\n" + error.message + "\nErrorID: "
@@ -209,6 +215,5 @@ public enum ErrorID {
    
    public static void main(String[] args) {
       System.out.println(ErrorID.getError("7530"));
-      ErrorID.showError(new Exception(), true);
    }
 }

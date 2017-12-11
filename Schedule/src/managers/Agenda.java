@@ -295,7 +295,7 @@ public class Agenda extends JPanel
    }
    
    public static void logError(String s, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: " + s + " : " + e.getMessage());
+      System.err.println(LocalTime.now() + " : ERROR: " + s + " : \n\t" + e.getMessage());
    }
    
    public Dimension getMinimumSize() {
