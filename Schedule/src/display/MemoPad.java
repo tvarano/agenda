@@ -5,13 +5,15 @@
 package display;
 
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.JTextPane;
 
 import information.ClassPeriod;
 import managers.UIHandler;
 
-public class MemoPad extends JTextPane
+public class MemoPad extends JTextPane implements FocusListener
 {
    private static final long serialVersionUID = 1L;
    private ClassPeriod parentClass;
@@ -24,6 +26,7 @@ public class MemoPad extends JTextPane
       setFont(UIHandler.font);
       setParentClass(parentClass); setParentPanel(parentPanel);
       this.setMinimumSize(new Dimension(100,100));
+      addFocusListener(this);
    }
 
    public void save() {
@@ -56,5 +59,23 @@ public class MemoPad extends JTextPane
    }
    public void setParentPanel(ScheduleInfoSelector parentPanel) {
       this.parentPanel = parentPanel;
+   }
+
+   private void callWrite() {
+      if (parentPanel != null)
+         parentPanel.getParentPane().writeMain();
+   }
+   
+   public boolean hasChanges() {
+      return !parentClass.getMemo().equals(getText());
+   }
+      
+   @Override
+   public void focusGained(FocusEvent e) {}
+
+   @Override
+   public void focusLost(FocusEvent e) {
+      save();
+      callWrite();
    }
 }

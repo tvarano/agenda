@@ -245,6 +245,10 @@ public class DisplayMain extends JPanel implements ActionListener
       checkAndUpdateTime();
       ClassPeriod current = findCurrentClass();
       configureBarTime(current);
+      if (infoSelector.getMemo().hasChanges()) {
+         infoSelector.getMemo().save();
+         writeMain();
+      }
       
       if (showDisp) {
          currentClassPane.update();
