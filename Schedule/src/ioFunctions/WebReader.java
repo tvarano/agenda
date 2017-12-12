@@ -27,18 +27,26 @@ public class WebReader
    public void init() {
       if (Agenda.statusU) Agenda.log("website reader initialized");
       try {
-         rotationDataSite = new URL("https://sites.google.com/pascack.k12.nj.us/agenda/home");
+         rotationDataSite = new URL("https://agendapascack.weebly.com/");
       } catch (MalformedURLException e) {
          if (Agenda.statusU) Agenda.logError("URL not traced", e);
       }
       String total = "";
+      long start = System.currentTimeMillis();
       try {
          total = retrieveHtml();
       } catch (IOException e) {
+         e.printStackTrace();
          if (Agenda.statusU) Agenda.logError("Internet Connection Error", e);
       }
+      long readTime = System.currentTimeMillis()-start;
+      start = System.currentTimeMillis();
       events = extractEvents(total);
+      long eventTime = System.currentTimeMillis()- start;
+      start = System.currentTimeMillis();
       dates = extractDates(total);
+      long dateTime = System.currentTimeMillis()- start;
+      if (Agenda.statusU) Agenda.log("internet read in "+readTime + ". events ordered in "+eventTime + ", dates in "+dateTime);
    }
 
    private static String retrieveHtml() throws IOException {
@@ -55,11 +63,11 @@ public class WebReader
    }
 
    public static ArrayList<String> extractEvents(String totalHtml) throws StringIndexOutOfBoundsException {
-      return findTypes(0, "ltr;\">", "</p>", "</div", totalHtml);
+      return findTypes(0, "&#8203;", "<br />", "<br />", "</div>", totalHtml);
    }
    
    public static ArrayList<String> extractDates(String totalHtml) throws StringIndexOutOfBoundsException {
-      return findTypes(0, "right;\">", "</p>", "</div", totalHtml);
+      return findTypes(0, "&#8203;&#8203;", "<br />", "<br />", "</div>", totalHtml);
    }
    
    private Integer[] getTodayDateStringIndexes() {
@@ -116,23 +124,33 @@ public class WebReader
       }
    }
    
-  private static ArrayList<String> findTypes(int startIndex, String beginKey,
+  private static ArrayList<String> findTypes(int startIndex, String firstKey, String beginKey,
         String endKey, String breakKey, String totalHtml) throws StringIndexOutOfBoundsException {
      if (totalHtml.equals(""))
         return null;
      ArrayList<String> retval = new ArrayList<String>();
-     int dIndex = startIndex;
+     int index = startIndex;
      int first = 0;
      do {
-        boolean isFirst = dIndex == startIndex;
-         dIndex = totalHtml.indexOf(beginKey, dIndex);
+        String startKey = beginKey;
+        boolean isFirst = index == startIndex;
+         if (isFirst) 
+            startKey = firstKey;
+         index = totalHtml.indexOf(startKey, index);
          if (isFirst)
-            first = dIndex;
-         String addition = (totalHtml.substring(dIndex + beginKey.length(),
-               totalHtml.indexOf(endKey, dIndex)));
-         dIndex += beginKey.length() + addition.length() + 10;
+            first = index;
+         int endIndex = (Math.min(totalHtml.indexOf(endKey, index + 1),
+               totalHtml.indexOf(breakKey, index + 1)) == -1)
+                     ? Math.max(totalHtml.indexOf(endKey, index + 1),
+                           totalHtml.indexOf(breakKey, index + 1))
+                     : Math.min(totalHtml.indexOf(endKey, index + 1),
+                           totalHtml.indexOf(breakKey, index + 1));
+         // TODO returning negative one, check for endIdnex
+         String addition = (totalHtml.substring(index + startKey.length(),
+               endIndex));
+         index += startKey.length() + addition.length() - 1;
          retval.add(addition);
-      } while (dIndex < totalHtml.indexOf(breakKey, first) && dIndex != -1);
+      } while (totalHtml.indexOf(breakKey, first) - index >= 3 && index != -1);
       return retval;
    }
 
@@ -142,5 +160,13 @@ public class WebReader
 
    public ArrayList<String> getDates() {
       return dates;
+   }
+   
+   public static void main(String[] args) {
+      long start = System.currentTimeMillis();
+      WebReader wr = new WebReader();
+      System.out.println(System.currentTimeMillis()-start);
+      wr.readTodayRotation();
+      System.out.println(System.currentTimeMillis()-start);
    }
 }
