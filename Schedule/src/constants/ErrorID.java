@@ -29,7 +29,7 @@ public enum ErrorID {
    FILE_TAMPER("There was an error with reading your schedule.\n"
                + "It has been reset to the default"),
    INPUT_ERROR("Input Error. Make sure all fields are filled correctly"), 
-   HALF_BLOCK_SELECTED("You selected a block half day, which does not exist.\n"
+   WRONG_HALF_SELECTED("You selected a half day rotation that does not exist.\n"
          + "The rotation has been set to a half day R1."),
    OTHER();
 

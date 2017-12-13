@@ -57,10 +57,10 @@ public class CurrentClassPane extends JPanel
       scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
       scroll.setToolTipText(list.getToolTipText());
       scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-      scroll.setOpaque(false);
+      scroll.setBackground(UIHandler.background);
+      list.setBackground(UIHandler.secondary);
       scroll.setSize(320, getHeight());
-      
+            
       info = new CurrentInfo(classPeriod, this);
       info.setVisible(true);
       int gap = 10;

@@ -88,21 +88,22 @@ public class WebReader
          if (indexes.length == 0)
             return Rotation.getRotation(LocalDate.now().getDayOfWeek());
          for (Integer i : indexes) {
-            if (RotationConstants.getRotation(events.get(i)) != null) {
-               if (Agenda.statusU) Agenda.log("ROTATION: "+events.get(i) + " read from internet");
+            String e = events.get(i);
+            if (RotationConstants.getRotation(e) != null) {
+               if (Agenda.statusU) Agenda.log("ROTATION: "+e + " read from internet");
                return RotationConstants.getRotation(events.get(i));
             }
-            if (events.get(i).contains("No School"))
+            if (e.contains("No School"))
                return Rotation.NO_SCHOOL;
-            if (events.get(i).contains("Half Day")) {
-               if (Agenda.statusU) Agenda.log("ROTATION: half "+events.get(i) + " read from internet");
+            if (e.contains("Half Day")) {
+               if (Agenda.statusU) Agenda.log("ROTATION: half "+e + " read from internet");
                return RotationConstants.toHalf(
-                     RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
+                     RotationConstants.getRotation(e.substring(0, e.indexOf('(')-1)));
             }
-            if (events.get(i).contains("Delayed Open")) {
-               if (Agenda.statusU) Agenda.log("ROTATION: delayed "+events.get(i) + " read from internet");
+            if (e.contains("Delayed Open")) {
+               if (Agenda.statusU) Agenda.log("ROTATION: delayed "+e + " read from internet");
                return RotationConstants.toDelay(
-                     RotationConstants.getRotation(events.get(i).substring(0, events.get(i).indexOf('(')-1)));
+                     RotationConstants.getRotation(e.substring(0, e.indexOf('(')-1)));
             }
          }
       }
@@ -114,12 +115,14 @@ public class WebReader
       try {
          String day = str.substring(0, str.indexOf("/"));
          day = (Integer.parseInt(day) < 10) ? "0" + day : day;
-         String month = str.substring(str.indexOf("/")+1, str.indexOf("/", str.indexOf("/")+1));
+         String month = str.substring(str.indexOf("/") + 1,
+               str.indexOf("/", str.indexOf("/") + 1));
          month = (Integer.parseInt(month) < 10) ? "0" + month : month;
-         String year = str.substring(str.indexOf("/", str.indexOf("/")+1)+1);
+         String year = str
+               .substring(str.indexOf("/", str.indexOf("/") + 1) + 1);
          return year + "-" + day + "-" + month;
       } catch (StringIndexOutOfBoundsException e) {
-         if (Agenda.statusU) Agenda.logError("unable to order dateString: "+str, e);
+         if (Agenda.statusU)Agenda.logError("unable to order dateString: " + str, e);
          return null;
       }
    }
