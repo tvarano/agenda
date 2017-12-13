@@ -22,6 +22,7 @@ public class ToolBar extends JToolBar implements ActionListener
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
    private boolean inputting, delayed, half;
+   private Rotation rotation;
    private JPanel parentPanel;
 
    public ToolBar(boolean inputting, JPanel parentPanel) {
@@ -50,8 +51,8 @@ public class ToolBar extends JToolBar implements ActionListener
             setDelayed(dm.getTodayR().isDelay());
          }
       }
-      for (Component b : getComponents()) {
-         b.repaint();
+      for (Component c : getComponents()) {
+         c.repaint();
       }
       super.repaint();
    }
@@ -81,6 +82,7 @@ public class ToolBar extends JToolBar implements ActionListener
       input.addMouseListener(UIHandler.buttonPaintListener(input));
       input.addActionListener(((DisplayMain) parentPanel).changeView());
       add(input);
+      setHighlights();
       return this;
    }
    
@@ -92,6 +94,15 @@ public class ToolBar extends JToolBar implements ActionListener
       return this;
    }
 
+   public void setHighlights() {
+      for (Component c : getComponents()) {
+         if (c instanceof RotationButton) {
+            RotationButton r = (RotationButton) c;
+            r.setHighlight(r.equals(rotation));
+         }
+      }
+   }
+   
    public boolean isInputting() {
       return inputting;
    }
@@ -116,6 +127,15 @@ public class ToolBar extends JToolBar implements ActionListener
    }
    public void setParentPanel(JPanel parentPanel) {
       this.parentPanel = parentPanel;
+   }
+
+   public Rotation getRotation() {
+      return rotation;
+   }
+   
+   public void setRotation(Rotation r) {
+      this.rotation = r;
+      setHighlights();
    }
 
    @Override

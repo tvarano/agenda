@@ -98,6 +98,7 @@ public class DisplayMain extends JPanel implements ActionListener
       checkAndUpdateTime();
       currentClassPane.setClassPeriod(findCurrentClass());
       pushTodaySchedule();
+      toolbar.setRotation(todayR);
    }
    
    private void addComponents() {
@@ -288,6 +289,7 @@ public class DisplayMain extends JPanel implements ActionListener
       todaySched.setData(OrderUtility.reorderAndClone(todayR, mainSched, mainSched.getClasses()));
       this.todayR = todayR;
       todaySched.setLunchLab(todayR);
+      toolbar.setRotation(todayR);
       pushTodaySchedule();
       update();
    }
