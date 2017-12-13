@@ -23,7 +23,8 @@ public enum Rotation
    DELAY_R3 (getSchedule(RotationConstants.DELAY_R3), DayType.DELAYED_OPEN, RotationConstants.DELAY_R3),
    DELAY_R4 (getSchedule(RotationConstants.DELAY_R4), DayType.DELAYED_OPEN, RotationConstants.DELAY_R4),
    DELAY_ODD (getSchedule(RotationConstants.DELAY_ODD), DayType.DELAY_ODD, RotationConstants.DELAY_ODD),
-   DELAY_EVEN (getSchedule(RotationConstants.DELAY_EVEN), DayType.DELAY_EVEN, RotationConstants.DELAY_EVEN)
+   DELAY_EVEN (getSchedule(RotationConstants.DELAY_EVEN), DayType.DELAY_EVEN, RotationConstants.DELAY_EVEN),
+   NO_SCHOOL (getSchedule(RotationConstants.NO_SCHOOL_INDEX), DayType.NO_SCHOOL, RotationConstants.NO_SCHOOL_INDEX)
    ;
       
    private final int lunchSlot;
@@ -85,6 +86,11 @@ public enum Rotation
       }
    }
    
+   /**
+    * cannot use a for loop due to the fact that the enum hasn't been initialized in some uses.
+    * @param rotationType
+    * @return
+    */
    private static DayType getType(int rotationType) {
       switch(rotationType) {
          case RotationConstants.R1 : case RotationConstants.R2 : case RotationConstants.R3  : case RotationConstants.R4 : 
@@ -99,6 +105,9 @@ public enum Rotation
             return DayType.DELAY_ODD;
          case RotationConstants.DELAY_EVEN : 
             return DayType.DELAY_EVEN;
+         case RotationConstants.NO_SCHOOL_INDEX : 
+            return DayType.NO_SCHOOL;
+            
       }
       return null;
    }
@@ -106,6 +115,8 @@ public enum Rotation
    private static ClassPeriod[] getSchedule(int rotationIndex) {
       if (debug) System.out.println("index="+rotationIndex);
       DayType dt = getType(rotationIndex);
+      if (rotationIndex == RotationConstants.NO_SCHOOL_INDEX)
+         return new ClassPeriod[] {RotationConstants.NO_SCHOOL_CLASS};
       int[] slots = getSlotRotation(rotationIndex);
       ClassPeriod[] retval = new ClassPeriod[slots.length];
       String name = "";
@@ -141,6 +152,8 @@ public enum Rotation
          case WEDNESDAY : return EVEN_BLOCK;
          case THURSDAY : return R4;
          case FRIDAY : return R3;
+         case SATURDAY : case SUNDAY : 
+            return NO_SCHOOL;
          default : return R1;
       }
    }

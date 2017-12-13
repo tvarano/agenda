@@ -37,8 +37,8 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.5.6 ß";
-   public static final int MIN_W = 733, MIN_H = 313;
+   public static final String BUILD = "v1.6.3 ß";
+   public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
    private static JFrame parentFrame;
@@ -58,6 +58,7 @@ public class Agenda extends JPanel
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
             manager.getDisplay().writeMain();
+            if (statusU) log("program closed");
             System.exit(0);
          }
       });
@@ -294,7 +295,7 @@ public class Agenda extends JPanel
    }
    
    public static void logError(String s, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: " + s + " : " + e.getMessage());
+      System.err.println(LocalTime.now() + " : ERROR: " + s + " : \n\t" + e.getMessage());
    }
    
    public Dimension getMinimumSize() {

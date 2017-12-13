@@ -10,6 +10,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Time;
 import managers.UIHandler;
@@ -19,7 +20,7 @@ public class CurrentInfo extends JTextPane{
       private ClassPeriod c;
       private int situation;
       private static final int NO_PARENT = 0, IN_BETWEEN = 1, NOT_IN_SCHOOL = 2, IN_CLASS = 3;
-      private NorthernCurrentClassPane parentPanel;
+      private CurrentClassPane parentPanel;
       private boolean hasParent, debug;
       
       public CurrentInfo(ClassPeriod c, JPanel parentPanel) {
@@ -29,6 +30,7 @@ public class CurrentInfo extends JTextPane{
          setBackground(UIHandler.background);
          setForeground(UIHandler.foreground);
          setParentPanel(parentPanel);  setClassPeriod(c);
+         initStyles();
          if (hasParent)
             setName(parentPanel.getName()+" current info");
          else
@@ -65,7 +67,11 @@ public class CurrentInfo extends JTextPane{
          String newLn = "\n";
          if (situation == IN_CLASS) {
             boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
-            String durationHour = (hour) ? c.getDuration().getHour12()+ " hour, " : "";
+            String durationHour = (c.getDuration().getHour24()) > 0 ? c.getDuration().getHour24()+ " hour, " : "";
+            if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+               return new String[] {
+                     "There is no school today."
+               };
             return new String[] {
                   "You are in"+newLn,
                   c+newLn,
@@ -76,7 +82,7 @@ public class CurrentInfo extends JTextPane{
                   " minutes"+newLn,
                   "In "+c.getRoomNumber()+newLn,
                   newLn,
-                  c.getStartTime() + " - " + c.getEndTime()+"."+newLn,
+                  c.getStartTime() + " - " + c.getEndTime()+".\t",
                   "The class is " + durationHour +c.getDuration().getMinute() + " minutes long." 
             };
          }
@@ -95,7 +101,7 @@ public class CurrentInfo extends JTextPane{
                   "You are not in school."+newLn,
                   "School starts in ",
                   new Time(LocalTime.now()).getTimeUntil(
-                        parentPanel.getParentPane().getSched().getSchoolDay().getStartTime())
+                        parentPanel.getParentPane().getMainSched().getSchoolDay().getStartTime())
                   .durationString()+newLn,
                   "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
                         "email me at varanoth@pascack.org"
@@ -109,7 +115,9 @@ public class CurrentInfo extends JTextPane{
       
       public String[] getStyles() {
          if (situation == IN_CLASS) {
-            return new String[] {
+            if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+               return new String[] {"h1"};
+             return new String[] {
                   "regular",
                   "h1",
                   "regular",
@@ -151,7 +159,7 @@ public class CurrentInfo extends JTextPane{
          setText("");
          String[] uneditedText = getTextInput();
          String styles[] = getStyles();
-         StyledDocument styleDoc = initStyles();
+         StyledDocument styleDoc = getStyledDocument();
          try {
             for (int i=0; i < uneditedText.length; i++) {
                styleDoc.insertString(styleDoc.getLength(), uneditedText[i],
@@ -210,13 +218,13 @@ public class CurrentInfo extends JTextPane{
       public void setClassPeriod(ClassPeriod c) {
          this.c = c;
       }
-      public NorthernCurrentClassPane getParentPanel() {
+      public CurrentClassPane getParentPanel() {
          return parentPanel;
       }
       public void setParentPanel(JPanel parentPanel) {
-         hasParent = (parentPanel instanceof NorthernCurrentClassPane);
+         hasParent = (parentPanel instanceof CurrentClassPane);
          if (hasParent)
-            this.parentPanel = (NorthernCurrentClassPane)parentPanel;
+            this.parentPanel = (CurrentClassPane)parentPanel;
       }
       public boolean hasParent() {
          return hasParent;

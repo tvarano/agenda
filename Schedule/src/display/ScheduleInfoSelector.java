@@ -12,8 +12,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import constants.ErrorID;
-import constants.Rotation;
 import constants.RotationConstants;
+import information.ClassPeriod;
 import information.Schedule;
 import managers.Agenda;
 import managers.UIHandler;
@@ -26,8 +26,9 @@ public class ScheduleInfoSelector extends JPanel
 {
    private static final long serialVersionUID = 1L;
    private Schedule todaySched, mainSched;
-   private static final int PREF_W = 228;
+   private static final int PREF_H = 240;
    private ScheduleList todayList, mainList, todayNameless;
+   private MemoPad memo;
    private ClassInfoPane info;
    private boolean debug;
    private JTabbedPane scheduleTabs;
@@ -36,41 +37,55 @@ public class ScheduleInfoSelector extends JPanel
    public ScheduleInfoSelector(Schedule todaySched, Schedule mainSched, DisplayMain parent) {
       debug = false;
       setBackground(UIHandler.background);
-      Rotation todayR = parent.getTodayR();
       
-      final Dimension minS = new Dimension(PREF_W, parent.getHeight());
-      setMinimumSize(minS);
+      setPreferredSize(new Dimension(parent.getWidth(),PREF_H));
       if (debug) System.out.println("CLASSES\n"+todaySched.classString(true));
-      if (debug) System.out.println("TODAYR = "+todayR);
       setParentPane(parent);
+      setTodaySched(todaySched); setMainSched(mainSched);
+      initComponents();
+      if (debug) System.out.println("AFTER "+todaySched.classString(true));
+      
+      setLayout(new GridLayout(1,3));
+      addComponents();
+      
+      if (debug) System.out.println(getName()+" initialized");
+   }
+   
+   private void initComponents() {
       todayList = new ScheduleList(todaySched, true); todayList.setParentPane(this); todayList.setName("Today's Classes");
       todayList.setAutoscrolls(true);
       mainList = new ScheduleList(mainSched, true);
       mainList.setParentPane(this); mainList.setName("Default Rotation");
       mainList.setAutoscrolls(true);
-      todayNameless = new ScheduleList(RotationConstants.getNamelessRotation(todaySched, todayR), false);
+      todayNameless = new ScheduleList(RotationConstants.getNamelessRotation(todaySched, parentPane.getTodayR()), false);
       todayNameless.setParentPane(this); todayNameless.setName("Today's Rotation");
       todayNameless.setAutoscrolls(true);
-      setTodaySched(todaySched); setMainSched(mainSched);
-      if (debug) System.out.println("AFTER "+todaySched.classString(true));
       
-      setLayout(new GridLayout(2,1));
+      memo = new MemoPad(new ClassPeriod(), this);
+      memo.setEnabled(false);
+      memo.setToolTipText("Save Notes, Homework, or Reminders");
+      
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
-      if (Agenda.statusU) Agenda.log("before classInfo select 47");
-      info = new ClassInfoPane(todaySched.getClasses()[0]);
+      if (Agenda.statusU) Agenda.log("scheduleInfo initializer mk 1");
+      info = new ClassInfoPane(null);
       add(scheduleTabs);
+   }
+   
+   private void addComponents() {
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
-      if (Agenda.statusU) Agenda.log("after scroll select 52");
-      JScrollPane infoScroll = new JScrollPane(info);
-      if (Agenda.statusU) Agenda.log("after scroll select 52");
-      //TODO next heavy method
-      infoScroll.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
-      if (Agenda.statusU) Agenda.log("after add select 55");
-      infoScroll.setOpaque(false);
-      add(infoScroll);
-      setName("eastPane");
-      if (debug) System.out.println(getName()+" initialized");
+      if (Agenda.statusU) Agenda.log("scheduleInfo initializer mk 2");
+      JScrollPane scroll = new JScrollPane(info);
+      scroll.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
+      if (Agenda.statusU) Agenda.log("scheduleInfo initializer mk 3");
+      scroll.setOpaque(false);
+      add(scroll);
+      scroll = new JScrollPane(memo);
+      scroll.setBorder(UIHandler.getTitledBorder("Select Class For Memo"));
+      scroll.setToolTipText(memo.getToolTipText());
+      scroll.setOpaque(false);
+      add(scroll);
+      setName("Info Selector");
    }
    
    public void updatePeriod() {
@@ -92,14 +107,29 @@ public class ScheduleInfoSelector extends JPanel
       info.setShowNames(selected.isShowNames());
       info.setClassPeriod(selectVal);
       if (selectVal == null)
-         parentPane.setMemoClass(-1);
+         setMemoClass(-1);
       else
-         parentPane.setMemoClass(selected.getSelectedValue().getSlot());
+         setMemoClass(selected.getSelectedValue().getSlot());
 
       String infoTitle = (info.getClassPeriod() == null) ? "Select Class For Info"
             : info.getClassPeriod().getTrimmedName() + " Info";
       ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));
       parentPane.revalidate();
+   }
+   
+   public void setMemoClass(int slot) {
+      ClassPeriod c = parentPane.classForMemo(slot);
+      setMemoBorderTitle(c);
+      memo.setParentClass(c);
+      memo.repaint();
+   }
+   
+   public MemoPad getMemo() {
+      return memo;
+   }
+   
+   public void setMemoBorderTitle(Object o) {
+      ((JScrollPane)memo.getParent().getParent()).setBorder(UIHandler.getTitledBorder(o + " Memo"));
    }
    
    public void pushTodaySchedule(Schedule s) {
@@ -149,7 +179,9 @@ public class ScheduleInfoSelector extends JPanel
    }
    public void setTodaySched(Schedule todaySched) {
       this.todaySched = todaySched;
-      todayList.setSchedule(todaySched);
+      if (todayList != null)
+         todayList.setSchedule(todaySched);
+      if (todayNameless != null)
       todayNameless.setSchedule(RotationConstants.getNamelessRotation(todaySched, parentPane.getTodayR()));
    }
    public Schedule getMainSched() {
@@ -157,7 +189,8 @@ public class ScheduleInfoSelector extends JPanel
    }
    public void setMainSched(Schedule mainSched) {
       this.mainSched = mainSched;
-      mainList.setSchedule(mainSched);
+      if (mainList != null)
+         mainList.setSchedule(mainSched);
    }
 
    public DisplayMain getParentPane() {

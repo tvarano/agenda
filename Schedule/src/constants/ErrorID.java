@@ -29,7 +29,7 @@ public enum ErrorID {
    FILE_TAMPER("There was an error with reading your schedule.\n"
                + "It has been reset to the default"),
    INPUT_ERROR("Input Error. Make sure all fields are filled correctly"), 
-   HALF_BLOCK_SELECTED("You selected a block half day, which does not exist.\n"
+   WRONG_HALF_SELECTED("You selected a half day rotation that does not exist.\n"
          + "The rotation has been set to a half day R1."),
    OTHER();
 
@@ -51,8 +51,14 @@ public enum ErrorID {
       return ID;
    }
 
+   public static class UserError extends Exception {
+      private static final long serialVersionUID = 1L;
+      public UserError(String message) {
+        super(message);
+      }
+   }
    public static void showUserError(ErrorID error) {
-      if (Agenda.statusU) Agenda.logError("User Error " + error + "\n", null);
+      if (Agenda.statusU) Agenda.logError("User Error " + error + " : ", new UserError(error.message));
       JOptionPane
             .showMessageDialog(null,
                   "User Error.\nDetails:\n" + error.message + "\nErrorID: "
@@ -83,12 +89,15 @@ public enum ErrorID {
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
          String prompt = "Go to" + newLn + Agenda.FileHandler.LOG_ROUTE + "\nFor your log data.";
          String text = "Details:\n" + message + newLn + importantText + prompt;
-         JOptionPane.showOptionDialog(null,
+         int choice2 = JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
-               null, (copy) ? new String[]{"Copy & Close", "Close"} : new String[] {"Close"}, "Close");
-         if (choice == 0 && copy) {
+               null, (copy) ? new String[]{"Copy & Close", "Copy & Contact", "Close"} : new String[] {"Close"}, "Close");
+         if (choice2 == 0 && copy) {
             ErrorCopier.copy(ID, e);
+         } else if (choice2 == 1) {
+            ErrorCopier.copy(ID, e);
+            Agenda.FileHandler.sendEmail();
          }
       }
    }

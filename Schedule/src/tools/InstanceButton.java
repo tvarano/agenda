@@ -1,5 +1,4 @@
 package tools;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +9,7 @@ import javax.swing.border.Border;
 
 import constants.RotationConstants;
 import display.DisplayMain;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -92,6 +92,8 @@ public class InstanceButton extends JButton implements ActionListener
          DisplayMain mainParent = null;
          if (parentBar.getParentPanel() instanceof DisplayMain)
             mainParent = (DisplayMain) parentBar.getParentPanel();
+         else 
+            Agenda.logError("INSTANCE ERROR "+ parentBar.getParentPanel(), new NullPointerException());
          if (getText().equalsIgnoreCase(DELAY)) {
             mainParent.setTodayR((enacted) ? RotationConstants.toDelay(mainParent.getTodayR())
                   : RotationConstants.toNormal(mainParent.getTodayR()));

@@ -18,6 +18,7 @@ public class OrderUtility
       if (debug) System.out.println("ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);
+      s.calculateSchoolDay();
       s.setPascackData();
       return s;
    }
@@ -27,6 +28,8 @@ public class OrderUtility
    }
    
    public static ClassPeriod[] reorderClasses(Rotation r, ClassPeriod[] unOrderedArray) {
+      if (r.equals(Rotation.NO_SCHOOL))
+         return Rotation.NO_SCHOOL.getTimes();
       if (debug) System.out.println("**********\nordering class array...");
       if (detailedDebug) printData(r, unOrderedArray);
       int extraClasses = unOrderedArray.length - Rotation.R1.getTimes().length;

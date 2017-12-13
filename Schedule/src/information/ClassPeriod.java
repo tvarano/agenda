@@ -75,6 +75,10 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       this(" ", new Time(), new Time());
    }
    
+   public ClassPeriod(String name) {
+      this(name, new Time(), new Time());
+   }
+
    public static String trimString(String s) {
       return trimString(s, DEF_STRING_LENGTH);
    }
