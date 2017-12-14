@@ -11,6 +11,7 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextPane;
 
 import information.ClassPeriod;
+import managers.Agenda;
 import managers.UIHandler;
 
 public class MemoPad extends JTextPane implements FocusListener
@@ -30,6 +31,7 @@ public class MemoPad extends JTextPane implements FocusListener
    }
 
    public void save() {
+      if (Agenda.statusU) Agenda.log("memo saved "+parentClass);
       if (this.parentClass != null)
          this.parentClass.setMemo(getText());
    }
@@ -67,6 +69,8 @@ public class MemoPad extends JTextPane implements FocusListener
    }
    
    public boolean hasChanges() {
+      if (parentClass == null)
+         return false;
       return !parentClass.getMemo().equals(getText());
    }
       

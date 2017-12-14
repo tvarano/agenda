@@ -11,7 +11,7 @@ import managers.Agenda;
 
 public class OrderUtility
 {
-   private static boolean debug = false, detailedDebug = true;
+   private static boolean debug = false, detailedDebug = false;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       if (Agenda.statusU) Agenda.log("ordering schedule: "+s.getName() + " to "+r);
@@ -69,7 +69,6 @@ public class OrderUtility
                newArrayIndex++;
                rotationIndex++;
             }
-            //TODO for now... make sure to have them write their own pascack.
          }
          if (order[i] == RotationConstants.PASCACK) {
             if (detailedDebug) System.out.println("entering pascack...");

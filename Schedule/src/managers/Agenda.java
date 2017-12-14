@@ -47,9 +47,11 @@ public class Agenda extends JPanel
    public static Runnable mainThread;
    public static URI sourceCode;
    
-   public Agenda() { 
+   public Agenda() {
       initialFileWork();
       
+      bar = UIHandler.configureMenuBar(parentFrame, this);
+
       if (statusU) log("Main began initialization");
       UIHandler.init();
       manager = new PanelManager(this, bar);
@@ -270,18 +272,33 @@ public class Agenda extends JPanel
        * delete all files. Needs to be done in order to correctly delete them all.
        */
       public static void deleteFiles() {
+         if (statusU) log("deleting files");
          deleteFile(new File(ENVELOPING_FOLDER));
+      }
+      
+      public static void moveFiles(String oldLocation) {
+         if (statusU) log("moving files");
+         moveFile(new File(oldLocation), ENVELOPING_FOLDER);
+      }
+      
+      public static void moveFile(File f, String newPath) {
+         if (f.isDirectory()) {
+            new File(newPath).mkdirs();
+            for (File in : f.listFiles()) {
+               System.out.println(f.getName() + " : "+f.getAbsolutePath());
+               moveFile(in, newPath + f.getName() + "/");
+            }
+         }
+         else 
+            f.renameTo(new File(newPath));
       }
       
       public static boolean deleteFile(File f) {
          if (f.isDirectory()) {
-            System.out.println(f+" isDirectory");
             for (File in : f.listFiles()) {
-               boolean del = deleteFile(in);
-               System.out.println(in+" del="+del);
+               deleteFile(in);
             }
          }
-         System.out.println("deleted "+f);
          return f.delete();
       }
    }
@@ -309,7 +326,6 @@ public class Agenda extends JPanel
       long start = System.currentTimeMillis();
       parentFrame = new JFrame(APP_NAME + " " + BUILD);
       int frameToPaneAdjustment = 22;
-      bar = UIHandler.configureMenuBar(parentFrame);
       parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
       parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       parentFrame.setVisible(true);
@@ -321,7 +337,7 @@ public class Agenda extends JPanel
       if (statusU)
          log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
    }
-   public static void restart() {
+   public void restart() {
       if (statusU) log("Program Restarted\n");
       restartApplication(new Runnable() {
          @Override
@@ -398,7 +414,7 @@ public class Agenda extends JPanel
       }
    }
   
-   public static void restartApplication(Runnable runBeforeRestart) {
+   public void restartApplication(Runnable runBeforeRestart) {
       final String javaBin = System.getProperty("java.home") + File.separator
             + "bin" + File.separator + "java";
       File currentJar = null;
@@ -429,7 +445,8 @@ public class Agenda extends JPanel
       // run the custom code
       if (runBeforeRestart != null) {
          runBeforeRestart.run();
-     }
+      }
+      manager.getDisplay().writeMain();
      if (statusU) log("restarting...");
      System.exit(0);
    }
