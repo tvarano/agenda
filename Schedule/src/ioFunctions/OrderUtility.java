@@ -11,7 +11,7 @@ import managers.Agenda;
 
 public class OrderUtility
 {
-   private static boolean debug = false, detailedDebug = false;
+   private static boolean debug = false, detailedDebug = true;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       if (Agenda.statusU) Agenda.log("ordering schedule: "+s.getName() + " to "+r);

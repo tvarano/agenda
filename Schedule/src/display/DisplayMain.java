@@ -171,6 +171,8 @@ public class DisplayMain extends JPanel implements ActionListener
          currentTime = new Time(LocalTime.now());
       if (currentTime.getHour24() == 0 && currentTime.getMinute() < 2)
             checkAndUpdateDate();
+      checkInSchool();
+      findCurrentClass();
       currentClassPane.pushCurrentTime(currentTime);
    }
    
@@ -291,6 +293,7 @@ public class DisplayMain extends JPanel implements ActionListener
       todaySched.setLunchLab(todayR);
       toolbar.setRotation(todayR);
       pushTodaySchedule();
+      
       update();
    }
    public DayOfWeek getToday() {

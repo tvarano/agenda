@@ -31,6 +31,8 @@ public enum ErrorID {
    INPUT_ERROR("Input Error. Make sure all fields are filled correctly"), 
    WRONG_HALF_SELECTED("You selected a half day rotation that does not exist.\n"
          + "The rotation has been set to a half day R1."),
+   WRONG_DELAY_SELECTED("You selected a delayed opening that doesn't exist\n"
+         + "The rotatoin has been set to a delayed opening R1."),
    OTHER();
 
    public static final String ERROR_NAME = Agenda.APP_NAME + " ERROR";

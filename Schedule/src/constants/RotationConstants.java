@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
-import managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -89,7 +88,7 @@ public final class RotationConstants
    public static Rotation toDelay(Rotation r) {
       Rotation ret = toDelay0(r);
       if (ret.equals(Rotation.INCORRECT_PARSE)) {
-         if (Agenda.statusU) Agenda.log("SOMETHING WENT WRONG WITH TO DELAY");
+         ErrorID.showUserError(ErrorID.WRONG_DELAY_SELECTED);
          return Rotation.DELAY_R1;
       }
       return ret;

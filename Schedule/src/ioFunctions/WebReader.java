@@ -10,6 +10,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import constants.Rotation;
 import constants.RotationConstants;
@@ -23,34 +29,78 @@ public class WebReader
    public WebReader() {
       init();
    }
-   
+
    public void init() {
-      if (Agenda.statusU) Agenda.log("website reader initialized");
+      if (Agenda.statusU)
+         Agenda.log("website reader initialized");
       try {
          rotationDataSite = new URL("https://agendapascack.weebly.com/");
       } catch (MalformedURLException e) {
-         if (Agenda.statusU) Agenda.logError("URL not traced", e);
+         if (Agenda.statusU)
+            Agenda.logError("URL not traced", e);
       }
       String total = "";
       long start = System.currentTimeMillis();
       try {
          total = retrieveHtml();
-      } catch (IOException e) {
-         e.printStackTrace();
-         if (Agenda.statusU) Agenda.logError("Internet Connection Error", e);
+      } catch (Exception e) {
+         if (Agenda.statusU) Agenda.log("Internet Connection Error");
       }
-      long readTime = System.currentTimeMillis()-start;
+      long readTime = System.currentTimeMillis() - start;
       start = System.currentTimeMillis();
       events = extractEvents(total);
-      long eventTime = System.currentTimeMillis()- start;
+      long eventTime = System.currentTimeMillis() - start;
       start = System.currentTimeMillis();
       dates = extractDates(total);
-      long dateTime = System.currentTimeMillis()- start;
-      if (Agenda.statusU) Agenda.log("internet read in "+readTime + ". events ordered in "+eventTime + ", dates in "+dateTime);
+      long dateTime = System.currentTimeMillis() - start;
+      if (Agenda.statusU)
+         Agenda.log("internet read in " + readTime + ". events ordered in "
+               + eventTime + ", dates in " + dateTime);
    }
 
-   private static String retrieveHtml() throws IOException {
-      BufferedReader in;
+   private static final long MILLIS_TO_WAIT = 4000L;
+   public static String retrieveHtml() throws ExecutionException, TimeoutException, InterruptedException {
+      final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+      // schedule the work
+      final Future<String> future = executor
+            .submit(WebReader::readHtml);
+      try {
+         // where we wait for task to complete
+         final String result = future.get(MILLIS_TO_WAIT,
+               TimeUnit.MILLISECONDS);
+         return result;
+      }
+
+      catch (TimeoutException e) {
+         if (Agenda.statusU) Agenda.logError("internet reading timed out", e);
+         future.cancel(true /* mayInterruptIfRunning */ );
+         throw e;
+      }
+
+      catch (InterruptedException e) {
+         if (Agenda.statusU) Agenda.logError("internet reading interrupted", e);
+         throw e;
+      }
+      catch (ExecutionException e) {
+         if (Agenda.statusU) Agenda.logError("internet reading execution error", e);
+         throw e;
+      }
+   }
+   /**
+    * dummy method to read some data from a website
+    */
+   private static String requestDataFromWebsite() {
+      try {
+         // force timeout to expire
+         Thread.sleep(14_000L);
+      } catch (InterruptedException e) {
+      }
+      return "dummy";
+   }
+   
+   private static String readHtml() throws IOException {
+      BufferedReader in = null;
       in = new BufferedReader(
             new InputStreamReader(rotationDataSite.openStream()));
       StringBuilder b = new StringBuilder();
@@ -166,10 +216,12 @@ public class WebReader
    }
    
    public static void main(String[] args) {
-      long start = System.currentTimeMillis();
+//      long start = System.currentTimeMillis();
+//      WebReader wr = new WebReader();
+//      System.out.println(System.currentTimeMillis()-start);
+//      wr.readTodayRotation();
+//      System.out.println(System.currentTimeMillis()-start);
       WebReader wr = new WebReader();
-      System.out.println(System.currentTimeMillis()-start);
-      wr.readTodayRotation();
-      System.out.println(System.currentTimeMillis()-start);
+      System.out.println(wr.readTodayRotation());
    }
 }
