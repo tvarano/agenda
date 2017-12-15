@@ -24,7 +24,8 @@ public enum Rotation
    DELAY_R4 (getSchedule(RotationConstants.DELAY_R4), DayType.DELAYED_OPEN, RotationConstants.DELAY_R4),
    DELAY_ODD (getSchedule(RotationConstants.DELAY_ODD), DayType.DELAY_ODD, RotationConstants.DELAY_ODD),
    DELAY_EVEN (getSchedule(RotationConstants.DELAY_EVEN), DayType.DELAY_EVEN, RotationConstants.DELAY_EVEN),
-   NO_SCHOOL (getSchedule(RotationConstants.NO_SCHOOL_INDEX), DayType.NO_SCHOOL, RotationConstants.NO_SCHOOL_INDEX)
+   NO_SCHOOL (getSchedule(RotationConstants.NO_SCHOOL_INDEX), DayType.NO_SCHOOL, RotationConstants.NO_SCHOOL_INDEX),
+   INCORRECT_PARSE(new ClassPeriod[0], DayType.NO_SCHOOL, RotationConstants.INCORRECT_PARSE)
    ;
       
    private final int lunchSlot;

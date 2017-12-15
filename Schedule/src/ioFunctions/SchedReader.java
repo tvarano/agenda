@@ -49,7 +49,7 @@ public class SchedReader {
       try {
          reader.close();
       } catch (IOException e) {
-         e.printStackTrace();
+         ErrorID.showError(e, true);
       }
       close();
       ret = formatSchedule(ret);
@@ -137,6 +137,14 @@ public class SchedReader {
       if (debug) System.out.println("rewriting sched");
       SchedWriter w = new SchedWriter();
       w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
+   }
+   
+   protected void finalize() {
+      try {
+         reader.close();
+      } catch (IOException e) {
+         Agenda.log("error in schedReader finalization");
+      }
    }
    
    public static void transfer(String localPath, File f) {

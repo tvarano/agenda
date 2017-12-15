@@ -69,7 +69,7 @@ public class InputMain extends JPanel
    
    public void init(Schedule s) {
       removeAll();
-      if (Agenda.statusU) Agenda.log("began input");
+      if (Agenda.statusU) Agenda.log("inputMain initialized");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       add(new ToolBar(true, this), BorderLayout.NORTH);
       amtClasses = s.getClasses().length;

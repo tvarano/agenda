@@ -98,6 +98,7 @@ public class DisplayMain extends JPanel implements ActionListener
       checkAndUpdateTime();
       currentClassPane.setClassPeriod(findCurrentClass());
       pushTodaySchedule();
+      toolbar.setRotation(todayR);
    }
    
    private void addComponents() {
@@ -170,6 +171,8 @@ public class DisplayMain extends JPanel implements ActionListener
          currentTime = new Time(LocalTime.now());
       if (currentTime.getHour24() == 0 && currentTime.getMinute() < 2)
             checkAndUpdateDate();
+      checkInSchool();
+      findCurrentClass();
       currentClassPane.pushCurrentTime(currentTime);
    }
    
@@ -288,7 +291,9 @@ public class DisplayMain extends JPanel implements ActionListener
       todaySched.setData(OrderUtility.reorderAndClone(todayR, mainSched, mainSched.getClasses()));
       this.todayR = todayR;
       todaySched.setLunchLab(todayR);
+      toolbar.setRotation(todayR);
       pushTodaySchedule();
+      
       update();
    }
    public DayOfWeek getToday() {
@@ -313,5 +318,10 @@ public class DisplayMain extends JPanel implements ActionListener
    @Override
    public void actionPerformed(ActionEvent e) {
       update();
+   }
+   
+   protected void finalize() {
+      hardStop();
+      web = null;
    }
 }

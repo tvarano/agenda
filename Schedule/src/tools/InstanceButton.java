@@ -108,5 +108,4 @@ public class InstanceButton extends JButton implements ActionListener
       }
       repaint();
    }
-
 }

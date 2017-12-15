@@ -15,7 +15,7 @@ import information.ClassPeriod;
 import information.Time;
 import managers.UIHandler;
 
-public class CurrentInfo extends JTextPane{
+public class CurrentInfo extends JTextPane {
       private static final long serialVersionUID = 1L;
       private ClassPeriod c;
       private int situation;

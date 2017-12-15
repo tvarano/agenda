@@ -31,6 +31,8 @@ public enum ErrorID {
    INPUT_ERROR("Input Error. Make sure all fields are filled correctly"), 
    WRONG_HALF_SELECTED("You selected a half day rotation that does not exist.\n"
          + "The rotation has been set to a half day R1."),
+   WRONG_DELAY_SELECTED("You selected a delayed opening that doesn't exist\n"
+         + "The rotatoin has been set to a delayed opening R1."),
    OTHER();
 
    public static final String ERROR_NAME = Agenda.APP_NAME + " ERROR";
@@ -66,8 +68,9 @@ public enum ErrorID {
                   ERROR_NAME, JOptionPane.WARNING_MESSAGE);
    }
    
-   private static int showInitialMessage(int messageType) {
-      String defMessage = "An error has occurred.\nClick \"Info\" for more information.";
+   private static int showInitialMessage(int messageType, boolean recoverable) {
+      String fatality = (recoverable) ? "recoverable" : "fatal";
+      String defMessage = "A " + fatality + " error has occurred.\nClick \"Info\" for more information.";
       String usrMessage = "A user "+defMessage.substring(3);
       String message = (messageType == JOptionPane.ERROR_MESSAGE) ? 
             defMessage : usrMessage;
@@ -77,11 +80,11 @@ public enum ErrorID {
             null, new String[]{"Info", "Close"}, "Close");
    }
 
-   public static void showGeneral(Throwable e, String ID, boolean copy) {
+   public static void showGeneral(Throwable e, String ID, boolean copy, boolean recoverable) {
       if (Agenda.statusU) Agenda.logError(ID, e);
       e.printStackTrace();
       String newLn = "\n";
-      int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE);
+      int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE, recoverable);
       if (choice == 0) {
          String message = getType(e).message;
          String internalMessage = (e.getMessage() == null) ? "" : e.getMessage() + newLn;
@@ -104,7 +107,7 @@ public enum ErrorID {
 
    public static void showError(Throwable e, boolean recover) {
       String ID = getID(e);
-      showGeneral(e, ID, true);
+      showGeneral(e, ID, true, recover);
       if (!recover)
          System.exit(0);
    }
@@ -115,7 +118,7 @@ public enum ErrorID {
    }
    
    public static void showPrintingError(Throwable e) {
-      showGeneral(e, getID(e), false);
+      showGeneral(e, getID(e), false, false);
    }
    
    private static ErrorID getType(Throwable e) {

@@ -114,7 +114,7 @@ public final class UIHandler {
 	private static class ThemeChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
 
-      public ThemeChooser(String themeName) {
+      public ThemeChooser(String themeName, Agenda a) {
 	      super(themeName);
 	      addActionListener(new ActionListener() {
             @Override
@@ -128,7 +128,7 @@ public final class UIHandler {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.INFORMATION_MESSAGE, null,
                         new String[]{"Restart", "Close"}, "Restart") == 0)
-                     Agenda.restart();
+                     a.restart();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
@@ -140,7 +140,7 @@ public final class UIHandler {
 	private static class LookChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
 
-      public LookChooser(UIManager.LookAndFeelInfo look) {
+      public LookChooser(UIManager.LookAndFeelInfo look, Agenda a) {
          super(look.getName());
          addActionListener(new ActionListener() {
             @Override
@@ -154,7 +154,7 @@ public final class UIHandler {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.INFORMATION_MESSAGE, null,
                         new String[]{"Restart", "Close"}, "Restart") == 0)
-                     Agenda.restart();
+                     a.restart();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
@@ -203,7 +203,7 @@ public final class UIHandler {
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
-   public synchronized static MenuBar configureMenuBar(JFrame frame) {
+   public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
 	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
       Menu m = new Menu("Time Left In Class: ");
@@ -218,7 +218,7 @@ public final class UIHandler {
             if (checkIntentions("Reset your schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
-               Agenda.restart();
+               age.restart();
             }
          }
       });
@@ -235,7 +235,7 @@ public final class UIHandler {
                   bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.LAF_ROUTE));
                   bw.write(UIManager.getSystemLookAndFeelClassName());
                   bw.close();
-                  Agenda.restart();
+                  age.restart();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
@@ -248,7 +248,7 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (checkIntentions("Restart the applicaiton"))
-               Agenda.restart();
+               age.restart();
          }
       });
       
@@ -259,11 +259,13 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-            File oldDir = new File(oldLoc);
             if (Agenda.FileHandler.setFileLocation()) {
-               Agenda.restartApplication(new Runnable() {
+//               Agenda.FileHandler.initAndCreateFiles();
+               age.restartApplication(new Runnable() {
                   public void run() {
-                     Agenda.FileHandler.deleteFile(oldDir);
+                     boolean complete = Agenda.FileHandler.moveFiles(oldLoc);
+                     if (Agenda.statusU) Agenda.log("files moved = "+complete);
+//                     Agenda.FileHandler.deleteFile(new File(oldLoc));
                   }
                });
             }
@@ -322,12 +324,12 @@ public final class UIHandler {
       
       Menu themes = (Menu)m.add(new Menu("Set Theme..."));
       for (String str : UIHandler.themes) {
-         themes.add(new ThemeChooser(str));
+         themes.add(new ThemeChooser(str, age));
       }
       Menu looks = (Menu)m.add(new Menu("Set Look..."));
       for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels())
          if (!laf.getName().equals("Nimbus"))
-            looks.add(new LookChooser(laf));
+            looks.add(new LookChooser(laf, age));
       bar.add(m);
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");

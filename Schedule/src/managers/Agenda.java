@@ -37,7 +37,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.6.3 ß";
+   public static final String BUILD = "v1.6.4 ß";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -47,9 +47,11 @@ public class Agenda extends JPanel
    public static Runnable mainThread;
    public static URI sourceCode;
    
-   public Agenda() { 
+   public Agenda() {
       initialFileWork();
       
+      bar = UIHandler.configureMenuBar(parentFrame, this);
+
       if (statusU) log("Main began initialization");
       UIHandler.init();
       manager = new PanelManager(this, bar);
@@ -74,15 +76,14 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureRouteFile();
 
       // if fileRoute doesn't exist...
       try {
          if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine()) {
-            FileHandler.writeFileLocation(System.getProperty("user.home") + "/Documents");
-            FileHandler.setFileLocation();
+            FileHandler.writeFileLocation(System.getProperty("user.home") + "/Applications/Agenda/");
          }
       } catch (Exception e1) {
          ErrorID.showError(e1, false);
@@ -102,6 +103,11 @@ public class Agenda extends JPanel
       }
    }
    
+   /**
+    * Everything that has to handle files
+    * @author varanoth
+    *
+    */
    public static class FileHandler {
       public static String ENVELOPING_FOLDER;
       public static String RESOURCE_ROUTE;
@@ -233,7 +239,7 @@ public class Agenda extends JPanel
       }
    
       public static void initFileNames(String envelop) {
-         ENVELOPING_FOLDER = envelop+"/Agenda/";
+         ENVELOPING_FOLDER = envelop+"/AgendaInternal/";
          RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
          LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
          FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
@@ -248,6 +254,7 @@ public class Agenda extends JPanel
       }
       
       public synchronized static void createFiles() {
+         if (statusU) log("filesCreated");
          if (new File(RESOURCE_ROUTE).mkdirs()) {
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
@@ -266,22 +273,38 @@ public class Agenda extends JPanel
             }
       }
       
-      /**
+      /** @deprecated
+       * SHOULD NOT BE USED
        * delete all files. Needs to be done in order to correctly delete them all.
        */
       public static void deleteFiles() {
+         if (statusU) log("deleting files");
          deleteFile(new File(ENVELOPING_FOLDER));
       }
       
+      public static boolean moveFiles(String oldLocation) {
+         if (statusU) log("attempting to move files");
+         
+         return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
+//         moveFile(new File(oldLocation), ENVELOPING_FOLDER);
+      }
+      
+      public static void moveFile(File f, String newPath) {
+         if (statusU) log("moving files");
+            f.renameTo(new File(newPath));
+      }
+      
+      /**
+       * @deprecated
+       * @param f
+       * @return
+       */
       public static boolean deleteFile(File f) {
          if (f.isDirectory()) {
-            System.out.println(f+" isDirectory");
             for (File in : f.listFiles()) {
-               boolean del = deleteFile(in);
-               System.out.println(in+" del="+del);
+               deleteFile(in);
             }
          }
-         System.out.println("deleted "+f);
          return f.delete();
       }
    }
@@ -309,7 +332,6 @@ public class Agenda extends JPanel
       long start = System.currentTimeMillis();
       parentFrame = new JFrame(APP_NAME + " " + BUILD);
       int frameToPaneAdjustment = 22;
-      bar = UIHandler.configureMenuBar(parentFrame);
       parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
       parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       parentFrame.setVisible(true);
@@ -321,8 +343,9 @@ public class Agenda extends JPanel
       if (statusU)
          log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
    }
-   public static void restart() {
-      if (statusU) log("Program Restarted\n");
+   public void restart() {
+      manager.getDisplay().writeMain();
+      if (statusU) log("Program Restarted with no arguments\n");
       restartApplication(new Runnable() {
          @Override
          public void run() {
@@ -346,7 +369,7 @@ public class Agenda extends JPanel
     *            some custom code to be run before restarting
     * @throws IOException
     */
-   public static void restartAppCP(Runnable runBeforeRestart) {
+   public void restartAppCP(Runnable runBeforeRestart) {
       try {
          // java binary
          String java = System.getProperty("java.home") + "/bin/java";
@@ -398,7 +421,7 @@ public class Agenda extends JPanel
       }
    }
   
-   public static void restartApplication(Runnable runBeforeRestart) {
+   public void restartApplication(Runnable runBeforeRestart) {
       final String javaBin = System.getProperty("java.home") + File.separator
             + "bin" + File.separator + "java";
       File currentJar = null;
@@ -414,10 +437,10 @@ public class Agenda extends JPanel
          restartAppCP(runBeforeRestart);
       }
 
-      // Build command: java -jar application.jar 
+      // Build command: java -jar application.jar
       final ArrayList<String> command = new ArrayList<String>();
-     command.add(javaBin);
-     command.add("-jar");
+      command.add(javaBin);
+      command.add("-jar");
       command.add(currentJar.getPath());
 
       final ProcessBuilder builder = new ProcessBuilder(command);
@@ -426,10 +449,22 @@ public class Agenda extends JPanel
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
+   // execute the command in a shutdown hook, to be sure that all the
+      // resources have been disposed before restarting the application
+//      Runtime.getRuntime().addShutdownHook(new Thread() {
+//         @Override
+//         public void run() {
+//            try {
+//               Runtime.getRuntime().exec(.toString());
+//            } catch (IOException e) {
+//               e.printStackTrace();
+//            }
+//         }
+//      });
       // run the custom code
       if (runBeforeRestart != null) {
          runBeforeRestart.run();
-     }
+      }
      if (statusU) log("restarting...");
      System.exit(0);
    }

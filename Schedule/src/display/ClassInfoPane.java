@@ -31,7 +31,7 @@ public class ClassInfoPane extends JTextPane
       this.setEditable(false);
       this.setClassPeriod(c);
       this.setMinimumSize(new Dimension(60,60));
-      initStyles(getStyledDocument());
+      initStyles();
    }
    
    private void createClassDetailPane() {
@@ -91,7 +91,8 @@ public class ClassInfoPane extends JTextPane
      }
    }
    
-   private void initStyles(StyledDocument doc) {
+   private void initStyles() {
+      StyledDocument doc = getStyledDocument();
       Style def = StyleContext.getDefaultStyleContext().
             getStyle(StyleContext.DEFAULT_STYLE);
       

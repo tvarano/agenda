@@ -69,7 +69,6 @@ public class OrderUtility
                newArrayIndex++;
                rotationIndex++;
             }
-            //TODO for now... make sure to have them write their own pascack.
          }
          if (order[i] == RotationConstants.PASCACK) {
             if (detailedDebug) System.out.println("entering pascack...");

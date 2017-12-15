@@ -202,6 +202,7 @@ public class Schedule implements Serializable
    }
    public void setClasses(ClassPeriod[] classes) {
       this.classes = classes;
+      calculateSchoolDay();
    }
    public Lab[] getLabs() {
       return labs;
