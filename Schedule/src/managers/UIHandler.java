@@ -259,13 +259,13 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-            File oldDir = new File(oldLoc);
             if (Agenda.FileHandler.setFileLocation()) {
-               Agenda.FileHandler.initAndCreateFiles();
+//               Agenda.FileHandler.initAndCreateFiles();
                age.restartApplication(new Runnable() {
                   public void run() {
-                     Agenda.FileHandler.moveFiles(oldLoc);
-                     Agenda.FileHandler.deleteFile(oldDir);
+                     boolean complete = Agenda.FileHandler.moveFiles(oldLoc);
+                     if (Agenda.statusU) Agenda.log("files moved = "+complete);
+//                     Agenda.FileHandler.deleteFile(new File(oldLoc));
                   }
                });
             }

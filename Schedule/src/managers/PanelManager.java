@@ -94,4 +94,9 @@ public class PanelManager
    public void setParent(Agenda parent) {
       this.parent = parent;
    }
+   protected void finalize() {
+      display = null;
+      input = null;
+      bar = null;
+   }
 }
