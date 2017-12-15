@@ -254,6 +254,7 @@ public final class UIHandler {
       
       m.addSeparator();
       
+      /*
       mi = m.add(new MenuItem("Choose File Location"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -272,6 +273,7 @@ public final class UIHandler {
             
          }
       });
+      */
       
       mi = m.add(new MenuItem("View File Location"));
       mi.addActionListener(new ActionListener() {
@@ -443,7 +445,7 @@ public final class UIHandler {
                bw.close();
             } catch (IOException e1) {
                e1.printStackTrace();
-               Agenda.FileHandler.setFileLocation();
+               Agenda.FileHandler.initAndCreateFiles();
             }
          }
          return themes[0];

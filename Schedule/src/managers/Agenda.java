@@ -69,7 +69,6 @@ public class Agenda extends JPanel
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
-   @SuppressWarnings("resource")
    public synchronized void initialFileWork() {
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
@@ -78,8 +77,9 @@ public class Agenda extends JPanel
       }
       boolean logData = false;
 
-      FileHandler.ensureRouteFile();
+//      FileHandler.ensureRouteFile();
 
+      /*
       // if fileRoute doesn't exist...
       try {
          if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine()) {
@@ -88,6 +88,7 @@ public class Agenda extends JPanel
       } catch (Exception e1) {
          ErrorID.showError(e1, false);
       }
+      */
       //check parameters, draw routes, create files if needed 
       FileHandler.initAndCreateFiles();
 
@@ -129,6 +130,9 @@ public class Agenda extends JPanel
          }
       }
       
+      /**
+       * @deprecated
+       */
       public static void ensureRouteFile() {
          try {
             new File(System.getProperty("user.home") + "/Applications/Agenda/").mkdirs();
@@ -140,11 +144,12 @@ public class Agenda extends JPanel
       
       public static void initAndCreateFiles() {
       // read file and set
-         String mainFolder = readFileLocation();
+//         String mainFolder = readFileLocation();
+         String mainFolder = System.getProperty("user.home") + "/Applications/Agenda"; 
          initFileNames(mainFolder);
 
          // ensure the user is correct
-         checkAndFormatUser();
+//         checkAndFormatUser();
          
          //if you need, create your folder and initialize routes
          createFiles();
@@ -181,6 +186,7 @@ public class Agenda extends JPanel
       }
       
       /**
+       * @deprecated
        * sets the file location by asking the user and writing it to a file.
        * @return true if and only if the function goes through cleanly.
        */
@@ -195,6 +201,10 @@ public class Agenda extends JPanel
          return true;
       }
 
+      /**
+       * @deprecated
+       * @return
+       */
       public static String askFileLocation() {
          JFileChooser c = new JFileChooser(System.getProperty("user.home"));
          c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -209,6 +219,11 @@ public class Agenda extends JPanel
          return c.getSelectedFile().getAbsolutePath();
       }
       
+      /**
+       * @deprecated
+       * @param s
+       * @return
+       */
       public static String writeFileLocation(String s) {
          if (s.equals(NO_LOCATION))
             return NO_LOCATION;
@@ -226,6 +241,10 @@ public class Agenda extends JPanel
          return s;
       }
 
+      /**
+       * @deprecated
+       * @return
+       */
       public static String readFileLocation() {
          Scanner s = null;
          try {
@@ -239,7 +258,7 @@ public class Agenda extends JPanel
       }
    
       public static void initFileNames(String envelop) {
-         ENVELOPING_FOLDER = envelop+"/AgendaInternal/";
+         ENVELOPING_FOLDER = envelop + "/";
          RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
          LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
          FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
@@ -247,6 +266,9 @@ public class Agenda extends JPanel
          LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
       }
       
+      /**
+       * @deprecated
+       */
       public static void checkAndFormatUser() {
          if (System.getProperty("user.home").indexOf(ENVELOPING_FOLDER.substring(0, 12)) < 0) {
             setFileLocation();
@@ -289,6 +311,11 @@ public class Agenda extends JPanel
 //         moveFile(new File(oldLocation), ENVELOPING_FOLDER);
       }
       
+      /**
+       * @deprecated
+       * @param f
+       * @param newPath
+       */
       public static void moveFile(File f, String newPath) {
          if (statusU) log("moving files");
             f.renameTo(new File(newPath));
