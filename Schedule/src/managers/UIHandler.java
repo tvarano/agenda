@@ -254,27 +254,6 @@ public final class UIHandler {
       
       m.addSeparator();
       
-      /*
-      mi = m.add(new MenuItem("Choose File Location"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-            if (Agenda.FileHandler.setFileLocation()) {
-//               Agenda.FileHandler.initAndCreateFiles();
-               age.restartApplication(new Runnable() {
-                  public void run() {
-                     boolean complete = Agenda.FileHandler.moveFiles(oldLoc);
-                     if (Agenda.statusU) Agenda.log("files moved = "+complete);
-//                     Agenda.FileHandler.deleteFile(new File(oldLoc));
-                  }
-               });
-            }
-            
-         }
-      });
-      */
-      
       mi = m.add(new MenuItem("View File Location"));
       mi.addActionListener(new ActionListener() {
          @Override

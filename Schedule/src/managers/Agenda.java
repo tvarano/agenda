@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.MenuBar;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -15,10 +14,8 @@ import java.net.URISyntaxException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -26,7 +23,6 @@ import javax.swing.UIManager;
 
 import constants.ErrorID;
 import ioFunctions.SchedReader;
-import resources.ResourceAccess;
 
 //Thomas Varano
 //Main class
@@ -77,18 +73,8 @@ public class Agenda extends JPanel
       }
       boolean logData = false;
 
-//      FileHandler.ensureRouteFile();
+      FileHandler.ensureRouteFile();
 
-      /*
-      // if fileRoute doesn't exist...
-      try {
-         if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine()) {
-            FileHandler.writeFileLocation(System.getProperty("user.home") + "/Applications/Agenda/");
-         }
-      } catch (Exception e1) {
-         ErrorID.showError(e1, false);
-      }
-      */
       //check parameters, draw routes, create files if needed 
       FileHandler.initAndCreateFiles();
 
@@ -115,8 +101,6 @@ public class Agenda extends JPanel
       public static String LOG_ROUTE;
       public static String FILE_ROUTE;
       public static String THEME_ROUTE, LAF_ROUTE;
-      public static final String FOLDER_ROUTE = System.getProperty("user.home")
-            + "/Applications/Agenda/AgendaInternalFileRoute.txt";
       public static final String NO_LOCATION = "noLoc";
       public static void openURI(URI uri) {
          if (Desktop.isDesktopSupported()) {
@@ -130,26 +114,15 @@ public class Agenda extends JPanel
          }
       }
       
-      /**
-       * @deprecated
-       */
-      public static void ensureRouteFile() {
-         try {
-            new File(System.getProperty("user.home") + "/Applications/Agenda/").mkdirs();
-            ResourceAccess.getFolderLocationFile().createNewFile();
-         } catch (IOException e2) {
-            ErrorID.showError(e2, false);
-         }
-      }     
-      
+      public static boolean ensureRouteFile() {
+         return new File(System.getProperty("user.home") + "/Applications/Agenda/")
+               .mkdirs();
+      }
+
       public static void initAndCreateFiles() {
-      // read file and set
-//         String mainFolder = readFileLocation();
+         // read file and set/
          String mainFolder = System.getProperty("user.home") + "/Applications/Agenda"; 
          initFileNames(mainFolder);
-
-         // ensure the user is correct
-//         checkAndFormatUser();
          
          //if you need, create your folder and initialize routes
          createFiles();
@@ -184,78 +157,6 @@ public class Agenda extends JPanel
             }
          }
       }
-      
-      /**
-       * @deprecated
-       * sets the file location by asking the user and writing it to a file.
-       * @return true if and only if the function goes through cleanly.
-       */
-      public static boolean setFileLocation() {
-         String fileLocation = askFileLocation();
-         if (fileLocation.equals(NO_LOCATION)) {
-            return false;
-         }
-         writeFileLocation(fileLocation);
-         initFileNames(readFileLocation());
-         ResourceAccess.getFolderLocationFile().setWritable(false);
-         return true;
-      }
-
-      /**
-       * @deprecated
-       * @return
-       */
-      public static String askFileLocation() {
-         JFileChooser c = new JFileChooser(System.getProperty("user.home"));
-         c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-         c.setDialogTitle("Choose The Location for Internal Files (Default to Documents)");
-         int choice;
-         do {
-           choice = c.showSaveDialog(null);
-         } while (choice != JFileChooser.APPROVE_OPTION && choice != JFileChooser.CANCEL_OPTION);
-         if (choice == JFileChooser.CANCEL_OPTION) {
-            return NO_LOCATION;
-         }
-         return c.getSelectedFile().getAbsolutePath();
-      }
-      
-      /**
-       * @deprecated
-       * @param s
-       * @return
-       */
-      public static String writeFileLocation(String s) {
-         if (s.equals(NO_LOCATION))
-            return NO_LOCATION;
-         ResourceAccess.getFolderLocationFile().setWritable(true);
-         try {
-            File folderLocationFile = ResourceAccess.getFolderLocationFile();
-            folderLocationFile.setExecutable(true);
-            BufferedWriter bw = new BufferedWriter(new FileWriter(folderLocationFile));
-            bw.write(s);
-            bw.close();
-         } catch (IOException e) {
-            ErrorID.showError(e, true);
-         }
-         ResourceAccess.getFolderLocationFile().setWritable(false);
-         return s;
-      }
-
-      /**
-       * @deprecated
-       * @return
-       */
-      public static String readFileLocation() {
-         Scanner s = null;
-         try {
-            s = new Scanner(ResourceAccess.getFolderLocationFile());
-         } catch (FileNotFoundException | NullPointerException e) {
-            ErrorID.showError(e, false);
-         }
-         String ret = s.nextLine();
-         s.close();
-         return ret;
-      }
    
       public static void initFileNames(String envelop) {
          ENVELOPING_FOLDER = envelop + "/";
@@ -266,17 +167,8 @@ public class Agenda extends JPanel
          LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
       }
       
-      /**
-       * @deprecated
-       */
-      public static void checkAndFormatUser() {
-         if (System.getProperty("user.home").indexOf(ENVELOPING_FOLDER.substring(0, 12)) < 0) {
-            setFileLocation();
-         }
-      }
-      
       public synchronized static void createFiles() {
-         if (statusU) log("filesCreated");
+         if (statusU) log("files created");
          if (new File(RESOURCE_ROUTE).mkdirs()) {
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
@@ -295,44 +187,10 @@ public class Agenda extends JPanel
             }
       }
       
-      /** @deprecated
-       * SHOULD NOT BE USED
-       * delete all files. Needs to be done in order to correctly delete them all.
-       */
-      public static void deleteFiles() {
-         if (statusU) log("deleting files");
-         deleteFile(new File(ENVELOPING_FOLDER));
-      }
-      
       public static boolean moveFiles(String oldLocation) {
          if (statusU) log("attempting to move files");
          
          return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
-//         moveFile(new File(oldLocation), ENVELOPING_FOLDER);
-      }
-      
-      /**
-       * @deprecated
-       * @param f
-       * @param newPath
-       */
-      public static void moveFile(File f, String newPath) {
-         if (statusU) log("moving files");
-            f.renameTo(new File(newPath));
-      }
-      
-      /**
-       * @deprecated
-       * @param f
-       * @return
-       */
-      public static boolean deleteFile(File f) {
-         if (f.isDirectory()) {
-            for (File in : f.listFiles()) {
-               deleteFile(in);
-            }
-         }
-         return f.delete();
       }
    }
    

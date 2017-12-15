@@ -18,10 +18,6 @@ public final class ResourceAccess
       return ResourceAccess.class.getResourceAsStream(localPath);
    }
    
-   public static File getFolderLocationFile() {
-      return new File(Agenda.FileHandler.FOLDER_ROUTE);
-   }
-   
    public static ImageIcon getImage(String localPath) {
       try {
          return new ImageIcon(ResourceAccess.class.getResource(localPath));
