@@ -73,13 +73,14 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureRouteFile();
 
       //check parameters, draw routes, create files if needed 
       FileHandler.initAndCreateFiles();
-
+      
+      //set system.out to the log file
       if (logData) {
          try {
             File log = new File(FileHandler.LOG_ROUTE);
@@ -90,6 +91,7 @@ public class Agenda extends JPanel
             ErrorID.showError(e, true);
          }
       }
+      //logs the time taken (in millis)
       if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
    }
    
@@ -104,6 +106,7 @@ public class Agenda extends JPanel
       public static String FILE_ROUTE;
       public static String THEME_ROUTE, LAF_ROUTE;
       public static final String NO_LOCATION = "noLoc";
+      
       public static void openURI(URI uri) {
          if (Desktop.isDesktopSupported()) {
             try {

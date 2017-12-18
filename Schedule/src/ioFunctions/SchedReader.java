@@ -150,15 +150,16 @@ public class SchedReader {
    public static void transfer(String localPath, File f) {
       if (Agenda.statusU) Agenda.log("transferring readme");
       try {
-         f.createNewFile();
-         Scanner in = new Scanner(ResourceAccess.getResource(localPath));
-         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-         while (in.hasNextLine()) {
-            bw.write(in.nextLine()+"\r\n");
+         if (f.createNewFile()) {
+            Scanner in = new Scanner(ResourceAccess.getResource(localPath));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            while (in.hasNextLine()) {
+               bw.write(in.nextLine()+"\r\n");
+            }
+            f.setWritable(false);
+            in.close();
+            bw.close();
          }
-         f.setWritable(false);
-         in.close();
-         bw.close();
       } catch (IOException | NullPointerException e) {
          ErrorID.showError(e, true);
       }

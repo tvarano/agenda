@@ -87,15 +87,16 @@ public class WebReader
          throw e;
       }
    }
-   /**
-    * timeout tester
-    */
+   
+   /*
+    // dummy method to test timeout
    private static String requestDataFromWebsite() {
       try {
          Thread.sleep(14_000L);
       } catch (InterruptedException e) {}
       return "dummy";
    }
+   */
    
    private static String readHtml() throws IOException {
       BufferedReader in = null;

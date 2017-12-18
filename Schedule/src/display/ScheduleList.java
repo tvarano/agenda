@@ -84,7 +84,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
    }
    public void setSchedule(Schedule schedule) {
       if (debugNames) System.out.println(getName() + "THE NEW SCHEDULE HERE IS "+schedule.getName());
-      this.schedule = schedule.clone();
+      this.schedule = schedule;
       createList();
    }
    public JPanel getParentPane() {

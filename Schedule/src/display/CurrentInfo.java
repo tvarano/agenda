@@ -1,6 +1,5 @@
 package display;
 import java.awt.Color;
-import java.time.LocalTime;
 
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
@@ -12,7 +11,6 @@ import javax.swing.text.StyledDocument;
 
 import constants.RotationConstants;
 import information.ClassPeriod;
-import information.Time;
 import managers.UIHandler;
 
 public class CurrentInfo extends JTextPane {
@@ -50,7 +48,7 @@ public class CurrentInfo extends JTextPane {
       
       private int findAndSetSituation() {
          if (hasParent) {
-            if (parentPanel.isInSchool()) {
+            if (parentPanel.checkInSchool()) {
                situation = IN_BETWEEN;
                if (c != null)
                   situation = IN_CLASS;
@@ -87,21 +85,21 @@ public class CurrentInfo extends JTextPane {
             };
          }
          if (situation == IN_BETWEEN) {
+            if (parentPanel.getParentPane().findNextClass() == null)
+               return new String[] {"ERROR"};
             return new String[] {
                   "You are in between classes."+newLn,
                   parentPanel.getParentPane().findNextClass().getName(),
                   " is next" + newLn +"in ",
                   ""+parentPanel.getParentPane().timeUntilNextClass().getMinute(),
                   " minutes."
-                  
             };
          }
          if (situation == NOT_IN_SCHOOL) {
             return new String[] {
                   "You are not in school."+newLn,
                   "School starts in ",
-                  new Time(LocalTime.now()).getTimeUntil(
-                        parentPanel.getParentPane().getMainSched().getSchoolDay().getStartTime())
+                  parentPanel.getParentPane().timeUntilSchool()
                   .durationString()+newLn,
                   "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
                         "email me at varanoth@pascack.org"
