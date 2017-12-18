@@ -4,13 +4,11 @@
 
 package resources;
 
-import java.io.File;
 import java.io.InputStream;
 
 import javax.swing.ImageIcon;
 
 import constants.ErrorID;
-import managers.Agenda;
 
 public final class ResourceAccess
 {
