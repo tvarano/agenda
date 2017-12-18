@@ -322,7 +322,7 @@ public class Agenda extends JPanel
          ErrorID.showError(e, false);
       }
 
-      // is it a jar file? if not, restart using the classpath way
+      // if not a jar, restart using the classpath way
       if (!currentJar.getName().endsWith(".jar")) {
          restartAppCP(runBeforeRestart);
       }
@@ -339,7 +339,7 @@ public class Agenda extends JPanel
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
-   // execute the command in a shutdown hook, to be sure that all the
+      // execute the command in a shutdown hook, to be sure that all the
       // resources have been disposed before restarting the application
       Runtime.getRuntime().addShutdownHook(new Thread() {
          @Override
