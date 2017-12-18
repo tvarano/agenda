@@ -91,9 +91,11 @@ public class PanelManager
    public Agenda getParent() {
       return parent;
    }
+   
    public void setParent(Agenda parent) {
       this.parent = parent;
    }
+   
    protected void finalize() {
       display = null;
       input = null;

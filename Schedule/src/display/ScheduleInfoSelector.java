@@ -139,27 +139,32 @@ public class ScheduleInfoSelector extends JPanel
    private JTabbedPane createTabbedPane() {
       JTabbedPane retval = new JTabbedPane();
       
+      String tabTip = "Select a class for info\nand memo writing";
       JScrollPane scroll = new JScrollPane(todayList); scroll.setName(todayList.getName());
       scroll.setBackground(todayList.getBackground());
-      retval.addTab(scroll.getName(), null, scroll, "Today's Rotation of Classes");
+      todayList.setToolTipText("Today's Rotation of Classes");
+      retval.addTab(scroll.getName(), null, scroll, tabTip);
       retval.setMnemonicAt(0, KeyEvent.VK_1);
       
       scroll = new JScrollPane(mainList); scroll.setName(mainList.getName());
       scroll.setBackground(mainList.getBackground());
-      retval.addTab(scroll.getName(), null, scroll, "Standard R1 Schedule");
+      mainList.setToolTipText("Standard R1 Schedule");
+      retval.addTab(scroll.getName(), null, scroll, tabTip);
       retval.setMnemonicAt(1, KeyEvent.VK_2);
       
       scroll = new JScrollPane(todayNameless); scroll.setName(todayNameless.getName());
       scroll.setBackground(todayNameless.getBackground());
-      retval.addTab(scroll.getName(), null, scroll, "Rotation for Today");
+      todayNameless.setToolTipText("Rotation for Today");
+      retval.addTab(scroll.getName(), null, scroll, tabTip);
       retval.setMnemonicAt(2, KeyEvent.VK_3);
       
       ScheduleList allC = new ScheduleList(RotationConstants.getAllClasses(mainSched), false);
       allC.setParentPane(this);
       scroll = new JScrollPane(allC);
       scroll.setName("All Classes");
+      allC.setToolTipText("Every Class You Have");
       scroll.setBackground(todayNameless.getBackground());
-      retval.addTab(scroll.getName(), null, scroll, "All Classes");
+      retval.addTab(scroll.getName(), null, scroll, tabTip);
       retval.setMnemonicAt(3, KeyEvent.VK_4);
       
       

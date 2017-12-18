@@ -41,7 +41,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private CurrentClassPane currentClassPane;
    private ToolBar toolbar;
    private ScheduleInfoSelector infoSelector;
-   private boolean updating, showDisp, inSchool;
+   private boolean updating, showDisp;
    private boolean debug, testSituation;
    private Timer timer;
    
@@ -67,7 +67,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private void initTime() {
       try {
          if (testSituation) {
-            currentTime = new Time(10,50);
+            currentTime = new Time(9,20);
             today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today); 
             
@@ -114,7 +114,9 @@ public class DisplayMain extends JPanel implements ActionListener
    public void writeMain() {
       if (Agenda.statusU) Agenda.log("wrote main Schedule");
       try {
-         new SchedWriter().write(mainSched);
+         SchedWriter w = new SchedWriter();
+         w.write(mainSched);
+         w.close();
       } catch (Exception e) {
          ErrorID.showUserError(ErrorID.FILE_TAMPER);
          Agenda.FileHandler.initAndCreateFiles();
@@ -192,7 +194,7 @@ public class DisplayMain extends JPanel implements ActionListener
     * @return
     */
    public ClassPeriod findNextClass() {
-      if (inSchool)
+      if (checkInSchool())
          return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
       return null;
    }
@@ -202,7 +204,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public Time timeUntilNextClass() {
-      if (inSchool)
+      if (checkInSchool())
          return currentTime.getTimeUntil(findNextClass().getStartTime());
       return new Time();
    }
@@ -212,8 +214,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public boolean checkInSchool() {
-      inSchool = todaySched.getSchoolDay().contains(currentTime);
-      return inSchool;
+      return todaySched.getSchoolDay().contains(currentTime);
    }
 
    public ClassPeriod findCurrentClass(){
@@ -283,7 +284,6 @@ public class DisplayMain extends JPanel implements ActionListener
       return todayR;
    }
    public void setTodayR(Rotation todayR) {
-      //TODO here get rid of sysout
       System.out.println("-----------------NEW ROTATION---------------------");
       if (updating)
          return;
@@ -322,6 +322,5 @@ public class DisplayMain extends JPanel implements ActionListener
    
    protected void finalize() {
       hardStop();
-      web = null;
    }
 }

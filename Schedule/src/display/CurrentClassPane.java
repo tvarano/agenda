@@ -32,7 +32,7 @@ public class CurrentClassPane extends JPanel
    public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");
       currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
-      inSchool = (c == null);
+      inSchool =  parent.checkInSchool();
       setClassPeriod(c); setSched(s); setParentPane(parent);
       setBackground(UIHandler.background);
       sched.setShowName(true);
@@ -71,7 +71,7 @@ public class CurrentClassPane extends JPanel
    }
    
    public boolean checkInSchool() {
-      inSchool = ((DisplayMain)parentPane).checkInSchool();
+      inSchool = parentPane.checkInSchool();
       return inSchool;
    }
    
@@ -91,7 +91,7 @@ public class CurrentClassPane extends JPanel
     * @return
     */
    public ClassPeriod findNextClass() {
-      return ((DisplayMain)parentPane).findNextClass();
+      return parentPane.findNextClass();
    }
    
    public Time getTimeLeft() {

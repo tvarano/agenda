@@ -33,7 +33,6 @@ public class SchedWriter
          outStream = new ObjectOutputStream(fileStream);
       } catch (IOException e) {
          ErrorID.showError(e, false);
-
       }
    }
    
@@ -54,10 +53,12 @@ public class SchedWriter
    
    public void close() {
       try {
+         fileStream.flush();
          fileStream.close();
+         outStream.flush();
          outStream.close();
       } catch (IOException e) {
-         ErrorID.showError(e, false);
+         ErrorID.showError(e, true);
       }
    }
 }

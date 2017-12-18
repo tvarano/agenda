@@ -66,7 +66,7 @@ public class WebReader
       final Future<String> future = executor
             .submit(WebReader::readHtml);
       try {
-         // where we wait for task to complete
+         // wait for task to complete
          final String result = future.get(MILLIS_TO_WAIT,
                TimeUnit.MILLISECONDS);
          return result;
@@ -74,7 +74,7 @@ public class WebReader
 
       catch (TimeoutException e) {
          if (Agenda.statusU) Agenda.logError("internet reading timed out", e);
-         future.cancel(true /* mayInterruptIfRunning */ );
+         future.cancel(true);
          throw e;
       }
 
@@ -87,17 +87,16 @@ public class WebReader
          throw e;
       }
    }
-   /**
-    * dummy method to read some data from a website
-    */
+   
+   /*
+    // dummy method to test timeout
    private static String requestDataFromWebsite() {
       try {
-         // force timeout to expire
          Thread.sleep(14_000L);
-      } catch (InterruptedException e) {
-      }
+      } catch (InterruptedException e) {}
       return "dummy";
    }
+   */
    
    private static String readHtml() throws IOException {
       BufferedReader in = null;
@@ -216,11 +215,6 @@ public class WebReader
    }
    
    public static void main(String[] args) {
-//      long start = System.currentTimeMillis();
-//      WebReader wr = new WebReader();
-//      System.out.println(System.currentTimeMillis()-start);
-//      wr.readTodayRotation();
-//      System.out.println(System.currentTimeMillis()-start);
       WebReader wr = new WebReader();
       System.out.println(wr.readTodayRotation());
    }

@@ -103,6 +103,8 @@ public final class UIHandler {
       UIManager.put("TabbedPane.foreground", foreground);
       UIManager.put("TabbedPane.insets", secondary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
+	   UIManager.put("ToolTip.background", background);
+	   UIManager.put("ToolTip.foreground", foreground);
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
 	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getImage("ErrorIcon.png"));
@@ -253,25 +255,6 @@ public final class UIHandler {
       });
       
       m.addSeparator();
-      
-      mi = m.add(new MenuItem("Choose File Location"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-            if (Agenda.FileHandler.setFileLocation()) {
-//               Agenda.FileHandler.initAndCreateFiles();
-               age.restartApplication(new Runnable() {
-                  public void run() {
-                     boolean complete = Agenda.FileHandler.moveFiles(oldLoc);
-                     if (Agenda.statusU) Agenda.log("files moved = "+complete);
-//                     Agenda.FileHandler.deleteFile(new File(oldLoc));
-                  }
-               });
-            }
-            
-         }
-      });
       
       mi = m.add(new MenuItem("View File Location"));
       mi.addActionListener(new ActionListener() {
@@ -443,7 +426,7 @@ public final class UIHandler {
                bw.close();
             } catch (IOException e1) {
                e1.printStackTrace();
-               Agenda.FileHandler.setFileLocation();
+               Agenda.FileHandler.initAndCreateFiles();
             }
          }
          return themes[0];

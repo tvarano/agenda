@@ -33,7 +33,14 @@ public class OrderUtility
       if (debug) System.out.println("**********\nordering class array...");
       if (detailedDebug) printData(r, unOrderedArray);
       int extraClasses = unOrderedArray.length - Rotation.R1.getTimes().length;
-      ClassPeriod[] newArray = new ClassPeriod[r.getTimes().length + extraClasses];
+      int totalAmt  = r.getTimes().length + extraClasses;
+      for (ClassPeriod c : unOrderedArray) {
+         if (c.getSlot() == 0 && r.isDelay())
+            totalAmt--;
+         else if (c.getSlot() == 8 && r.isHalf())
+            totalAmt--;
+      }
+      ClassPeriod[] newArray = new ClassPeriod[totalAmt];
       int[] order = Rotation.getSlotRotation(r);
       
       //check for zero period, etc.
@@ -41,12 +48,15 @@ public class OrderUtility
       int newArrayIndex = 0, rotationIndex = 0;
       for (int i = 0; i < unOrderedArray.length; i++) {
          if (unOrderedArray[i].getSlot() == 0) {
-            newArray[0] = unOrderedArray[i];
-            newArrayIndex++;
+            if (!r.isDelay()) {
+               newArray[0] = unOrderedArray[i];
+               newArrayIndex++;
+            }
             arrayStart++;
          }
          else if (unOrderedArray[i].getSlot() == 8) {
-            newArray[newArray.length-1] = unOrderedArray[i];
+            if (!r.isHalf())
+               newArray[newArray.length-1] = unOrderedArray[i];
          }
       }
       
