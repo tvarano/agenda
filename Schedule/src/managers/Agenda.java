@@ -1,4 +1,5 @@
 package managers;
+
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -66,12 +67,13 @@ public class Agenda extends JPanel
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
    public synchronized void initialFileWork() {
+      long start = System.currentTimeMillis();
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = false;
+      boolean logData = true;
 
       FileHandler.ensureRouteFile();
 
@@ -88,12 +90,12 @@ public class Agenda extends JPanel
             ErrorID.showError(e, true);
          }
       }
+      if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
    }
    
    /**
     * Everything that has to handle files
     * @author varanoth
-    *
     */
    public static class FileHandler {
       public static String ENVELOPING_FOLDER;
@@ -121,7 +123,7 @@ public class Agenda extends JPanel
 
       public static void initAndCreateFiles() {
          // read file and set/
-         String mainFolder = System.getProperty("user.home") + "/Applications/Agenda"; 
+         String mainFolder = System.getProperty("user.home") + "/Applications/Agenda/"; 
          initFileNames(mainFolder);
          
          //if you need, create your folder and initialize routes
@@ -159,7 +161,7 @@ public class Agenda extends JPanel
       }
    
       public static void initFileNames(String envelop) {
-         ENVELOPING_FOLDER = envelop + "/";
+         ENVELOPING_FOLDER = envelop;
          RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
          LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
          FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
@@ -198,12 +200,12 @@ public class Agenda extends JPanel
       return bar;
    }
    
-   public static void log(String s) {
-      System.out.println(LocalTime.now() + " : "+s);
+   public static void log(String text) {
+      System.out.println(LocalTime.now() + " : "+text);
    }
    
-   public static void logError(String s, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: " + s + " : \n\t" + e.getMessage());
+   public static void logError(String message, Throwable e) {
+      System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
    }
    
    public Dimension getMinimumSize() {
@@ -247,8 +249,8 @@ public class Agenda extends JPanel
    public static final String SUN_JAVA_COMMAND = "sun.java.command";
 
    /**
-    * Restart the current Java application</br>
-    * <b>completely copy-pasted but it works like a charm</b>
+    * Restart the current Java application
+    * however, only if the program is run through eclipse or with a classPath
     * 
     * @param runBeforeRestart
     *            some custom code to be run before restarting
@@ -336,16 +338,16 @@ public class Agenda extends JPanel
       }
    // execute the command in a shutdown hook, to be sure that all the
       // resources have been disposed before restarting the application
-//      Runtime.getRuntime().addShutdownHook(new Thread() {
-//         @Override
-//         public void run() {
-//            try {
-//               Runtime.getRuntime().exec(.toString());
-//            } catch (IOException e) {
-//               e.printStackTrace();
-//            }
-//         }
-//      });
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+         @Override
+         public void run() {
+            try {
+               Runtime.getRuntime().exec(builder.toString());
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+      });
       // run the custom code
       if (runBeforeRestart != null) {
          runBeforeRestart.run();

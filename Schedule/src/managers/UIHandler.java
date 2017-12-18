@@ -103,6 +103,8 @@ public final class UIHandler {
       UIManager.put("TabbedPane.foreground", foreground);
       UIManager.put("TabbedPane.insets", secondary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
+	   UIManager.put("ToolTip.background", background);
+	   UIManager.put("ToolTip.foreground", foreground);
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
 	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getImage("ErrorIcon.png"));

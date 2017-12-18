@@ -114,7 +114,9 @@ public class DisplayMain extends JPanel implements ActionListener
    public void writeMain() {
       if (Agenda.statusU) Agenda.log("wrote main Schedule");
       try {
-         new SchedWriter().write(mainSched);
+         SchedWriter w = new SchedWriter();
+         w.write(mainSched);
+         w.close();
       } catch (Exception e) {
          ErrorID.showUserError(ErrorID.FILE_TAMPER);
          Agenda.FileHandler.initAndCreateFiles();
@@ -322,6 +324,5 @@ public class DisplayMain extends JPanel implements ActionListener
    
    protected void finalize() {
       hardStop();
-      web = null;
    }
 }
