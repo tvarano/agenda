@@ -23,7 +23,7 @@ import managers.UIHandler;
 //[Program Descripion]
 //Sep 20, 2017
 
-public class ClassInputSlot extends JPanel implements ActionListener
+public class DataInputSlot extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;
    private static final int gap = 4;
@@ -39,12 +39,12 @@ public class ClassInputSlot extends JPanel implements ActionListener
    private boolean hasParent, hasLab, removable, labFriendly, debug;
    private JTextField[] promptFields;
    
-   public ClassInputSlot(int slotNumber, Container parentPanel) {
+   public DataInputSlot(int slotNumber, Container parentPanel) {
       this (new ClassPeriod(slotNumber), parentPanel);
       if (debug) System.out.println("input slot "+slotNumber+" initialized empty");
    }
    
-   public ClassInputSlot(ClassPeriod c, Container parentPanel) {
+   public DataInputSlot(ClassPeriod c, Container parentPanel) {
       if (c == null) c = new ClassPeriod();
       debug = false;
       setFont(UIHandler.getInputLabelFont());
@@ -54,8 +54,8 @@ public class ClassInputSlot extends JPanel implements ActionListener
       setSlotNumber(c.getSlot());
       hasLab = false; 
       removable = (slotNumber == 0 || slotNumber == 8);
-      if (parentPanel instanceof InputMain) {
-         this.parentPanel = (InputMain)parentPanel;
+      if (parentPanel instanceof DataInput) {
+         this.parentPanel = (DataInput)parentPanel;
           hasParent = true;
       }
       else
@@ -199,7 +199,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
       if (checkCanCreate()) {
 //         resolveError();
          if (hasParent && hasLab) {
-            ((InputMain) parentPanel).addLab(slotNumber);
+            ((DataInput) parentPanel).addLab(slotNumber);
             if (debug)
                System.out.println("\tslot" +slotNumber +"Added lab");
          }
@@ -263,7 +263,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
          AbstractButton b = (AbstractButton) e.getSource();
          if (b.getActionCommand().equals("remove")) {
             if (hasParent)
-               ((InputMain) parentPanel).removeClassAndReOrder(slotNumber, this);
+               ((DataInput) parentPanel).removeClassAndReOrder(slotNumber, this);
             else
                parentPanel.remove(this);
          }

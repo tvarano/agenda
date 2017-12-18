@@ -10,7 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import input.InputMain;
+import input.DataInput;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -21,7 +21,7 @@ public class AddButton extends JButton implements ActionListener
 {
    private static final long serialVersionUID = 1L;
    private int slot;
-   private InputMain parentPanel;
+   private DataInput parentPanel;
    private boolean parentIsInput;
 
    public AddButton(int slot, JComponent parentPanel) {
@@ -35,9 +35,9 @@ public class AddButton extends JButton implements ActionListener
       setSlot(slot);
       addActionListener(this);
       addMouseListener(UIHandler.buttonPaintListener(this));
-      parentIsInput = parentPanel instanceof InputMain;
+      parentIsInput = parentPanel instanceof DataInput;
       if (parentIsInput)
-         setParentPanel((InputMain)parentPanel);
+         setParentPanel((DataInput)parentPanel);
    }
    
    public int getSlot() {
@@ -46,10 +46,10 @@ public class AddButton extends JButton implements ActionListener
    public void setSlot(int slot) {
       this.slot = slot;
    }
-   public InputMain getParentPanel() {
+   public DataInput getParentPanel() {
       return parentPanel;
    }
-   public void setParentPanel(InputMain parentPanel) {
+   public void setParentPanel(DataInput parentPanel) {
       this.parentPanel = parentPanel;
    }
    @Override
@@ -63,7 +63,7 @@ public class AddButton extends JButton implements ActionListener
    public static class Menu extends JComboBox<String> implements ActionListener
    { 
       private static final long serialVersionUID = 1L;
-      private InputMain parentPanel;
+      private DataInput parentPanel;
       private boolean parentIsInput;
       
       public Menu(JPanel parentPanel) {
@@ -76,16 +76,16 @@ public class AddButton extends JButton implements ActionListener
          classes[1] = ""+0; classes[2] = ""+8;
          setModel(new DefaultComboBoxModel<String>(classes));
          
-         parentIsInput = (parentPanel instanceof InputMain);
+         parentIsInput = (parentPanel instanceof DataInput);
          if (parentIsInput)
-            setParentPanel((InputMain) parentPanel);
+            setParentPanel((DataInput) parentPanel);
          
       }
 
-      public InputMain getParentPanel() {
+      public DataInput getParentPanel() {
          return parentPanel;
       }
-      public void setParentPanel(InputMain parentPanel) {
+      public void setParentPanel(DataInput parentPanel) {
          this.parentPanel = parentPanel;
       }
       

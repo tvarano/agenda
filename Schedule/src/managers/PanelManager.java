@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import display.DisplayMain;
-import input.InputMain;
+import input.DataInput;
 
 //Thomas Varano
 //[Program Descripion]
@@ -16,14 +16,18 @@ public class PanelManager
 {
    private Agenda parent;
    private DisplayMain display;
-   private InputMain input;
+   private DataInput input;
    private MenuBar bar;
    private boolean inputting;
+   private int currentScreen;
+   public static final int DISPLAY = 0, DATA_IN = 1, GPA_IN = 2;
+   
+   
    public PanelManager(Agenda parent, MenuBar bar) { 
       setParent(parent);
       this.bar = bar;
       display = new DisplayMain(this);  display.setName("display");
-      input = new InputMain(this);  input.setName("input");
+      input = new DataInput(this);  input.setName("input");
       parent.setLayout(new CardLayout());
       parent.add(display, display.getName());
       parent.add(input, input.getName());

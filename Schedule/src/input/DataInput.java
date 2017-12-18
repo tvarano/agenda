@@ -27,26 +27,26 @@ import tools.ToolBar;
 //Thomas Varano
 //Aug 31, 2017
 
-public class InputMain extends JPanel
+public class DataInput extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final int INIT_AMT_CL = 7;
    private ArrayList<Lab> labs;
-   private ArrayList<ClassInputSlot> slots;
+   private ArrayList<DataInputSlot> slots;
    private JPanel center;
    private ClassPeriod lunch;
    private PanelManager parentManager;
    private boolean hasZeroPeriod, hasManager, error, debug, saved;
    private int amtClasses;
-   private ClassInputSlot pascack;
+   private DataInputSlot pascack;
    private Schedule beginningSchedule;
    
-   public InputMain(PanelManager parentManager) {
+   public DataInput(PanelManager parentManager) {
       debug = false;
       center = new JPanel();
       center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
       labs = new ArrayList<Lab>();
-      slots = new ArrayList<ClassInputSlot>();
+      slots = new ArrayList<DataInputSlot>();
       setBackground(UIHandler.tertiary);
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       setLayout(new BorderLayout());
@@ -94,16 +94,16 @@ public class InputMain extends JPanel
    }
    
    private void addSlot(int slotIndex) {
-      ClassInputSlot s = new ClassInputSlot(slotIndex, this);
+      DataInputSlot s = new DataInputSlot(slotIndex, this);
       int addIndex = (hasZeroPeriod) ? slotIndex : slotIndex-1;
       slots.add(addIndex, s);
       center.add(s, addIndex);
    }
    
-   private ClassInputSlot addSlot(ClassPeriod c) {
+   private DataInputSlot addSlot(ClassPeriod c) {
       if (debug) System.out.println("INPUT added "+c.getInfo());
-      slots.add(new ClassInputSlot(c, this));
-      return (ClassInputSlot) center.add(slots.get(slots.size()-1));
+      slots.add(new DataInputSlot(c, this));
+      return (DataInputSlot) center.add(slots.get(slots.size()-1));
    }
    
    private void addPascack(ClassPeriod pref) {
@@ -165,7 +165,7 @@ public class InputMain extends JPanel
    private void initSlots(ClassPeriod[] cp, Lab[] labs) {
       initSlots(cp);
       for (Lab l : labs) {
-         for (ClassInputSlot c : slots) {
+         for (DataInputSlot c : slots) {
             if (l.getClassSlot() == c.getSlotNumber()) {
                c.setLab(true);
                if (debug) System.out.println("lab "+l.getClassSlot() + "set to "+c);
@@ -229,8 +229,8 @@ public class InputMain extends JPanel
       Component[] c = center.getComponents();
       
       for (int i = 0; i < c.length; i++) {
-         if (c[i] instanceof ClassInputSlot) {
-            slots.add((ClassInputSlot) c[i]);
+         if (c[i] instanceof DataInputSlot) {
+            slots.add((DataInputSlot) c[i]);
          }
       }
    }
@@ -255,8 +255,8 @@ public class InputMain extends JPanel
    
    private boolean canCreate() {
       for (Component c : center.getComponents())
-         if (c instanceof ClassInputSlot) 
-            if (!((ClassInputSlot) c).checkCanCreate())
+         if (c instanceof DataInputSlot) 
+            if (!((DataInputSlot) c).checkCanCreate())
                return false;
       return true;
    }
@@ -274,8 +274,8 @@ public class InputMain extends JPanel
       
       int classIndex = 0;
       for (int i = 0; i < c.length; i++) {
-         if (c[i] instanceof ClassInputSlot && !c[i].equals(pascack)) {
-            classes[classIndex] = ((ClassInputSlot) c[i]).createClass();
+         if (c[i] instanceof DataInputSlot && !c[i].equals(pascack)) {
+            classes[classIndex] = ((DataInputSlot) c[i]).createClass();
             
             if (classes[classIndex].getSlot() == 4) {
                if (debug) System.out.println("filling lunch");
