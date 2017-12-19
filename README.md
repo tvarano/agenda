@@ -1,15 +1,12 @@
 # Agenda
-If you are unable to run the program, there are a few steps you might have to take.
-Sorry.
-
-First, you will get a security error, saying the application is by an unidentified developer. 
-Go to System Preferences > Security & Privacy > General. Then run the program. 
-You should see a message notifying you of the program in System Preferences and a button saying "Run Anyway"
-Click "Run Anyway," and the program should run properly. 
-
-Second, if you get an error saying you need a JDK environment, go to Self Service > Updates and download Java_8U144.
-If you have Eclipse, this is not necessary. 
-
-If you have any errors, check the log (in the folder that you chose) and look through the messages. 
-
-email me with any questions, errors, and log lines at varanoth@pascack.org 
+A scheduler program for Pascack Hills (with possible implementation in Pascack Valley). Given the template schedules are correct, the user will be able to determine where they should be in school, how much time is left in their current activity, and their schedule for the day. They can take notes and keep their assignments in order for each class. The program is accessible, but is still in beta phase, with many new bugs popping up with every new addition. Eventually, the program will hopefully be exported with self service to both schools in the district, and can be modulated 
+<p>Upcoming features may include: 
+<ul>
+<li>GPA Calculation</li>
+<li>File modulation</li>
+<li>possible text edit</li>
+<li>More streamlined memo page</li>
+<li>Application format</li>
+<li>Self service support</li>
+<li>Mobile support</li>
+</ul>
