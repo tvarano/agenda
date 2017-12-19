@@ -15,9 +15,6 @@ import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.PreferencesEvent;
 import java.awt.desktop.PreferencesHandler;
-import java.awt.desktop.QuitEvent;
-import java.awt.desktop.QuitHandler;
-import java.awt.desktop.QuitResponse;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -231,7 +228,7 @@ public final class UIHandler {
 	
 	private static void showPreferences(Agenda age) {
 	   final int w = 300;
-	   final int h = 400;
+	   final int h = 300;
 	   JFrame f = new JFrame(Agenda.APP_NAME + " Preferences");
 	   JPanel p = new JPanel();
 	   p.setPreferredSize(new Dimension(w, h));
@@ -341,7 +338,9 @@ public final class UIHandler {
                      + "CREDITS:\n"
                      + "Thomas Varano : Author\n"
                      + "Michael Port : GPA Support\n"
-                     + "Matthew Gheduzzi : Alpha Tester\n",
+                     + "Viktor Nakev : Icon Designer\n"
+                     + "Matthew Gheduzzi : Alpha Tester\n"
+                     + "Michael Ruberto : Conceptual Designer",
                      "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
             }
          });
