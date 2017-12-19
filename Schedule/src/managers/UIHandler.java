@@ -1,12 +1,23 @@
 package managers;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PreferencesHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -23,7 +34,11 @@ import java.util.Scanner;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -115,53 +130,75 @@ public final class UIHandler {
 	
 	private static class ThemeChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
+      private String themeName;
 
       public ThemeChooser(String themeName, Agenda a) {
 	      super(themeName);
+	      this.themeName = themeName;
 	      addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
-                  bw.write(themeName);
-                  bw.close();
-                  if (JOptionPane.showOptionDialog(null,
-                        "Changing the theme requires a restart", Agenda.APP_NAME,
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE, null,
-                        new String[]{"Restart", "Close"}, "Restart") == 0)
-                     a.restart();
-               } catch (IOException e1) {
-                  ErrorID.showError(e1, true);
-               }
+               writeData();
+               if (JOptionPane.showOptionDialog(null,
+                     "Changing the theme requires a restart", Agenda.APP_NAME,
+                     JOptionPane.YES_NO_OPTION,
+                     JOptionPane.INFORMATION_MESSAGE, null,
+                     new String[]{"Restart", "Close"}, "Restart") == 0)
+                  a.restart();
             } 
 	      });
 	   }
+      public void writeData() {
+         try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+            bw.write(themeName);
+            bw.close();
+            
+         } catch (IOException e1) {
+            ErrorID.showError(e1, true);
+         }
+      }
+      public String toString() {
+         return themeName;
+      }
 	}
 
 	private static class LookChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
+      private UIManager.LookAndFeelInfo look;
 
       public LookChooser(UIManager.LookAndFeelInfo look, Agenda a) {
          super(look.getName());
+         this.look = look;
          addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.RESOURCE_ROUTE+"look.txt"));
-                  bw.write(look.getClassName());
-                  bw.close();
-                  if (JOptionPane.showOptionDialog(null,
-                        "Changing the look requires a restart", Agenda.APP_NAME,
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE, null,
-                        new String[]{"Restart", "Close"}, "Restart") == 0)
-                     a.restart();
-               } catch (IOException e1) {
-                  ErrorID.showError(e1, true);
-               }
-            } 
+               performAction(a);
+            }
          });
+      }
+      
+      public void writeData() {
+         try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.RESOURCE_ROUTE+"look.txt"));
+            bw.write(look.getClassName());
+            bw.close();
+         } catch (IOException e1) {
+            ErrorID.showError(e1, true);
+         }
+      }
+      
+      public void performAction(Agenda a) {
+            writeData();
+            if (JOptionPane.showOptionDialog(null,
+                  "Changing the look requires a restart", Agenda.APP_NAME,
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.INFORMATION_MESSAGE, null,
+                  new String[]{"Restart", "Close"}, "Restart") == 0)
+               a.restart();
+      }
+      public String toString() {
+         return look.getName();
       }
    }
 	private static class LinkChooser extends MenuItem {
@@ -187,6 +224,93 @@ public final class UIHandler {
       }
 	}
 	
+	private static Border getUnFormattedTitleBorder(String title) {
+	   return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2),
+            title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP, font, Color.BLACK);
+	}
+	
+	private static void showPreferences(Agenda age) {
+	   final int w = 300;
+	   final int h = 400;
+	   JFrame f = new JFrame(Agenda.APP_NAME + " Preferences");
+	   JPanel p = new JPanel();
+	   p.setPreferredSize(new Dimension(w, h));
+	   p.setLayout(new BorderLayout());
+	   JPanel top = new JPanel();
+	   JLabel l = new JLabel("Input your preferences");
+	   l.setFont(font);
+	   top.add(l);
+	   top.setPreferredSize(new Dimension(w,40));
+	   p.add(top, BorderLayout.NORTH);
+	   
+	   JPanel center = new JPanel();
+	   center.setLayout(new GridLayout(1, 2));
+	   JList<LookChooser> lookList = new JList<LookChooser>();
+	   lookList.setBorder(getUnFormattedTitleBorder("Look and Feel"));
+	   DefaultListModel<LookChooser> lookModel = new DefaultListModel<LookChooser>();
+	   lookList.setForeground(Color.BLACK);
+	   lookList.setSelectionBackground(Color.DARK_GRAY);
+	   lookList.setSelectionForeground(Color.WHITE);
+      lookList.setModel(lookModel);
+	   for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels())
+         if (!laf.getName().equals("Nimbus")) {
+            LookChooser lc = new LookChooser(laf, age);
+            lookModel.addElement(lc);
+            if (laf.getName().equals(UIManager.getLookAndFeel().getName()))
+               lookList.setSelectedValue(lc, true);
+         }
+	   center.add(lookList);
+	   
+	   JList<ThemeChooser> themeList = new JList<ThemeChooser>();
+	   themeList.setForeground(Color.BLACK);
+	   themeList.setSelectionBackground(Color.DARK_GRAY);
+	   themeList.setSelectionForeground(Color.WHITE);
+	   themeList.setBorder(getUnFormattedTitleBorder("Theme"));
+	   DefaultListModel<ThemeChooser> themeModel = new DefaultListModel<ThemeChooser>();
+	   themeList.setModel(themeModel);
+	   for (String s : themes) {
+	      ThemeChooser tc = new ThemeChooser(s, age);
+	      themeModel.addElement(tc);
+	      if (readDoc("theme.txt", THEME_ID).equals(s))
+	         themeList.setSelectedValue(tc, true);
+	   }
+	   center.add(themeList);
+	   p.add(center, BorderLayout.CENTER);
+	   
+	   JPanel bottom = new JPanel();
+	   bottom.setLayout(new GridLayout(1,2));
+	   JButton b = new JButton("Cancel");
+	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	   b.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            f.dispose();
+         }
+	   });
+	   bottom.add(b);
+	   b = new JButton("Apply and Restart");
+	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	   b.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            lookList.getSelectedValue().writeData();
+            themeList.getSelectedValue().writeData();
+            age.restart();
+         }
+      });
+	   b.setSelected(true);
+	   bottom.add(b);
+	   
+	   
+	   p.add(bottom, BorderLayout.SOUTH);
+	   
+	   f.getContentPane().add(p);
+	   f.pack();
+	   f.setLocationRelativeTo(age);
+	   f.setVisible(true);
+	   f.setResizable(false);
+	}
+	
 	/**
 	 * the themes available for the application
 	 */
@@ -206,6 +330,29 @@ public final class UIHandler {
    }
 
    public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
+      if (Desktop.isDesktopSupported()) {
+         Desktop.getDesktop().setAboutHandler(new AboutHandler() {
+            @Override
+            public void handleAbout(AboutEvent arg0) {
+               JOptionPane.showMessageDialog(null, 
+                     "Agenda is a schedule program for Pascack Hills (and possibly Valley)\n"
+                     + "that can keep track of time, school schedules, assignments, and GPA\n"
+                     + "for students.\n"
+                     + "CREDITS:\n"
+                     + "Thomas Varano : Author\n"
+                     + "Michael Port : GPA Support\n"
+                     + "Matthew Gheduzzi : Alpha Tester\n",
+                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+         
+         Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {
+            @Override
+            public void handlePreferences(PreferencesEvent arg0) {
+               showPreferences(age);
+            } 
+         });
+      }
 	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
       Menu m = new Menu("Time Left In Class: ");
