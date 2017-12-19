@@ -1,12 +1,17 @@
 package managers;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PreferencesHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -206,6 +211,29 @@ public final class UIHandler {
    }
 
    public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
+      if (Desktop.isDesktopSupported()) {
+         Desktop.getDesktop().setAboutHandler(new AboutHandler() {
+            @Override
+            public void handleAbout(AboutEvent arg0) {
+               JOptionPane.showMessageDialog(null, 
+                     "Agenda is a schedule program for Pascack Hills (and possibly Valley)\n"
+                     + "that can keep track of time, school schedules, assignments, and GPA\n"
+                     + "for students.\n"
+                     + "CREDITS:\n"
+                     + "Thomas Varano : Author\n"
+                     + "Michael Port : GPA Support\n"
+                     + "Matthew Gheduzzi : Alpha Tester\n",
+                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+         
+         Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {
+            @Override
+            public void handlePreferences(PreferencesEvent arg0) {
+//               showPreferences();
+            } 
+         });
+      }
 	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
       Menu m = new Menu("Time Left In Class: ");
