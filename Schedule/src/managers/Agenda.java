@@ -4,6 +4,9 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.MenuBar;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -61,6 +64,16 @@ public class Agenda extends JPanel
             System.exit(0);
          }
       });
+      if (Desktop.isDesktopSupported())
+         Desktop.getDesktop().setQuitHandler(new QuitHandler() {
+            @Override
+            public void handleQuitRequestWith(QuitEvent arg0,
+                  QuitResponse arg1) {
+               manager.getDisplay().writeMain();
+               if (statusU) log("program quit");
+               arg1.performQuit();
+            }
+         });
    }
    
    /**
