@@ -53,7 +53,7 @@ public enum DayType
    }
    
    public boolean hasLab() {
-      return labSwitch == null;
+      return labSwitch != null;
    }
 
    public boolean equals(DayType otherDT) {

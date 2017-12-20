@@ -17,8 +17,10 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    private static final long serialVersionUID = -8853513886388469596L;
    public static final String NO_TEACH = "Teacher Name";
    public static final String NO_ROOM = "000";
+   public static final int FULL_YEAR = 0, HALF_YEAR = 1;
    public static final int DEF_STRING_LENGTH = 20;
-   private int slot;
+   private int slot, courseLength;
+   private double grade;
    private String roomNumber, memo;
    private boolean showName, canShowPeriod;
    private static boolean debug = false;
@@ -177,8 +179,38 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    public void setData(ClassPeriod c) {
       setName(c.getName()); setRoomNumber(c.getRoomNumber()); setTeacher(c.getTeacher()); setSlot(c.getSlot());
+      setGrade(c.getGrade());
    }
    
+   public double getGrade() {
+      return (grade == 0) ? 100 : grade;
+   }
+   
+   public String getLetterGrade() {
+      //TODO return letter grade based on number
+      double rg = Math.round(getGrade());
+      if (rg > 98)
+         return "A+";
+//      else if (grade > )
+      return "F";
+   }
+
+   public void setGrade(double grade) {
+      this.grade = grade;
+   }
+   
+   public void setGrade(String letterGrade) {
+      //TODO do grade settign
+   }
+
+   public int getCourseLength() {
+      return courseLength;
+   }
+
+   public void setCourseLength(int courseLength) {
+      this.courseLength = courseLength;
+   }
+
    public boolean equals(ClassPeriod c) {
       if (c == null)
          return false;

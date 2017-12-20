@@ -55,7 +55,7 @@ public class Agenda extends JPanel
       if (statusU) log("Main began initialization");
       UIHandler.init();
       manager = new PanelManager(this, bar);
-      manager.setCurrentPane(false);
+      manager.setCurrentPane(PanelManager.DISPLAY);
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {

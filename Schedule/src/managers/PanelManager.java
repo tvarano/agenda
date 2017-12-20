@@ -18,9 +18,9 @@ public class PanelManager
    private DisplayMain display;
    private DataInput input;
    private MenuBar bar;
-   private boolean inputting;
-   private int currentScreen;
-   public static final int DISPLAY = 0, DATA_IN = 1, GPA_IN = 2;
+//   private boolean inputting;
+   private int currentPane;
+   public static final int DISPLAY = 0, INPUT = 1, GPA = 2;
    
    
    public PanelManager(Agenda parent, MenuBar bar) { 
@@ -33,14 +33,14 @@ public class PanelManager
       parent.add(input, input.getName());
    }
    
-   public void setCurrentPane(boolean inputting) {
-      if (this.inputting == inputting)
+   public void setCurrentPane(int type) {
+      if (currentPane == type)
          return;
-      if (inputting)
+      if (type == INPUT)
           ((CardLayout) parent.getLayout()).show(parent, input.getName());
       else 
          ((CardLayout) parent.getLayout()).show(parent, display.getName());
-      this.inputting = inputting;
+      this.currentPane = type;
    }
    
    public MenuBar getBar() {
@@ -57,29 +57,35 @@ public class PanelManager
    }
    
    public void startInput() {
-      if (inputting == true)
+      if (currentPane == INPUT)
          return;
       display.stop();
       input.setBeginningSchedule(display.getMainSched());
-      setCurrentPane(true);
+      setCurrentPane(INPUT);
    }
    
-   public ActionListener changeView(boolean inputting) {
+   public ActionListener changeView(int parentType) {
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (Agenda.statusU) Agenda.log("view changed. inputting = "+inputting);
-            if (inputting) 
+            if (Agenda.statusU) Agenda.log("view changed. type = "+parentType);
+            if (parentType == INPUT) 
                startInput();
+            else if (parentType == GPA)
+               startGPA();
             else
-               finishInputting();
+               reinitDisp();
          }
       };
    }
    
-   public void finishInputting() {
+   public void startGPA() {
+      
+   }
+   
+   public void reinitDisp() {
       display.reinitialize();
-      setCurrentPane(false);
+      setCurrentPane(DISPLAY);
    }
    
    public void dispose() {
@@ -88,9 +94,9 @@ public class PanelManager
 	   input = null;
    }
    
-   public void closeInput() {
+   public void resumeDisp() {
       display.resume();
-      setCurrentPane(false);
+      setCurrentPane(DISPLAY);
    }
    public Agenda getParent() {
       return parent;

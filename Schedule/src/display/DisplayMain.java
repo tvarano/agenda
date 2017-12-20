@@ -94,7 +94,7 @@ public class DisplayMain extends JPanel implements ActionListener
       infoSelector = new ScheduleInfoSelector(todaySched, mainSched, this);
 
       currentClassPane = new CurrentClassPane(new ClassPeriod(), todaySched, this);
-      toolbar = new ToolBar(false, this);
+      toolbar = new ToolBar(PanelManager.DISPLAY, this);
       checkAndUpdateTime();
       currentClassPane.setClassPeriod(findCurrentClass());
       pushTodaySchedule();
@@ -261,8 +261,8 @@ public class DisplayMain extends JPanel implements ActionListener
       setUpdating(false);
    }
    
-   public ActionListener changeView() {
-      return parentManager.changeView(true);
+   public ActionListener changeView(int type) {
+      return parentManager.changeView(type);
    }
    
    public Dimension getMinimumSize() {

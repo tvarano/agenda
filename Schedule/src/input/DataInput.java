@@ -59,19 +59,16 @@ public class DataInput extends JPanel
    public void init(int amtSlots) {
       removeAll();
       if (debug) System.out.println("INPUTFRAME construted empty");
-      add(new ToolBar(true, this), BorderLayout.NORTH);
       initSlots(amtSlots);
       amtClasses = amtSlots;
       addPascack(null);
-      add(center, BorderLayout.CENTER);
-      add(createBottomPanel(), BorderLayout.SOUTH);
+      init0();
    }
    
    public void init(Schedule s) {
       removeAll();
       if (Agenda.statusU) Agenda.log("inputMain initialized");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
-      add(new ToolBar(true, this), BorderLayout.NORTH);
       amtClasses = s.getClasses().length;
       if (s.getLabs() != null && s.getLabs().length != 0)
          initSlots(s.getClasses(), s.getLabs());
@@ -79,8 +76,14 @@ public class DataInput extends JPanel
          initSlots(s.getClasses());
       setLunch(s.get(RotationConstants.LUNCH));
       addPascack(s.getPascackPreferences());
+      init0();
+   }
+   
+   private void init0() {
+      add(new ToolBar(PanelManager.INPUT, this), BorderLayout.NORTH);
       add(center, BorderLayout.CENTER);
       add(createBottomPanel(), BorderLayout.SOUTH);
+      
    }
    
    public void addLab(int slot) {
@@ -309,9 +312,9 @@ public class DataInput extends JPanel
    public void close() {
       if (hasManager) {
          if (saved)
-            parentManager.finishInputting();
+            parentManager.reinitDisp();
          else 
-            parentManager.closeInput();
+            parentManager.resumeDisp();
       }
       else 
          ((JFrame)getParent().getParent().getParent().getParent()).dispose();
