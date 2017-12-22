@@ -237,7 +237,7 @@ public final class UIHandler {
 	   JLabel l = new JLabel("Input your preferences");
 	   l.setFont(font);
 	   top.add(l);
-	   top.setPreferredSize(new Dimension(w,40));
+	   top.setPreferredSize(new Dimension(w,30));
 	   p.add(top, BorderLayout.NORTH);
 	   
 	   JPanel center = new JPanel();
@@ -337,7 +337,6 @@ public final class UIHandler {
                      + "for students.\n"
                      + "CREDITS:\n"
                      + "Thomas Varano : Author\n"
-                     + "Michael Port : GPA Support\n"
                      + "Viktor Nakev : Icon Designer\n"
                      + "Matthew Gheduzzi : Alpha Tester\n"
                      + "Michael Ruberto : Conceptual Designer",
@@ -359,7 +358,14 @@ public final class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
-      MenuItem mi = m.add(new MenuItem("Clear Schedule"));
+      MenuItem mi = m.add(new MenuItem("Input Schedule"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            age.getManager().startInput();
+         }
+      });
+      mi = m.add(new MenuItem("Clear Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {

@@ -6,6 +6,8 @@ package input;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,28 +20,46 @@ import javax.swing.JTextField;
 
 import information.ClassPeriod;
 import information.Schedule;
+import managers.UIHandler;
 
 public class GPAInputSlot extends JPanel
 {
    private static final long serialVersionUID = 1L;
    private ClassPeriod cp;
+   private int nameLength;
+   private GPAInput parentPanel;
+   
    private boolean useNumbers, hasLab, honors;
 
-   public GPAInputSlot(ClassPeriod in) {
+   public GPAInputSlot(ClassPeriod in, GPAInput parentPanel) {
+      this(in, -1, parentPanel);
+   }
+   
+   public GPAInputSlot(ClassPeriod in, int nameLength, GPAInput parentPanel) {
+      super();
       this.cp = in;
-      init();
+      setParentPanel(parentPanel);
+      init(nameLength);
    }
 
-   public GPAInputSlot(int slot, Schedule sched) {
+   public GPAInputSlot(int slot, Schedule sched, int nameLength, GPAInput parentPanel) {
       cp = sched.get(slot);
-      init();
+      setParentPanel(parentPanel);
+      init(nameLength);
    }
-
+   
    public void init() {
+      init(-1);
+   }
+   
+   public void init(int nameLength) {
       removeAll();
+      this.nameLength = nameLength;
       ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
-      add(new JLabel(cp.getName() + " : "));
+      add(new JLabel(cp.formattedString(UIHandler.font, nameLength) + " : "));
+      System.out.println("hereqw");
       add(new JLabel("Grade: "));
+      honors = cp.isHonors();
       if (useNumbers) {
          JTextField field = (JTextField) add(new JTextField(cp.getGrade() + ""));
          field.setPreferredSize(new Dimension(50, 25));
@@ -54,11 +74,11 @@ public class GPAInputSlot extends JPanel
       }
       add(new JLabel("Honors or AP: "));
       JCheckBox hon = new JCheckBox();
+      hon.setSelected(honors);
       hon.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             honors = !honors;
-            System.out.println("CLICKED. hon = " + honors);
          }
       });
       add(hon);
@@ -112,6 +132,20 @@ public class GPAInputSlot extends JPanel
       repaint();
    }
    
+   public void setNameLength(int nameLength) {
+      this.nameLength = nameLength;
+      save();
+      init(nameLength);
+   }
+   
+   public GPAInput getParentPanel() {
+      return parentPanel;
+   }
+
+   public void setParentPanel(GPAInput parentPanel) {
+      this.parentPanel = parentPanel;
+   }
+
    @SuppressWarnings("unchecked")
    public void save() {
       if (useNumbers)

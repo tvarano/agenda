@@ -27,7 +27,7 @@ import tools.ToolBar;
 //Thomas Varano
 //Aug 31, 2017
 
-public class DataInput extends JPanel
+public class DataInput extends JPanel implements InputManager
 {
    private static final long serialVersionUID = 1L;
    public static final int INIT_AMT_CL = 7;
@@ -67,6 +67,7 @@ public class DataInput extends JPanel
    
    public void init(Schedule s) {
       removeAll();
+      init0();
       if (Agenda.statusU) Agenda.log("inputMain initialized");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       amtClasses = s.getClasses().length;
@@ -76,7 +77,6 @@ public class DataInput extends JPanel
          initSlots(s.getClasses());
       setLunch(s.get(RotationConstants.LUNCH));
       addPascack(s.getPascackPreferences());
-      init0();
    }
    
    private void init0() {
@@ -148,20 +148,25 @@ public class DataInput extends JPanel
       return p;
    }
    
+   @Override 
+   public void addClass(ClassPeriod c) {
+      if (c.getSlot() == 0) {
+         hasZeroPeriod = true;
+         setButtonEnabled(ToolBar.ZERO_BUTTON, false);
+         if (debug) System.out.println("INPUT HAS ZERO PERIOD");
+      }
+      else if (c.getSlot() == 8) {
+         setButtonEnabled(ToolBar.EIGHT_BUTTON, false);
+      }
+      if (c.getSlot() != RotationConstants.LUNCH)
+         addSlot(c);
+      else
+         amtClasses--;
+   }
+   
    private void initSlots(ClassPeriod[] cp) {
       for (ClassPeriod c : cp) {
-         if (c.getSlot() == 0) {
-            hasZeroPeriod = true;
-            setButtonEnabled(ToolBar.ZERO_BUTTON, false);
-            if (debug) System.out.println("INPUT HAS ZERO PERIOD");
-         }
-         else if (c.getSlot() == 8) {
-            setButtonEnabled(ToolBar.EIGHT_BUTTON, false);
-         }
-         if (c.getSlot() != RotationConstants.LUNCH)
-            addSlot(c);
-         else
-            amtClasses--;
+         addClass(c);
       }
    }
    
@@ -184,6 +189,7 @@ public class DataInput extends JPanel
       }
    }
    
+   @Override
    public void addClass(int slot) {
       if (slot == 0) {
          hasZeroPeriod = true;
@@ -195,7 +201,7 @@ public class DataInput extends JPanel
       revalidate();
       amtClasses++;     
    }
-   
+      
    public void removeClassAndReOrder(int slot, Component c) {
       removeClassInt(slot);
       removeAndReOrder(c);
@@ -263,7 +269,9 @@ public class DataInput extends JPanel
                return false;
       return true;
    }
-   private void save() {
+   
+   @Override
+   public void save() {
       if (debug) System.out.println("SAVING SCHED");
       SchedWriter writer = new SchedWriter();
       Component[] c = center.getComponents();

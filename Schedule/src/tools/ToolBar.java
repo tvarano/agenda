@@ -14,6 +14,7 @@ import javax.swing.JToolBar;
 import constants.Rotation;
 import display.DisplayMain;
 import input.GPAInput;
+import input.InputManager;
 import managers.PanelManager;
 import managers.UIHandler;
 
@@ -95,8 +96,8 @@ public class ToolBar extends JToolBar implements ActionListener
    
    private ToolBar createToolBarDataIn() {
       removeAll();
-      add(new AddButton(0, parentPanel));
-      add(new AddButton(8, parentPanel));
+      add(new AddButton(0, (InputManager)parentPanel));
+      add(new AddButton(8, (InputManager)parentPanel));
       return this;
    }
    
@@ -167,12 +168,18 @@ public class ToolBar extends JToolBar implements ActionListener
    }
    public void setDelayed(boolean delayed) {
       this.delayed = delayed;
+      for (Component c : getComponents()) {
+         c.repaint();
+      }   
    }
    public boolean isHalf() {
       return half;
    }
    public void setHalf(boolean half) {
       this.half = half;
+      for (Component c : getComponents()) {
+         c.repaint();
+      }
    }
    public JPanel getParentPanel() {
       return parentPanel;

@@ -1,4 +1,8 @@
 package information;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 
 import constants.Lab;
@@ -19,10 +23,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public static final String NO_ROOM = "000";
    public static final int FULL_YEAR = 0, HALF_YEAR = 1;
    public static final int DEF_STRING_LENGTH = 20;
+   public static final int DEF_STRING_WIDTH = 150;
    private int slot, courseLength;
    private double grade;
+   private static final FontRenderContext frc = new FontRenderContext(new AffineTransform(),true,true);
    private String roomNumber, memo;
-   private boolean showName, canShowPeriod;
+   private boolean showName, canShowPeriod, honors;
    private static boolean debug = false;
    private String name, teacher;
    private Time startTime, endTime, duration;
@@ -105,6 +111,24 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    public String toString() {
       return (showName || !canShowPeriod) ? getTrimmedName() : "Period "+slot;
+   }
+   
+   public String formattedString(Font font, int preferredSize) {
+      final int prefW = (preferredSize == -1) ? DEF_STRING_WIDTH : preferredSize;
+      String ret = getTrimmedName();
+      while (stringWidth(ret, font) < prefW) {
+         ret = " " + ret;
+      }
+      return ret;
+   }
+   
+   private static int stringWidth(String str, Font font) {
+      return (int)(font.getStringBounds(str, frc).getWidth());
+      
+   }
+   
+   public int nameWidth(Font font) {
+      return stringWidth(getTrimmedName(), font);
    }
    
    public int getSlot() {
@@ -209,6 +233,14 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
 
    public void setCourseLength(int courseLength) {
       this.courseLength = courseLength;
+   }
+
+   public boolean isHonors() {
+      return honors;
+   }
+
+   public void setHonors(boolean honors) {
+      this.honors = honors;
    }
 
    public boolean equals(ClassPeriod c) {

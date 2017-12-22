@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import display.DisplayMain;
 import input.DataInput;
+import input.GPAInput;
 
 //Thomas Varano
 //[Program Descripion]
@@ -17,6 +18,7 @@ public class PanelManager
    private Agenda parent;
    private DisplayMain display;
    private DataInput input;
+   private GPAInput gpa;
    private MenuBar bar;
 //   private boolean inputting;
    private int currentPane;
@@ -60,6 +62,7 @@ public class PanelManager
       if (currentPane == INPUT)
          return;
       display.stop();
+//      gpa.save();
       input.setBeginningSchedule(display.getMainSched());
       setCurrentPane(INPUT);
    }

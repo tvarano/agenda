@@ -37,8 +37,8 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.6.4 ß";
-   public static final int MIN_W = 733, MIN_H = 360; 
+   public static final String BUILD = "v1.7.0 (Beta)";
+   public static final int MIN_W = /*733*/ 600, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
    private static JFrame parentFrame;
@@ -75,18 +75,19 @@ public class Agenda extends JPanel
             }
          });
    }
+
    
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
-   public synchronized void initialFileWork() {
+   public static synchronized void initialFileWork() {
       long start = System.currentTimeMillis();
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureRouteFile();
 
@@ -106,6 +107,10 @@ public class Agenda extends JPanel
       }
       //logs the time taken (in millis)
       if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
+   }
+   
+   public PanelManager getManager() {
+      return manager;
    }
    
    /**
