@@ -7,6 +7,7 @@ package input;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,16 +23,20 @@ import javax.swing.JPanel;
 import constants.ErrorID;
 import information.ClassPeriod;
 import information.Schedule;
+import ioFunctions.SchedReader;
+import ioFunctions.SchedWriter;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
 import tools.ToolBar;
 
-public class GPAInput extends JPanel
+public class GPAInput extends JPanel implements InputManager
 {
    private static final long serialVersionUID = 1L;
    private Schedule sched;
    private JPanel center;
+   private int nameLength;
+   private boolean hasZero;
    private ArrayList<GPAInputSlot> slots;
    private PanelManager manager;
    private JLabel dispLabel;
@@ -40,20 +45,28 @@ public class GPAInput extends JPanel
    private boolean debug;
    
    public GPAInput(Schedule sched, PanelManager manager) {
+      super();
       this.manager = manager;
+      this.sched = sched;
+      setFont(UIHandler.font);
       if (sched != null)
          init(sched);
       else 
          init(0);
-      this.sched = sched;
    }
    
    public GPAInput(int amtClasses, PanelManager manager) {
       this.manager = manager;
+      setFont(UIHandler.font);
       init(amtClasses);
    }
    
+   public GPAInput(PanelManager manager) {
+      this(0, manager);
+   }
+   
    private void init0() {
+      removeAll();
       debug = true;
       center = new JPanel();
       center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
@@ -82,18 +95,50 @@ public class GPAInput extends JPanel
    }
    
    private void initAndAddSlots(Schedule sched) {
-      for (int i = 0; i < sched.getClasses().length; i++)
-         addSlot(sched.getClasses()[i]);
+      //first check length
+      hasZero = sched.hasZeroPeriod();
+      for (ClassPeriod c : sched.getGpaClasses()) {
+         if (c.nameWidth(getFont()) > nameLength)
+            nameLength = c.nameWidth(getFont());
+      }
+      for (int i = 0; i < sched.getGpaClasses().size(); i++) {
+         addSlot(sched.getGpaClasses().get(i), sched.hasZeroPeriod());
+      }
    }
    
    private void initAndAddSlots(int amtClasses) {
+      hasZero = false;
       for (int i = 1; i <= amtClasses; i++) 
-         addSlot(new ClassPeriod(i));
+         addSlot(new ClassPeriod(i), hasZero);
    }
    
-   private void addSlot(ClassPeriod c) {
-      GPAInputSlot add = new GPAInputSlot(c);
-      center.add(add);
+   private void calculateNames() {
+      for (GPAInputSlot is : slots) {
+         is.setNameLength(nameLength);
+      }
+   }
+   
+   @Override
+   public void addClass(int index) {
+      addClass(new ClassPeriod(index));
+   }
+
+   @Override
+   public void addClass(ClassPeriod c) {
+      if (c.nameWidth(getFont()) > nameLength) {
+         System.out.println("width changed "+c);
+         nameLength = c.nameWidth(getFont());
+         calculateNames();
+      }
+      addSlot(c, hasZero);
+   }
+   
+   private void addSlot(ClassPeriod c, boolean hasZero) {
+      GPAInputSlot add = new GPAInputSlot(c, nameLength, this);
+      int addIndex = (hasZero) ? c.getSlot() : c.getSlot()-1;
+      if (addIndex > center.getComponentCount() || addIndex > slots.size())
+         addIndex = -1;
+      center.add(add, addIndex);
       slots.add(add);
    }
    
@@ -105,7 +150,8 @@ public class GPAInput extends JPanel
       JLabel l = new JLabel("Your 5.0 GPA");
       l.setBorder(BorderFactory.createEmptyBorder(gap,gap,gap,gap));
       p.add(l);
-      dispLabel = new JLabel("");
+      dispLabel = new JLabel("0.0");
+      dispLabel.setBorder(BorderFactory.createEmptyBorder(gap,gap,gap,gap));
       dispLabel.setFont(UIHandler.getInputLabelFont());
       l.setBorder(BorderFactory.createEmptyBorder(gap,gap,gap,gap));
       p.add(dispLabel);
@@ -117,10 +163,10 @@ public class GPAInput extends JPanel
       p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
-      JButton button = new JButton("Cancel");
+      JButton button = new JButton("Close");
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
-      button.setToolTipText("Exit Without Saving");
+      button.setToolTipText("Exit and Save");
       button.addActionListener(changeView(PanelManager.DISPLAY));
       p.add(button);
       
@@ -144,21 +190,40 @@ public class GPAInput extends JPanel
    }
    
    public void refresh() {
+      save();
       double gpa = calculateGPA(5);
       if (gpa == -1)
          return;
       dispLabel.setText(gpa + "");
+      ((BorderLayout) getLayout()).getLayoutComponent(this, BorderLayout.EAST).revalidate();
    }
    
    public ActionListener changeView(int type) {
-      //TODO not correct action listener
-//      return manager.changeView(type);
-      return new ActionListener() {
+//      TODO not correct action listener
+      if (manager != null)
+         return manager.changeView(type);
+      
+       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             if (debug) System.out.println("CHANGED TO "+ type);
          }  
       };
+   }
+   
+   public void save() {
+      for (GPAInputSlot s : slots) {
+         if (!s.canCreate())
+            ErrorID.showUserError(ErrorID.INPUT_ERROR);
+         s.save();
+      }
+      new SchedWriter().write(sched);
+      if (Agenda.statusU) Agenda.log("schedule successfully saved");
+   }
+   
+   public void closeToDisp() {
+      save();
+      
    }
 
    public double calculateGPA(double outOf) {
@@ -184,10 +249,19 @@ public class GPAInput extends JPanel
       revalidate();
    }
    
+   public void setSchedule(Schedule s) {
+      this.sched = s;
+      init(s);
+   }
+   
    public static void main(String[] args) {
+      Agenda.initialFileWork();
       UIHandler.init();
       JFrame f = new JFrame(Agenda.APP_NAME + " " + Agenda.BUILD + " GPA TEST");
-      f.getContentPane().add(new GPAInput(7, null));
+      final long start = System.currentTimeMillis();
+      System.out.println("started");
+      f.getContentPane().add(new GPAInput(new SchedReader().readSched(), null));
+      System.out.println(System.currentTimeMillis() - start);
       f.setVisible(true);
       f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       f.setSize(new Dimension(Agenda.PREF_W, Agenda.PREF_H + 22));

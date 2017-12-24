@@ -14,6 +14,7 @@ import javax.swing.JToolBar;
 import constants.Rotation;
 import display.DisplayMain;
 import input.GPAInput;
+import input.InputManager;
 import managers.PanelManager;
 import managers.UIHandler;
 
@@ -26,8 +27,8 @@ public class ToolBar extends JToolBar implements ActionListener
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
    private boolean delayed, half;
-   private int parentType;
    private Rotation rotation;
+   private int parentType;
    private JPanel parentPanel;
 
    public ToolBar(int parentType, JPanel parentPanel) {
@@ -41,11 +42,11 @@ public class ToolBar extends JToolBar implements ActionListener
       setMargin(new Insets(7,5,0,0));
    }
    
-   private ToolBar create(int parentType) {
+   private ToolBar create(int type) {
       setBackground(UIHandler.background);
-      if (parentType == PanelManager.INPUT)
+      if (type == PanelManager.INPUT)
          return createToolBarDataIn();
-      else if (parentType == PanelManager.GPA)
+      else if (type == PanelManager.GPA)
          return createToolBarGPA();
       return createToolBarDisplay();
    }
@@ -79,7 +80,7 @@ public class ToolBar extends JToolBar implements ActionListener
       b = new InstanceButton(InstanceButton.HALF);
       b.setParentBar(this);
       add(b);
-      JButton input = new JButton("Input Schedule");
+      JButton input = new JButton("View GPA");
       input.setForeground(UIHandler.foreground);
       input.setFocusable(false);
       input.setBorderPainted(false);
@@ -87,16 +88,9 @@ public class ToolBar extends JToolBar implements ActionListener
       input.setOpaque(false);
       input.setFont(UIHandler.getButtonFont());
       input.addMouseListener(UIHandler.buttonPaintListener(input));
-      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.INPUT));
+      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.GPA));
       add(input);
       setHighlights();
-      return this;
-   }
-   
-   private ToolBar createToolBarDataIn() {
-      removeAll();
-      add(new AddButton(0, parentPanel));
-      add(new AddButton(8, parentPanel));
       return this;
    }
    
@@ -143,6 +137,15 @@ public class ToolBar extends JToolBar implements ActionListener
          }
       });
       add(rb);
+      return this;
+   }
+
+   
+   //make a button for adding a class
+   private ToolBar createToolBarDataIn() {
+      removeAll();
+      add(new AddButton(0, (InputManager)parentPanel));
+      add(new AddButton(8, (InputManager)parentPanel));
       return this;
    }
 

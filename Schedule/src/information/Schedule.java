@@ -1,5 +1,6 @@
 package information;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import constants.ErrorID;
 import constants.Lab;
@@ -19,6 +20,7 @@ public class Schedule implements Serializable
    private static final long serialVersionUID = -3898901184816193456L;
    public static final int NORMAL_AMT_DAYS = 7;
    private ClassPeriod[] classes;
+   private ArrayList<ClassPeriod> gpaClasses;
    private boolean showName;
    private ClassPeriod schoolDay, pascackPreferences; 
    private Lab[] labs;
@@ -59,6 +61,10 @@ public class Schedule implements Serializable
    
    public void init() {
       debug = false;
+      gpaClasses = new ArrayList<ClassPeriod>();
+      for (int i = 0; i < classes.length; i++)
+         if (classes[i].getSlot() != RotationConstants.PASCACK && classes[i].getSlot() != RotationConstants.LUNCH)
+            gpaClasses.add(classes[i]);
       pascackPreferences.setName("Pascack Pd");
       pascackPreferences.setSlot(RotationConstants.PASCACK);
       setShowName(true);
@@ -224,6 +230,9 @@ public class Schedule implements Serializable
    }
    public ClassPeriod getPascackPreferences() {
       return pascackPreferences;
+   }
+   public ArrayList<ClassPeriod> getGpaClasses() {
+      return gpaClasses;
    }
    public void setPascackPreferences(ClassPeriod pascackPreferences) {
       this.pascackPreferences = pascackPreferences;
