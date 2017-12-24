@@ -89,7 +89,7 @@ public class Agenda extends JPanel
       }
       boolean logData = false;
 
-      FileHandler.ensureRouteFile();
+      FileHandler.ensureFileRoute();
 
       //check parameters, draw routes, create files if needed 
       FileHandler.initAndCreateFiles();
@@ -137,7 +137,7 @@ public class Agenda extends JPanel
          }
       }
       
-      public static boolean ensureRouteFile() {
+      public static boolean ensureFileRoute() {
          return new File(System.getProperty("user.home") + "/Applications/Agenda/")
                .mkdirs();
       }

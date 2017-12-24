@@ -231,8 +231,8 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    public static void main(String[] args) {
-      UIHandler.init();
       Agenda.initialFileWork();
+      UIHandler.init();
       JFrame f = new JFrame(Agenda.APP_NAME + " " + Agenda.BUILD + " GPA TEST");
       final long start = System.currentTimeMillis();
       System.out.println("started");
