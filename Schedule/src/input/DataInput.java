@@ -143,7 +143,7 @@ public class DataInput extends JPanel implements InputManager
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
       button.setActionCommand("submit");
-      button.addActionListener(saveAndChangeView());
+      button.addActionListener(saveAndChangeViewAction());
       p.add(button);
       return p;
    }
@@ -248,16 +248,16 @@ public class DataInput extends JPanel implements InputManager
       return new ActionListener() {
          @Override
           public void actionPerformed(ActionEvent e) {
-               close();
+               closeToDisp();
           } 
        };
    }
    
-   public ActionListener saveAndChangeView() {
+   public ActionListener saveAndChangeViewAction() {
       return new ActionListener() {
          @Override
           public void actionPerformed(ActionEvent e) {
-               saveAndClose();
+               saveAndCloseToDisp();
           } 
        };
    }
@@ -317,7 +317,7 @@ public class DataInput extends JPanel implements InputManager
       saved = true;
    }
    
-   public void close() {
+   public void closeToDisp() {
       if (hasManager) {
          if (saved)
             parentManager.reinitDisp();
@@ -329,11 +329,11 @@ public class DataInput extends JPanel implements InputManager
       if (Agenda.statusU) Agenda.log("closed input");
    }
    
-   public void saveAndClose() {
+   public void saveAndCloseToDisp() {
       save();
       if (debug) System.out.println("saved. error = "+error);
       if (!error)
-         close();
+         closeToDisp();
    }
    
    public void removeAndReOrder(Component c) {

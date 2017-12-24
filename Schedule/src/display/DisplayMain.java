@@ -29,6 +29,14 @@ import tools.ToolBar;
 //Thomas Varano
 //Aug 31, 2017
 
+/**
+ * Responsible for displaying the home screen of the application. Everything not involving input and GPA is done here, 
+ * usually constituting showing data and editing memos.
+ * 
+ * @param parentManager the {@linkplain PanelManager} responsible for handling the state of the application, and thereby 
+ * this object.
+ * @author Thomas Varano
+ */
 public class DisplayMain extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;

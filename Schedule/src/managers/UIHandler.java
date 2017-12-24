@@ -53,6 +53,12 @@ import ioFunctions.SchedWriter;
 import resources.ResourceAccess;
 
 //Thomas Varano
+
+/**
+ * Handles all UI necessities, including LAF and theme. Uninstantiatable and unextendable. Only for static calls.
+ * 
+ * @author Thomas Varano
+ */
 public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
@@ -229,7 +235,7 @@ public final class UIHandler {
 	private static void showPreferences(Agenda age) {
 	   final int w = 300;
 	   final int h = 300;
-	   JFrame f = new JFrame(Agenda.APP_NAME + " Preferences");
+	   JFrame f = new JFrame("Preferences");
 	   JPanel p = new JPanel();
 	   p.setPreferredSize(new Dimension(w, h));
 	   p.setLayout(new BorderLayout());
@@ -365,6 +371,15 @@ public final class UIHandler {
             age.getManager().startInput();
          }
       });
+      mi = m.add(new MenuItem("View GPA"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            age.getManager().startGPA();
+         }
+      });
+      
+      m.addSeparator();
       mi = m.add(new MenuItem("Clear Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override

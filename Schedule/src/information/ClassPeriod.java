@@ -123,6 +123,8 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    
    private static int stringWidth(String str, Font font) {
+      if (str == null || font == null)
+         return 0;
       return (int)(font.getStringBounds(str, frc).getWidth());
       
    }

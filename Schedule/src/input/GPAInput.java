@@ -24,6 +24,7 @@ import constants.ErrorID;
 import information.ClassPeriod;
 import information.Schedule;
 import ioFunctions.SchedReader;
+import ioFunctions.SchedWriter;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
@@ -36,7 +37,6 @@ public class GPAInput extends JPanel implements InputManager
    private JPanel center;
    private int nameLength;
    private boolean hasZero;
-   private Font font;
    private ArrayList<GPAInputSlot> slots;
    private PanelManager manager;
    private JLabel dispLabel;
@@ -48,7 +48,7 @@ public class GPAInput extends JPanel implements InputManager
       super();
       this.manager = manager;
       this.sched = sched;
-      font = UIHandler.font;
+      setFont(UIHandler.font);
       if (sched != null)
          init(sched);
       else 
@@ -57,10 +57,16 @@ public class GPAInput extends JPanel implements InputManager
    
    public GPAInput(int amtClasses, PanelManager manager) {
       this.manager = manager;
+      setFont(UIHandler.font);
       init(amtClasses);
    }
    
+   public GPAInput(PanelManager manager) {
+      this(0, manager);
+   }
+   
    private void init0() {
+      removeAll();
       debug = true;
       center = new JPanel();
       center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
@@ -92,8 +98,8 @@ public class GPAInput extends JPanel implements InputManager
       //first check length
       hasZero = sched.hasZeroPeriod();
       for (ClassPeriod c : sched.getGpaClasses()) {
-         if (c.nameWidth(font) > nameLength)
-            nameLength = c.nameWidth(font);
+         if (c.nameWidth(getFont()) > nameLength)
+            nameLength = c.nameWidth(getFont());
       }
       for (int i = 0; i < sched.getGpaClasses().size(); i++) {
          addSlot(sched.getGpaClasses().get(i), sched.hasZeroPeriod());
@@ -119,9 +125,9 @@ public class GPAInput extends JPanel implements InputManager
 
    @Override
    public void addClass(ClassPeriod c) {
-      if (c.nameWidth(font) > nameLength) {
+      if (c.nameWidth(getFont()) > nameLength) {
          System.out.println("width changed "+c);
-         nameLength = c.nameWidth(font);
+         nameLength = c.nameWidth(getFont());
          calculateNames();
       }
       addSlot(c, hasZero);
@@ -157,10 +163,10 @@ public class GPAInput extends JPanel implements InputManager
       p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
-      JButton button = new JButton("Cancel");
+      JButton button = new JButton("Close");
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
-      button.setToolTipText("Exit Without Saving");
+      button.setToolTipText("Exit and Save");
       button.addActionListener(changeView(PanelManager.DISPLAY));
       p.add(button);
       
@@ -184,6 +190,7 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    public void refresh() {
+      save();
       double gpa = calculateGPA(5);
       if (gpa == -1)
          return;
@@ -192,9 +199,11 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    public ActionListener changeView(int type) {
-      //TODO not correct action listener
-//      return manager.changeView(type);
-      return new ActionListener() {
+//      TODO not correct action listener
+      if (manager != null)
+         return manager.changeView(type);
+      
+       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             if (debug) System.out.println("CHANGED TO "+ type);
@@ -203,8 +212,18 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    public void save() {
-      for (GPAInputSlot s : slots)
+      for (GPAInputSlot s : slots) {
+         if (!s.canCreate())
+            ErrorID.showUserError(ErrorID.INPUT_ERROR);
          s.save();
+      }
+      new SchedWriter().write(sched);
+      if (Agenda.statusU) Agenda.log("schedule successfully saved");
+   }
+   
+   public void closeToDisp() {
+      save();
+      
    }
 
    public double calculateGPA(double outOf) {
@@ -228,6 +247,11 @@ public class GPAInput extends JPanel implements InputManager
          in.setUseNumbers(numbers);
       }
       revalidate();
+   }
+   
+   public void setSchedule(Schedule s) {
+      this.sched = s;
+      init(s);
    }
    
    public static void main(String[] args) {

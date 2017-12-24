@@ -80,7 +80,7 @@ public class ToolBar extends JToolBar implements ActionListener
       b = new InstanceButton(InstanceButton.HALF);
       b.setParentBar(this);
       add(b);
-      JButton input = new JButton("Input Schedule");
+      JButton input = new JButton("View GPA");
       input.setForeground(UIHandler.foreground);
       input.setFocusable(false);
       input.setBorderPainted(false);
@@ -88,7 +88,7 @@ public class ToolBar extends JToolBar implements ActionListener
       input.setOpaque(false);
       input.setFont(UIHandler.getButtonFont());
       input.addMouseListener(UIHandler.buttonPaintListener(input));
-      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.INPUT));
+      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.GPA));
       add(input);
       setHighlights();
       return this;
