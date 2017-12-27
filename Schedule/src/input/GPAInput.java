@@ -39,11 +39,11 @@ import tools.ToolBar;
 
 /**
  * TODO 
- * removing classes
- * adding back from your regular schedule
+ * removing classes        DONE
+ * adding back from your regular schedule       DONE
  *    joption pane "add from your schedule or create new class"
- * ensuring the ease for lab switches
- * question icon
+ * ensuring the ease for lab switches DONE
+ * question icon DONE
  * 
  * @author Thomas Varano
  *
@@ -71,6 +71,7 @@ public class GPAInput extends JPanel implements InputManager
          init(sched);
       else 
          init(0);
+      System.out.println(sched.getName() + " GPANAME");
    }
    
    public GPAInput(int amtClasses, PanelManager manager) {
@@ -85,7 +86,7 @@ public class GPAInput extends JPanel implements InputManager
    
    private void init0() {
       removeAll();
-      debug = true;
+      debug = false;
       center = new JPanel();
       center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
       center.add(averageDisplay());
@@ -97,7 +98,6 @@ public class GPAInput extends JPanel implements InputManager
       ToolBar bar = new ToolBar(PanelManager.GPA, this);
       add(bar, BorderLayout.NORTH);
       add(new JScrollPane(center), BorderLayout.CENTER);
-//      add(averageDisplay(), BorderLayout.EAST);
       add(createBottomPanel(), BorderLayout.SOUTH);
    }
    
@@ -196,18 +196,6 @@ public class GPAInput extends JPanel implements InputManager
    private JPanel averageDisplay() {
       JPanel p = new JPanel();
       ((FlowLayout) p.getLayout()).setAlignment(FlowLayout.RIGHT);
-      /*
-      p.setBorder(UIHandler.getTitledBorder("GPA"));
-      int gap = 5;
-      JLabel l = new JLabel("Your 5.0 GPA");
-      l.setBorder(BorderFactory.createEmptyBorder(gap,gap,gap,gap));
-      p.add(l);
-      dispLabel = new JLabel("0.0");
-      dispLabel.setBorder(BorderFactory.createEmptyBorder(gap,gap,gap,gap));
-      dispLabel.setFont(UIHandler.getInputLabelFont());
-      l.setBorder(BorderFactory.createEmptyBorder(gap,gap,gap,gap));
-      p.add(dispLabel);
-      */
       
       dispLabel = new JLabel(labelPrefix);
       final int gap = 5;
@@ -254,7 +242,6 @@ public class GPAInput extends JPanel implements InputManager
       if (gpa == -1)
          return;
       dispLabel.setText(labelPrefix + gpa);
-//      ((BorderLayout) getLayout()).getLayoutComponent(this, BorderLayout.EAST).revalidate();
    }
    
    public ActionListener changeView(int type) {
@@ -288,13 +275,13 @@ public class GPAInput extends JPanel implements InputManager
       for (GPAInputSlot s : slots) {
          s.save();
       }
-      new SchedWriter().write(sched);
+      manager.saveSchedule(this);
       if (Agenda.statusU) Agenda.log("schedule successfully saved");
    }
    
    public void closeToDisp() {
       save();
-      
+      manager.reinitDisp();
    }
 
    public double calculateGPA(double outOf) {

@@ -216,7 +216,7 @@ public class Schedule implements Serializable
       String newLn = (newLine) ? "\n" : "";
       String tab = (newLine) ? "\t" : "";
       for (ClassPeriod c : classes)
-         retval += tab+c.toString() +", "+newLn;
+         retval += tab + c +", "+newLn;
       return retval;
    }
    
@@ -239,7 +239,8 @@ public class Schedule implements Serializable
    }
    public void setClasses(ClassPeriod[] classes) {
       this.classes = classes;
-      calculateSchoolDay();
+      if (classes.length > 0 && classes[0] != null && classes[classes.length-1] != null)
+         calculateSchoolDay();
    }
    public Lab[] getLabs() {
       return labs;

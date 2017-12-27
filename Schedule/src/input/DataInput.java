@@ -17,7 +17,6 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
-import ioFunctions.SchedWriter;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
@@ -283,16 +282,8 @@ public class DataInput extends JPanel implements InputManager
    @Override
    public void save() {
       if (debug) System.out.println("SAVING SCHED");
-      SchedWriter writer = new SchedWriter();
       Component[] c = center.getComponents();
       ClassPeriod[] classes = new ClassPeriod[amtClasses+1];
-      
-      /*if (!canCreate()) {
-         cannotCreate();
-         return;
-      } else {
-         resolve();
-      }*/
       
       int classIndex = 0;
       for (int i = 0; i < c.length; i++) {
@@ -322,7 +313,7 @@ public class DataInput extends JPanel implements InputManager
       // write
       Schedule s = new Schedule(classes, labs.toArray(new Lab[labs.size()]));
       s.setPascackPreferences(pascack.createClass());
-      writer.write(s);
+      parentManager.saveSchedule(this);
       if (debug) System.out.println("wrote" + s);
       if (Agenda.statusU) Agenda.log("saved input");
       saved = true;

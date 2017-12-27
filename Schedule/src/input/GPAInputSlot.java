@@ -28,7 +28,7 @@ public class GPAInputSlot extends JPanel
    private GPAInput parentPanel;
    private int courseWeight;
    
-   private boolean useNumbers, hasLab, honors, debug;
+   private boolean useNumbers, honors, debug;
    
    public GPAInputSlot(ClassPeriod in, GPAInput parentPanel) {
       super();
@@ -46,14 +46,13 @@ public class GPAInputSlot extends JPanel
    }
    
    public void init() {
-      debug = true;
+      debug = false;
       create();
    }
    
    public void create() {
       removeAll();
       ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
-//      add(new JLabel(cp.formattedString(UIHandler.font, nameLength) + " : "));
       JTextField nameField = new JTextField(cp.getTrimmedName());
       nameField.setPreferredSize(new Dimension(ClassPeriod.DEF_STRING_WIDTH, 25));
       nameField.setEditable(false);
@@ -62,14 +61,17 @@ public class GPAInputSlot extends JPanel
       nameField.setForeground(UIHandler.foreground);
       nameField.setToolTipText(cp.getName());
       add(nameField);
-      add(new JLabel("Grade: "));
+      JLabel l = new JLabel("Grade: ");
+      l.setFont(UIHandler.getButtonFont());
+      add(l);
       honors = cp.isHonors();
       if (useNumbers) {
          JTextField field = (JTextField) add(new JTextField(cp.getGrade() + ""));
          field.setFont(UIHandler.getInputFieldFont());
-         field.setPreferredSize(new Dimension(50, 25));
+         field.setPreferredSize(new Dimension(60, 25));
       } else {
          JComboBox<String> chooser = new JComboBox<String>();
+         chooser.setFont(UIHandler.getButtonFont());
          DefaultComboBoxModel<String> m = new DefaultComboBoxModel<String>();
          chooser.setModel(m);
          for (String gr : GPAInput.letterGrades)
@@ -77,17 +79,19 @@ public class GPAInputSlot extends JPanel
          m.setSelectedItem(cp.getLetterGrade());
          add(chooser);
       }
-//      add(new JLabel("Honors or AP: "));
       JCheckBox hon = new JCheckBox("Honors/AP");
+      hon.setFont(UIHandler.getButtonFont());
       hon.setSelected(honors);
       hon.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             honors = !honors;
+            cp.setHonors(honors);
          }
       });
       add(hon);
       JComboBox<String> courseLen = new JComboBox<String>();
+      courseLen.setFont(UIHandler.getButtonFont());
       DefaultComboBoxModel<String> clm = new DefaultComboBoxModel<String>();
       courseLen.setModel(clm);
       clm.addElement("Course Weight");

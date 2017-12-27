@@ -64,6 +64,8 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    public ClassPeriod(int slot) {
       this(slot, "Period "+slot, NO_TEACH, NO_ROOM);
+      if (slot == RotationConstants.NO_SLOT)
+         setName("New Class");
    }
    
    public ClassPeriod(String name, Time startTime, Time endTime) {

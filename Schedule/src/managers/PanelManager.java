@@ -5,6 +5,8 @@ import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JComponent;
+
 import display.DisplayMain;
 import input.DataInput;
 import input.GPAInput;
@@ -46,11 +48,15 @@ public class PanelManager
    public void setCurrentPane(int type) {
       if (currentPane == type)
          return;
-      if (type == INPUT)
+      if (currentPane == GPA)
+         gpa.save();
+      else if (currentPane == INPUT)
+         input.save();
+      if (type == INPUT) {
           ((CardLayout) parent.getLayout()).show(parent, input.getName());
-      else if (type == GPA)
+      } else if (type == GPA) {
          ((CardLayout) parent.getLayout()).show(parent, gpa.getName());
-      else 
+      } else 
          ((CardLayout) parent.getLayout()).show(parent, display.getName());
       this.currentPane = type;
    }
@@ -134,6 +140,11 @@ public class PanelManager
    
    public void setParent(Agenda parent) {
       this.parent = parent;
+   }
+   
+   public void saveSchedule(JComponent caller) {
+      System.out.println("SAVED BY "+caller);
+      display.writeMain();
    }
    
    protected void finalize() {

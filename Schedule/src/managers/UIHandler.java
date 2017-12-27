@@ -128,6 +128,7 @@ public final class UIHandler {
 	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getImage("ErrorIcon.png"));
 	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getImage("WarningIcon.png"));
 	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getImage("InfoIcon.png"));
+	   UIManager.put("OptionPane.questionIcon", ResourceAccess.getImage("QuestionIcon.png"));
 	}
 	
 	

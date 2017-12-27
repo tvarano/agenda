@@ -49,7 +49,7 @@ public class DataInputSlot extends JPanel implements ActionListener
    
    public DataInputSlot(ClassPeriod c, Container parentPanel) {
       if (c == null) c = new ClassPeriod();
-      debug = true;
+      debug = false;
       setFont(UIHandler.getInputLabelFont());
       setBackground(UIHandler.background);
       setForeground(UIHandler.foreground);
@@ -76,26 +76,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       return new Dimension(Agenda.PREF_W, 30);
    }
    
-   public static void main(String[] args) {
-      Agenda.initialFileWork();
-      UIHandler.init();
-      System.out.println(showInputSlot().getInfo());
-   }
-   
    public static ClassPeriod showInputSlot() {
-      /*
-         String[] slots = new String[10];
-         slots[0] = "Select a class slot";
-         for (int i = 0; i < 9; i++)
-            slots[i+1] = i + "";
-         JComboBox<String> slotBox = new JComboBox<String>(slots);
-      do {
-         JOptionPane.showMessageDialog(null, slotBox, "Create",
-               JOptionPane.QUESTION_MESSAGE);
-      } while (slotBox.getSelectedIndex() == 0);
-      
-      DataInputSlot in = new DataInputSlot(slotBox.getSelectedIndex()-1, null);
-      */
       DataInputSlot in = new DataInputSlot(RotationConstants.NO_SLOT, null);
       
       if (JOptionPane.showOptionDialog(null, in, "CREATE", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
