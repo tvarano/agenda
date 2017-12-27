@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import constants.ErrorID;
 import constants.Lab;
 import constants.Rotation;
 import constants.RotationConstants;
@@ -36,7 +35,7 @@ public class DataInput extends JPanel implements InputManager
    private JPanel center;
    private ClassPeriod lunch;
    private PanelManager parentManager;
-   private boolean hasZeroPeriod, hasManager, error, debug, saved;
+   private boolean hasZeroPeriod, hasManager, debug, saved;
    private int amtClasses;
    private DataInputSlot pascack;
    private Schedule beginningSchedule;
@@ -164,6 +163,15 @@ public class DataInput extends JPanel implements InputManager
          amtClasses--;
    }
    
+   /**
+    * unused for this class
+    */
+   @Override
+   @Deprecated
+   public void addCustomClass() {
+      addClass(RotationConstants.NO_SLOT);
+   }
+   
    private void initSlots(ClassPeriod[] cp) {
       for (ClassPeriod c : cp) {
          addClass(c);
@@ -223,6 +231,7 @@ public class DataInput extends JPanel implements InputManager
          setButtonEnabled(ToolBar.EIGHT_BUTTON, true);
    }
    
+   /*
    private void cannotCreate() {
       error = !canCreate();
       if (debug) System.out.println("cannotCreate");
@@ -232,6 +241,7 @@ public class DataInput extends JPanel implements InputManager
    private void resolve() {
       error = false;
    }
+   */
 
    public void reWriteSlotsArray() {
       slots.removeAll(slots);
@@ -262,13 +272,13 @@ public class DataInput extends JPanel implements InputManager
        };
    }
    
-   private boolean canCreate() {
-      for (Component c : center.getComponents())
-         if (c instanceof DataInputSlot) 
-            if (!((DataInputSlot) c).checkCanCreate())
-               return false;
-      return true;
-   }
+//   private boolean canCreate() {
+//      for (Component c : center.getComponents())
+//         if (c instanceof DataInputSlot) 
+//            if (!((DataInputSlot) c).checkCanCreate())
+//               return false;
+//      return true;
+//   }
    
    @Override
    public void save() {
@@ -276,12 +286,13 @@ public class DataInput extends JPanel implements InputManager
       SchedWriter writer = new SchedWriter();
       Component[] c = center.getComponents();
       ClassPeriod[] classes = new ClassPeriod[amtClasses+1];
-      if (!canCreate()) {
+      
+      /*if (!canCreate()) {
          cannotCreate();
          return;
       } else {
          resolve();
-      }
+      }*/
       
       int classIndex = 0;
       for (int i = 0; i < c.length; i++) {
@@ -331,8 +342,8 @@ public class DataInput extends JPanel implements InputManager
    
    public void saveAndCloseToDisp() {
       save();
-      if (debug) System.out.println("saved. error = "+error);
-      if (!error)
+      /*if (debug) System.out.println("saved. error = "+error);
+      if (!error)*/
          closeToDisp();
    }
    

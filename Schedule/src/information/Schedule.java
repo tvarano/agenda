@@ -39,6 +39,10 @@ public class Schedule implements Serializable
       init(classes, labSlots, pascackPreferences);
    }
    
+   public Schedule(ClassPeriod[] classes) {
+      this(classes, new Lab[0]);
+   }
+   
    public Schedule(ClassPeriod[] classes, Lab labSlot) {
       this(classes, new Lab[]{labSlot});
    }
@@ -73,6 +77,31 @@ public class Schedule implements Serializable
          name = "unNamedSchedSize"+classes.length;
    }
    
+   public ClassPeriod addGPAClass(ClassPeriod c) {
+      gpaClasses.add(c);
+      return c;
+   }
+   
+   public ClassPeriod addGPAClass(ClassPeriod c, int index) {
+      gpaClasses.add(index, c);
+      return c;
+   }
+   
+   public ClassPeriod addGPAClass(int slot) {
+      ClassPeriod c = new ClassPeriod(slot);
+      gpaClasses.add(c);
+      return c;
+   }
+   
+   public ClassPeriod removeGPAClass(ClassPeriod c) {
+      gpaClasses.remove(c);
+      return c;
+   }
+   
+   public ClassPeriod removeGPAClass(int index) {
+      return gpaClasses.remove(index);
+   }
+   
    public ClassPeriod classAt(Time t) {
       for (ClassPeriod c : classes)
          if (c.contains(t))
@@ -97,7 +126,9 @@ public class Schedule implements Serializable
    public Schedule clone() {
       if (debug) System.out.println(name+" cloned. showName:"+showName);
       Schedule retval = new Schedule();
-      retval.setClasses(classes);
+      retval.setClasses(new ClassPeriod[classes.length]);
+      for (int i = 0; i < classes.length; i++)
+         retval.getClasses()[i] = classes[i].clone();
       retval.setLabs(getLabs());
       retval.setName(getName()+"(Clone)");
       retval.setShowName(showName);

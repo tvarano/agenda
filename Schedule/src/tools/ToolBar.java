@@ -120,6 +120,7 @@ public class ToolBar extends JToolBar implements ActionListener
       ButtonGroup bg = new ButtonGroup();
       JRadioButton rb = new JRadioButton("Use Numbers");
       bg.add(rb);
+      rb.setFont(UIHandler.getButtonFont());
       rb.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
@@ -129,6 +130,7 @@ public class ToolBar extends JToolBar implements ActionListener
       add(rb);
       rb = new JRadioButton("Use Letter");
       bg.add(rb);
+      rb.setFont(UIHandler.getButtonFont());
       rb.setSelected(true);
       rb.addActionListener(new ActionListener() {
          @Override
@@ -137,6 +139,8 @@ public class ToolBar extends JToolBar implements ActionListener
          }
       });
       add(rb);
+      
+      add(new AddButton(-1, (InputManager)parentPanel));
       return this;
    }
 

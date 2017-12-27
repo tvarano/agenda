@@ -11,12 +11,14 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import constants.RotationConstants;
 import information.ClassPeriod;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -36,8 +38,9 @@ public class DataInputSlot extends JPanel implements ActionListener
    private Container parentPanel;
    private JCheckBox labBox;
    private String memo;
-   private boolean hasParent, hasLab, removable, labFriendly, debug;
+   private boolean hasParent, hasLab, removable, labFriendly;
    private JTextField[] promptFields;
+   private static boolean debug;
    
    public DataInputSlot(int slotNumber, Container parentPanel) {
       this (new ClassPeriod(slotNumber), parentPanel);
@@ -46,14 +49,14 @@ public class DataInputSlot extends JPanel implements ActionListener
    
    public DataInputSlot(ClassPeriod c, Container parentPanel) {
       if (c == null) c = new ClassPeriod();
-      debug = false;
+      debug = true;
       setFont(UIHandler.getInputLabelFont());
       setBackground(UIHandler.background);
       setForeground(UIHandler.foreground);
       setName(c.getSlot() + "input slot");
       setSlotNumber(c.getSlot());
       hasLab = false; 
-      removable = (slotNumber == 0 || slotNumber == 8);
+      removable = ((slotNumber == 0 || slotNumber == 8) && parentPanel != null);
       if (parentPanel instanceof DataInput) {
          this.parentPanel = (DataInput)parentPanel;
           hasParent = true;
@@ -66,15 +69,49 @@ public class DataInputSlot extends JPanel implements ActionListener
       int amtFields = 3;
       promptFields = new JTextField[amtFields];
       setLayout(new SpringLayout());
-      addComponents(c);
+      addComponents(c);  
+   }
+   
+   public Dimension getPreferredSize() {
+      return new Dimension(Agenda.PREF_W, 30);
+   }
+   
+   public static void main(String[] args) {
+      Agenda.initialFileWork();
+      UIHandler.init();
+      System.out.println(showInputSlot().getInfo());
+   }
+   
+   public static ClassPeriod showInputSlot() {
+      /*
+         String[] slots = new String[10];
+         slots[0] = "Select a class slot";
+         for (int i = 0; i < 9; i++)
+            slots[i+1] = i + "";
+         JComboBox<String> slotBox = new JComboBox<String>(slots);
+      do {
+         JOptionPane.showMessageDialog(null, slotBox, "Create",
+               JOptionPane.QUESTION_MESSAGE);
+      } while (slotBox.getSelectedIndex() == 0);
       
+      DataInputSlot in = new DataInputSlot(slotBox.getSelectedIndex()-1, null);
+      */
+      DataInputSlot in = new DataInputSlot(RotationConstants.NO_SLOT, null);
+      
+      if (JOptionPane.showOptionDialog(null, in, "CREATE", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+            null, null, null) == 0)
+         return in.createClass();
+      if (debug) System.out.println("returning null");
+      return null;
    }
    
    private void addComponents(ClassPeriod c) {
       int index = 0;
       SpringLayout l = (SpringLayout) getLayout();
       //label for the class slot
-      JLabel labelLeft = new JLabel((slotNumber == RotationConstants.PASCACK) ? "P-" : slotNumber+"-"); 
+      JLabel labelLeft = new JLabel((slotNumber == RotationConstants.PASCACK) ? "P-" : slotNumber+"-");
+      if (c.getSlot() == RotationConstants.NO_SLOT)
+         labelLeft.setText("");
       labelLeft.setFont(getFont());
       labelLeft.setForeground(getForeground());
       add(labelLeft);
@@ -173,49 +210,30 @@ public class DataInputSlot extends JPanel implements ActionListener
    private void setNorthBound(JComponent c) {
       int vgap = (c instanceof JTextField || c instanceof JCheckBox || c instanceof JButton) ? gap : gap*2;
       ((SpringLayout) getLayout()).putConstraint(SpringLayout.NORTH, c, vgap, SpringLayout.NORTH, this);
-   }
-//   //TODO
-//   public void showError() {
-//      error = true;
-//      ErrorID.showError(ErrorID.INPUT_ERROR, true);
-//      if (debug) System.out.println(getName()+" has error");
-//   }
-//  //TODO
-//   public void resolveError() {
-//      if (error) {
-//         if (debug) System.out.println(getName()+" resolved error");
-//      }
-//      error = false;
-//   }
-  
-   public boolean checkCanCreate() {
+   }   
+   
+   public void forceNames() {
       for (JTextField f : promptFields)
          if (f.getText().equals(""))
-            return false;
-      return true;
+            f.setText("unspecified");
    }
    
    public ClassPeriod createClass() {
-      if (checkCanCreate()) {
-//         resolveError();
-         if (hasParent && hasLab) {
-            ((DataInput) parentPanel).addLab(slotNumber);
-            if (debug)
-               System.out.println("\tslot" +slotNumber +"Added lab");
-         }
-         ClassPeriod retval = new ClassPeriod(slotNumber, promptFields[0].getText(), promptFields[1].getText(), 
-               promptFields[2].getText());
-         retval.setMemo(memo);
-         if (debug)
-            System.out.println("created:"+retval.getInfo());
-         return retval;
+      forceNames();
+      if (hasParent && hasLab) {
+         ((DataInput) parentPanel).addLab(slotNumber);
+         if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
       }
-      return new ClassPeriod();
+      ClassPeriod retval = new ClassPeriod(slotNumber,
+            promptFields[0].getText(), promptFields[1].getText(),
+            promptFields[2].getText());
+      retval.setMemo(memo);
+      if (debug) System.out.println("created:" + retval.getInfo());
+      return retval;
    }
    
    public void setLab(boolean hasLab) {
       labBox.setSelected(hasLab);
-//      ((JCheckBox)getComponents()[getComponents().length-1]).setSelected(hasLab);
       this.hasLab = hasLab;
    }
 

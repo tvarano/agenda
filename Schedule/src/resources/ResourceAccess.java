@@ -12,7 +12,7 @@ import constants.ErrorID;
 
 public final class ResourceAccess
 {
-   public static InputStream getResource(String localPath) {
+   public static InputStream getResourceStream(String localPath) {
       return ResourceAccess.class.getResourceAsStream(localPath);
    }
    

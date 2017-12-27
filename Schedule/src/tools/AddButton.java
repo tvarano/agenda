@@ -6,11 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 
-import input.DataInput;
-import input.GPAInput;
+import input.DataInputSlot;
 import input.InputManager;
 import managers.UIHandler;
 
@@ -25,7 +22,7 @@ public class AddButton extends JButton implements ActionListener
    private InputManager parentPanel;
 
    public AddButton(int slot, InputManager parentPanel) {
-      super("Add "+slot+" Period");
+      super((slot == -1) ? "Add New Class" : "Add "+slot+" Period");
       setBorderPainted(false);
       setFocusable(false);
       setOpaque(false);
@@ -54,7 +51,10 @@ public class AddButton extends JButton implements ActionListener
    }
    @Override
    public void actionPerformed(ActionEvent e) {
-      parentPanel.addClass(slot);
+      if (slot == -1)
+         parentPanel.addCustomClass();
+      else
+         parentPanel.addClass(slot);
    }
    
    //If you want a menu...

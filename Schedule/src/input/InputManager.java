@@ -8,6 +8,8 @@ import information.ClassPeriod;
 
 public interface InputManager
 {
+   void addCustomClass();
+   
    void addClass(int index);
    
    void addClass(ClassPeriod c);

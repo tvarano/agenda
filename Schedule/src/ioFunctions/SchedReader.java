@@ -151,7 +151,7 @@ public class SchedReader {
       if (Agenda.statusU) Agenda.log("transferring readme");
       try {
          if (f.createNewFile()) {
-            Scanner in = new Scanner(ResourceAccess.getResource(localPath));
+            Scanner in = new Scanner(ResourceAccess.getResourceStream(localPath));
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
             while (in.hasNextLine()) {
                bw.write(in.nextLine()+"\r\n");

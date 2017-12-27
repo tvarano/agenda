@@ -13,8 +13,9 @@ public final class RotationConstants
 {
    public static final int R1 = 1, R2 = 2, R3 = 3, R4 = 4, ODD_BL= 5, EVEN_BL = 6;
    public static final int HALF_R1 = 7, HALF_R3 = 8, HALF_R4 = 9, 
-         DELAY_R1 = 10, DELAY_R3 = 11, DELAY_R4 = 12, DELAY_ODD = 13, DELAY_EVEN = 14, NO_SCHOOL_INDEX = 15;
-   public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_TYPE = 11, INCORRECT_PARSE = 12;
+         DELAY_R1 = 10, DELAY_R3 = 11, DELAY_R4 = 12, DELAY_ODD = 13, DELAY_EVEN = 14, 
+         NO_SCHOOL_INDEX = 15, INCORRECT_PARSE = 16;
+   public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_TYPE = 11, NO_SLOT = -1;
    public static final int[] SPECIAL_CLASSES = {0, 8, PASCACK};
    
    private static final String[] NAMES = {"R1", "R2", "R3", "R4", "Odd Block", "Even Block", "R1 Half Day", 
