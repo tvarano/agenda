@@ -36,13 +36,24 @@ import managers.PanelManager;
 import managers.UIHandler;
 import tools.ToolBar;
 
-/**
+/*
  * TODO 
  * removing classes        DONE
  * adding back from your regular schedule       DONE
  *    joption pane "add from your schedule or create new class"
  * ensuring the ease for lab switches DONE
  * question icon DONE
+ * writing and reordering classes DONE
+ * 
+ *
+ */
+
+/**
+ * Central panel for allowing the user to integrate their GPA into the program. 
+ * <p>
+ * <strong>NOTE this does not affect the classes in the display, just for the gpa. </strong>  
+ * 
+ * it uses the {@link Schedule} gpa classes arrayList to produce a separate list of classes.
  * 
  * @author Thomas Varano
  *
