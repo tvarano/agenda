@@ -31,7 +31,6 @@ import display.ScheduleList;
 import information.ClassPeriod;
 import information.Schedule;
 import ioFunctions.SchedReader;
-import ioFunctions.SchedWriter;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.UIHandler;
@@ -71,13 +70,14 @@ public class GPAInput extends JPanel implements InputManager
          init(sched);
       else 
          init(0);
-      System.out.println(sched.getName() + " GPANAME");
+      if (Agenda.statusU) Agenda.log("gpa constructed with schedule");
    }
    
    public GPAInput(int amtClasses, PanelManager manager) {
       this.manager = manager;
       setFont(UIHandler.font);
       init(amtClasses);
+      if (Agenda.statusU) Agenda.log("gpa constructed empty");
    }
    
    public GPAInput(PanelManager manager) {
@@ -102,6 +102,7 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    private void init(Schedule s) {
+      if (Agenda.statusU) Agenda.log("gpa init with "+s.getName());
       init0();
       initComponents();
       initAndAddSlots(s);
@@ -268,6 +269,7 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    public void save() {
+      System.out.println("GPA 272 gpa = " + sched.getGpaClasses().toString());
       if (checkAndSetError()) {
          ErrorID.showUserError(ErrorID.INPUT_ERROR);
          return;
@@ -275,13 +277,16 @@ public class GPAInput extends JPanel implements InputManager
       for (GPAInputSlot s : slots) {
          s.save();
       }
-      manager.saveSchedule(this);
-      if (Agenda.statusU) Agenda.log("schedule successfully saved");
+      if (manager != null)
+         manager.saveSchedule(sched, getClass());
+      if (Agenda.statusU) Agenda.log("gpa successfully saved");
    }
    
    public void closeToDisp() {
-      save();
-      manager.reinitDisp();
+      if (manager != null) {
+         save();
+         manager.reinitDisp();
+      }
    }
 
    public double calculateGPA(double outOf) {
@@ -356,7 +361,7 @@ public class GPAInput extends JPanel implements InputManager
       UIHandler.init();
       JFrame f = new JFrame(Agenda.APP_NAME + " " + Agenda.BUILD + " GPA TEST");
       final long start = System.currentTimeMillis();
-      System.out.println("started");
+      System.out.println("NOTE gpa run seperately");
       f.getContentPane().add(new GPAInput(new SchedReader().readSched(), null));
       System.out.println(System.currentTimeMillis() - start);
       f.setVisible(true);

@@ -313,7 +313,7 @@ public class DataInput extends JPanel implements InputManager
       // write
       Schedule s = new Schedule(classes, labs.toArray(new Lab[labs.size()]));
       s.setPascackPreferences(pascack.createClass());
-      parentManager.saveSchedule(this);
+      parentManager.saveSchedule(s, getClass());
       if (debug) System.out.println("wrote" + s);
       if (Agenda.statusU) Agenda.log("saved input");
       saved = true;

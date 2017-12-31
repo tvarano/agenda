@@ -209,9 +209,15 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public void setCanShowPeriod(boolean canShowPeriod) {
       this.canShowPeriod = canShowPeriod;
    }
-   public void setData(ClassPeriod c) {
-      setName(c.getName()); setRoomNumber(c.getRoomNumber()); setTeacher(c.getTeacher()); setSlot(c.getSlot());
+   public void setBackgroundData(ClassPeriod c) {
       setGrade(c.getGrade()); setCourseWeight(c.getCourseWeight());
+   }
+   public void setForegroundData(ClassPeriod c) {
+      setName(c.getName()); setRoomNumber(c.getRoomNumber()); setTeacher(c.getTeacher()); setSlot(c.getSlot());      
+   }
+   public void setData(ClassPeriod c) {
+      setForegroundData(c);
+      setBackgroundData(c);
    }
    
    public ClassPeriod clone() {
@@ -276,10 +282,8 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public boolean equals(ClassPeriod c) {
       if (c == null)
          return false;
-      return c.getName() == name 
-            && c.getSlot() == slot &&
-            c.getStartTime().equals(startTime) && c.getEndTime().equals(endTime) && 
-            c.getTeacher().equals(teacher);
+      return c.getName() == name && c.getSlot() == slot && 
+            c.getTeacher().equals(teacher) && grade == c.grade && courseWeight == c.courseWeight;
       }
 
    @Override

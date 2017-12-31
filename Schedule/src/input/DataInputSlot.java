@@ -37,7 +37,8 @@ public class DataInputSlot extends JPanel implements ActionListener
    private int slotNumber;
    private Container parentPanel;
    private JCheckBox labBox;
-   private String memo;
+//   private String memo;
+   private ClassPeriod dataHolder;
    private boolean hasParent, hasLab, removable, labFriendly;
    private JTextField[] promptFields;
    private static boolean debug;
@@ -50,6 +51,7 @@ public class DataInputSlot extends JPanel implements ActionListener
    public DataInputSlot(ClassPeriod c, Container parentPanel) {
       if (c == null) c = new ClassPeriod();
       debug = false;
+      dataHolder = c.clone();
       setFont(UIHandler.getInputLabelFont());
       setBackground(UIHandler.background);
       setForeground(UIHandler.foreground);
@@ -63,8 +65,6 @@ public class DataInputSlot extends JPanel implements ActionListener
       }
       else
          this.parentPanel = parentPanel;
-      setMemo(c.getMemo());
-      if (debug) System.out.println(getName() + "INPUT SLOT CREATED WITH MEMO: "+memo);
       labFriendly = true;
       int amtFields = 3;
       promptFields = new JTextField[amtFields];
@@ -73,11 +73,12 @@ public class DataInputSlot extends JPanel implements ActionListener
    }
    
    public Dimension getPreferredSize() {
-      return new Dimension(Agenda.PREF_W, 30);
+      return new Dimension(Agenda.PREF_W-100, 30);
    }
    
    public static ClassPeriod showInputSlot() {
       DataInputSlot in = new DataInputSlot(RotationConstants.NO_SLOT, null);
+      in.setLabFriendly(false);
       
       if (JOptionPane.showOptionDialog(null, in, "CREATE", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
             null, null, null) == 0)
@@ -208,7 +209,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       ClassPeriod retval = new ClassPeriod(slotNumber,
             promptFields[0].getText(), promptFields[1].getText(),
             promptFields[2].getText());
-      retval.setMemo(memo);
+      retval.setBackgroundData(dataHolder);
       if (debug) System.out.println("created:" + retval.getInfo());
       return retval;
    }
@@ -246,14 +247,6 @@ public class DataInputSlot extends JPanel implements ActionListener
       labFriendly = b;
       if (!labFriendly)
          remove(labBox);
-   }
-
-   public String getMemo() {
-      return memo;
-   }
-
-   public void setMemo(String memo) {
-      this.memo = memo;
    }
 
    @Override

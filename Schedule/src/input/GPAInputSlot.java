@@ -53,7 +53,7 @@ public class GPAInputSlot extends JPanel
    public void create() {
       removeAll();
       ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
-      JTextField nameField = new JTextField(cp.getTrimmedName());
+      JTextField nameField = new JTextField(cp.getTrimmedName());                   //displays the name
       nameField.setPreferredSize(new Dimension(ClassPeriod.DEF_STRING_WIDTH, 25));
       nameField.setEditable(false);
       nameField.setFont(UIHandler.getInputFieldFont());
@@ -61,16 +61,16 @@ public class GPAInputSlot extends JPanel
       nameField.setForeground(UIHandler.foreground);
       nameField.setToolTipText(cp.getName());
       add(nameField);
-      JLabel l = new JLabel("Grade: ");
+      JLabel l = new JLabel("Grade: ");                                             //prompts the grade of the class
       l.setFont(UIHandler.getButtonFont());
       add(l);
       honors = cp.isHonors();
       if (useNumbers) {
-         JTextField field = (JTextField) add(new JTextField(cp.getGrade() + ""));
+         JTextField field = (JTextField) add(new JTextField(cp.getGrade() + ""));   //field for number grades
          field.setFont(UIHandler.getInputFieldFont());
          field.setPreferredSize(new Dimension(60, 25));
       } else {
-         JComboBox<String> chooser = new JComboBox<String>();
+         JComboBox<String> chooser = new JComboBox<String>();                       //JCombo for letter grades
          chooser.setFont(UIHandler.getButtonFont());
          DefaultComboBoxModel<String> m = new DefaultComboBoxModel<String>();
          chooser.setModel(m);
@@ -79,7 +79,7 @@ public class GPAInputSlot extends JPanel
          m.setSelectedItem(cp.getLetterGrade());
          add(chooser);
       }
-      JCheckBox hon = new JCheckBox("Honors/AP");
+      JCheckBox hon = new JCheckBox("Honors/AP");                                   //checkbox for honors / ap credit
       hon.setFont(UIHandler.getButtonFont());
       hon.setSelected(honors);
       hon.addActionListener(new ActionListener() {
@@ -90,7 +90,7 @@ public class GPAInputSlot extends JPanel
          }
       });
       add(hon);
-      JComboBox<String> courseLen = new JComboBox<String>();
+      JComboBox<String> courseLen = new JComboBox<String>();                        //determines the weight of the course
       courseLen.setFont(UIHandler.getButtonFont());
       DefaultComboBoxModel<String> clm = new DefaultComboBoxModel<String>();
       courseLen.setModel(clm);

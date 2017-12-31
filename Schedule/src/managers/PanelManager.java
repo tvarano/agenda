@@ -5,12 +5,12 @@ import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JComponent;
-
 import display.DisplayMain;
+import information.Schedule;
 import input.DataInput;
 import input.GPAInput;
 import ioFunctions.SchedReader;
+import ioFunctions.SchedWriter;
 
 //Thomas Varano
 //[Program Descripion]
@@ -142,8 +142,13 @@ public class PanelManager
       this.parent = parent;
    }
    
-   public void saveSchedule(JComponent caller) {
-      System.out.println("SAVED BY "+caller);
+   public void saveSchedule(Schedule s, Class<?> caller) {
+      if (Agenda.statusU) Agenda.log("NEW schedule save called by "+caller.getSimpleName());
+      new SchedWriter().write(s);
+   }
+   
+   public void saveSchedule(Class<?> caller) {
+      if (Agenda.statusU) Agenda.log("**main schedule save called by "+caller.getSimpleName());
       display.writeMain();
    }
    

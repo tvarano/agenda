@@ -52,6 +52,7 @@ public class Agenda extends JPanel
    public static URI sourceCode;
    
    public Agenda() {
+      setName("main class");
       initialFileWork();
       
       bar = UIHandler.configureMenuBar(parentFrame, this);
@@ -63,7 +64,7 @@ public class Agenda extends JPanel
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-            manager.getDisplay().writeMain();
+            manager.saveSchedule(Agenda.class);
             if (statusU) log("program closed");
             System.exit(0);
          }

@@ -65,10 +65,13 @@ public class Schedule implements Serializable
    
    public void init() {
       debug = false;
+      System.out.println(getName() + "SCHED 68 GPA = "+gpaClasses);
+      if (gpaClasses == null) {
       gpaClasses = new ArrayList<ClassPeriod>();
-      for (int i = 0; i < classes.length; i++)
-         if (classes[i].getSlot() != RotationConstants.PASCACK && classes[i].getSlot() != RotationConstants.LUNCH)
-            gpaClasses.add(classes[i]);
+         for (int i = 0; i < classes.length; i++)
+            if (classes[i].getSlot() != RotationConstants.PASCACK && classes[i].getSlot() != RotationConstants.LUNCH)
+               gpaClasses.add(classes[i]);
+      }
       pascackPreferences.setName("Pascack Pd");
       pascackPreferences.setSlot(RotationConstants.PASCACK);
       setShowName(true);
@@ -124,6 +127,7 @@ public class Schedule implements Serializable
    }
    
    public Schedule clone() {
+      System.out.println(name + "CLONEDCLONEDCLONED");
       if (debug) System.out.println(name+" cloned. showName:"+showName);
       Schedule retval = new Schedule();
       retval.setClasses(new ClassPeriod[classes.length]);
@@ -133,6 +137,22 @@ public class Schedule implements Serializable
       retval.setName(getName()+"(Clone)");
       retval.setShowName(showName);
       retval.setPascackPreferences(pascackPreferences);
+      retval.gpaClasses = cloneGPA(retval);
+      return retval;
+   }
+   
+   private ArrayList<ClassPeriod> cloneGPA(Schedule cloneTo) {
+      ArrayList<ClassPeriod> retval = new ArrayList<ClassPeriod>();
+      for (ClassPeriod ours : gpaClasses) {
+         final int beginningSize = retval.size();
+         for (ClassPeriod theirs : cloneTo.classes) {
+            if (theirs.equals(ours)) 
+               retval.add(theirs);
+         }
+         if (retval.size() == beginningSize)
+            retval.add(ours);
+      }
+      
       return retval;
    }
    

@@ -93,6 +93,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private void initComponents() {
       SchedReader r = new SchedReader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
+      System.out.println("\tDISP 96 GPA is " + mainSched.getGpaClasses().toString() );
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug && todaySched.get(RotationConstants.LUNCH) != null)
          System.out.println("today lunch" + todaySched.get(RotationConstants.LUNCH).getInfo());
@@ -119,7 +120,7 @@ public class DisplayMain extends JPanel implements ActionListener
 	   timer.stop();
    }
    
-   public void writeMain() {
+   public synchronized void writeMain() {
       if (Agenda.statusU) Agenda.log("wrote main Schedule");
       try {
          SchedWriter w = new SchedWriter();
