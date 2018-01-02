@@ -39,7 +39,6 @@ public class SchedWriter
    public void write(Schedule s) {
       if (s == null) {
          if (debug) System.err.println("written schedule is null");
-         //TODO why not recoverable?
          ErrorID.showError(new NullPointerException(), false);
          return;
       }

@@ -47,7 +47,7 @@ public class Agenda extends JPanel
    private PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
-   public static boolean statusU, inEclipse;
+   public static boolean statusU;
    public static Runnable mainThread;
    public static URI sourceCode;
    
