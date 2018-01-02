@@ -10,7 +10,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
-import java.awt.MenuItem;
+import java.awt.MenuItem; 
 import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.PreferencesEvent;
