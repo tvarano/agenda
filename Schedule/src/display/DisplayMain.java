@@ -93,7 +93,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private void initComponents() {
       SchedReader r = new SchedReader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
-      System.out.println("\tDISP 96 GPA is " + mainSched.getGpaClasses().toString() );
+      if (debug) System.out.println("\tDISP 96 GPA is " + mainSched.getGpaClasses().toString() );
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug && todaySched.get(RotationConstants.LUNCH) != null)
          System.out.println("today lunch" + todaySched.get(RotationConstants.LUNCH).getInfo());
@@ -154,19 +154,19 @@ public class DisplayMain extends JPanel implements ActionListener
       resume();
    }
    
-   public static void setBarText(String s) {
-      Agenda.getBar().getMenu(0).setLabel(s);
+   public void setBarText(String s) {
+      parentManager.getTimeMenu().setLabel(s);
    }
-   
-   public static void setBarTime(Time timeLeft) {
-      String begin = "Time Left In Class: "; 
-      setBarText(begin + timeLeft.durationString());
+  
+   public void setBarTime(Time timeLeft) {
+      String prefix = "Time Left In Class: "; 
+      setBarText(prefix + timeLeft.durationString());
    }
    
    public void configureBarTime(ClassPeriod c) {
       if (c != null) {
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
-         if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+         if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
             setBarText("No School");
       }
        else if (checkInSchool())

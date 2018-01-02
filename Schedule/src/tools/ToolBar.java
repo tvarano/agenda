@@ -97,7 +97,7 @@ public class ToolBar extends JToolBar implements ActionListener
    private ToolBar createToolBarGPA() {
       removeAll();
       
-      JButton b = (JButton) add(new JButton("Show Display"));
+      JButton b = (JButton) add(new JButton("Go Home"));
       b.setForeground(UIHandler.foreground);
       b.setFocusable(false);
       b.setBorderPainted(false);

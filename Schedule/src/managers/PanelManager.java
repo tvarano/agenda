@@ -63,17 +63,21 @@ public class PanelManager
    
    public MenuBar getBar() {
       return bar;
-   }
-   
+   }  
    public DisplayMain getDisplay() {
       return display;
-   }
-   
+   }   
    public Menu getTimeMenu() {
-      System.out.println("BAR"+bar);
       return bar.getMenu(0);
    }
-   
+   public void beforeClose() {
+      if (currentPane == GPA)
+         gpa.save();
+      else if (currentPane == INPUT)
+         input.save();
+      else
+         saveSchedule(getClass());
+   }
    public void startInput() {
       if (Agenda.statusU) Agenda.log("input requested");
       if (currentPane == INPUT) {

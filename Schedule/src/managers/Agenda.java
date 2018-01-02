@@ -53,6 +53,7 @@ public class Agenda extends JPanel
    
    public Agenda() {
       setName("main class");
+      if (statusU) log(getClass().getSimpleName()+" began initialization");
       initialFileWork();
       
       bar = UIHandler.configureMenuBar(parentFrame, this);
@@ -64,7 +65,7 @@ public class Agenda extends JPanel
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-            manager.saveSchedule(Agenda.class);
+            manager.beforeClose();
             if (statusU) log("program closed");
             System.exit(0);
          }
@@ -74,13 +75,12 @@ public class Agenda extends JPanel
             @Override
             public void handleQuitRequestWith(QuitEvent arg0,
                   QuitResponse arg1) {
-               manager.getDisplay().writeMain();
+               manager.beforeClose();
                if (statusU) log("program quit");
                arg1.performQuit();
             }
          });
    }
-
    
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
@@ -196,8 +196,8 @@ public class Agenda extends JPanel
       }
       
       public synchronized static void createFiles() {
-         if (statusU) log("files created");
          if (new File(RESOURCE_ROUTE).mkdirs()) {
+            if (statusU) log("files created");
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;

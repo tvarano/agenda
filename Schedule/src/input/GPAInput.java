@@ -103,6 +103,7 @@ public class GPAInput extends JPanel implements InputManager
       center.add(averageDisplay());
       setLayout(new BorderLayout());
       slots = new ArrayList<GPAInputSlot>();
+      initComponents();
    }
    
    private void initComponents() {
@@ -115,13 +116,11 @@ public class GPAInput extends JPanel implements InputManager
    private void init(Schedule s) {
       if (Agenda.statusU) Agenda.log("gpa init with "+s.getName());
       init0();
-      initComponents();
       initAndAddSlots(s);
    }
    
    private void init(int amtClasses) {
       init0();
-      initComponents();
       initAndAddSlots(amtClasses);
    }
    
@@ -188,7 +187,7 @@ public class GPAInput extends JPanel implements InputManager
       
       ScheduleList sl = new ScheduleList(
             new Schedule(unSignedClasses.toArray(new ClassPeriod[unSignedClasses.size()])), true);
-      sl.setBorder(UIHandler.getTitledBorder("Select Your Class"));
+      sl.setBorder(UIHandler.getTitledBorder("Put After..."));
       
       JOptionPane.showMessageDialog(null, sl, "Select a Class", JOptionPane.QUESTION_MESSAGE, null);
       return sl.getSelectedValue();
@@ -197,10 +196,7 @@ public class GPAInput extends JPanel implements InputManager
    private void addSlot(ClassPeriod c, boolean hasZero) {
       if (debug) System.out.println("adding"+ c.getInfo());
       GPAInputSlot add = new GPAInputSlot(c, this);
-//      int addIndex = (hasZero) ? c.getSlot() : c.getSlot()-1;
-//      if (addIndex > center.getComponentCount() || addIndex > slots.size())
-//         addIndex = -1;
-      center.add(add/*, addIndex*/);
+      center.add(add);
       slots.add(add);
       revalidate();
    }
@@ -280,7 +276,7 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    public void save() {
-      System.out.println("GPA 272 gpa = " + sched.getGpaClasses().toString());
+      if (debug) System.out.println("GPA 272 gpa = " + sched.getGpaClasses().toString());
       if (checkAndSetError()) {
          ErrorID.showUserError(ErrorID.INPUT_ERROR);
          return;

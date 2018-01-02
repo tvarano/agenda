@@ -43,12 +43,12 @@ public final class RotationConstants
       retval.setName(s.getName() + "(all Classes)");
       ArrayList<ClassPeriod> classes = new ArrayList<ClassPeriod>();
       if (s.indexOf(0) >= 0)
-         classes.add(PERIOD_ZERO);
+         classes.add(getPeriodZero());
       for (ClassPeriod c : Rotation.R1.getTimes())
          classes.add(c);
       if (s.indexOf(8) >= 0)
-         classes.add(PERIOD_EIGHT);
-      classes.add(PASCACK_PERIOD);
+         classes.add(getPeriodEight());
+      classes.add(getPascack());
       retval.setClasses(classes.toArray(new ClassPeriod[classes.size()]));
       return retval;
    }
@@ -60,14 +60,32 @@ public final class RotationConstants
       return retval;
    }
    
+   public static final ClassPeriod getPeriodZero() {
+      return new ClassPeriod(0, "Period 0", new Time(7,15), new Time(7,56));
+   }
+   
+   public static final ClassPeriod getPeriodEight() {
+      return new ClassPeriod(8, "Period 8", new Time(14,57), new Time(15,44));
+   }
+   
+   public static final ClassPeriod getPascackPeriod() {
+      return new ClassPeriod(RotationConstants.PASCACK, "Pascack Period", 
+            Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime());
+   }
+   
+   /*
    public static final ClassPeriod PERIOD_ZERO = new ClassPeriod(0, "Period 0", new Time(7,15), new Time(7,56)),
          PERIOD_EIGHT = new ClassPeriod(8, "Period 8", new Time(14,57), new Time(15,44)), 
          PASCACK_PERIOD = new ClassPeriod(RotationConstants.PASCACK, "Pascack Period", 
-               Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime()), 
-         NO_SCHOOL_CLASS = new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), "", "");
+               Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime()); 
+               */
+   
+   public static final ClassPeriod getNoSchoolClass() {
+      return new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), "", "");
+   }
    
    public static final ClassPeriod getPascack() {
-      ClassPeriod retval = PASCACK_PERIOD;
+      ClassPeriod retval = getPascackPeriod();
       retval.setCanShowPeriod(false);
       return retval;
    }

@@ -47,7 +47,8 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public ClassPeriod(int slot, String name, Time startTime, Time endTime, String teacher, String roomNumber) {
       setSlot(slot); setName(name); setStartTime(startTime); setEndTime(endTime); 
       setTeacher(teacher); setRoomNumber(roomNumber); setShowName(true); 
-      setCanShowPeriod(slot != RotationConstants.LUNCH && slot != RotationConstants.PASCACK);
+      setCanShowPeriod(slot != RotationConstants.LUNCH && slot != RotationConstants.PASCACK &&
+      slot != RotationConstants.NO_SCHOOL_TYPE);
       if (courseWeight == NO_WEIGHT)
          courseWeight = FULL_YEAR;
       if (debug)

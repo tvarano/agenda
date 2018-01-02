@@ -116,8 +116,9 @@ public enum Rotation
    private static ClassPeriod[] getSchedule(int rotationIndex) {
       if (debug) System.out.println("index="+rotationIndex);
       DayType dt = getType(rotationIndex);
-      if (rotationIndex == RotationConstants.NO_SCHOOL_INDEX)
-         return new ClassPeriod[] {RotationConstants.NO_SCHOOL_CLASS};
+      if (debug) System.out.println("nosc "+RotationConstants.getNoSchoolClass());
+      if (rotationIndex == RotationConstants.NO_SCHOOL_INDEX) 
+         return new ClassPeriod[]{RotationConstants.getNoSchoolClass()};
       int[] slots = getSlotRotation(rotationIndex);
       ClassPeriod[] retval = new ClassPeriod[slots.length];
       String name = "";

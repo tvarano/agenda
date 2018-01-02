@@ -54,7 +54,7 @@ public class SchedReader {
       close();
       ret = formatSchedule(ret);
       if (Agenda.statusU) Agenda.log(ret.getName()+" read");
-      System.out.println("READ 57 SCHED READ gpa " + ret.getGpaClasses().toString());
+      if (debug) System.out.println("READ 57 SCHED READ gpa " + ret.getGpaClasses().toString());
       return ret;
    }
    
@@ -93,11 +93,11 @@ public class SchedReader {
    private Schedule checkSpecialPeriods(Schedule in) {
       for (ClassPeriod c : in.getClasses()) {
          if (c.getSlot() == 0)
-            c.setTimeTemplate(RotationConstants.PERIOD_ZERO);
+            c.setTimeTemplate(RotationConstants.getPeriodZero());
          else if (c.getSlot() == 8)
-            c.setTimeTemplate(RotationConstants.PERIOD_EIGHT);
+            c.setTimeTemplate(RotationConstants.getPeriodEight());
          else if (c.getSlot() == RotationConstants.PASCACK)
-            c.setTimeTemplate(RotationConstants.PASCACK_PERIOD);
+            c.setTimeTemplate(RotationConstants.getPascackPeriod());
          else if (c.getSlot() == RotationConstants.LUNCH)
             c.setName("Lunch");
       }
