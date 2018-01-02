@@ -13,8 +13,9 @@ public final class RotationConstants
 {
    public static final int R1 = 1, R2 = 2, R3 = 3, R4 = 4, ODD_BL= 5, EVEN_BL = 6;
    public static final int HALF_R1 = 7, HALF_R3 = 8, HALF_R4 = 9, 
-         DELAY_R1 = 10, DELAY_R3 = 11, DELAY_R4 = 12, DELAY_ODD = 13, DELAY_EVEN = 14, NO_SCHOOL_INDEX = 15;
-   public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_TYPE = 11, INCORRECT_PARSE = 12;
+         DELAY_R1 = 10, DELAY_R3 = 11, DELAY_R4 = 12, DELAY_ODD = 13, DELAY_EVEN = 14, 
+         NO_SCHOOL_INDEX = 15, INCORRECT_PARSE = 16;
+   public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_TYPE = 11, NO_SLOT = -1;
    public static final int[] SPECIAL_CLASSES = {0, 8, PASCACK};
    
    private static final String[] NAMES = {"R1", "R2", "R3", "R4", "Odd Block", "Even Block", "R1 Half Day", 
@@ -42,12 +43,12 @@ public final class RotationConstants
       retval.setName(s.getName() + "(all Classes)");
       ArrayList<ClassPeriod> classes = new ArrayList<ClassPeriod>();
       if (s.indexOf(0) >= 0)
-         classes.add(PERIOD_ZERO);
+         classes.add(getPeriodZero());
       for (ClassPeriod c : Rotation.R1.getTimes())
          classes.add(c);
       if (s.indexOf(8) >= 0)
-         classes.add(PERIOD_EIGHT);
-      classes.add(PASCACK_PERIOD);
+         classes.add(getPeriodEight());
+      classes.add(getPascack());
       retval.setClasses(classes.toArray(new ClassPeriod[classes.size()]));
       return retval;
    }
@@ -59,14 +60,32 @@ public final class RotationConstants
       return retval;
    }
    
+   public static final ClassPeriod getPeriodZero() {
+      return new ClassPeriod(0, "Period 0", new Time(7,15), new Time(7,56));
+   }
+   
+   public static final ClassPeriod getPeriodEight() {
+      return new ClassPeriod(8, "Period 8", new Time(14,57), new Time(15,44));
+   }
+   
+   public static final ClassPeriod getPascackPeriod() {
+      return new ClassPeriod(RotationConstants.PASCACK, "Pascack Period", 
+            Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime());
+   }
+   
+   /*
    public static final ClassPeriod PERIOD_ZERO = new ClassPeriod(0, "Period 0", new Time(7,15), new Time(7,56)),
          PERIOD_EIGHT = new ClassPeriod(8, "Period 8", new Time(14,57), new Time(15,44)), 
          PASCACK_PERIOD = new ClassPeriod(RotationConstants.PASCACK, "Pascack Period", 
-               Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime()), 
-         NO_SCHOOL_CLASS = new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), "", "");
+               Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime()); 
+               */
+   
+   public static final ClassPeriod getNoSchoolClass() {
+      return new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), "", "");
+   }
    
    public static final ClassPeriod getPascack() {
-      ClassPeriod retval = PASCACK_PERIOD;
+      ClassPeriod retval = getPascackPeriod();
       retval.setCanShowPeriod(false);
       return retval;
    }

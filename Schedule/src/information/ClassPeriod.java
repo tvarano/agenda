@@ -1,8 +1,12 @@
 package information;
+import java.awt.Font;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 
 import constants.Lab;
 import constants.RotationConstants;
+import input.GPAInput;
 
 //Thomas Varano
 //Aug 31, 2017
@@ -17,10 +21,14 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    private static final long serialVersionUID = -8853513886388469596L;
    public static final String NO_TEACH = "Teacher Name";
    public static final String NO_ROOM = "000";
+   public static final int NO_WEIGHT = 0, HALF_YEAR = 1, FULL_YEAR = 2, FULL_LAB = 3;
    public static final int DEF_STRING_LENGTH = 20;
-   private int slot;
+   public static final int DEF_STRING_WIDTH = 85;
+   private int slot, courseWeight;
+   private double grade;
+   private static final FontRenderContext frc = new FontRenderContext(new AffineTransform(),true,true);
    private String roomNumber, memo;
-   private boolean showName, canShowPeriod;
+   private boolean showName, canShowPeriod, honors;
    private static boolean debug = false;
    private String name, teacher;
    private Time startTime, endTime, duration;
@@ -39,7 +47,10 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public ClassPeriod(int slot, String name, Time startTime, Time endTime, String teacher, String roomNumber) {
       setSlot(slot); setName(name); setStartTime(startTime); setEndTime(endTime); 
       setTeacher(teacher); setRoomNumber(roomNumber); setShowName(true); 
-      setCanShowPeriod(slot != RotationConstants.LUNCH && slot != RotationConstants.PASCACK);
+      setCanShowPeriod(slot != RotationConstants.LUNCH && slot != RotationConstants.PASCACK &&
+      slot != RotationConstants.NO_SCHOOL_TYPE);
+      if (courseWeight == NO_WEIGHT)
+         courseWeight = FULL_YEAR;
       if (debug)
          System.out.println("INITIALIZED"+getInfo());
       duration = Time.calculateDuration(startTime, endTime);  
@@ -54,10 +65,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    public ClassPeriod(int slot) {
       this(slot, "Period "+slot, NO_TEACH, NO_ROOM);
+      if (slot == RotationConstants.NO_SLOT)
+         setName("New Class");
    }
    
    public ClassPeriod(String name, Time startTime, Time endTime) {
-      this(-1, name, startTime, endTime);
+      this(RotationConstants.NO_SLOT, name, startTime, endTime);
    }
    
    public ClassPeriod(ClassPeriod anchor) {
@@ -91,7 +104,9 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return s;
    }
    public String getInfo() {
-    return getClass().getName()+"[" + name + " slot="+slot+"("+startTime+"-"+endTime+") Rm." +roomNumber+ " showName="+showName+"]";
+      return getClass().getName() + "[" + name + ", slot=" + slot + " ("
+            + startTime + "-" + endTime + ") Rm." + roomNumber + ", teacher ="
+            + teacher + ", showName =" + showName + "]";
 
    }
    public void setTimeTemplate(ClassPeriod c) {
@@ -99,10 +114,30 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       setStartTime(c.getStartTime()); setEndTime(c.getEndTime());
    }
    public boolean isIncomplete() {
-      return (slot == -1 || name.equals(" ") || teacher.equals(NO_TEACH) || roomNumber == NO_ROOM);
+      return (slot == RotationConstants.NO_SLOT || name.equals(" ") || teacher.equals(NO_TEACH) || roomNumber == NO_ROOM);
    }
    public String toString() {
       return (showName || !canShowPeriod) ? getTrimmedName() : "Period "+slot;
+   }
+   
+   public String formattedString(Font font, int preferredSize) {
+      final int prefW = (preferredSize == -1) ? DEF_STRING_WIDTH : preferredSize;
+      String ret = getTrimmedName();
+      while (stringWidth(ret, font) < prefW) {
+         ret = " " + ret;
+      }
+      return ret;
+   }
+   
+   private static int stringWidth(String str, Font font) {
+      if (str == null || font == null)
+         return 0;
+      return (int)(font.getStringBounds(str, frc).getWidth());
+      
+   }
+   
+   public int nameWidth(Font font) {
+      return stringWidth(getTrimmedName(), font);
    }
    
    public int getSlot() {
@@ -175,17 +210,81 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public void setCanShowPeriod(boolean canShowPeriod) {
       this.canShowPeriod = canShowPeriod;
    }
+   public void setBackgroundData(ClassPeriod c) {
+      setGrade(c.getGrade()); setCourseWeight(c.getCourseWeight());
+   }
+   public void setForegroundData(ClassPeriod c) {
+      setName(c.getName()); setRoomNumber(c.getRoomNumber()); setTeacher(c.getTeacher()); setSlot(c.getSlot());      
+   }
    public void setData(ClassPeriod c) {
-      setName(c.getName()); setRoomNumber(c.getRoomNumber()); setTeacher(c.getTeacher()); setSlot(c.getSlot());
+      setForegroundData(c);
+      setBackgroundData(c);
    }
    
+   public ClassPeriod clone() {
+     ClassPeriod c = new ClassPeriod();
+     c.setData(this);
+     return c;
+   }
+   
+   public double getGrade() {
+      return (grade == 0) ? 100 : grade;
+   }
+   
+   public String getLetterGrade() {
+      int rg = (int) Math.round(getGrade());
+      int grade = 60;
+      for (int i = GPAInput.letterGrades.length - 1; i >= 0; i--) {
+         if (rg <= grade)
+            return GPAInput.letterGrades[i];
+         if (i % 3 == 0)
+            grade += 3;
+         else if (i % 3 == 1)
+            grade += 4;
+         else
+            grade += 3;
+      }      
+      return "ERROR IN GRADING";
+   }
+
+   public void setGrade(double grade) {
+      this.grade = grade;
+   }
+
+   public void setGrade(String letterGrade) {
+      int grade = 97;
+      for (int i = 0; i < GPAInput.letterGrades.length; i++) {
+         if (letterGrade.equalsIgnoreCase(GPAInput.letterGrades[i]))
+            setGrade(grade);
+         if (grade == 62)
+            grade = 55;
+         else if (i % 3 == 0)
+            grade -= 2;
+         else if (i % 3 == 1)
+            grade -= 3;
+         else
+            grade -= 5;
+      }
+   }
+
+   public int getCourseWeight() {
+      return courseWeight == NO_WEIGHT ? FULL_YEAR : courseWeight;
+   }
+   public void setCourseWeight(int courseWeight) {
+      this.courseWeight = courseWeight;
+   }
+   public boolean isHonors() {
+      return honors;
+   }
+   public void setHonors(boolean honors) {
+      this.honors = honors;
+   }
+
    public boolean equals(ClassPeriod c) {
       if (c == null)
          return false;
-      return c.getName() == name 
-            && c.getSlot() == slot &&
-            c.getStartTime().equals(startTime) && c.getEndTime().equals(endTime) && 
-            c.getTeacher().equals(teacher);
+      return c.getName() == name && c.getSlot() == slot && 
+            c.getTeacher().equals(teacher) && grade == c.grade && courseWeight == c.courseWeight;
       }
 
    @Override
@@ -193,7 +292,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return getSlot() - c.getSlot();
    }
 
-   public static class LabPeriod extends ClassPeriod implements Serializable{
+   public static class LabPeriod extends ClassPeriod implements Serializable {
       private static final long serialVersionUID = 1L;
       private Lab lab;
       

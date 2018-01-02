@@ -5,12 +5,17 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 
 import constants.Rotation;
 import display.DisplayMain;
+import input.GPAInput;
+import input.InputManager;
+import managers.PanelManager;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -21,13 +26,14 @@ public class ToolBar extends JToolBar implements ActionListener
 {
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
-   private boolean inputting, delayed, half;
+   private boolean delayed, half;
    private Rotation rotation;
+   private int parentType;
    private JPanel parentPanel;
 
-   public ToolBar(boolean inputting, JPanel parentPanel) {
+   public ToolBar(int parentType, JPanel parentPanel) {
       setParentPanel(parentPanel);
-      setInputting(inputting);
+      setParentType(parentType);
       setBorderPainted(false);
       setName("ToolBar");
       setBackground(UIHandler.tertiary);
@@ -36,15 +42,17 @@ public class ToolBar extends JToolBar implements ActionListener
       setMargin(new Insets(7,5,0,0));
    }
    
-   private ToolBar create(boolean inputting) {
+   private ToolBar create(int type) {
       setBackground(UIHandler.background);
-      if (inputting)
-         return createToolBarInput();
+      if (type == PanelManager.INPUT)
+         return createToolBarDataIn();
+      else if (type == PanelManager.GPA)
+         return createToolBarGPA();
       return createToolBarDisplay();
    }
    
    public void repaint() {
-      if (!inputting) {
+      if (parentType == PanelManager.DISPLAY) {
          DisplayMain dm = (DisplayMain)parentPanel;
          if (dm != null && dm.getTodayR() != null) {
             setHalf(dm.getTodayR().isHalf());
@@ -72,7 +80,7 @@ public class ToolBar extends JToolBar implements ActionListener
       b = new InstanceButton(InstanceButton.HALF);
       b.setParentBar(this);
       add(b);
-      JButton input = new JButton("Input Schedule");
+      JButton input = new JButton("View GPA");
       input.setForeground(UIHandler.foreground);
       input.setFocusable(false);
       input.setBorderPainted(false);
@@ -80,17 +88,68 @@ public class ToolBar extends JToolBar implements ActionListener
       input.setOpaque(false);
       input.setFont(UIHandler.getButtonFont());
       input.addMouseListener(UIHandler.buttonPaintListener(input));
-      input.addActionListener(((DisplayMain) parentPanel).changeView());
+      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.GPA));
       add(input);
       setHighlights();
       return this;
    }
    
-   //make a button for adding a class
-   private ToolBar createToolBarInput() {
+   private ToolBar createToolBarGPA() {
       removeAll();
-      add(new AddButton(0, parentPanel));
-      add(new AddButton(8, parentPanel));
+      
+      JButton b = (JButton) add(new JButton("Go Home"));
+      b.setForeground(UIHandler.foreground);
+      b.setFocusable(false);
+      b.setBorderPainted(false);
+      b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      b.setOpaque(false);
+      b.setFont(UIHandler.getButtonFont());
+      b.addActionListener(((GPAInput) parentPanel).changeView(PanelManager.DISPLAY));
+      b.addMouseListener(UIHandler.buttonPaintListener(b));
+      
+      b = (JButton) add(new JButton("Input Schedule"));
+      b.setForeground(UIHandler.foreground);
+      b.setFocusable(false);
+      b.setBorderPainted(false);
+      b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      b.setOpaque(false);
+      b.setFont(UIHandler.getButtonFont());
+      b.addActionListener(((GPAInput) parentPanel).changeView(PanelManager.INPUT));
+      b.addMouseListener(UIHandler.buttonPaintListener(b));
+      
+      ButtonGroup bg = new ButtonGroup();
+      JRadioButton rb = new JRadioButton("Use Numbers");
+      bg.add(rb);
+      rb.setFont(UIHandler.getButtonFont());
+      rb.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            ((GPAInput) parentPanel).setMethod(true);
+         }
+      });
+      add(rb);
+      rb = new JRadioButton("Use Letter");
+      bg.add(rb);
+      rb.setFont(UIHandler.getButtonFont());
+      rb.setSelected(true);
+      rb.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            ((GPAInput) parentPanel).setMethod(false);
+         }
+      });
+      add(rb);
+      
+      add(new AddButton(-1, (InputManager)parentPanel));
+      return this;
+   }
+
+   
+   //make a button for adding a class
+   private ToolBar createToolBarDataIn() {
+      removeAll();
+      add(new AddButton(0, (InputManager)parentPanel));
+      add(new AddButton(8, (InputManager)parentPanel));
       return this;
    }
 
@@ -103,12 +162,12 @@ public class ToolBar extends JToolBar implements ActionListener
       }
    }
    
-   public boolean isInputting() {
-      return inputting;
+   public int getParentType() {
+      return parentType;
    }
-   public void setInputting(boolean inputting) {
-      this.inputting = inputting;
-      create(inputting);
+   public void setParentType(int parentType) {
+      this.parentType = parentType;
+      create(parentType);
    }
    public boolean isDelayed() {
       return delayed;

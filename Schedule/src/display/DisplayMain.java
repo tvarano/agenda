@@ -29,6 +29,14 @@ import tools.ToolBar;
 //Thomas Varano
 //Aug 31, 2017
 
+/**
+ * Responsible for displaying the home screen of the application. Everything not involving input and GPA is done here, 
+ * usually constituting showing data and editing memos.
+ * 
+ * @param parentManager the {@linkplain PanelManager} responsible for handling the state of the application, and thereby 
+ * this object.
+ * @author Thomas Varano
+ */
 public class DisplayMain extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;
@@ -85,6 +93,7 @@ public class DisplayMain extends JPanel implements ActionListener
    private void initComponents() {
       SchedReader r = new SchedReader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
+      if (debug) System.out.println("\tDISP 96 GPA is " + mainSched.getGpaClasses().toString() );
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug && todaySched.get(RotationConstants.LUNCH) != null)
          System.out.println("today lunch" + todaySched.get(RotationConstants.LUNCH).getInfo());
@@ -94,7 +103,7 @@ public class DisplayMain extends JPanel implements ActionListener
       infoSelector = new ScheduleInfoSelector(todaySched, mainSched, this);
 
       currentClassPane = new CurrentClassPane(new ClassPeriod(), todaySched, this);
-      toolbar = new ToolBar(false, this);
+      toolbar = new ToolBar(PanelManager.DISPLAY, this);
       checkAndUpdateTime();
       currentClassPane.setClassPeriod(findCurrentClass());
       pushTodaySchedule();
@@ -111,7 +120,7 @@ public class DisplayMain extends JPanel implements ActionListener
 	   timer.stop();
    }
    
-   public void writeMain() {
+   public synchronized void writeMain() {
       if (Agenda.statusU) Agenda.log("wrote main Schedule");
       try {
          SchedWriter w = new SchedWriter();
@@ -145,19 +154,19 @@ public class DisplayMain extends JPanel implements ActionListener
       resume();
    }
    
-   public static void setBarText(String s) {
-      Agenda.getBar().getMenu(0).setLabel(s);
+   public void setBarText(String s) {
+      parentManager.getTimeMenu().setLabel(s);
    }
-   
-   public static void setBarTime(Time timeLeft) {
-      String begin = "Time Left In Class: "; 
-      setBarText(begin + timeLeft.durationString());
+  
+   public void setBarTime(Time timeLeft) {
+      String prefix = "Time Left In Class: "; 
+      setBarText(prefix + timeLeft.durationString());
    }
    
    public void configureBarTime(ClassPeriod c) {
       if (c != null) {
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
-         if (c.equals(RotationConstants.NO_SCHOOL_CLASS))
+         if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
             setBarText("No School");
       }
        else if (checkInSchool())
@@ -261,8 +270,8 @@ public class DisplayMain extends JPanel implements ActionListener
       setUpdating(false);
    }
    
-   public ActionListener changeView() {
-      return parentManager.changeView(true);
+   public ActionListener changeView(int type) {
+      return parentManager.changeView(type);
    }
    
    public Dimension getMinimumSize() {

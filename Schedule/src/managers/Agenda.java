@@ -32,22 +32,28 @@ import ioFunctions.SchedReader;
 //Main class
 //Sep 20, 2017
 
-
+/**
+ * Main class. Begins the program and initializes all references.
+ * 
+ * @author Thomas Varano
+ */
 public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.6.4 ß";
+   public static final String BUILD = "v1.7.0 (Beta)";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
-   public static boolean statusU, inEclipse;
+   public static boolean statusU;
    public static Runnable mainThread;
    public static URI sourceCode;
    
    public Agenda() {
+      setName("main class");
+      if (statusU) log(getClass().getSimpleName()+" began initialization");
       initialFileWork();
       
       bar = UIHandler.configureMenuBar(parentFrame, this);
@@ -55,11 +61,11 @@ public class Agenda extends JPanel
       if (statusU) log("Main began initialization");
       UIHandler.init();
       manager = new PanelManager(this, bar);
-      manager.setCurrentPane(false);
+      manager.setCurrentPane(PanelManager.DISPLAY);
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-            manager.getDisplay().writeMain();
+            manager.beforeClose();
             if (statusU) log("program closed");
             System.exit(0);
          }
@@ -69,7 +75,7 @@ public class Agenda extends JPanel
             @Override
             public void handleQuitRequestWith(QuitEvent arg0,
                   QuitResponse arg1) {
-               manager.getDisplay().writeMain();
+               manager.beforeClose();
                if (statusU) log("program quit");
                arg1.performQuit();
             }
@@ -79,16 +85,16 @@ public class Agenda extends JPanel
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
-   public synchronized void initialFileWork() {
+   public static synchronized void initialFileWork() {
       long start = System.currentTimeMillis();
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
-      FileHandler.ensureRouteFile();
+      FileHandler.ensureFileRoute();
 
       //check parameters, draw routes, create files if needed 
       FileHandler.initAndCreateFiles();
@@ -106,6 +112,10 @@ public class Agenda extends JPanel
       }
       //logs the time taken (in millis)
       if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
+   }
+   
+   public PanelManager getManager() {
+      return manager;
    }
    
    /**
@@ -132,7 +142,7 @@ public class Agenda extends JPanel
          }
       }
       
-      public static boolean ensureRouteFile() {
+      public static boolean ensureFileRoute() {
          return new File(System.getProperty("user.home") + "/Applications/Agenda/")
                .mkdirs();
       }
@@ -186,8 +196,8 @@ public class Agenda extends JPanel
       }
       
       public synchronized static void createFiles() {
-         if (statusU) log("files created");
          if (new File(RESOURCE_ROUTE).mkdirs()) {
+            if (statusU) log("files created");
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;

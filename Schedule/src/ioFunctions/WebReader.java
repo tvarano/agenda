@@ -197,7 +197,6 @@ public class WebReader
                            totalHtml.indexOf(breakKey, index + 1))
                      : Math.min(totalHtml.indexOf(endKey, index + 1),
                            totalHtml.indexOf(breakKey, index + 1));
-         // TODO returning negative one, check for endIdnex
          String addition = (totalHtml.substring(index + startKey.length(),
                endIndex));
          index += startKey.length() + addition.length() - 1;

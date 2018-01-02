@@ -6,11 +6,9 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
-import input.InputMain;
+import input.DataInputSlot;
+import input.InputManager;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -21,11 +19,10 @@ public class AddButton extends JButton implements ActionListener
 {
    private static final long serialVersionUID = 1L;
    private int slot;
-   private InputMain parentPanel;
-   private boolean parentIsInput;
+   private InputManager parentPanel;
 
-   public AddButton(int slot, JComponent parentPanel) {
-      super("Add "+slot+" Period");
+   public AddButton(int slot, InputManager parentPanel) {
+      super((slot == -1) ? "Add New Class" : "Add "+slot+" Period");
       setBorderPainted(false);
       setFocusable(false);
       setOpaque(false);
@@ -35,9 +32,9 @@ public class AddButton extends JButton implements ActionListener
       setSlot(slot);
       addActionListener(this);
       addMouseListener(UIHandler.buttonPaintListener(this));
-      parentIsInput = parentPanel instanceof InputMain;
-      if (parentIsInput)
-         setParentPanel((InputMain)parentPanel);
+      if (parentPanel instanceof InputManager) {
+         setParentPanel(parentPanel);
+      }
    }
    
    public int getSlot() {
@@ -46,27 +43,27 @@ public class AddButton extends JButton implements ActionListener
    public void setSlot(int slot) {
       this.slot = slot;
    }
-   public InputMain getParentPanel() {
+   public InputManager getParentPanel() {
       return parentPanel;
    }
-   public void setParentPanel(InputMain parentPanel) {
+   public void setParentPanel(InputManager parentPanel) {
       this.parentPanel = parentPanel;
    }
    @Override
    public void actionPerformed(ActionEvent e) {
-      if (parentIsInput) {
+      if (slot == -1)
+         parentPanel.addCustomClass();
+      else
          parentPanel.addClass(slot);
-      }
    }
    
    //If you want a menu...
    public static class Menu extends JComboBox<String> implements ActionListener
    { 
       private static final long serialVersionUID = 1L;
-      private InputMain parentPanel;
-      private boolean parentIsInput;
+      private InputManager parentPanel;
       
-      public Menu(JPanel parentPanel) {
+      public Menu(InputManager parentPanel, int amtClasses) {
          super();
          addActionListener(this);
          setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -75,17 +72,12 @@ public class AddButton extends JButton implements ActionListener
          classes[0] = "Add Class At:";
          classes[1] = ""+0; classes[2] = ""+8;
          setModel(new DefaultComboBoxModel<String>(classes));
-         
-         parentIsInput = (parentPanel instanceof InputMain);
-         if (parentIsInput)
-            setParentPanel((InputMain) parentPanel);
-         
+         setParentPanel( parentPanel); 
       }
-
-      public InputMain getParentPanel() {
+      public InputManager getParentPanel() {
          return parentPanel;
       }
-      public void setParentPanel(InputMain parentPanel) {
+      public void setParentPanel(InputManager parentPanel) {
          this.parentPanel = parentPanel;
       }
       
@@ -93,22 +85,8 @@ public class AddButton extends JButton implements ActionListener
       public void actionPerformed(ActionEvent e) {
          @SuppressWarnings("unchecked")
          JComboBox<String> c = (JComboBox<String>) e.getSource();
-         if (parentIsInput) {
-            if (c.getSelectedIndex() != 0) {
-               parentPanel.addClass(Integer.parseInt((String) c.getSelectedItem()));
-            }
-         }
+         if (c.getSelectedIndex() != 0) 
+            parentPanel.addClass(Integer.parseInt((String) c.getSelectedItem()));
       }
-   }
-   
-   public static void main(String[] args) {
-      JFrame test = new JFrame("AddButtonTest");
-      JPanel pane = new JPanel();
-      pane.add(new AddButton.Menu(pane));
-      test.add(pane);
-      test.pack();
-      test.setVisible(true);
-      test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      test.setLocationRelativeTo(null);
    }
 }

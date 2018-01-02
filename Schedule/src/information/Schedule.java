@@ -1,5 +1,6 @@
 package information;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import constants.ErrorID;
 import constants.Lab;
@@ -19,6 +20,7 @@ public class Schedule implements Serializable
    private static final long serialVersionUID = -3898901184816193456L;
    public static final int NORMAL_AMT_DAYS = 7;
    private ClassPeriod[] classes;
+   private ArrayList<ClassPeriod> gpaClasses;
    private boolean showName;
    private ClassPeriod schoolDay, pascackPreferences; 
    private Lab[] labs;
@@ -35,6 +37,10 @@ public class Schedule implements Serializable
    
    public Schedule(ClassPeriod[] classes, Lab[] labSlots, ClassPeriod pascackPreferences) {
       init(classes, labSlots, pascackPreferences);
+   }
+   
+   public Schedule(ClassPeriod[] classes) {
+      this(classes, new Lab[0]);
    }
    
    public Schedule(ClassPeriod[] classes, Lab labSlot) {
@@ -59,12 +65,44 @@ public class Schedule implements Serializable
    
    public void init() {
       debug = false;
+      if (debug) System.out.println(getName() + "SCHED 68 GPA = "+gpaClasses);
+      if (gpaClasses == null) {
+      gpaClasses = new ArrayList<ClassPeriod>();
+         for (int i = 0; i < classes.length; i++)
+            if (classes[i].getSlot() != RotationConstants.PASCACK && classes[i].getSlot() != RotationConstants.LUNCH)
+               gpaClasses.add(classes[i]);
+      }
       pascackPreferences.setName("Pascack Pd");
       pascackPreferences.setSlot(RotationConstants.PASCACK);
       setShowName(true);
       calculateSchoolDay();
       if (name == null)
          name = "unNamedSchedSize"+classes.length;
+   }
+   
+   public ClassPeriod addGPAClass(ClassPeriod c) {
+      gpaClasses.add(c);
+      return c;
+   }
+   
+   public ClassPeriod addGPAClass(ClassPeriod c, int index) {
+      gpaClasses.add(index, c);
+      return c;
+   }
+   
+   public ClassPeriod addGPAClass(int slot) {
+      ClassPeriod c = new ClassPeriod(slot);
+      gpaClasses.add(c);
+      return c;
+   }
+   
+   public ClassPeriod removeGPAClass(ClassPeriod c) {
+      gpaClasses.remove(c);
+      return c;
+   }
+   
+   public ClassPeriod removeGPAClass(int index) {
+      return gpaClasses.remove(index);
    }
    
    public ClassPeriod classAt(Time t) {
@@ -89,13 +127,32 @@ public class Schedule implements Serializable
    }
    
    public Schedule clone() {
+      System.out.println(name + "CLONEDCLONEDCLONED");
       if (debug) System.out.println(name+" cloned. showName:"+showName);
       Schedule retval = new Schedule();
-      retval.setClasses(classes);
+      retval.setClasses(new ClassPeriod[classes.length]);
+      for (int i = 0; i < classes.length; i++)
+         retval.getClasses()[i] = classes[i].clone();
       retval.setLabs(getLabs());
       retval.setName(getName()+"(Clone)");
       retval.setShowName(showName);
       retval.setPascackPreferences(pascackPreferences);
+      retval.gpaClasses = cloneGPA(retval);
+      return retval;
+   }
+   
+   private ArrayList<ClassPeriod> cloneGPA(Schedule cloneTo) {
+      ArrayList<ClassPeriod> retval = new ArrayList<ClassPeriod>();
+      for (ClassPeriod ours : gpaClasses) {
+         final int beginningSize = retval.size();
+         for (ClassPeriod theirs : cloneTo.classes) {
+            if (theirs.equals(ours)) 
+               retval.add(theirs);
+         }
+         if (retval.size() == beginningSize)
+            retval.add(ours);
+      }
+      
       return retval;
    }
    
@@ -179,7 +236,7 @@ public class Schedule implements Serializable
       String newLn = (newLine) ? "\n" : "";
       String tab = (newLine) ? "\t" : "";
       for (ClassPeriod c : classes)
-         retval += tab+c.toString() +", "+newLn;
+         retval += tab + c +", "+newLn;
       return retval;
    }
    
@@ -202,7 +259,8 @@ public class Schedule implements Serializable
    }
    public void setClasses(ClassPeriod[] classes) {
       this.classes = classes;
-      calculateSchoolDay();
+      if (classes.length > 0 && classes[0] != null && classes[classes.length-1] != null)
+         calculateSchoolDay();
    }
    public Lab[] getLabs() {
       return labs;
@@ -224,6 +282,9 @@ public class Schedule implements Serializable
    }
    public ClassPeriod getPascackPreferences() {
       return pascackPreferences;
+   }
+   public ArrayList<ClassPeriod> getGpaClasses() {
+      return gpaClasses;
    }
    public void setPascackPreferences(ClassPeriod pascackPreferences) {
       this.pascackPreferences = pascackPreferences;
