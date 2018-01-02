@@ -6,6 +6,13 @@ package input;
 
 import information.ClassPeriod;
 
+/**
+ * Specifies an input manager, necessarily adding methods that are needed for each of them. 
+ * they may not all be completely implemented in both classes, but they are necessary for work between panels
+ * 
+ * @author Thomas Varano
+ *
+ */
 public interface InputManager
 {
    void addCustomClass();
@@ -15,4 +22,6 @@ public interface InputManager
    void addClass(ClassPeriod c);
          
    void save();
+   
+   void closeToDisp();
 }
