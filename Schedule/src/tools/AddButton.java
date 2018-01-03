@@ -7,7 +7,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
-import input.DataInputSlot;
 import input.InputManager;
 import managers.UIHandler;
 
