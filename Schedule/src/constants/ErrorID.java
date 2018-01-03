@@ -22,7 +22,7 @@ import managers.Agenda;
 public enum ErrorID {
    IO_EXCEPTION("Internal Input / Output Error"),
    NULL_POINT("Internal Null Pointer Error"),
-   FNF("File Not Found"),
+   FILE_NOT_FOUND("File Not Found"),
    INITIALIZER("Exception in Initializer"),
    SERIALIZE("Data Corruption in Reading / Writing Process"),
    
@@ -32,7 +32,7 @@ public enum ErrorID {
    WRONG_HALF_SELECTED("You selected a half day rotation that does not exist.\n"
          + "The rotation has been set to a half day R1."),
    WRONG_DELAY_SELECTED("You selected a delayed opening that doesn't exist\n"
-         + "The rotatoin has been set to a delayed opening R1."),
+         + "The rotation has been set to a delayed opening R1."),
    OTHER();
 
    public static final String ERROR_NAME = Agenda.APP_NAME + " ERROR";
@@ -127,7 +127,7 @@ public enum ErrorID {
       if (e instanceof NullPointerException)
          return NULL_POINT;
       if (e instanceof FileNotFoundException)
-         return FNF;
+         return FILE_NOT_FOUND;
       if (e instanceof ExceptionInInitializerError)
          return INITIALIZER;
       if (e instanceof IOException)
@@ -183,6 +183,7 @@ public enum ErrorID {
          if (debug) System.out.println("copying "+str+" : "+e);
          Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
          systemClipboard.setContents(new ErrorCopier(str, e), null);
+         if (Agenda.statusU) Agenda.log("copied error " + e.getMessage());
          if (debug)
             try {
                System.out.println("copied: "+systemClipboard.getData(DataFlavor.stringFlavor));
@@ -218,5 +219,6 @@ public enum ErrorID {
    
    public static void main(String[] args) {
       System.out.println(ErrorID.getError("7530"));
+      ErrorID.showError(new NullPointerException(), false);
    }
 }

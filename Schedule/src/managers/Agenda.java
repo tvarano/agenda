@@ -44,6 +44,7 @@ public class Agenda extends JPanel
    public static final String BUILD = "v1.7.0 (Beta)";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
+   public static final String EMAIL = "varanoth@pascack.org";
    private PanelManager manager;
    private static JFrame parentFrame;
    private static MenuBar bar;
@@ -53,8 +54,8 @@ public class Agenda extends JPanel
    
    public Agenda() {
       setName("main class");
-      if (statusU) log(getClass().getSimpleName()+" began initialization");
       initialFileWork();
+      if (statusU) log(getClass().getSimpleName()+" began initialization");
       
       bar = UIHandler.configureMenuBar(parentFrame, this);
 
@@ -106,6 +107,7 @@ public class Agenda extends JPanel
             PrintStream logStream = new PrintStream(log);
             System.setOut(logStream);
             System.setErr(logStream);
+            if (statusU) log ("log set");
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
@@ -167,7 +169,7 @@ public class Agenda extends JPanel
       }
       
       public static void sendEmail() {
-         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to varanoth@pascack.org", 
+         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+EMAIL, 
                Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
                new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
          if (choice == 2 || choice == -1) 
@@ -176,7 +178,7 @@ public class Agenda extends JPanel
             if (Desktop.isDesktopSupported()) {
                try {
                   if (choice == 0)
-                     Desktop.getDesktop().mail(new URI("mailto:varanoth@pascack.org?subject=Agenda%20Contact"));
+                     Desktop.getDesktop().mail(new URI("mailto:"+EMAIL+"?subject=Agenda%20Contact"));
                   else
                      Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
                } catch (IOException | URISyntaxException e1) {
