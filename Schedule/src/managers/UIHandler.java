@@ -379,8 +379,16 @@ public final class UIHandler {
             age.getManager().startGPA();
          }
       });
+      mi = m.add(new MenuItem("Refresh"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            age.getManager().refresh();
+         }
+      });
       
       m.addSeparator();
+      
       mi = m.add(new MenuItem("Clear Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override

@@ -61,6 +61,11 @@ public class PanelManager
       this.currentPane = type;
    }
    
+   public void refresh() {
+      if (currentPane == DISPLAY)
+         reinitDisp();
+   }
+   
    public MenuBar getBar() {
       return bar;
    }  
