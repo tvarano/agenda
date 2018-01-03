@@ -8,6 +8,15 @@ import information.Time;
 //Thomas Varano
 //Sep 3, 2017
 
+/**
+ * Depicts the order in which classes go and what times they are scheduled at. 
+ * <p>
+ * Merely as a template, should not be used alone, but can instantiate default classes with no information but times. 
+ * 
+ * @author Thomas Varano
+ *
+ * @see RotationConstants
+ */
 public enum Rotation
 {
    R1 (getSchedule(RotationConstants.R1), DayType.NORMAL, RotationConstants.R1),

@@ -9,6 +9,13 @@ import information.Time;
 //[Program Descripion]
 //Sep 12, 2017
 
+/**
+ * A class containing all convenience methods and static indexes / references used in rotation.
+ * 
+ * @see Rotation
+ * @author Thomas Varano
+ *
+ */
 public final class RotationConstants
 {
    public static final int R1 = 1, R2 = 2, R3 = 3, R4 = 4, ODD_BL= 5, EVEN_BL = 6;
