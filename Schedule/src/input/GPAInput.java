@@ -187,7 +187,7 @@ public class GPAInput extends JPanel implements InputManager
       
       ScheduleList sl = new ScheduleList(
             new Schedule(unSignedClasses.toArray(new ClassPeriod[unSignedClasses.size()])), true);
-      sl.setBorder(UIHandler.getTitledBorder("Put After..."));
+      sl.setBorder(UIHandler.getTitledBorder("Select..."));
       
       JOptionPane.showMessageDialog(null, sl, "Select a Class", JOptionPane.QUESTION_MESSAGE, null);
       return sl.getSelectedValue();

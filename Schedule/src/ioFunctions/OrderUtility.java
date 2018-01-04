@@ -50,14 +50,17 @@ public class OrderUtility
       for (int i = 0; i < unOrderedArray.length; i++) {
          if (unOrderedArray[i].getSlot() == 0) {
             if (!r.isDelay()) {
+               unOrderedArray[i].setTimeTemplate(RotationConstants.getPeriodZero());
                newArray[0] = unOrderedArray[i];
                newArrayIndex++;
             }
             arrayStart++;
          }
          else if (unOrderedArray[i].getSlot() == 8) {
-            if (!r.isHalf())
+            if (!r.isHalf()) {
                newArray[newArray.length-1] = unOrderedArray[i];
+               unOrderedArray[i].setTimeTemplate(RotationConstants.getPeriodEight());
+            }
          }
       }
       
