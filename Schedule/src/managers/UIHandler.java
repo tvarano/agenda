@@ -369,21 +369,21 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            age.getManager().startInput();
+            age.getManager().setCurrentPane(PanelManager.INPUT);
          }
       });
       mi = m.add(new MenuItem("View GPA"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            age.getManager().startGPA();
+            age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
-      mi = m.add(new MenuItem("Refresh"));
+      mi = m.add(new MenuItem("Reread Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            age.getManager().refresh();
+            age.getManager().reset();
          }
       });
       

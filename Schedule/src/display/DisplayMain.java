@@ -23,6 +23,7 @@ import ioFunctions.SchedWriter;
 import ioFunctions.WebReader;
 import managers.Agenda;
 import managers.PanelManager;
+import managers.PanelView;
 import managers.UIHandler;
 import tools.ToolBar;
 
@@ -37,7 +38,7 @@ import tools.ToolBar;
  * this object.
  * @author Thomas Varano
  */
-public class DisplayMain extends JPanel implements ActionListener
+public class DisplayMain extends JPanel implements ActionListener, PanelView
 {
    private static final long serialVersionUID = 1L;
    private PanelManager parentManager;
@@ -133,8 +134,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void stop() {
-      infoSelector.getMemo().save();
-      writeMain();
+      save();
       showDisp = false;
    }
    
@@ -271,7 +271,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public ActionListener changeView(int type) {
-      return parentManager.changeView(type);
+      return parentManager.changeViewListener(type);
    }
    
    public Dimension getMinimumSize() {
@@ -331,5 +331,27 @@ public class DisplayMain extends JPanel implements ActionListener
    
    protected void finalize() {
       hardStop();
+   }
+
+   @Override
+   public void refresh() {
+      reinitialize();
+   }
+
+   @Override
+   public void open() {
+      reinitialize();
+      resume();
+   }
+
+   @Override
+   public void close() {
+      stop();
+   }
+   
+   @Override
+   public void save() {
+      infoSelector.getMemo().save();
+      writeMain();
    }
 }

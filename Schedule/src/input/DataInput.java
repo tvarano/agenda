@@ -17,15 +17,17 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
+import ioFunctions.SchedReader;
 import managers.Agenda;
 import managers.PanelManager;
+import managers.PanelView;
 import managers.UIHandler;
 import tools.ToolBar;
 
 //Thomas Varano
 //Aug 31, 2017
 
-public class DataInput extends JPanel implements InputManager
+public class DataInput extends JPanel implements InputManager, PanelView
 {
    private static final long serialVersionUID = 1L;
    public static final int INIT_AMT_CL = 7;
@@ -320,11 +322,9 @@ public class DataInput extends JPanel implements InputManager
    }
    
    public void closeToDisp() {
+      //TODO decide if this should be a simple resume or a whole new reading if you haven't saved
       if (hasManager) {
-         if (saved)
-            parentManager.reinitDisp();
-         else 
-            parentManager.resumeDisp();
+         parentManager.setCurrentPane(PanelManager.DISPLAY);
       }
       else 
          ((JFrame)getParent().getParent().getParent().getParent()).dispose();
@@ -363,5 +363,20 @@ public class DataInput extends JPanel implements InputManager
 
    public void setLunch(ClassPeriod lunch) {
       this.lunch = lunch;
+   }
+
+   @Override
+   public void refresh() {
+      setBeginningSchedule(new SchedReader().readAndOrderSchedule(parentManager.getTodayR()));
+   }
+
+   @Override
+   public void close() {
+      save();
+   }
+   
+   @Override
+   public void open() {
+      setBeginningSchedule(parentManager.getMainSched());
    }
 }

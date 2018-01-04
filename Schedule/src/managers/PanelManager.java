@@ -9,7 +9,6 @@ import display.DisplayMain;
 import information.Schedule;
 import input.DataInput;
 import input.GPAInput;
-import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
 
 //Thomas Varano
@@ -30,7 +29,8 @@ public class PanelManager
    private DataInput input;
    private GPAInput gpa;
    private MenuBar bar;
-   private int currentPane;
+   private int currentType;
+   private PanelView currentView;
    public static final int DISPLAY = 0, INPUT = 1, GPA = 2;
    
    public PanelManager(Agenda parent, MenuBar bar) { 
@@ -46,24 +46,28 @@ public class PanelManager
    }
    
    public void setCurrentPane(int type) {
-      if (currentPane == type)
+      if (currentType == type)
          return;
-      if (currentPane == GPA)
+      currentView.save();
+      /*if (currentType == GPA)
          gpa.save();
-      else if (currentPane == INPUT)
+      else if (currentType == INPUT)
          input.save();
+         */
       if (type == INPUT) {
-          ((CardLayout) parent.getLayout()).show(parent, input.getName());
+          currentView = input;
       } else if (type == GPA) {
-         ((CardLayout) parent.getLayout()).show(parent, gpa.getName());
+         currentView = gpa;
       } else 
-         ((CardLayout) parent.getLayout()).show(parent, display.getName());
-      this.currentPane = type;
+         currentView = display;
+//         ((CardLayout) parent.getLayout()).show(parent, display.getName());
+      currentView.open();
+      parent.show(currentView.getName());
+      this.currentType = type;
    }
    
-   public void refresh() {
-      if (currentPane == DISPLAY)
-         reinitDisp();
+   public void reset() {
+      currentView.refresh();
    }
    
    public MenuBar getBar() {
@@ -76,50 +80,49 @@ public class PanelManager
       return bar.getMenu(0);
    }
    public void beforeClose() {
-      if (currentPane == GPA)
-         gpa.save();
-      else if (currentPane == INPUT)
-         input.save();
-      else
-         saveSchedule(getClass());
+      currentView.save();
    }
+   /*
    public void startInput() {
       if (Agenda.statusU) Agenda.log("input requested");
-      if (currentPane == INPUT) {
+      if (currentType == INPUT) {
          if (Agenda.statusU) Agenda.log("input denied");
          return;
       }
-      else if (currentPane == DISPLAY)
-         display.stop();
       else 
-         gpa.save();
+         currentView.close();
       if (Agenda.statusU) Agenda.log("input granted");
       input.setBeginningSchedule(display.getMainSched());
       setCurrentPane(INPUT);
    }
+   */
    
-   public ActionListener changeView(int parentType) {
+   public information.Schedule getMainSched() {
+      return display.getMainSched();
+   }
+   
+   public constants.Rotation getTodayR() {
+      return display.getTodayR();
+   }
+   
+   public ActionListener changeViewListener(int parentType) {
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (Agenda.statusU) Agenda.log("view changed. type = "+parentType);
-            if (parentType == INPUT) 
-               startInput();
-            else if (parentType == GPA)
-               startGPA();
-            else
-               reinitDisp();
+            setCurrentPane(parentType);
          }
       };
    }
    
+   /*
    public void startGPA() {
       if (Agenda.statusU) Agenda.log("gpa requested");
-      if (currentPane == GPA) {
+      if (currentType == GPA) {
          if (Agenda.statusU) Agenda.log("gpa denied");
          return;
       }
-      else if (currentPane == DISPLAY)
+      else if (currentType == DISPLAY)
          display.stop();
       else 
          input.save();
@@ -127,11 +130,14 @@ public class PanelManager
       gpa.setSchedule(new SchedReader().readSched());
       setCurrentPane(GPA);
    }
+   */
    
+   /*
    public void reinitDisp() {
       display.reinitialize();
       setCurrentPane(DISPLAY);
    }
+   */
    
    public void dispose() {
 	   display.hardStop();
@@ -139,10 +145,12 @@ public class PanelManager
 	   input = null;
    }
    
+   /*
    public void resumeDisp() {
       display.resume();
       setCurrentPane(DISPLAY);
    }
+   */
    public Agenda getParent() {
       return parent;
    }

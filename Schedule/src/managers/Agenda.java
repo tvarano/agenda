@@ -1,5 +1,6 @@
 package managers;
 
+import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -226,6 +227,10 @@ public class Agenda extends JPanel
    
    public static MenuBar getBar() {
       return bar;
+   }
+   
+   public void show(String name) {
+      ((CardLayout) getLayout()).show(this, name);
    }
    
    public static void log(String text) {

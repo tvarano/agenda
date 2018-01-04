@@ -33,6 +33,7 @@ import information.Schedule;
 import ioFunctions.SchedReader;
 import managers.Agenda;
 import managers.PanelManager;
+import managers.PanelView;
 import managers.UIHandler;
 import tools.ToolBar;
 
@@ -58,7 +59,7 @@ import tools.ToolBar;
  * @author Thomas Varano
  *
  */
-public class GPAInput extends JPanel implements InputManager
+public class GPAInput extends JPanel implements InputManager, PanelView
 {
    private static final long serialVersionUID = 1L;
    private Schedule sched;
@@ -239,12 +240,12 @@ public class GPAInput extends JPanel implements InputManager
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            refresh();
+            refreshGPA();
          }
       };
    }
    
-   public void refresh() {
+   public void refreshGPA() {
       save();
       double gpa = calculateGPA(5);
       if (gpa == -1)
@@ -254,7 +255,7 @@ public class GPAInput extends JPanel implements InputManager
    
    public ActionListener changeView(int type) {
       if (manager != null)
-         return manager.changeView(type);
+         return manager.changeViewListener(type);
       
        return new ActionListener() {
          @Override
@@ -292,7 +293,7 @@ public class GPAInput extends JPanel implements InputManager
    public void closeToDisp() {
       if (manager != null) {
          save();
-         manager.reinitDisp();
+         manager.setCurrentPane(PanelManager.DISPLAY);
       }
    }
 
@@ -361,6 +362,21 @@ public class GPAInput extends JPanel implements InputManager
    public void setSchedule(Schedule s) {
       this.sched = s;
       init(s);
+   }
+   
+   @Override
+   public void open() {
+      setSchedule(manager.getMainSched());
+   }
+
+   @Override
+   public void close() {
+      save();
+   }
+   
+   @Override
+   public void refresh() {
+      setSchedule(new SchedReader().readAndOrderSchedule(manager.getTodayR()));
    }
    
    public static void main(String[] args) {
