@@ -47,18 +47,19 @@ public class Agenda extends JPanel
    public static final int PREF_W = MIN_W, PREF_H = 460;
    public static final String CONTACT_EMAIL = "varanoth@pascack.org";
    private PanelManager manager;
-   private static JFrame parentFrame;
-   private static MenuBar bar;
+   private JFrame parentFrame;
+   private MenuBar bar;
    public static boolean statusU;
    public static Runnable mainThread;
    public static URI sourceCode;
    
-   public Agenda() {
+   public Agenda(JFrame frame) {
       setName("main class");
       initialFileWork();
       if (statusU) log(getClass().getSimpleName()+" began initialization");
       
-      bar = UIHandler.configureMenuBar(parentFrame, this);
+      this.parentFrame = frame;
+      bar = UIHandler.configureMenuBar(frame, this);
 
       if (statusU) log("Main began initialization");
       UIHandler.init();
@@ -94,7 +95,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureFileRoute();
 
@@ -225,7 +226,7 @@ public class Agenda extends JPanel
       }
    }
    
-   public static MenuBar getBar() {
+   public MenuBar getBar() {
       return bar;
    }
    
@@ -250,16 +251,16 @@ public class Agenda extends JPanel
    
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
-      parentFrame = new JFrame(APP_NAME + " " + BUILD);
+      JFrame frame = new JFrame(APP_NAME + " " + BUILD);
       int frameToPaneAdjustment = 22;
-      parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-      parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-      parentFrame.setVisible(true);
-      parentFrame.setLocationRelativeTo(null);
-      Agenda main = new Agenda();
-      parentFrame.getContentPane().add(main);
-      parentFrame.pack();
-      parentFrame.setLocationRelativeTo(null);
+      frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+      frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+      frame.setVisible(true);
+      frame.setLocationRelativeTo(null);
+      Agenda main = new Agenda(frame);
+      frame.getContentPane().add(main);
+      frame.pack();
+      frame.setLocationRelativeTo(null);
       if (statusU)
          log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
    }

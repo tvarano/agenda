@@ -43,6 +43,7 @@ public class PanelManager
       parent.add(display, display.getName());
       parent.add(input, input.getName());
       parent.add(gpa, gpa.getName());
+      currentView = display; 
    }
    
    public void setCurrentPane(int type) {

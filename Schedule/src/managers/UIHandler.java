@@ -10,7 +10,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
-import java.awt.MenuItem; 
+import java.awt.MenuItem;
 import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.PreferencesEvent;
@@ -24,10 +24,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.instrument.IllegalClassFormatException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -596,7 +596,7 @@ public final class UIHandler {
                else if (type == LAF_ID)
                   bw.write(UIManager.getSystemLookAndFeelClassName());
                else {
-                  ErrorID.showError(new IllegalClassFormatException("type "+type+" is undefined for writing a UI trait"), true);
+                  ErrorID.showError(new DataFormatException("type "+type+" is undefined for writing a UI trait"), true);
                   bw.write("");
                }
                bw.close();
