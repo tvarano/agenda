@@ -231,18 +231,6 @@ public class DataInput extends JPanel implements InputManager, PanelView
       else if (slot == 8)
          setButtonEnabled(ToolBar.EIGHT_BUTTON, true);
    }
-   
-   /*
-   private void cannotCreate() {
-      error = !canCreate();
-      if (debug) System.out.println("cannotCreate");
-      ErrorID.showUserError(ErrorID.INPUT_ERROR);
-   }
-   
-   private void resolve() {
-      error = false;
-   }
-   */
 
    public void reWriteSlotsArray() {
       slots.removeAll(slots);
@@ -272,14 +260,6 @@ public class DataInput extends JPanel implements InputManager, PanelView
           } 
        };
    }
-   
-//   private boolean canCreate() {
-//      for (Component c : center.getComponents())
-//         if (c instanceof DataInputSlot) 
-//            if (!((DataInputSlot) c).checkCanCreate())
-//               return false;
-//      return true;
-//   }
    
    @Override
    public void save() {
@@ -333,9 +313,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
    
    public void saveAndCloseToDisp() {
       save();
-      /*if (debug) System.out.println("saved. error = "+error);
-      if (!error)*/
-         closeToDisp();
+      closeToDisp();
    }
    
    public void removeAndReOrder(Component c) {
