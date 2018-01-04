@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.ProgressMonitor;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
@@ -251,15 +252,19 @@ public class Agenda extends JPanel
    
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
-      JFrame frame = new JFrame(APP_NAME + " " + BUILD);
+      ProgressMonitor pm = new ProgressMonitor(null, "LOADING...", "NOTE", 0, 5);
+      pm.setMillisToDecideToPopup(1);
+      JFrame frame = new JFrame("LOADING....");
       int frameToPaneAdjustment = 22;
       frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
       frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
       frame.setVisible(true);
       frame.setLocationRelativeTo(null);
       Agenda main = new Agenda(frame);
+      frame.setTitle(APP_NAME + " " + BUILD);
       frame.getContentPane().add(main);
       frame.pack();
+      pm.close();
       frame.setLocationRelativeTo(null);
       if (statusU)
          log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
