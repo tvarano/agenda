@@ -162,6 +162,14 @@ public class ToolBar extends JToolBar implements ActionListener
       }
    }
    
+   public void setBevels() {
+      for (Component c : getComponents()) {
+         if (c instanceof InstanceButton) {
+            ((InstanceButton) c).repaint();
+         }
+      }
+   }
+   
    public int getParentType() {
       return parentType;
    }
@@ -192,9 +200,16 @@ public class ToolBar extends JToolBar implements ActionListener
       return rotation;
    }
    
+   private void setState() {
+      setHalf(rotation.isHalf());
+      setDelayed(rotation.isDelay());
+   }
+    
    public void setRotation(Rotation r) {
       this.rotation = r;
+      setState();
       setHighlights();
+      setBevels();
    }
 
    @Override

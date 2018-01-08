@@ -301,6 +301,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       saved = true;
    }
    
+   @Override
    public void closeToDisp() {
       //TODO decide if this should be a simple resume or a whole new reading if you haven't saved
       if (hasManager) {

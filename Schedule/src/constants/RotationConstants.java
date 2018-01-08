@@ -18,16 +18,18 @@ import information.Time;
  */
 public final class RotationConstants
 {
+   // NOTE unable to code for reliability / flexibility due to the fact that 
+   // the numbers need to be final to properly initialize rotations 
    public static final int R1 = 1, R2 = 2, R3 = 3, R4 = 4, ODD_BL= 5, EVEN_BL = 6;
    public static final int HALF_R1 = 7, HALF_R3 = 8, HALF_R4 = 9, 
          DELAY_R1 = 10, DELAY_R3 = 11, DELAY_R4 = 12, DELAY_ODD = 13, DELAY_EVEN = 14, 
-         NO_SCHOOL_INDEX = 15, INCORRECT_PARSE = 16;
+         NO_SCHOOL_INDEX = 15, INCORRECT_PARSE = 16, TEST_ONE = 17, TEST_TWO = 18, TEST_THREE = 19;
    public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_TYPE = 11, NO_SLOT = -1;
    public static final int[] SPECIAL_CLASSES = {0, 8, PASCACK};
    
    private static final String[] NAMES = {"R1", "R2", "R3", "R4", "Odd Block", "Even Block", "R1 Half Day", 
-         "R3 Half Day", "R4 Half Day", "R1 Delayed Opening", "R3 Delayed Opening", "R4 Delayed Opening"
-         };
+         "R3 Half Day", "R4 Half Day", "R1 Delayed Opening", "R3 Delayed Opening", "R4 Delayed Opening",
+         "Odd Block Delayed Opening", "Even Block Delayed Opening", "No School", "INCORRECT_PARSE", "Day One", "Day Two", "Day Three"};
    
    public static final String getName(int rotationIndex) {
       return NAMES[rotationIndex-1];
@@ -157,4 +159,37 @@ public final class RotationConstants
       }
    }
    
+   public static final Rotation[] regularRotations() {
+      return new Rotation[] {Rotation.R1, Rotation.ODD_BLOCK, Rotation.EVEN_BLOCK, Rotation.R4, Rotation.R3};
+   }
+   
+   public static final Rotation[] halfRotations() {
+      ArrayList<Rotation> ret = new ArrayList<Rotation>();
+      for (Rotation r : Rotation.values())
+         if (r.isHalf())
+            ret.add(r);
+      return ret.toArray(new Rotation[ret.size()]);
+   }
+   
+   public static final Rotation[] delayRotations() {
+      ArrayList<Rotation> ret = new ArrayList<Rotation>();
+      for (Rotation r : Rotation.values())
+         if (r.isDelay())
+            ret.add(r);
+      return ret.toArray(new Rotation[ret.size()]);
+   }
+   
+   public static final Rotation[] specialRotations() {
+      ArrayList<Rotation> ret = new ArrayList<Rotation>();
+      ret.add(Rotation.R2);
+      for (Rotation r : Rotation.values())
+         if (r.isOther())
+            ret.add(r);
+      return ret.toArray(new Rotation[ret.size()]);
+   }
+   
+   public static final String[] categoryNames = {"Normal", "Half Day", "Delayed Opening", "Other"};
+   public static final Rotation[][] categorizedRotations() {
+      return new Rotation[][] {regularRotations(), halfRotations(), delayRotations(), specialRotations()};
+   }
 }

@@ -4,7 +4,11 @@ import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.MenuBar;
+import java.awt.RenderingHints;
 import java.awt.desktop.QuitEvent;
 import java.awt.desktop.QuitHandler;
 import java.awt.desktop.QuitResponse;
@@ -24,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.ProgressMonitor;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
@@ -43,7 +46,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.7.0 (Beta)";
+   public static final String BUILD = "v1.7.1 (Beta)";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    public static final String CONTACT_EMAIL = "varanoth@pascack.org";
@@ -51,19 +54,16 @@ public class Agenda extends JPanel
    private JFrame parentFrame;
    private MenuBar bar;
    public static boolean statusU;
-   public static Runnable mainThread;
    public static URI sourceCode;
    
    public Agenda(JFrame frame) {
       setName("main class");
       initialFileWork();
       if (statusU) log(getClass().getSimpleName()+" began initialization");
-      
+
+      UIHandler.init();      
       this.parentFrame = frame;
       bar = UIHandler.configureMenuBar(frame, this);
-
-      if (statusU) log("Main began initialization");
-      UIHandler.init();
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(PanelManager.DISPLAY);
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -252,22 +252,48 @@ public class Agenda extends JPanel
    
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
-      ProgressMonitor pm = new ProgressMonitor(null, "LOADING...", "NOTE", 0, 5);
-      pm.setMillisToDecideToPopup(1);
       JFrame frame = new JFrame("LOADING....");
       int frameToPaneAdjustment = 22;
-      frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-      frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+      
+      // loading screen, frame adjustments
+      EventQueue.invokeLater(new Runnable() {
+         public void run() {
+            JPanel p = new JPanel() {
+               private static final long serialVersionUID = 1L;
+               
+               @Override 
+               public void paintComponent(Graphics g) {
+                  Graphics2D g2 = (Graphics2D) g;
+                  g2.addRenderingHints(new RenderingHints(
+                        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+                  g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
+                  g2.drawString("LOADING...", 260, 150);
+                  if (statusU) log("Drawing strings took " + (System.currentTimeMillis() - start));
+               }
+            };
+            frame.getContentPane().add(p);
+            frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+         }
+      });
       frame.setVisible(true);
-      frame.setLocationRelativeTo(null);
-      Agenda main = new Agenda(frame);
-      frame.setTitle(APP_NAME + " " + BUILD);
-      frame.getContentPane().add(main);
-      frame.pack();
-      pm.close();
-      frame.setLocationRelativeTo(null);
-      if (statusU)
-         log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+      
+      // effective EDT
+      EventQueue.invokeLater(new Runnable() {
+         @Override
+         public void run() {
+            Agenda main = new Agenda(frame);
+            frame.setTitle(APP_NAME + " " + BUILD);
+            frame.getContentPane().remove(0);
+            frame.getContentPane().add(main);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            if (statusU)
+               log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+         }
+      });
    }
    public void restart() {
       manager.getDisplay().writeMain();
@@ -275,8 +301,7 @@ public class Agenda extends JPanel
       restartApplication(new Runnable() {
          @Override
          public void run() {
-            if (statusU)
-               log("Restart Successful.\n");
+            if (statusU) log("Restart Successful.\n");
          }
       });
    }

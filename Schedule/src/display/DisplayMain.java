@@ -56,7 +56,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -71,6 +71,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       timer = new Timer(5000, this);
       timer.start();
       if (Agenda.statusU) Agenda.log("display main fully initialized");
+   }
+   
+   public Rotation readRotation() {
+      return web.readTodayRotation();
    }
    
    private void initTime() {
@@ -293,7 +297,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return todayR;
    }
    public void setTodayR(Rotation todayR) {
-      System.out.println("-----------------NEW ROTATION---------------------");
+      if (Agenda.statusU) System.out.println("-----------------NEW ROTATION---------------------");
       if (updating)
          return;
       if (debug) System.out.println("DISPLAY SETTING ROTATION TO "+ todayR);
@@ -301,6 +305,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       this.todayR = todayR;
       todaySched.setLunchLab(todayR);
       toolbar.setRotation(todayR);
+      toolbar.repaint();
       pushTodaySchedule();
       
       update();

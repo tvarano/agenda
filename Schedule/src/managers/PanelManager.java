@@ -106,6 +106,11 @@ public class PanelManager
       return display.getTodayR();
    }
    
+   public void setRotation(constants.Rotation r) {
+      //if (currentType == DISPLAY)
+      display.setTodayR(r);
+   }
+   
    public ActionListener changeViewListener(int parentType) {
       return new ActionListener() {
          @Override

@@ -47,6 +47,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
 import constants.ErrorID;
+import constants.Rotation;
 import constants.RotationConstants;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
@@ -63,12 +64,11 @@ public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
    
-	public static Font font;
+	public static final Font font = new Font("Futura", Font.PLAIN, 16);;
 	private static boolean debug;
 	
 	public static void init() { 
 	   debug = false;
-	   font = new Font("Futura", Font.PLAIN, 16);
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -333,6 +333,10 @@ public final class UIHandler {
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
+   private static void setRotation(Agenda age, constants.Rotation r) {
+      age.getManager().setRotation(r);
+   }
+   
    public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
       if (Desktop.isDesktopSupported()) {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
@@ -379,6 +383,21 @@ public final class UIHandler {
             age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
+      Menu rotations = (Menu) m.add(new Menu("Set Rotation"));
+      for (int i = 0; i < RotationConstants.categorizedRotations().length; i++) {
+         Menu rm = (Menu) rotations.add(new Menu(RotationConstants.categoryNames[i]));
+         for (Rotation r : RotationConstants.categorizedRotations()[i]) {
+            if (!r.equals(Rotation.INCORRECT_PARSE)) {
+               MenuItem ri = rm.add(new MenuItem(RotationConstants.getName(r.getIndex())));
+               ri.addActionListener(new ActionListener() {
+                  @Override
+                  public void actionPerformed(ActionEvent arg0) {
+                     setRotation(age, r);
+                  }
+               });
+            }
+         }
+      }
       mi = m.add(new MenuItem("Reread Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
