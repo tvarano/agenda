@@ -95,11 +95,11 @@ public enum Rotation
          case RotationConstants.HALF_R4 :
             return new int[] {4,1,2,3,7,5,6};
          case RotationConstants.TEST_ONE : 
-            return new int[] {1, RotationConstants.PASCACK, RotationConstants.LUNCH, 5, RotationConstants.PASCACK};
+            return new int[] {1, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 5, RotationConstants.PASCACK_STUDY_2};
          case RotationConstants.TEST_TWO : 
-            return new int[] {2, 4, RotationConstants.LUNCH, RotationConstants.PASCACK, 6};
+            return new int[] {2, 4, RotationConstants.LUNCH, RotationConstants.PASCACK_STUDY_1, 6};
          case RotationConstants.TEST_THREE : 
-            return new int[] {3, RotationConstants.PASCACK, RotationConstants.LUNCH, 7, RotationConstants.PASCACK};
+            return new int[] {3, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 7, RotationConstants.PASCACK_STUDY_2};
          default :
             return new int[0];
       }
@@ -149,6 +149,10 @@ public enum Rotation
          }
          else if (slots[i] == RotationConstants.PASCACK)
             name = "Pascack Period";
+         else if (slots[i] == RotationConstants.PASCACK_STUDY_1)
+            name = RotationConstants.pascack_1_name;
+         else if (slots[i] == RotationConstants.PASCACK_STUDY_2)
+            name = RotationConstants.pascack_2_name;
          else 
             name = "Period " + slots[i];
          retval[i].setName(name); retval[i].setStartTime(

@@ -14,7 +14,7 @@ public class Time implements Comparable<Time>, Serializable
 {
    private static final long serialVersionUID = -4296172955026537771L;
    public static final Time MIDNIGHT = new Time(0,0), 
-         NOON = new Time(12,0); 
+         NOON = new Time(12,0), NO_TIME = new Time(-1,-1); 
    public static final int HOUR_IN_DAY = 24, MIN_IN_DAY = 1440, SEC_IN_DAY = (MIN_IN_DAY*60), MIN_IN_HOUR = 60;
    private int hour24, minute;
    private boolean am;

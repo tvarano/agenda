@@ -9,9 +9,9 @@ import managers.Agenda;
 //[Program Descripion]
 //Oct 20, 2017
 
-public class OrderUtility
+public final class OrderUtility
 {
-   private static boolean debug = false, detailedDebug = false;
+   private static boolean debug = true, detailedDebug = true;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       if (Agenda.statusU) Agenda.log("ordering schedule: "+s.getName() + " to "+r);
@@ -49,7 +49,7 @@ public class OrderUtility
       int newArrayIndex = 0, rotationIndex = 0;
       for (int i = 0; i < unOrderedArray.length; i++) {
          if (unOrderedArray[i].getSlot() == 0) {
-            if (!r.isDelay()) {
+            if (RotationConstants.isZeroFriendly(r)) {
                unOrderedArray[i].setTimeTemplate(RotationConstants.getPeriodZero());
                newArray[0] = unOrderedArray[i];
                newArrayIndex++;
@@ -57,7 +57,7 @@ public class OrderUtility
             arrayStart++;
          }
          else if (unOrderedArray[i].getSlot() == 8) {
-            if (!r.isHalf()) {
+            if (RotationConstants.isEightFriendly(r)) {
                newArray[newArray.length-1] = unOrderedArray[i];
                unOrderedArray[i].setTimeTemplate(RotationConstants.getPeriodEight());
             }
@@ -84,11 +84,24 @@ public class OrderUtility
                rotationIndex++;
             }
          }
+         // take special periods 
          if (order[i] == RotationConstants.PASCACK) {
             if (detailedDebug) System.out.println("entering pascack...");
             newArray[newArrayIndex] = RotationConstants.getPascack();
             newArrayIndex++;
             rotationIndex++;
+         
+         } else if (order[i] == RotationConstants.PASCACK_STUDY_1) {
+            newArray[newArrayIndex] = RotationConstants.getPascackStudyOne();
+            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.pascack_1_name));
+            newArrayIndex++;
+            rotationIndex++;
+         } else if (order[i] == RotationConstants.PASCACK_STUDY_1) {
+            newArray[newArrayIndex] = RotationConstants.getPascackStudyOne();
+            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.pascack_2_name));
+            newArrayIndex++;
+            rotationIndex++;
+          
          }
       }
       if (detailedDebug) {
@@ -97,7 +110,7 @@ public class OrderUtility
       }
       return newArray;
    }
-   
+      
    private static void printData(Rotation r, ClassPeriod[] oldArray) {
          System.out.println("--------");
          for (ClassPeriod c : oldArray)

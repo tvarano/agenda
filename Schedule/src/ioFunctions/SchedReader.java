@@ -92,13 +92,20 @@ public class SchedReader {
    
    private Schedule checkSpecialPeriods(Schedule in) {
       for (ClassPeriod c : in.getClasses()) {
-         if (c.getSlot() == 0)
+         int s = c.getSlot();
+         if (s == 0)
             c.setTimeTemplate(RotationConstants.getPeriodZero());
-         else if (c.getSlot() == 8)
+         else if (s == 8)
             c.setTimeTemplate(RotationConstants.getPeriodEight());
-         else if (c.getSlot() == RotationConstants.PASCACK)
-            c.setTimeTemplate(RotationConstants.getPascackPeriod());
-         else if (c.getSlot() == RotationConstants.LUNCH)
+         else if (RotationConstants.isPascack(c)) {
+            c.setData(in.getPascackPreferences());
+            if (s == RotationConstants.PASCACK)
+               c.setTimeTemplate(RotationConstants.getPascack());
+            else if (s == RotationConstants.PASCACK_STUDY_1)
+               c.setName(RotationConstants.getPascackStudyOne().getName());
+            else 
+               c.setName(RotationConstants.getPascackStudyOne().getName());
+         } else if (s == RotationConstants.LUNCH)
             c.setName("Lunch");
       }
       return in;

@@ -421,7 +421,7 @@ public class Agenda extends JPanel
    }
 
    public static void main(String[] args) {
-      statusU = true;
+      statusU = false;
       if (statusU) log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
