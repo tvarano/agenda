@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+
 import constants.Rotation;
 import constants.RotationConstants;
 import display.DisplayMain;
@@ -21,7 +22,7 @@ public class RotationButton extends JButton implements ActionListener
    public static final String TODAY_R = "~currentRotation$";
    private Rotation r;
    private JPanel parentPanel;
-   private boolean debug;
+   private boolean debug, overridingPower, highlight;
    
    /**
     * @param text
@@ -33,17 +34,19 @@ public class RotationButton extends JButton implements ActionListener
       setParentPanel(parentPanel);
       setBorderPainted(false);
       setFocusable(false);
-      setOpaque(false);
       setFont(UIHandler.getButtonFont());
+      highlight = false;
       setForeground(UIHandler.foreground);
+      setBackground(UIHandler.tertiary.brighter());
       setCursor(new Cursor(Cursor.HAND_CURSOR));
       addMouseListener(UIHandler.buttonPaintListener(this));
       addActionListener(this);
       if (text == TODAY_R) {
+         overridingPower = true;
          if (debug) System.out.println(text+" button parent:"+parentPanel);
          if (parentPanel instanceof DisplayMain) {
             setText(" Today's Rotation ");
-            r = ((DisplayMain) parentPanel).getTodayR();
+            r = ((DisplayMain) parentPanel).readRotation();
          if (debug)
             System.out.println(getText());
          }
@@ -52,6 +55,11 @@ public class RotationButton extends JButton implements ActionListener
          this.r = RotationConstants.getRotation(getText().trim());
       setName(text+ " button");
    }
+   public void repaint() {
+      setOpaque(highlight);
+      super.repaint();
+   }
+   
    public RotationButton(int i, JPanel parentPanel) {
       this(RotationConstants.getName(i), parentPanel);  
    }
@@ -64,6 +72,22 @@ public class RotationButton extends JButton implements ActionListener
    public void setParentPanel(JPanel parentPanel) {
       this.parentPanel = parentPanel;
    }
+   public boolean isHighlighted() {
+      return highlight;
+   }
+   public void setHighlight(boolean highlight) {
+      this.highlight = highlight;
+   }
+   public boolean equals(Rotation o) {
+      return RotationConstants.equalsAllTypes(r, o);
+   }
+   public boolean equals(RotationButton o) {
+      if (o == null)
+         return false;
+      return (RotationConstants.equalsAllTypes(r, o.r));
+//      return r.equals(o.r);
+   }
+   
    @Override
    public void actionPerformed(ActionEvent e) {
       if (debug) System.out.println(getName()+"clicked");
@@ -75,6 +99,10 @@ public class RotationButton extends JButton implements ActionListener
             return;
          if (getParent() instanceof ToolBar) {
             parentBar = (ToolBar)getParent();
+            if (overridingPower) {
+               parentBar.setHalf(r.isHalf());
+               parentBar.setDelayed(r.isDelay());
+            }
             if (parentBar.isDelayed())
                parentPane.setTodayR(RotationConstants.toDelay(r));
             else if (parentBar.isHalf())
@@ -82,6 +110,8 @@ public class RotationButton extends JButton implements ActionListener
             else {
                parentPane.setTodayR(r);
             }
+            parentBar.setRotation(r);
+            parentBar.repaint();
             if (debug)  System.out.println("set rotation to + "+r);
          }
       }

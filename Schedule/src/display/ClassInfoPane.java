@@ -31,31 +31,25 @@ public class ClassInfoPane extends JTextPane
       this.setEditable(false);
       this.setClassPeriod(c);
       this.setMinimumSize(new Dimension(60,60));
+      initStyles();
    }
    
    private void createClassDetailPane() {
       if (debug) System.out.println(getName() + "Parent"+getParent());
+      this.setText("");
       if (c == null) {
-         if (getParent() instanceof CurrentClassPane) {
-            if (((CurrentClassPane) getParent()).isInSchool())
-               setText("In Between Classes. \nNext Class is:\n"+((CurrentClassPane) getParent()).findNextClass());
-            else
-               setText("Not in school");
-         }
-         else 
-            setText("Class not selected");
+         putStyles(new String[] {"Class Not Selected"}, new String[] {"regular"});
          return;
       }
-      this.setText("");
       String newLine = "\n";
       String tab = (thinConstraints) ?"     ":"";
       if (debug) System.out.println(c);
-      
+      String hour = (c.getDuration().getHour24() > 0) ? c.getDuration().getHour24()+" hour, " : "";
       String teacher = (thinConstraints) ? "Teacher: " + c.getTrimmedTeacher() + newLine 
             : "Teacher: " + c.getTrimmedTeacher() + newLine;
       String classLength = (thinConstraints) ? 
-            "Class Length:"+ newLine +c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes" : 
-               "Class Length: "+c.getDuration().getHour12()+" hours, "+c.getDuration().getMinute()+" minutes";
+            "Class Length:"+ newLine +hour+c.getDuration().getMinute()+" minutes" : 
+               "Class Length: "+hour+c.getDuration().getMinute()+" minutes";
       String times = c.getStartTime() + " - " + c.getEndTime();
       
       if (showNames) {
@@ -87,7 +81,6 @@ public class ClassInfoPane extends JTextPane
    
    private void putStyles(String[] uneditedText, String[] styles) {
       StyledDocument styleDoc = getStyledDocument();
-      initStyles(styleDoc);
       try {
          for (int i=0; i < uneditedText.length; i++) {
             styleDoc.insertString(styleDoc.getLength(), uneditedText[i],
@@ -98,8 +91,8 @@ public class ClassInfoPane extends JTextPane
      }
    }
    
-   private void initStyles(StyledDocument doc) {
-      if (Agenda.statusU) Agenda.log("STYLES CREATED info 83");
+   private void initStyles() {
+      StyledDocument doc = getStyledDocument();
       Style def = StyleContext.getDefaultStyleContext().
             getStyle(StyleContext.DEFAULT_STYLE);
       

@@ -1,5 +1,4 @@
 package tools;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +9,7 @@ import javax.swing.border.Border;
 
 import constants.RotationConstants;
 import display.DisplayMain;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -30,7 +30,7 @@ public class InstanceButton extends JButton implements ActionListener
       setFocusable(false);
       setName("instanceButton "+key);
       setFont(UIHandler.getButtonFont());
-      setToolTipText("Alter Next Selection to "+key);
+      setToolTipText("Alter Selection to "+key);
       setForeground(UIHandler.foreground);
       setOpaque(false);
       unEnactedBorder = BorderFactory.createRaisedSoftBevelBorder(); 
@@ -43,7 +43,6 @@ public class InstanceButton extends JButton implements ActionListener
    }
 
    public void repaint() {
-      super.repaint();
       if (parentBar != null) {
          if (getText().equalsIgnoreCase(HALF) &&
                parentBar.isDelayed())
@@ -52,7 +51,9 @@ public class InstanceButton extends JButton implements ActionListener
             setEnabled(false);
          else
             setEnabled(true);
+         findEnacted();
          }
+      super.repaint();
    }
    private Border calcBorder() {
       if (enacted)
@@ -60,6 +61,11 @@ public class InstanceButton extends JButton implements ActionListener
       return unEnactedBorder;
    }
    
+   public void findEnacted() {
+      enacted = (parentBar.isHalf() && getText().equalsIgnoreCase(HALF) || 
+            parentBar.isDelayed() && getText().equalsIgnoreCase(DELAY));
+      setBorder(calcBorder());
+   }
    public Border getEnactedBorder() {
       return enactedBorder;
    }
@@ -82,27 +88,24 @@ public class InstanceButton extends JButton implements ActionListener
    @Override
    public void actionPerformed(ActionEvent e) {
       enacted = !enacted;
-      setBorder(calcBorder());
       if (parentBar != null) {
          DisplayMain mainParent = null;
          if (parentBar.getParentPanel() instanceof DisplayMain)
             mainParent = (DisplayMain) parentBar.getParentPanel();
+         else 
+            Agenda.logError("INSTANCE ERROR "+ parentBar.getParentPanel(), new NullPointerException());
          if (getText().equalsIgnoreCase(DELAY)) {
-            parentBar.setDelayed(enacted);
             mainParent.setTodayR((enacted) ? RotationConstants.toDelay(mainParent.getTodayR())
                   : RotationConstants.toNormal(mainParent.getTodayR()));
+            parentBar.setDelayed(enacted);
          }
          else if (getText().equalsIgnoreCase(HALF)) {
-            parentBar.setHalf(enacted);
             mainParent.setTodayR((enacted) ? RotationConstants.toHalf(mainParent.getTodayR())
                   : RotationConstants.toNormal(mainParent.getTodayR()));
+            parentBar.setHalf(enacted);
             }
-      }
-      for (Component b : parentBar
-            .getComponents()) {
-         b.repaint();
+         parentBar.repaint();
       }
       repaint();
    }
-
 }

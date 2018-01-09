@@ -14,7 +14,6 @@ import java.io.StreamCorruptedException;
 import javax.swing.JOptionPane;
 
 import managers.Agenda;
-import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
@@ -23,15 +22,17 @@ import managers.UIHandler;
 public enum ErrorID {
    IO_EXCEPTION("Internal Input / Output Error"),
    NULL_POINT("Internal Null Pointer Error"),
-   FNF("File Not Found"),
+   FILE_NOT_FOUND("File Not Found"),
    INITIALIZER("Exception in Initializer"),
    SERIALIZE("Data Corruption in Reading / Writing Process"),
    
    FILE_TAMPER("There was an error with reading your schedule.\n"
                + "It has been reset to the default"),
    INPUT_ERROR("Input Error. Make sure all fields are filled correctly"), 
-   HALF_BLOCK_SELECTED("You selected a block half day, which does not exist.\n"
+   WRONG_HALF_SELECTED("You selected a half day rotation that does not exist.\n"
          + "The rotation has been set to a half day R1."),
+   WRONG_DELAY_SELECTED("You selected a delayed opening that doesn't exist\n"
+         + "The rotation has been set to a delayed opening R1."),
    OTHER();
 
    public static final String ERROR_NAME = Agenda.APP_NAME + " ERROR";
@@ -52,8 +53,14 @@ public enum ErrorID {
       return ID;
    }
 
+   public static class UserError extends Exception {
+      private static final long serialVersionUID = 1L;
+      public UserError(String message) {
+        super(message);
+      }
+   }
    public static void showUserError(ErrorID error) {
-      if (Agenda.statusU) Agenda.logError("User Error " + error + "\n", null);
+      if (Agenda.statusU) Agenda.logError("User Error " + error + " : ", new UserError(error.message));
       JOptionPane
             .showMessageDialog(null,
                   "User Error.\nDetails:\n" + error.message + "\nErrorID: "
@@ -61,8 +68,9 @@ public enum ErrorID {
                   ERROR_NAME, JOptionPane.WARNING_MESSAGE);
    }
    
-   private static int showInitialMessage(int messageType) {
-      String defMessage = "An error has occurred.\nClick \"Info\" for more information.";
+   private static int showInitialMessage(int messageType, boolean recoverable) {
+      String fatality = (recoverable) ? "recoverable" : "fatal";
+      String defMessage = "A " + fatality + " error has occurred.\nClick \"Info\" for more information.";
       String usrMessage = "A user "+defMessage.substring(3);
       String message = (messageType == JOptionPane.ERROR_MESSAGE) ? 
             defMessage : usrMessage;
@@ -72,11 +80,11 @@ public enum ErrorID {
             null, new String[]{"Info", "Close"}, "Close");
    }
 
-   public static void showGeneral(Throwable e, String ID, boolean copy) {
+   public static void showGeneral(Throwable e, String ID, boolean copy, boolean recoverable) {
       if (Agenda.statusU) Agenda.logError(ID, e);
       e.printStackTrace();
       String newLn = "\n";
-      int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE);
+      int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE, recoverable);
       if (choice == 0) {
          String message = getType(e).message;
          String internalMessage = (e.getMessage() == null) ? "" : e.getMessage() + newLn;
@@ -84,19 +92,22 @@ public enum ErrorID {
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
          String prompt = "Go to" + newLn + Agenda.FileHandler.LOG_ROUTE + "\nFor your log data.";
          String text = "Details:\n" + message + newLn + importantText + prompt;
-         JOptionPane.showOptionDialog(null,
+         int choice2 = JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
-               null, (copy) ? new String[]{"Copy & Close", "Close"} : new String[] {"Close"}, "Close");
-         if (choice == 0 && copy) {
+               null, (copy) ? new String[]{"Copy & Close", "Copy & Contact", "Close"} : new String[] {"Close"}, "Close");
+         if (choice2 == 0 && copy) {
             ErrorCopier.copy(ID, e);
+         } else if (choice2 == 1) {
+            ErrorCopier.copy(ID, e);
+            Agenda.FileHandler.sendEmail();
          }
       }
    }
 
    public static void showError(Throwable e, boolean recover) {
       String ID = getID(e);
-      showGeneral(e, ID, true);
+      showGeneral(e, ID, true, recover);
       if (!recover)
          System.exit(0);
    }
@@ -107,7 +118,7 @@ public enum ErrorID {
    }
    
    public static void showPrintingError(Throwable e) {
-      showGeneral(e, getID(e), false);
+      showGeneral(e, getID(e), false, false);
    }
    
    private static ErrorID getType(Throwable e) {
@@ -116,7 +127,7 @@ public enum ErrorID {
       if (e instanceof NullPointerException)
          return NULL_POINT;
       if (e instanceof FileNotFoundException)
-         return FNF;
+         return FILE_NOT_FOUND;
       if (e instanceof ExceptionInInitializerError)
          return INITIALIZER;
       if (e instanceof IOException)
@@ -172,6 +183,7 @@ public enum ErrorID {
          if (debug) System.out.println("copying "+str+" : "+e);
          Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
          systemClipboard.setContents(new ErrorCopier(str, e), null);
+         if (Agenda.statusU) Agenda.log("copied error " + e.getMessage());
          if (debug)
             try {
                System.out.println("copied: "+systemClipboard.getData(DataFlavor.stringFlavor));
@@ -206,12 +218,7 @@ public enum ErrorID {
    }
    
    public static void main(String[] args) {
-      UIHandler.init();
-      ErrorCopier ec = null;
-      try {
-         ec.getData();
-      } catch (NullPointerException e) {
-         ErrorID.showError(e, true);
-      }
+      System.out.println(ErrorID.getError("7530"));
+      ErrorID.showError(new NullPointerException(), false);
    }
 }

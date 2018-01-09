@@ -57,8 +57,8 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
    }
 
    public void autoSetSelection() {
-      if (parentPane instanceof SouthernCurrentClassPane) {
-         SouthernCurrentClassPane parent = (SouthernCurrentClassPane) parentPane;
+      if (parentPane instanceof CurrentClassPane) {
+         CurrentClassPane parent = (CurrentClassPane) parentPane;
          if (parent.checkInSchool()) {
             if (parent.getClassPeriod() == null)
                setSelectedValue(schedule.get(parent.findNextClass().getSlot()), true);
@@ -70,7 +70,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
             if (debug) System.out.println(getName()+": out of school");
             clearSelection();
          }
-         if (debug) System.out.println("move class back to "+((SouthernCurrentClassPane) parentPane).getClassPeriod());
+         if (debug) System.out.println("move class back to "+((CurrentClassPane) parentPane).getClassPeriod());
       }
       else {
          if (debug) System.out.println(getName()+"error in scheduleListAutoSelect");
@@ -84,7 +84,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
    }
    public void setSchedule(Schedule schedule) {
       if (debugNames) System.out.println(getName() + "THE NEW SCHEDULE HERE IS "+schedule.getName());
-      this.schedule = schedule.clone();
+      this.schedule = schedule;
       createList();
    }
    public JPanel getParentPane() {
@@ -111,6 +111,10 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
    public void setSelectable(boolean selectable) {
       this.selectable = selectable;
       setFocusable(selectable);
+   }
+   
+   public String toString() {
+      return getClass().getName() + "[" + getName() + " size = " + getSize() + "]";
    }
    
    @Override

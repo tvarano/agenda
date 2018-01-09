@@ -1,13 +1,16 @@
 Hi, 
 Thanks for using Agenda to manage your schedule at school. There are only a few things to go over to make sure everything works properly. 
 
-1). When transferring this program, please make sure to deliver these instructions. It is important everyone can get them. If you lose them, look under the help tab when you run Agenda. From there, you can create a new one on your desktop. 
+1). When transferring this program, please make sure to deliver these instructions. It is important everyone can get them. If you lose them, look under the help tab when you run Agenda to create a new one on your desktop. 
 
-IMPORTANT FOR RUNNING THE PROGRAM
+
+******************IMPORTANT FOR RUNNING THE PROGRAM******************
 2). Running the program trips a security notification on the school Macs (don’t worry, this isn’t a virus).
  All you have to do to get around this is go to System Preferences > Security & Privacy > General. You should see a button saying “Run anyway.” That should run the program. 
+*********************************************************************
 
-3). You might get an error telling you to update your JDK (or something along those lines). In that case, go to self service and download the update “Java 8U_144”. If that doesn’t work, the only other way to get the JDK on your computer is to download Eclipse (found in Self Service > Applications). This is a bit annoying, because Eclipse is a large program and will take a while to install. However, it will allow you to use Agenda, so download as you see fit. 
+
+3). You might get an error telling you to update your JDK (or something along those lines). THIS IS A VERY UNLIKELY ERROR. In that case, go to self service and download the update “Java 8U_144”. If that doesn’t work, the only other way to get the JDK on your computer is to download Eclipse (found in Self Service > Applications). This is a bit annoying, because Eclipse is a large program and will take a while to install. However, it will allow you to use Agenda, so download as you see fit. 
 
 If you have any issues, please email me at varanoth@pascack.org.
 -Thomas Varano

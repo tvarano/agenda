@@ -1,11 +1,19 @@
 package managers;
+
+import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.MenuBar;
+import java.awt.RenderingHints;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -15,99 +23,117 @@ import java.net.URISyntaxException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
 import ioFunctions.SchedReader;
-import resources.ResourceAccess;
 
 //Thomas Varano
-//[Program Descripion]
+//Main class
 //Sep 20, 2017
 
-
+/**
+ * Main class. Begins the program and initializes all references.
+ * 
+ * @author Thomas Varano
+ */
 public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.4.0 ß";
-   public static final int MIN_W = 733, MIN_H = 313;
+   public static final String BUILD = "v1.7.1 (Beta)";
+   public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
-   private static PanelManager manager;
-   private static JFrame parentFrame;
-   private static MenuBar bar;
-   public static boolean statusU, inEclipse;
-   public static Runnable mainThread;
+   public static final String CONTACT_EMAIL = "varanoth@pascack.org";
+   private PanelManager manager;
+   private JFrame parentFrame;
+   private MenuBar bar;
+   public static boolean statusU;
    public static URI sourceCode;
    
-   public Agenda() { 
+   public Agenda(JFrame frame) {
+      setName("main class");
       initialFileWork();
-      
-      if (statusU) log("Main began initialization");
-      UIHandler.init();
+      if (statusU) log(getClass().getSimpleName()+" began initialization");
+
+      UIHandler.init();      
+      this.parentFrame = frame;
+      bar = UIHandler.configureMenuBar(frame, this);
       manager = new PanelManager(this, bar);
-      manager.setCurrentPane(false);
+      manager.setCurrentPane(PanelManager.DISPLAY);
+      parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+         @Override
+         public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+            manager.beforeClose();
+            if (statusU) log("program closed");
+            System.exit(0);
+         }
+      });
+      if (Desktop.isDesktopSupported())
+         Desktop.getDesktop().setQuitHandler(new QuitHandler() {
+            @Override
+            public void handleQuitRequestWith(QuitEvent arg0,
+                  QuitResponse arg1) {
+               manager.beforeClose();
+               if (statusU) log("program quit");
+               arg1.performQuit();
+            }
+         });
    }
    
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
-   @SuppressWarnings("resource")
-   public synchronized void initialFileWork() {
+   public static synchronized void initialFileWork() {
+      long start = System.currentTimeMillis();
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
-      
-      FileHandler.ensureRouteFile();
-      
-      //if folder location is unassigned, assign it
-         String mainFolder = null;
-         //if fileRoute doesn't exist...
-         try {
-            if (!new Scanner(ResourceAccess.getFolderLocationFile()).hasNextLine())
-               FileHandler.setFileLocation();
-         } catch (Exception e1) {
-            ErrorID.showError(e1, false);
-         }
-         //read file and set
-         mainFolder = FileHandler.readFileLocation();
-         FileHandler.initFileNames(mainFolder);
-         
-      //ensure the user is correct
-      FileHandler.checkAndFormatUser();
-      
-      //if you need, create your folder and initialize routes
-      FileHandler.createFiles();
+      boolean logData = false;
 
+      FileHandler.ensureFileRoute();
+
+      //check parameters, draw routes, create files if needed 
+      FileHandler.initAndCreateFiles();
+      
+      //set system.out to the log file
       if (logData) {
          try {
             File log = new File(FileHandler.LOG_ROUTE);
             PrintStream logStream = new PrintStream(log);
             System.setOut(logStream);
             System.setErr(logStream);
+            if (statusU) log ("log set");
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
       }
+      //logs the time taken (in millis)
+      if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
    }
    
+   public PanelManager getManager() {
+      return manager;
+   }
+   
+   /**
+    * Everything that has to handle files
+    * @author varanoth
+    */
    public static class FileHandler {
       public static String ENVELOPING_FOLDER;
       public static String RESOURCE_ROUTE;
       public static String LOG_ROUTE;
       public static String FILE_ROUTE;
       public static String THEME_ROUTE, LAF_ROUTE;
-      public static final String FOLDER_ROUTE = System.getProperty("user.home")
-            + "/Applications/Agenda/AgendaInternalFileRoute.txt";
+      public static final String NO_LOCATION = "noLoc";
       
       public static void openURI(URI uri) {
          if (Desktop.isDesktopSupported()) {
@@ -121,61 +147,52 @@ public class Agenda extends JPanel
          }
       }
       
-      public static void ensureRouteFile() {
-         try {
-            new File(System.getProperty("user.home") + "/Applications/Agenda/").mkdirs();
-            ResourceAccess.getFolderLocationFile().createNewFile();
-         } catch (IOException e2) {
-            ErrorID.showError(e2, false);
-         }
+      public static boolean ensureFileRoute() {
+         return new File(System.getProperty("user.home") + "/Applications/Agenda/")
+               .mkdirs();
+      }
+
+      public static void initAndCreateFiles() {
+         // read file and set/
+         String mainFolder = System.getProperty("user.home") + "/Applications/Agenda/"; 
+         initFileNames(mainFolder);
+         
+         //if you need, create your folder and initialize routes
+         createFiles();
       }
       
-      public static void setFileLocation() {
-         ResourceAccess.getFolderLocationFile().setWritable(true);
-         writeFileLocation(askFileLocation());
-         initFileNames(readFileLocation());
-         ResourceAccess.getFolderLocationFile().setWritable(false);
-
-      }
-
-      public static String askFileLocation() {
-         JFileChooser c = new JFileChooser(System.getProperty("user.home"));
-         c.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-         c.setDialogTitle("Choose The Location for Internal Files");
-         int choice;
-         do {
-           choice = c.showSaveDialog(null);
-         } while (choice != JFileChooser.APPROVE_OPTION && choice != JFileChooser.CANCEL_OPTION);
-         if (choice == JFileChooser.CANCEL_OPTION)
-           System.exit(0);
-         return c.getSelectedFile().getAbsolutePath();
+      public static void openDesktopFile(String path) {
+         if (Desktop.isDesktopSupported()) {
+            try {
+               Desktop.getDesktop().open(new File(path));
+            } catch (IOException e1) {
+               ErrorID.showError(e1, true);
+            }
+        }
       }
       
-      public static String writeFileLocation(String s) {
-         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(ResourceAccess.getFolderLocationFile()));
-            bw.write(s);
-            bw.close();
-         } catch (IOException e) {
-            ErrorID.showError(e, true);
+      public static void sendEmail() {
+         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+CONTACT_EMAIL, 
+               Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
+               new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
+         if (choice == 2 || choice == -1) 
+            return;
+         else {
+            if (Desktop.isDesktopSupported()) {
+               try {
+                  if (choice == 0)
+                     Desktop.getDesktop().mail(new URI("mailto:"+CONTACT_EMAIL+"?subject=Agenda%20Contact"));
+                  else
+                     Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
+               } catch (IOException | URISyntaxException e1) {
+                  ErrorID.showError(e1, true);
+               }
+            }
          }
-         return s;
-      }
-
-      public static String readFileLocation() {
-         Scanner s = null;
-         try {
-            s = new Scanner(ResourceAccess.getFolderLocationFile());
-         } catch (FileNotFoundException | NullPointerException e) {
-            ErrorID.showError(e, false);
-         }
-         String ret = s.nextLine();
-         s.close();
-         return ret;
       }
    
       public static void initFileNames(String envelop) {
-         ENVELOPING_FOLDER = envelop+"/Agenda/";
+         ENVELOPING_FOLDER = envelop;
          RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
          LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
          FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
@@ -183,14 +200,9 @@ public class Agenda extends JPanel
          LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
       }
       
-      public static void checkAndFormatUser() {
-         if (System.getProperty("user.home").indexOf(ENVELOPING_FOLDER.substring(0, 12)) < 0) {
-            setFileLocation();
-         }
-      }
-      
       public synchronized static void createFiles() {
          if (new File(RESOURCE_ROUTE).mkdirs()) {
+            if (statusU) log("files created");
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;
@@ -208,36 +220,27 @@ public class Agenda extends JPanel
             }
       }
       
-      /**
-       * delete all files. Needs to be done in order to correctly delete them all.
-       */
-      public static void deleteFiles() {
-         deleteFile(new File(ENVELOPING_FOLDER));
-      }
-      
-      public static boolean deleteFile(File f) {
-         if (f.isDirectory()) {
-            System.out.println(f+" isDirectory");
-            for (File in : f.listFiles()) {
-               boolean del = deleteFile(in);
-               System.out.println(in+" del="+del);
-            }
-         }
-         System.out.println("deleted "+f);
-         return f.delete();
+      public static boolean moveFiles(String oldLocation) {
+         if (statusU) log("attempting to move files");
+         
+         return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
       }
    }
    
-   public static MenuBar getBar() {
+   public MenuBar getBar() {
       return bar;
    }
    
-   public static void log(String s) {
-      System.out.println(LocalTime.now() + " : "+s);
+   public void show(String name) {
+      ((CardLayout) getLayout()).show(this, name);
    }
    
-   public static void logError(String s, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: "+s);
+   public static void log(String text) {
+      System.out.println(LocalTime.now() + " : "+text);
+   }
+   
+   public static void logError(String message, Throwable e) {
+      System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
    }
    
    public Dimension getMinimumSize() {
@@ -249,27 +252,56 @@ public class Agenda extends JPanel
    
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
-      parentFrame = new JFrame(APP_NAME + " " + BUILD);
+      JFrame frame = new JFrame("LOADING....");
       int frameToPaneAdjustment = 22;
-      bar = UIHandler.configureMenuBar(parentFrame);
-      parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-      parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      parentFrame.setVisible(true);
-      parentFrame.setLocationRelativeTo(null);
-      Agenda main = new Agenda();
-      parentFrame.getContentPane().add(main);
-      parentFrame.pack();
-      parentFrame.setLocationRelativeTo(null);
-      if (statusU)
-         log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+      
+      // loading screen, frame adjustments
+      EventQueue.invokeLater(new Runnable() {
+         public void run() {
+            JPanel p = new JPanel() {
+               private static final long serialVersionUID = 1L;
+               
+               @Override 
+               public void paintComponent(Graphics g) {
+                  Graphics2D g2 = (Graphics2D) g;
+                  g2.addRenderingHints(new RenderingHints(
+                        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+                  g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
+                  g2.drawString("LOADING...", 260, 150);
+                  if (statusU) log("Drawing strings took " + (System.currentTimeMillis() - start));
+               }
+            };
+            frame.getContentPane().add(p);
+            frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+         }
+      });
+      frame.setVisible(true);
+      
+      // effective EDT
+      EventQueue.invokeLater(new Runnable() {
+         @Override
+         public void run() {
+            Agenda main = new Agenda(frame);
+            frame.setTitle(APP_NAME + " " + BUILD);
+            frame.getContentPane().remove(0);
+            frame.getContentPane().add(main);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            if (statusU)
+               log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+         }
+      });
    }
-   public static void restart() {
-      if (statusU) log("Program Restarted\n");
+   public void restart() {
+      manager.getDisplay().writeMain();
+      if (statusU) log("Program Restarted with no arguments\n");
       restartApplication(new Runnable() {
          @Override
          public void run() {
-            if (statusU)
-               log("Restart Successful.\n");
+            if (statusU) log("Restart Successful.\n");
          }
       });
    }
@@ -281,14 +313,14 @@ public class Agenda extends JPanel
    public static final String SUN_JAVA_COMMAND = "sun.java.command";
 
    /**
-    * Restart the current Java application</br>
-    * <b>completely copy-pasted but it works like a charm</b>
+    * Restart the current Java application
+    * however, only if the program is run through eclipse or with a classPath
     * 
     * @param runBeforeRestart
     *            some custom code to be run before restarting
     * @throws IOException
     */
-   public static void restartAppCP(Runnable runBeforeRestart) {
+   public void restartAppCP(Runnable runBeforeRestart) {
       try {
          // java binary
          String java = System.getProperty("java.home") + "/bin/java";
@@ -340,7 +372,7 @@ public class Agenda extends JPanel
       }
    }
   
-   public static void restartApplication(Runnable runBeforeRestart) {
+   public void restartApplication(Runnable runBeforeRestart) {
       final String javaBin = System.getProperty("java.home") + File.separator
             + "bin" + File.separator + "java";
       File currentJar = null;
@@ -351,15 +383,15 @@ public class Agenda extends JPanel
          ErrorID.showError(e, false);
       }
 
-      // is it a jar file? if not, restart using the classpath way
+      // if not a jar, restart using the classpath way
       if (!currentJar.getName().endsWith(".jar")) {
          restartAppCP(runBeforeRestart);
       }
 
-      // Build command: java -jar application.jar 
+      // Build command: java -jar application.jar
       final ArrayList<String> command = new ArrayList<String>();
-     command.add(javaBin);
-     command.add("-jar");
+      command.add(javaBin);
+      command.add("-jar");
       command.add(currentJar.getPath());
 
       final ProcessBuilder builder = new ProcessBuilder(command);
@@ -368,26 +400,28 @@ public class Agenda extends JPanel
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
+      // execute the command in a shutdown hook, to be sure that all the
+      // resources have been disposed before restarting the application
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+         @Override
+         public void run() {
+            try {
+               Runtime.getRuntime().exec(builder.toString());
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+      });
       // run the custom code
       if (runBeforeRestart != null) {
          runBeforeRestart.run();
-     }
+      }
      if (statusU) log("restarting...");
      System.exit(0);
    }
-   
-   public static void close() {
-      parentFrame.dispose();
-      manager.dispose();
-      bar = null;
-   }
-   
-   public static void openFresh() {
-      main(null);
-   }
 
    public static void main(String[] args) {
-      statusU = true;
+      statusU = false;
       if (statusU) log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

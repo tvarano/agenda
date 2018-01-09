@@ -33,14 +33,12 @@ public class SchedWriter
          outStream = new ObjectOutputStream(fileStream);
       } catch (IOException e) {
          ErrorID.showError(e, false);
-
       }
    }
    
    public void write(Schedule s) {
       if (s == null) {
          if (debug) System.err.println("written schedule is null");
-         //TODO why not recoverable?
          ErrorID.showError(new NullPointerException(), false);
          return;
       }
@@ -54,10 +52,12 @@ public class SchedWriter
    
    public void close() {
       try {
+         fileStream.flush();
          fileStream.close();
+         outStream.flush();
          outStream.close();
       } catch (IOException e) {
-         ErrorID.showError(e, false);
+         ErrorID.showError(e, true);
       }
    }
 }

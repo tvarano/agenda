@@ -1,12 +1,20 @@
 package managers;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PreferencesHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -16,15 +24,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.instrument.IllegalClassFormatException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -36,25 +47,28 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
 import constants.ErrorID;
+import constants.Rotation;
 import constants.RotationConstants;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
 import resources.ResourceAccess;
 
 //Thomas Varano
-public class UIHandler {
+
+/**
+ * Handles all UI necessities, including LAF and theme. Uninstantiatable and unextendable. Only for static calls.
+ * 
+ * @author Thomas Varano
+ */
+public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
    
-	public static Font font;
-//	public static String fontFam;
+	public static final Font font = new Font("Futura", Font.PLAIN, 16);;
 	private static boolean debug;
 	
 	public static void init() { 
 	   debug = false;
-	   font = new Font("Futura", Font.PLAIN, 16);
-	   //heavy proccess, bypassed
-//	   fontFam = "Futura";
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -107,63 +121,88 @@ public class UIHandler {
       UIManager.put("TabbedPane.foreground", foreground);
       UIManager.put("TabbedPane.insets", secondary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
+	   UIManager.put("ToolTip.background", background);
+	   UIManager.put("ToolTip.foreground", foreground);
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
 	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getImage("ErrorIcon.png"));
 	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getImage("WarningIcon.png"));
 	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getImage("InfoIcon.png"));
+	   UIManager.put("OptionPane.questionIcon", ResourceAccess.getImage("QuestionIcon.png"));
 	}
 	
 	
 	private static class ThemeChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
+      private String themeName;
 
-      public ThemeChooser(String themeName) {
+      public ThemeChooser(String themeName, Agenda a) {
 	      super(themeName);
+	      this.themeName = themeName;
 	      addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
-                  bw.write(themeName);
-                  bw.close();
-                  if (JOptionPane.showOptionDialog(null,
-                        "Changing the theme requires a restart", Agenda.APP_NAME,
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE, null,
-                        new String[]{"Restart", "Close"}, "Restart") == 0)
-                     Agenda.restart();
-               } catch (IOException e1) {
-                  ErrorID.showError(e1, true);
-               }
+               writeData();
+               if (JOptionPane.showOptionDialog(null,
+                     "Changing the theme requires a restart", Agenda.APP_NAME,
+                     JOptionPane.YES_NO_OPTION,
+                     JOptionPane.INFORMATION_MESSAGE, null,
+                     new String[]{"Restart", "Close"}, "Restart") == 0)
+                  a.restart();
             } 
 	      });
 	   }
+      public void writeData() {
+         try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+            bw.write(themeName);
+            bw.close();
+            
+         } catch (IOException e1) {
+            ErrorID.showError(e1, true);
+         }
+      }
+      public String toString() {
+         return themeName;
+      }
 	}
 
 	private static class LookChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
+      private UIManager.LookAndFeelInfo look;
 
-      public LookChooser(UIManager.LookAndFeelInfo look) {
+      public LookChooser(UIManager.LookAndFeelInfo look, Agenda a) {
          super(look.getName());
+         this.look = look;
          addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               try {
-                  BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.RESOURCE_ROUTE+"look.txt"));
-                  bw.write(look.getClassName());
-                  bw.close();
-                  if (JOptionPane.showOptionDialog(null,
-                        "Changing the look requires a restart", Agenda.APP_NAME,
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE, null,
-                        new String[]{"Restart", "Close"}, "Restart") == 0)
-                     Agenda.restart();
-               } catch (IOException e1) {
-                  ErrorID.showError(e1, true);
-               }
-            } 
+               performAction(a);
+            }
          });
+      }
+      
+      public void writeData() {
+         try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.RESOURCE_ROUTE+"look.txt"));
+            bw.write(look.getClassName());
+            bw.close();
+         } catch (IOException e1) {
+            ErrorID.showError(e1, true);
+         }
+      }
+      
+      public void performAction(Agenda a) {
+            writeData();
+            if (JOptionPane.showOptionDialog(null,
+                  "Changing the look requires a restart", Agenda.APP_NAME,
+                  JOptionPane.YES_NO_OPTION,
+                  JOptionPane.INFORMATION_MESSAGE, null,
+                  new String[]{"Restart", "Close"}, "Restart") == 0)
+               a.restart();
+      }
+      public String toString() {
+         return look.getName();
       }
    }
 	private static class LinkChooser extends MenuItem {
@@ -189,6 +228,93 @@ public class UIHandler {
       }
 	}
 	
+	private static Border getUnFormattedTitleBorder(String title) {
+	   return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2),
+            title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP, font, Color.BLACK);
+	}
+	
+	private static void showPreferences(Agenda age) {
+	   final int w = 300;
+	   final int h = 300;
+	   JFrame f = new JFrame("Preferences");
+	   JPanel p = new JPanel();
+	   p.setPreferredSize(new Dimension(w, h));
+	   p.setLayout(new BorderLayout());
+	   JPanel top = new JPanel();
+	   JLabel l = new JLabel("Input your preferences");
+	   l.setFont(font);
+	   top.add(l);
+	   top.setPreferredSize(new Dimension(w,30));
+	   p.add(top, BorderLayout.NORTH);
+	   
+	   JPanel center = new JPanel();
+	   center.setLayout(new GridLayout(1, 2));
+	   JList<LookChooser> lookList = new JList<LookChooser>();
+	   lookList.setBorder(getUnFormattedTitleBorder("Look and Feel"));
+	   DefaultListModel<LookChooser> lookModel = new DefaultListModel<LookChooser>();
+	   lookList.setForeground(Color.BLACK);
+	   lookList.setSelectionBackground(Color.DARK_GRAY);
+	   lookList.setSelectionForeground(Color.WHITE);
+      lookList.setModel(lookModel);
+	   for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels())
+         if (!laf.getName().equals("Nimbus")) {
+            LookChooser lc = new LookChooser(laf, age);
+            lookModel.addElement(lc);
+            if (laf.getName().equals(UIManager.getLookAndFeel().getName()))
+               lookList.setSelectedValue(lc, true);
+         }
+	   center.add(lookList);
+	   
+	   JList<ThemeChooser> themeList = new JList<ThemeChooser>();
+	   themeList.setForeground(Color.BLACK);
+	   themeList.setSelectionBackground(Color.DARK_GRAY);
+	   themeList.setSelectionForeground(Color.WHITE);
+	   themeList.setBorder(getUnFormattedTitleBorder("Theme"));
+	   DefaultListModel<ThemeChooser> themeModel = new DefaultListModel<ThemeChooser>();
+	   themeList.setModel(themeModel);
+	   for (String s : themes) {
+	      ThemeChooser tc = new ThemeChooser(s, age);
+	      themeModel.addElement(tc);
+	      if (readDoc("theme.txt", THEME_ID).equals(s))
+	         themeList.setSelectedValue(tc, true);
+	   }
+	   center.add(themeList);
+	   p.add(center, BorderLayout.CENTER);
+	   
+	   JPanel bottom = new JPanel();
+	   bottom.setLayout(new GridLayout(1,2));
+	   JButton b = new JButton("Cancel");
+	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	   b.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            f.dispose();
+         }
+	   });
+	   bottom.add(b);
+	   b = new JButton("Apply and Restart");
+	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	   b.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            lookList.getSelectedValue().writeData();
+            themeList.getSelectedValue().writeData();
+            age.restart();
+         }
+      });
+	   b.setSelected(true);
+	   bottom.add(b);
+	   
+	   
+	   p.add(bottom, BorderLayout.SOUTH);
+	   
+	   f.getContentPane().add(p);
+	   f.pack();
+	   f.setLocationRelativeTo(age);
+	   f.setVisible(true);
+	   f.setResizable(false);
+	}
+	
 	/**
 	 * the themes available for the application
 	 */
@@ -204,11 +330,38 @@ public class UIHandler {
             "You are about to:\n" + action
                   + ".\nAre you sure you want to do this?",
             Agenda.APP_NAME + " WARNING", JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE, null, new String[]{"Yes", "No"},
-            "No") == 0);
+            JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
-   public synchronized static MenuBar configureMenuBar(JFrame frame) {
+   private static void setRotation(Agenda age, constants.Rotation r) {
+      age.getManager().setRotation(r);
+   }
+   
+   public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
+      if (Desktop.isDesktopSupported()) {
+         Desktop.getDesktop().setAboutHandler(new AboutHandler() {
+            @Override
+            public void handleAbout(AboutEvent arg0) {
+               JOptionPane.showMessageDialog(null, 
+                     "Agenda is a schedule program for Pascack Hills (and possibly Valley)\n"
+                     + "that can keep track of time, school schedules, assignments, and GPA\n"
+                     + "for students.\n"
+                     + "CREDITS:\n"
+                     + "Thomas Varano : Author\n"
+                     + "Viktor Nakev : Icon Designer\n"
+                     + "Matthew Gheduzzi : Alpha Tester\n"
+                     + "Michael Ruberto : Conceptual Designer",
+                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+         
+         Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {
+            @Override
+            public void handlePreferences(PreferencesEvent arg0) {
+               showPreferences(age);
+            } 
+         });
+      }
 	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
       Menu m = new Menu("Time Left In Class: ");
@@ -216,43 +369,108 @@ public class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
+      MenuItem mi = m.add(new MenuItem("Input Schedule"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            age.getManager().setCurrentPane(PanelManager.INPUT);
+         }
+      });
+      mi = m.add(new MenuItem("View GPA"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            age.getManager().setCurrentPane(PanelManager.GPA);
+         }
+      });
+      Menu rotations = (Menu) m.add(new Menu("Set Rotation"));
+      for (int i = 0; i < RotationConstants.categorizedRotations().length; i++) {
+         Menu rm = (Menu) rotations.add(new Menu(RotationConstants.categoryNames[i]));
+         for (Rotation r : RotationConstants.categorizedRotations()[i]) {
+            if (!r.equals(Rotation.INCORRECT_PARSE)) {
+               MenuItem ri = rm.add(new MenuItem(RotationConstants.getName(r.getIndex())));
+               ri.addActionListener(new ActionListener() {
+                  @Override
+                  public void actionPerformed(ActionEvent arg0) {
+                     setRotation(age, r);
+                  }
+               });
+            }
+         }
+      }
+      mi = m.add(new MenuItem("Reread Schedule"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            age.getManager().reset();
+         }
+      });
+      
       m.addSeparator();
-      MenuItem mi = m.add(new MenuItem("Reset Schedule"));
+      
+      mi = m.add(new MenuItem("Clear Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (checkIntentions("Reset your schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
-               Agenda.restart();
+               age.restart();
             }
          }
+      });
+      mi = m.add(new MenuItem("Clear Preferences"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            if (checkIntentions("Clear Preferences.\nThis Requires a restart")) {
+               BufferedWriter bw;
+               try {
+                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+                  bw.write(themes[0]);
+                  bw.close();
+                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.LAF_ROUTE));
+                  bw.write(UIManager.getSystemLookAndFeelClassName());
+                  bw.close();
+                  age.restart();
+               } catch (IOException e1) {
+                  ErrorID.showError(e1, true);
+               }
+            }
+         }
+         
       });
       mi = m.add(new MenuItem("Restart"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (checkIntentions("Restart the applicaiton"))
-               Agenda.restart();
+               age.restart();
          }
       });
       
-      mi = m.add(new MenuItem("Choose File Location"));
+      m.addSeparator();
+      
+      mi = m.add(new MenuItem("View File Location"));
       mi.addActionListener(new ActionListener() {
-    	  @Override
-    	  public void actionPerformed(ActionEvent e) {
-    		  if (checkIntentions("Move your folder and delete data. This requires a restart.")) {
-    			  String oldLoc = Agenda.FileHandler.ENVELOPING_FOLDER;
-    			  File oldDir = new File(oldLoc);
-    			  Agenda.FileHandler.setFileLocation();
-    			  Agenda.restartApplication(new Runnable() {
-    			     public void run() {
-    			        Agenda.FileHandler.deleteFile(oldDir);
-    			     }
-    			  });
-    		  }
-    	  }
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            if (JOptionPane.showOptionDialog(null, "Your files are kept at:\n"+Agenda.FileHandler.ENVELOPING_FOLDER,
+                  Agenda.APP_NAME + " File Location", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                  new String[] {"View In Finder", "Close"}, "Close") == 0) {
+               Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.ENVELOPING_FOLDER);
+            }
+         }
       });
+      
+      mi = m.add(new MenuItem("Open Log"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
+         }
+      });
+
       
       mi = m.add(new MenuItem("View Source Code"));
       mi.addActionListener(new ActionListener() {
@@ -284,12 +502,12 @@ public class UIHandler {
       
       Menu themes = (Menu)m.add(new Menu("Set Theme..."));
       for (String str : UIHandler.themes) {
-         themes.add(new ThemeChooser(str));
+         themes.add(new ThemeChooser(str, age));
       }
       Menu looks = (Menu)m.add(new Menu("Set Look..."));
       for (LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels())
          if (!laf.getName().equals("Nimbus"))
-            looks.add(new LookChooser(laf));
+            looks.add(new LookChooser(laf, age));
       bar.add(m);
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");
@@ -301,23 +519,29 @@ public class UIHandler {
       m.add(new LinkChooser("Agenda Source", Agenda.sourceCode));
       
       bar.add(m);
-      //---------------------------Help Bar--------------------------
+      // ---------------------------Help Bar--------------------------
       m = new Menu("Help");
       mi = m.add(new MenuItem("Error Help"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, 
+            int choice = JOptionPane.showOptionDialog(null,
                   "Error logging helps the efficiency and ease of use for \n"
-                  + "this program. Logs are kept at:\n"
-                  + Agenda.FileHandler.LOG_ROUTE + "\n"
-                  + "and keep internal information about the program as it runs.\n"
-                  + "If an error occurs, its message will be printed in the log.\n"
-                  + "The best thing to do is simply send the entire log when this\n"
-                  + "occurs. It gives the most information possible and will allow\n"
-                  + "for the error to be fixed most quickly.\n"
-                  + "Email the log to varanoth@pascack.org", 
-                  Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+                        + "this program. Logs are kept at:\n"
+                        + Agenda.FileHandler.LOG_ROUTE + "\n"
+                        + "and keep internal information about the program as it runs.\n"
+                        + "If an error occurs, its message will be printed in the log.\n"
+                        + "The best thing to do is simply send the entire log when this\n"
+                        + "occurs. It gives the most information possible and will allow\n"
+                        + "for the error to be fixed most quickly.\n"
+                        + "Email the log to "+Agenda.CONTACT_EMAIL,
+                  Agenda.APP_NAME, JOptionPane.DEFAULT_OPTION,
+                  JOptionPane.INFORMATION_MESSAGE, null,
+                  new String[]{"Close", "Open Log", "Send Email"}, "Close");
+            if (choice == 2)
+               Agenda.FileHandler.sendEmail();
+            else if (choice == 1)
+               Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
          }
       });
       mi = m.add(new MenuItem("Sharing Protocol"));
@@ -337,10 +561,17 @@ public class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             SchedReader.transfer("Installation Instructions.txt", 
-                  new File(System.getProperty("user.home") + "/Desktop/Installation Instructions.txt"));
+                  new File(System.getProperty("user.home") + "/Desktop/README.txt"));
             JOptionPane.showMessageDialog(null, 
-                  "Installation instructions have been created on your desktop.",
+                  "Installation instructions (README.txt) have been created on your desktop.",
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+         }
+      });
+      mi = m.add(new MenuItem("Contact"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            Agenda.FileHandler.sendEmail();
          }
       });
       bar.setHelpMenu(m);
@@ -384,13 +615,13 @@ public class UIHandler {
                else if (type == LAF_ID)
                   bw.write(UIManager.getSystemLookAndFeelClassName());
                else {
-                  ErrorID.showError(new IllegalClassFormatException("type "+type+" is undefined for writing a UI trait"), true);
+                  ErrorID.showError(new DataFormatException("type "+type+" is undefined for writing a UI trait"), true);
                   bw.write("");
                }
                bw.close();
             } catch (IOException e1) {
                e1.printStackTrace();
-               Agenda.FileHandler.setFileLocation();
+               Agenda.FileHandler.initAndCreateFiles();
             }
          }
          return themes[0];
@@ -561,20 +792,16 @@ public class UIHandler {
             title, justification, position, font, titleColor);
 	}
 	
+	
 	public static Color getScrollColor() {
 	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);
 	}
-	
-//	private static Font getBold(float size) {
-//	   return font.deriveFont(size).deriveFont(Font.BOLD);
-//	}
 	
 	public static Border getTitledBorder(String title) {
 	   return getTitledBorder(title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP);
 	}
 	
 	public static Font getInputLabelFont() {
-//	   return getBold(14F);
 	   return font.deriveFont(15F);
 	}
 	
@@ -587,7 +814,6 @@ public class UIHandler {
 	}
 	
 	public static Font getButtonFont() {
-//	   return getBold(12F);
 	   return font.deriveFont(13F);
 	}
 	

@@ -11,19 +11,21 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import constants.RotationConstants;
 import information.ClassPeriod;
+import managers.Agenda;
 import managers.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]
 //Sep 20, 2017
 
-public class ClassInputSlot extends JPanel implements ActionListener
+public class DataInputSlot extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;
    private static final int gap = 4;
@@ -35,26 +37,30 @@ public class ClassInputSlot extends JPanel implements ActionListener
    private int slotNumber;
    private Container parentPanel;
    private JCheckBox labBox;
-   private boolean hasParent, hasLab, removable, labFriendly, debug;
+//   private String memo;
+   private ClassPeriod dataHolder;
+   private boolean hasParent, hasLab, removable, labFriendly;
    private JTextField[] promptFields;
+   private static boolean debug;
    
-   public ClassInputSlot(int slotNumber, Container parentPanel) {
+   public DataInputSlot(int slotNumber, Container parentPanel) {
       this (new ClassPeriod(slotNumber), parentPanel);
       if (debug) System.out.println("input slot "+slotNumber+" initialized empty");
    }
    
-   public ClassInputSlot(ClassPeriod c, Container parentPanel) {
+   public DataInputSlot(ClassPeriod c, Container parentPanel) {
       if (c == null) c = new ClassPeriod();
       debug = false;
+      dataHolder = c.clone();
       setFont(UIHandler.getInputLabelFont());
       setBackground(UIHandler.background);
       setForeground(UIHandler.foreground);
       setName(c.getSlot() + "input slot");
       setSlotNumber(c.getSlot());
       hasLab = false; 
-      removable = (slotNumber == 0 || slotNumber == 8);
-      if (parentPanel instanceof InputMain) {
-         this.parentPanel = (InputMain)parentPanel;
+      removable = ((slotNumber == 0 || slotNumber == 8) && parentPanel != null);
+      if (parentPanel instanceof DataInput) {
+         this.parentPanel = (DataInput)parentPanel;
           hasParent = true;
       }
       else
@@ -63,15 +69,31 @@ public class ClassInputSlot extends JPanel implements ActionListener
       int amtFields = 3;
       promptFields = new JTextField[amtFields];
       setLayout(new SpringLayout());
-      addComponents(c);
+      addComponents(c);  
+   }
+   
+   public Dimension getPreferredSize() {
+      return new Dimension(Agenda.PREF_W-100, 30);
+   }
+   
+   public static ClassPeriod showInputSlot() {
+      DataInputSlot in = new DataInputSlot(RotationConstants.NO_SLOT, null);
+      in.setLabFriendly(false);
       
+      if (JOptionPane.showOptionDialog(null, in, "CREATE", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+            null, null, null) == 0)
+         return in.createClass();
+      if (debug) System.out.println("returning null");
+      return null;
    }
    
    private void addComponents(ClassPeriod c) {
       int index = 0;
       SpringLayout l = (SpringLayout) getLayout();
       //label for the class slot
-      JLabel labelLeft = new JLabel((slotNumber == RotationConstants.PASCACK) ? "P-" : slotNumber+"-"); 
+      JLabel labelLeft = new JLabel((slotNumber == RotationConstants.PASCACK) ? "P-" : slotNumber+"-");
+      if (c.getSlot() == RotationConstants.NO_SLOT)
+         labelLeft.setText("");
       labelLeft.setFont(getFont());
       labelLeft.setForeground(getForeground());
       add(labelLeft);
@@ -170,48 +192,30 @@ public class ClassInputSlot extends JPanel implements ActionListener
    private void setNorthBound(JComponent c) {
       int vgap = (c instanceof JTextField || c instanceof JCheckBox || c instanceof JButton) ? gap : gap*2;
       ((SpringLayout) getLayout()).putConstraint(SpringLayout.NORTH, c, vgap, SpringLayout.NORTH, this);
-   }
-//   //TODO
-//   public void showError() {
-//      error = true;
-//      ErrorID.showError(ErrorID.INPUT_ERROR, true);
-//      if (debug) System.out.println(getName()+" has error");
-//   }
-//  //TODO
-//   public void resolveError() {
-//      if (error) {
-//         if (debug) System.out.println(getName()+" resolved error");
-//      }
-//      error = false;
-//   }
-  
-   public boolean checkCanCreate() {
+   }   
+   
+   public void forceNames() {
       for (JTextField f : promptFields)
          if (f.getText().equals(""))
-            return false;
-      return true;
+            f.setText("unspecified");
    }
    
    public ClassPeriod createClass() {
-      if (checkCanCreate()) {
-//         resolveError();
-         if (hasParent && hasLab) {
-            ((InputMain) parentPanel).addLab(slotNumber);
-            if (debug)
-               System.out.println("\tslot" +slotNumber +"Added lab");
-         }
-         ClassPeriod retval = new ClassPeriod(slotNumber, promptFields[0].getText(), promptFields[1].getText(), 
-               promptFields[2].getText());
-         if (debug)
-            System.out.println("created:"+retval.getInfo());
-         return retval;
+      forceNames();
+      if (hasParent && hasLab) {
+         ((DataInput) parentPanel).addLab(slotNumber);
+         if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
       }
-      return new ClassPeriod();
+      ClassPeriod retval = new ClassPeriod(slotNumber,
+            promptFields[0].getText(), promptFields[1].getText(),
+            promptFields[2].getText());
+      retval.setBackgroundData(dataHolder);
+      if (debug) System.out.println("created:" + retval.getInfo());
+      return retval;
    }
    
    public void setLab(boolean hasLab) {
       labBox.setSelected(hasLab);
-//      ((JCheckBox)getComponents()[getComponents().length-1]).setSelected(hasLab);
       this.hasLab = hasLab;
    }
 
@@ -251,7 +255,7 @@ public class ClassInputSlot extends JPanel implements ActionListener
          AbstractButton b = (AbstractButton) e.getSource();
          if (b.getActionCommand().equals("remove")) {
             if (hasParent)
-               ((InputMain) parentPanel).removeClassAndReOrder(slotNumber, this);
+               ((DataInput) parentPanel).removeClassAndReOrder(slotNumber, this);
             else
                parentPanel.remove(this);
          }

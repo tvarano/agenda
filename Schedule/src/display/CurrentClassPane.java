@@ -1,9 +1,11 @@
 package display;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.time.LocalTime;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import information.ClassPeriod;
 import information.Schedule;
@@ -17,20 +19,20 @@ import managers.UIHandler;
 public class CurrentClassPane extends JPanel
 {
    private static final long serialVersionUID = 1L;
-   private ClassInfoPane info;
-   private JPanel parentPane;
+   private DisplayMain parentPane;
    private Time currentTime;
-   private NorthernCurrentClassPane northPane;
-   private SouthernCurrentClassPane southPane;
+   private CurrentInfo info;
+   private ScheduleList list;
    private ClassPeriod classPeriod;
    private Schedule sched;
+   private final int LIST_W = 200;
    private boolean inSchool; 
    private boolean debug = false;
    
-   public CurrentClassPane(ClassPeriod c, Schedule s, JPanel parent) {
+   public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");
       currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
-      inSchool = (c == null);
+      inSchool =  parent.checkInSchool();
       setClassPeriod(c); setSched(s); setParentPane(parent);
       setBackground(UIHandler.background);
       sched.setShowName(true);
@@ -38,16 +40,50 @@ public class CurrentClassPane extends JPanel
          System.out.println("classPane class:"+c);
          System.out.println("classPane sched:"+getSched());
       }
-      setLayout(new GridLayout(2,1));
-      northPane = new NorthernCurrentClassPane(c, this);
-      southPane = new SouthernCurrentClassPane(c, s, this);
-      add(northPane);
-      add(southPane);
+      setLayout(new BorderLayout());
+      
+      initAndAddComponents();
+   }
+   
+   private void initAndAddComponents() {
+      list = new ScheduleList(sched, true);
+      list.setName("southPane todayList");
+      list.setParentPane(this);
+      list.setSelectedValue(sched.get(classPeriod.getSlot()), true); 
+      list.setToolTipText("Today's Schedule With Your Current Class");
+      list.setSelectable(false);
+      
+      JScrollPane scroll = new JScrollPane(list);
+      scroll.setBorder(UIHandler.getTitledBorder("Today's Schedule"));
+      scroll.setToolTipText(list.getToolTipText());
+      scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scroll.setBackground(UIHandler.background);
+      list.setBackground(UIHandler.secondary);
+      scroll.setSize(320, getHeight());
+            
+      info = new CurrentInfo(classPeriod, this);
+      info.setVisible(true);
+      int gap = 10;
+      info.setBorder(BorderFactory.createEmptyBorder(gap, gap, gap, gap));
+      
+      add(listPanel(scroll), BorderLayout.EAST);
+      add(info, BorderLayout.CENTER);
    }
    
    public boolean checkInSchool() {
-      inSchool = ((DisplayMain)parentPane).checkInSchool();
+      inSchool = parentPane.checkInSchool();
       return inSchool;
+   }
+   
+   private JPanel listPanel(JScrollPane scroll) {
+      JPanel retval = new JPanel();
+      retval.setName("list panel");
+      retval.setLayout(new BorderLayout());
+      retval.add(scroll);
+      JPanel sizeFix = new JPanel();
+      sizeFix.setPreferredSize(new Dimension(LIST_W, 0));
+      retval.add(sizeFix, BorderLayout.SOUTH);
+      return retval;
    }
    
    /**
@@ -55,7 +91,11 @@ public class CurrentClassPane extends JPanel
     * @return
     */
    public ClassPeriod findNextClass() {
-      return ((DisplayMain)parentPane).findNextClass();
+      return parentPane.findNextClass();
+   }
+   
+   public Time getTimeLeft() {
+      return currentTime.getTimeUntil(classPeriod.getEndTime());
    }
    
    public Time timeUntilNextClass() {
@@ -72,10 +112,9 @@ public class CurrentClassPane extends JPanel
       return null;
    }
    
-
    public void update() {
-      southPane.update();
-      northPane.update();
+      list.autoSetSelection();
+      info.repaintText();
       revalidate();
    }
    
@@ -87,26 +126,24 @@ public class CurrentClassPane extends JPanel
    }
    public void pushCurrentTime(Time t) {
       setCurrentTime(t);
-      northPane.pushCurrentTime(t);
+      update();
    }
    public void pushClassPeriod(ClassPeriod c) {
       if (debug) System.out.println(getName() + " pushed " +c);
       setClassPeriod(c);
       checkInSchool();
-      northPane.pushClassPeriod(c);
-      southPane.pushClassPeriod(c);
+      info.pushClassPeriod(c);
+      list.setSelectedValue(classPeriod, true);
          
    }
    
    public void pushCurrentSlot(int slot) {
-      setClassPeriod(sched.get(slot));
+      pushClassPeriod(sched.get(slot));
       checkInSchool();
-      northPane.pushCurrentSlot(slot);
-      southPane.pushCurrentSlot(slot);
    }
    public void pushTodaySchedule(Schedule s) {
       setSched(s);
-      southPane.pushTodaySchedule(s);
+      list.setSchedule(s);
    }   
    
    public boolean isInSchool() {
@@ -127,16 +164,13 @@ public class CurrentClassPane extends JPanel
    public void setClassPeriod(ClassPeriod classPeriod) {
       this.classPeriod = classPeriod;
    }
-   public ClassInfoPane getInfo() {
+   public CurrentInfo getInfo() {
       return info;
    }
-   public NorthernCurrentClassPane getNorthPane() {
-      return northPane;
-   }
-   public JPanel getParentPane() {
+   public DisplayMain getParentPane() {
       return parentPane;
    }
-   public void setParentPane(JPanel parent) {
+   public void setParentPane(DisplayMain parent) {
       this.parentPane = parent;
    }
    public Time getCurrentTime() {
@@ -144,5 +178,8 @@ public class CurrentClassPane extends JPanel
    }
    public void setCurrentTime(Time currentTime) {
       this.currentTime = currentTime;
+   }
+   public int getCurrentSlot() {
+      return classPeriod.getSlot();
    }
 }

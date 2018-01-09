@@ -1,15 +1,21 @@
 package tools;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 
 import constants.Rotation;
 import display.DisplayMain;
+import input.GPAInput;
+import input.InputManager;
+import managers.PanelManager;
 import managers.UIHandler;
 
 //Thomas Varano
@@ -20,12 +26,14 @@ public class ToolBar extends JToolBar implements ActionListener
 {
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
-   private boolean inputting, delayed, half;
+   private boolean delayed, half;
+   private Rotation rotation;
+   private int parentType;
    private JPanel parentPanel;
 
-   public ToolBar(boolean inputting, JPanel parentPanel) {
+   public ToolBar(int parentType, JPanel parentPanel) {
       setParentPanel(parentPanel);
-      create(inputting);
+      setParentType(parentType);
       setBorderPainted(false);
       setName("ToolBar");
       setBackground(UIHandler.tertiary);
@@ -34,11 +42,27 @@ public class ToolBar extends JToolBar implements ActionListener
       setMargin(new Insets(7,5,0,0));
    }
    
-   private ToolBar create(boolean inputting) {
+   private ToolBar create(int type) {
       setBackground(UIHandler.background);
-      if (inputting)
-         return createToolBarInput();
+      if (type == PanelManager.INPUT)
+         return createToolBarDataIn();
+      else if (type == PanelManager.GPA)
+         return createToolBarGPA();
       return createToolBarDisplay();
+   }
+   
+   public void repaint() {
+      if (parentType == PanelManager.DISPLAY) {
+         DisplayMain dm = (DisplayMain)parentPanel;
+         if (dm != null && dm.getTodayR() != null) {
+            setHalf(dm.getTodayR().isHalf());
+            setDelayed(dm.getTodayR().isDelay());
+         }
+      }
+      for (Component c : getComponents()) {
+         c.repaint();
+      }
+      super.repaint();
    }
    
    private ToolBar createToolBarDisplay() {
@@ -56,7 +80,7 @@ public class ToolBar extends JToolBar implements ActionListener
       b = new InstanceButton(InstanceButton.HALF);
       b.setParentBar(this);
       add(b);
-      JButton input = new JButton("Input Schedule");
+      JButton input = new JButton("View GPA");
       input.setForeground(UIHandler.foreground);
       input.setFocusable(false);
       input.setBorderPainted(false);
@@ -64,35 +88,94 @@ public class ToolBar extends JToolBar implements ActionListener
       input.setOpaque(false);
       input.setFont(UIHandler.getButtonFont());
       input.addMouseListener(UIHandler.buttonPaintListener(input));
-      input.addActionListener(((DisplayMain) parentPanel).changeView());
+      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.GPA));
       add(input);
+      setHighlights();
       return this;
    }
    
-   //make a button for adding a class
-   private ToolBar createToolBarInput() {
+   private ToolBar createToolBarGPA() {
       removeAll();
-      add(new AddButton(0, parentPanel));
-      add(new AddButton(8, parentPanel));
-      //TODO remove sizeCheck
-//      JButton add = (JButton) add(new JButton("sizeCheck"));
-//      add.addActionListener(new ActionListener() {
-//         @Override
-//         public void actionPerformed(ActionEvent e) {
-//            System.out.println(parentPanel.getWidth()+","+parentPanel.getHeight());
-//         }
-//         
-//      });
-//      this.setAlignmentX(JToolBar.LEFT_ALIGNMENT);
+      
+      JButton b = (JButton) add(new JButton("Go Home"));
+      b.setForeground(UIHandler.foreground);
+      b.setFocusable(false);
+      b.setBorderPainted(false);
+      b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      b.setOpaque(false);
+      b.setFont(UIHandler.getButtonFont());
+      b.addActionListener(((GPAInput) parentPanel).changeView(PanelManager.DISPLAY));
+      b.addMouseListener(UIHandler.buttonPaintListener(b));
+      
+      b = (JButton) add(new JButton("Input Schedule"));
+      b.setForeground(UIHandler.foreground);
+      b.setFocusable(false);
+      b.setBorderPainted(false);
+      b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+      b.setOpaque(false);
+      b.setFont(UIHandler.getButtonFont());
+      b.addActionListener(((GPAInput) parentPanel).changeView(PanelManager.INPUT));
+      b.addMouseListener(UIHandler.buttonPaintListener(b));
+      
+      ButtonGroup bg = new ButtonGroup();
+      JRadioButton rb = new JRadioButton("Use Numbers");
+      bg.add(rb);
+      rb.setFont(UIHandler.getButtonFont());
+      rb.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            ((GPAInput) parentPanel).setMethod(true);
+         }
+      });
+      add(rb);
+      rb = new JRadioButton("Use Letter");
+      bg.add(rb);
+      rb.setFont(UIHandler.getButtonFont());
+      rb.setSelected(true);
+      rb.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            ((GPAInput) parentPanel).setMethod(false);
+         }
+      });
+      add(rb);
+      
+      add(new AddButton(-1, (InputManager)parentPanel));
       return this;
    }
 
-   public boolean isInputting() {
-      return inputting;
+   
+   //make a button for adding a class
+   private ToolBar createToolBarDataIn() {
+      removeAll();
+      add(new AddButton(0, (InputManager)parentPanel));
+      add(new AddButton(8, (InputManager)parentPanel));
+      return this;
    }
-   public void setInputting(boolean inputting) {
-      this.inputting = inputting;
-      create(inputting);
+
+   public void setHighlights() {
+      for (Component c : getComponents()) {
+         if (c instanceof RotationButton) {
+            RotationButton r = (RotationButton) c;
+            r.setHighlight(r.equals(rotation));
+         }
+      }
+   }
+   
+   public void setBevels() {
+      for (Component c : getComponents()) {
+         if (c instanceof InstanceButton) {
+            ((InstanceButton) c).repaint();
+         }
+      }
+   }
+   
+   public int getParentType() {
+      return parentType;
+   }
+   public void setParentType(int parentType) {
+      this.parentType = parentType;
+      create(parentType);
    }
    public boolean isDelayed() {
       return delayed;
@@ -111,6 +194,22 @@ public class ToolBar extends JToolBar implements ActionListener
    }
    public void setParentPanel(JPanel parentPanel) {
       this.parentPanel = parentPanel;
+   }
+
+   public Rotation getRotation() {
+      return rotation;
+   }
+   
+   private void setState() {
+      setHalf(rotation.isHalf());
+      setDelayed(rotation.isDelay());
+   }
+    
+   public void setRotation(Rotation r) {
+      this.rotation = r;
+      setState();
+      setHighlights();
+      setBevels();
    }
 
    @Override

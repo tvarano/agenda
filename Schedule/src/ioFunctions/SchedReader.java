@@ -49,17 +49,20 @@ public class SchedReader {
       try {
          reader.close();
       } catch (IOException e) {
-         e.printStackTrace();
+         ErrorID.showError(e, true);
       }
       close();
       ret = formatSchedule(ret);
       if (Agenda.statusU) Agenda.log(ret.getName()+" read");
+      if (debug) System.out.println("READ 57 SCHED READ gpa " + ret.getGpaClasses().toString());
       return ret;
    }
    
    public Schedule formatSchedule(Schedule in) {
       Schedule retval = assignLabClassRooms(setTimes(checkSpecialPeriods(in)));
       retval.init();
+      for (ClassPeriod c : retval.getClasses())
+         c.calculateDuration();
       return retval;
    }
    
@@ -89,13 +92,20 @@ public class SchedReader {
    
    private Schedule checkSpecialPeriods(Schedule in) {
       for (ClassPeriod c : in.getClasses()) {
-         if (c.getSlot() == 0)
-            c.setTimeTemplate(RotationConstants.PERIOD_ZERO);
-         else if (c.getSlot() == 8)
-            c.setTimeTemplate(RotationConstants.PERIOD_EIGHT);
-         else if (c.getSlot() == RotationConstants.PASCACK)
-            c.setTimeTemplate(RotationConstants.PASCACK_PERIOD);
-         else if (c.getSlot() == RotationConstants.LUNCH)
+         int s = c.getSlot();
+         if (s == 0)
+            c.setTimeTemplate(RotationConstants.getPeriodZero());
+         else if (s == 8)
+            c.setTimeTemplate(RotationConstants.getPeriodEight());
+         else if (RotationConstants.isPascack(c)) {
+            c.setData(in.getPascackPreferences());
+            if (s == RotationConstants.PASCACK)
+               c.setTimeTemplate(RotationConstants.getPascack());
+            else if (s == RotationConstants.PASCACK_STUDY_1)
+               c.setName(RotationConstants.getPascackStudyOne().getName());
+            else 
+               c.setName(RotationConstants.getPascackStudyOne().getName());
+         } else if (s == RotationConstants.LUNCH)
             c.setName("Lunch");
       }
       return in;
@@ -137,18 +147,27 @@ public class SchedReader {
       w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
    }
    
+   protected void finalize() {
+      try {
+         reader.close();
+      } catch (IOException e) {
+         Agenda.log("error in schedReader finalization");
+      }
+   }
+   
    public static void transfer(String localPath, File f) {
       if (Agenda.statusU) Agenda.log("transferring readme");
       try {
-         f.createNewFile();
-         Scanner in = new Scanner(ResourceAccess.getResource(localPath));
-         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-         while (in.hasNextLine()) {
-            bw.write(in.nextLine()+"\r\n");
+         if (f.createNewFile()) {
+            Scanner in = new Scanner(ResourceAccess.getResourceStream(localPath));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            while (in.hasNextLine()) {
+               bw.write(in.nextLine()+"\r\n");
+            }
+            f.setWritable(false);
+            in.close();
+            bw.close();
          }
-         f.setWritable(false);
-         in.close();
-         bw.close();
       } catch (IOException | NullPointerException e) {
          ErrorID.showError(e, true);
       }
