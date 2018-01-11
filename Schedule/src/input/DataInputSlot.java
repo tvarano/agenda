@@ -53,8 +53,10 @@ public class DataInputSlot extends JPanel implements ActionListener
       debug = false;
       dataHolder = c.clone();
       setFont(UIHandler.getInputLabelFont());
-      setBackground(UIHandler.background);
-      setForeground(UIHandler.foreground);
+      if (parentPanel != null) {
+         setBackground(UIHandler.background);
+         setForeground(UIHandler.foreground);
+      }
       setName(c.getSlot() + "input slot");
       setSlotNumber(c.getSlot());
       hasLab = false; 

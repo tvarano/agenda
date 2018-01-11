@@ -100,6 +100,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       removeAll();
       debug = false;
       center = new JPanel();
+      center.setBackground(UIHandler.background);
       center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
       center.add(averageDisplay());
       setLayout(new BorderLayout());
@@ -204,9 +205,11 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    
    private JPanel averageDisplay() {
       JPanel p = new JPanel();
+      p.setBackground(UIHandler.background);
       ((FlowLayout) p.getLayout()).setAlignment(FlowLayout.RIGHT);
       
       dispLabel = new JLabel(labelPrefix);
+      dispLabel.setForeground(UIHandler.foreground);
       final int gap = 5;
       dispLabel.setFont(UIHandler.getInputLabelFont());
       dispLabel.setBorder(BorderFactory.createEmptyBorder(gap,0,0,gap));

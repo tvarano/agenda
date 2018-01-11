@@ -119,6 +119,7 @@ public class ToolBar extends JToolBar implements ActionListener
       
       ButtonGroup bg = new ButtonGroup();
       JRadioButton rb = new JRadioButton("Use Numbers");
+      rb.setForeground(UIHandler.foreground);
       bg.add(rb);
       rb.setFont(UIHandler.getButtonFont());
       rb.addActionListener(new ActionListener() {
@@ -129,6 +130,7 @@ public class ToolBar extends JToolBar implements ActionListener
       });
       add(rb);
       rb = new JRadioButton("Use Letter");
+      rb.setForeground(UIHandler.foreground);
       bg.add(rb);
       rb.setFont(UIHandler.getButtonFont());
       rb.setSelected(true);

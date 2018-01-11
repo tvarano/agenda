@@ -34,6 +34,7 @@ public class GPAInputSlot extends JPanel
       super();
       this.cp = in;
       setParentPanel(parentPanel);
+      setBackground(UIHandler.background);
       setFont(UIHandler.getInputLabelFont());
       init();
    }
@@ -62,6 +63,7 @@ public class GPAInputSlot extends JPanel
       nameField.setToolTipText(cp.getName());
       add(nameField);
       JLabel l = new JLabel("Grade: ");                                             //prompts the grade of the class
+      l.setForeground(UIHandler.foreground);
       l.setFont(UIHandler.getButtonFont());
       add(l);
       honors = cp.isHonors();
@@ -80,6 +82,7 @@ public class GPAInputSlot extends JPanel
          add(chooser);
       }
       JCheckBox hon = new JCheckBox("Honors/AP");                                   //checkbox for honors / ap credit
+      hon.setForeground(UIHandler.foreground);
       hon.setFont(UIHandler.getButtonFont());
       hon.setSelected(honors);
       hon.addActionListener(new ActionListener() {

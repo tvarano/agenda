@@ -115,13 +115,12 @@ public final class UIHandler {
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("List.selectionForeground", foreground);
 	   UIManager.put("List.foreground", foreground);
-	   UIManager.put("List.disabledText", Color.red);
       UIManager.put("TabbedPane.selected", quaternary);
       UIManager.put("TabbedPane.selectHighlight", quaternary);
       UIManager.put("TabbedPane.foreground", foreground);
       UIManager.put("TabbedPane.insets", secondary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
-	   UIManager.put("ToolTip.background", background);
+	   UIManager.put("ToolTip.background", background.brighter());
 	   UIManager.put("ToolTip.foreground", foreground);
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
@@ -351,7 +350,7 @@ public final class UIHandler {
                      + "Viktor Nakev : Icon Designer\n"
                      + "Matthew Gheduzzi : Alpha Tester\n"
                      + "Michael Ruberto : Conceptual Designer",
-                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
             }
          });
          
