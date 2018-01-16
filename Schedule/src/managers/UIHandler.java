@@ -128,7 +128,13 @@ public final class UIHandler {
 	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getImage("WarningIcon.png"));
 	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getImage("InfoIcon.png"));
 	   UIManager.put("OptionPane.questionIcon", ResourceAccess.getImage("QuestionIcon.png"));
-	}
+	   
+	   final int divThickness = 4;
+	   UIManager.put("SplitPane.background", background);
+      UIManager.put("SplitPaneDivider.border", BorderFactory.createLineBorder(titleBorderColor, divThickness));
+      UIManager.put("SplitPaneDivider.draggingColor", titleBorderColor.darker());
+      UIManager.put("SplitPane.dividerSize", divThickness);
+	   }
 	
 	
 	private static class ThemeChooser extends MenuItem {
