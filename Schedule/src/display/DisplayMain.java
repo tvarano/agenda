@@ -1,6 +1,5 @@
 package display;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +10,6 @@ import java.time.LocalTime;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.Timer;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
 
 import constants.ErrorID;
 import constants.Lab;
