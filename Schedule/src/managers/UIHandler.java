@@ -67,6 +67,9 @@ public final class UIHandler {
 	public static final Font font = new Font("Futura", Font.PLAIN, 16);;
 	private static boolean debug;
 	
+	/**
+	 * must be done for any other use of this class. initializes all variables
+	 */
 	public static void init() { 
 	   debug = false;
 	   setLAF();
@@ -80,9 +83,9 @@ public final class UIHandler {
          
          @Override
          protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
             System.out.println("CALLED PAINT");
             setBackground(Color.BLUE);
-            super.paintComponent(g);
          }
          public Dimension getMinimumSize() {
             return new Dimension(Agenda.MIN_W,Agenda.MIN_H);

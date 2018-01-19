@@ -46,6 +46,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Schedule mainSched, todaySched;
    private Rotation todayR;
    private DayOfWeek today;
+   private LocalDate lastRead;
    private WebReader web;
    private Time currentTime;
    private CurrentClassPane currentClassPane;
@@ -84,11 +85,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
             currentTime = new Time(9,20);
             today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today); 
-            
+            lastRead = LocalDate.now();
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
             todayR = web.readTodayRotation();
+            lastRead = LocalDate.now();
          }
       } catch (Throwable e) { 
          e.printStackTrace();
@@ -121,8 +123,6 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, currentClassPane, infoSelector);
       
       add(sp, BorderLayout.CENTER);
-//      add(infoSelector, BorderLayout.SOUTH);
-//      add(currentClassPane, BorderLayout.CENTER);
    }
    
    public void hardStop() {
@@ -188,17 +188,19 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now());
-      if (currentTime.getHour24() == 0 && currentTime.getMinute() < 2)
-            checkAndUpdateDate();
+      checkAndUpdateDate();
       checkInSchool();
       findCurrentClass();
       currentClassPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
-      today = LocalDate.now().getDayOfWeek();
-      web.init();
-      setTodayR(web.readTodayRotation());
+      if (!LocalDate.now().equals(lastRead)) {
+         lastRead = LocalDate.now();
+         today = LocalDate.now().getDayOfWeek();
+         web.init();
+         setTodayR(web.readTodayRotation());
+      }
    }
    
    public void pushTodaySchedule() {

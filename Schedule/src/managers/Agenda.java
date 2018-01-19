@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.MenuBar;
 import java.awt.RenderingHints;
 import java.awt.desktop.QuitEvent;
@@ -32,6 +33,7 @@ import javax.swing.UIManager;
 
 import constants.ErrorID;
 import ioFunctions.SchedReader;
+import resources.ResourceAccess;
 
 //Thomas Varano
 //Main class
@@ -89,7 +91,7 @@ public class Agenda extends JPanel
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
-   public static synchronized void initialFileWork() {
+   public static void initialFileWork() {
       long start = System.currentTimeMillis();
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
@@ -255,23 +257,32 @@ public class Agenda extends JPanel
       JFrame frame = new JFrame("LOADING....");
       int frameToPaneAdjustment = 22;
       
+      
       // loading screen, frame adjustments
       EventQueue.invokeLater(new Runnable() {
          public void run() {
             JPanel p = new JPanel() {
                private static final long serialVersionUID = 1L;
+               int dots = 3;
                
                @Override 
                public void paintComponent(Graphics g) {
+                  super.paintComponent(g);
                   Graphics2D g2 = (Graphics2D) g;
                   g2.addRenderingHints(new RenderingHints(
                         RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+                  g2.drawImage((Image) ResourceAccess.getImage("loading.gif").getImage(), 0, 0, 100, 100, null);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
-                  g2.drawString("LOADING...", 260, 150);
+                  String s = "LOADING";
+                  System.out.println("woring");
+                  for (int i = 0; i < dots; i++)
+                     s += ".";
+                  g2.drawString(s, 260, 150);
+                  dots++;
                   if (statusU) log("Drawing strings took " + (System.currentTimeMillis() - start));
                }
             };
-            frame.getContentPane().add(p);
+            frame.add(p);
             frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.pack();
@@ -285,13 +296,13 @@ public class Agenda extends JPanel
          @Override
          public void run() {
             Agenda main = new Agenda(frame);
+            frame.getContentPane().getComponent(0).repaint();
             frame.setTitle(APP_NAME + " " + BUILD);
             frame.getContentPane().remove(0);
             frame.getContentPane().add(main);
             frame.pack();
             frame.setLocationRelativeTo(null);
-            if (statusU)
-               log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+            if (statusU) log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
          }
       });
    }
@@ -421,7 +432,7 @@ public class Agenda extends JPanel
    }
 
    public static void main(String[] args) {
-      statusU = false;
+      statusU = true;
       if (statusU) log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

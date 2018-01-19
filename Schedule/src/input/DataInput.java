@@ -343,6 +343,14 @@ public class DataInput extends JPanel implements InputManager, PanelView
    public void setLunch(ClassPeriod lunch) {
       this.lunch = lunch;
    }
+   
+   public boolean isSaved() {
+      return saved;
+   }
+   
+   public void setSaved(boolean saved) {
+      this.saved = saved;
+   }
 
    @Override
    public void refresh() {

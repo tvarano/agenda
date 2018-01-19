@@ -5,6 +5,8 @@
 package input;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -64,7 +66,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    private static final long serialVersionUID = 1L;
    private Schedule sched;
    private JPanel center;
-   private boolean hasZero;
+   private boolean hasZero, saved;
    private ArrayList<GPAInputSlot> slots;
    private PanelManager manager;
    private JLabel dispLabel;
@@ -288,6 +290,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       for (GPAInputSlot s : slots) {
          s.save();
       }
+      saved = true;
       if (manager != null)
          manager.saveSchedule(sched, getClass());
       if (Agenda.statusU) Agenda.log("gpa successfully saved");
@@ -375,6 +378,19 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    @Override
    public void close() {
       save();
+   }
+   
+   public boolean isSaved() {
+      return saved;
+   }
+   
+   public void setSaved(boolean saved) {
+      this.saved = saved;
+      setBackground((saved) ? Color.GREEN : Color.RED);
+      for (Component c : getComponents()) {
+         c.setBackground(getBackground());
+      }
+      repaint();
    }
    
    @Override

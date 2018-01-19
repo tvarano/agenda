@@ -24,4 +24,6 @@ public interface InputManager
    void save();
    
    void closeToDisp();
+   
+   boolean isSaved();
 }
