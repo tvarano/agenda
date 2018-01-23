@@ -362,7 +362,6 @@ public final class UIHandler {
                      "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
             }
          });
-         
          Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {
             @Override
             public void handlePreferences(PreferencesEvent arg0) {

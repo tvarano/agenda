@@ -13,6 +13,10 @@ import java.awt.RenderingHints;
 import java.awt.desktop.QuitEvent;
 import java.awt.desktop.QuitHandler;
 import java.awt.desktop.QuitResponse;
+import java.awt.desktop.ScreenSleepEvent;
+import java.awt.desktop.ScreenSleepListener;
+import java.awt.desktop.SystemSleepEvent;
+import java.awt.desktop.SystemSleepListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -76,7 +80,7 @@ public class Agenda extends JPanel
             System.exit(0);
          }
       });
-      if (Desktop.isDesktopSupported())
+      if (Desktop.isDesktopSupported()) {
          Desktop.getDesktop().setQuitHandler(new QuitHandler() {
             @Override
             public void handleQuitRequestWith(QuitEvent arg0,
@@ -86,6 +90,29 @@ public class Agenda extends JPanel
                arg1.performQuit();
             }
          });
+         Desktop.getDesktop().addAppEventListener(new SystemSleepListener() {
+            @Override
+            public void systemAboutToSleep(SystemSleepEvent arg0) {
+               manager.getDisplay().hardStop();;
+            }
+            @Override
+            public void systemAwoke(SystemSleepEvent arg0) {
+               manager.getDisplay().hardResume();
+               manager.getDisplay().checkAndUpdateTime();
+               manager.getDisplay().checkAndUpdateDate();
+            }
+         });
+         Desktop.getDesktop().addAppEventListener(new ScreenSleepListener() {
+            @Override
+            public void screenAboutToSleep(ScreenSleepEvent arg0) {
+               manager.getDisplay().stop();
+            }
+            @Override
+            public void screenAwoke(ScreenSleepEvent arg0) {
+               manager.getDisplay().resume();
+            }
+         });
+      }
    }
    
    /**
