@@ -126,7 +126,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = false;
+      boolean logData = true;
 
       FileHandler.ensureFileRoute();
 
@@ -140,7 +140,7 @@ public class Agenda extends JPanel
             PrintStream logStream = new PrintStream(log);
             System.setOut(logStream);
             System.setErr(logStream);
-            log ("log set");
+            log ("streams set to "+FileHandler.LOG_ROUTE);
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }

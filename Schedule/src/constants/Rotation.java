@@ -206,7 +206,8 @@ public enum Rotation
       return dayType;
    }
    public boolean isDelay() {
-      return dayType.equals(DayType.DELAYED_OPEN) || dayType.equals(DayType.DELAY_EVEN) || dayType.equals(DayType.DELAY_ODD);
+      return dayType.equals(DayType.DELAYED_OPEN) || dayType.equals(DayType.DELAY_EVEN) 
+            || dayType.equals(DayType.DELAY_ODD) || dayType.equals(DayType.DELAY_ARR);
    }
    public boolean isHalf() {
       return dayType.equals(DayType.HALF_DAY);
@@ -215,6 +216,6 @@ public enum Rotation
       return dayType.equals(DayType.TEST_DAY);
    }
    public boolean isOther() {
-      return !(dayType.equals(DayType.NORMAL) || isDelay() || isHalf());
+      return !(dayType.equals(DayType.NORMAL) || isDelay() || isHalf() || isTestDay());
    }
 }

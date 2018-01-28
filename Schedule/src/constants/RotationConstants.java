@@ -59,7 +59,7 @@ public final class RotationConstants
    }
    
    public static boolean isZeroFriendly(Rotation r) {
-      return !(r.isDelay() || r.getDayType().equals(DayType.TEST_DAY));
+      return !(r.isDelay() || r.isTestDay());
    }
    
    public static boolean isEightFriendly(Rotation r) {
@@ -163,7 +163,7 @@ public final class RotationConstants
    
    public static Rotation toNormal(Rotation r) {
       switch (r) {
-         case HALF_R1 : case DELAY_R1 : return Rotation.R1;
+         case HALF_R1 : case DELAY_R1 : case DELAY_ARRIVAL : return Rotation.R1;
          case HALF_R3 : case DELAY_R3 : return Rotation.R3;
          case HALF_R4 : case DELAY_R4 : return Rotation.R4;
          case DELAY_ODD : return Rotation.ODD_BLOCK;
