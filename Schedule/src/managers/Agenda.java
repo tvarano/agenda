@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
+import information.Addresses;
 import ioFunctions.SchedReader;
 import resources.ResourceAccess;
 
@@ -52,7 +53,6 @@ public class Agenda extends JPanel
    public static final String BUILD = "v1.7.1 (Beta)";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
-   public static final String CONTACT_EMAIL = "varanoth@pascack.org";
    private PanelManager manager;
    private JFrame parentFrame;
    private MenuBar bar;
@@ -178,14 +178,13 @@ public class Agenda extends JPanel
       }
       
       public static boolean ensureFileRoute() {
-         return new File(System.getProperty("user.home") + "/Applications/Agenda/")
+         return new File(Addresses.AGENDA_HOME)
                .mkdirs();
       }
 
       public static void initAndCreateFiles() {
          // read file and set/
-         String mainFolder = System.getProperty("user.home") + "/Applications/Agenda/"; 
-         initFileNames(mainFolder);
+         initFileNames(Addresses.AGENDA_HOME);
          
          //if you need, create your folder and initialize routes
          createFiles();
@@ -202,7 +201,8 @@ public class Agenda extends JPanel
       }
       
       public static void sendEmail() {
-         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+CONTACT_EMAIL, 
+         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+ 
+               Addresses.CONTACT_EMAIL, 
                Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
                new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
          if (choice == 2 || choice == -1) 
@@ -211,7 +211,7 @@ public class Agenda extends JPanel
             if (Desktop.isDesktopSupported()) {
                try {
                   if (choice == 0)
-                     Desktop.getDesktop().mail(new URI("mailto:"+CONTACT_EMAIL+"?subject=Agenda%20Contact"));
+                     Desktop.getDesktop().mail(new URI("mailto:"+Addresses.CONTACT_EMAIL+"?subject=Agenda%20Contact"));
                   else
                      Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
                } catch (IOException | URISyntaxException e1) {
@@ -266,7 +266,6 @@ public class Agenda extends JPanel
    }
    
    public static void log(String text) {
-      //FIXME internal update recognition
       if (statusU)
          System.out.println(LocalTime.now() + " : "+text);
    }
@@ -305,7 +304,6 @@ public class Agenda extends JPanel
                   g2.drawImage((Image) ResourceAccess.getImage("loading.gif").getImage(), 0, 0, 100, 100, null);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
                   String s = "LOADING";
-                  System.out.println("woring");
                   for (int i = 0; i < dots; i++)
                      s += ".";
                   g2.drawString(s, 260, 150);

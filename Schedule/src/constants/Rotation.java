@@ -38,7 +38,7 @@ public enum Rotation
    TEST_ONE(DayType.TEST_DAY),
    TEST_TWO(DayType.TEST_DAY),
    TEST_THREE(DayType.TEST_DAY),
-   ;
+   DELAY_ARRIVAL(DayType.DELAY_ARR);
       
    private final int lunchSlot;
    private final ClassPeriod[] times;
@@ -48,7 +48,8 @@ public enum Rotation
    private final static boolean debug = false;
    
    private Rotation(DayType dt) {
-         this.times = getSchedule(ordinal()+1); this.labSwitch = dt.getLabSwitch(); this.dayType = dt;
+         this.dayType = dt;
+         this.times = getSchedule(ordinal()+1); this.labSwitch = dt.getLabSwitch();
          this.index = ordinal()+1; lunchSlot = calcLunchSlot(); 
          if (debug) System.out.println("rotation "+index+" created");
    }
@@ -100,6 +101,8 @@ public enum Rotation
             return new int[] {2, 4, RotationConstants.LUNCH, RotationConstants.PASCACK_STUDY_1, 6};
          case RotationConstants.TEST_THREE : 
             return new int[] {3, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 7, RotationConstants.PASCACK_STUDY_2};
+         case RotationConstants.DELAY_ARR : 
+            return new int[] {6, lunch, 2, 4};
          default :
             return new int[0];
       }
@@ -128,6 +131,8 @@ public enum Rotation
             return DayType.NO_SCHOOL;
          case RotationConstants.TEST_ONE : case RotationConstants.TEST_TWO : case RotationConstants.TEST_THREE :
             return DayType.TEST_DAY;
+         case RotationConstants.DELAY_ARR :
+            return DayType.DELAY_ARR;
       }
       return null;
    }
@@ -151,8 +156,9 @@ public enum Rotation
             name = "Pascack Period";
          else if (slots[i] == RotationConstants.PASCACK_STUDY_1)
             name = RotationConstants.pascack_1_name;
-         else if (slots[i] == RotationConstants.PASCACK_STUDY_2)
+         else if (slots[i] == RotationConstants.PASCACK_STUDY_2) {
             name = RotationConstants.pascack_2_name;
+         }
          else 
             name = "Period " + slots[i];
          retval[i].setName(name); retval[i].setStartTime(
@@ -204,6 +210,9 @@ public enum Rotation
    }
    public boolean isHalf() {
       return dayType.equals(DayType.HALF_DAY);
+   }
+   public boolean isTestDay() {
+      return dayType.equals(DayType.TEST_DAY);
    }
    public boolean isOther() {
       return !(dayType.equals(DayType.NORMAL) || isDelay() || isHalf());

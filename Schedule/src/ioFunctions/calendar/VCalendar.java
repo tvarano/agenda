@@ -17,7 +17,7 @@ public class VCalendar {
    }
    
    public static VCalendar build(ArrayList<VEvent> events) {
-      return new VCalendar();
+      return new VCalendar(events);
    }
    
    public ArrayList<VEvent> events() {
@@ -35,8 +35,4 @@ public class VCalendar {
    public String eventsString() {
       return getClass().getName() + "["+events.toString() + "]";
    }
-   
-//   public String toString() {
-//      return getClass().getName();
-//   }
 }

@@ -23,9 +23,13 @@ public class VEvent {
    }
    
    public static LocalDate translateDate(String dateString) {
-      return LocalDate.of(Integer.parseInt(dateString.substring(0,4)), 
+      return LocalDate.of(getYear(dateString), 
             Integer.parseInt(dateString.substring(4,6)), 
             Integer.parseInt(dateString.substring(6,8)));
+   }
+   
+   public static int getYear(String dateString) {
+      return Integer.parseInt(dateString.substring(0,4));
    }
    
    //TODO should it include end?
@@ -56,5 +60,8 @@ public class VEvent {
    }
    public void setDetail(String detail) {
       this.detail = detail;
+   }
+   public String toString() {
+      return getClass().getName() + "[" + summary  + ", (" + start + " - "+end + ")]";
    }
 }

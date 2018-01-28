@@ -41,7 +41,10 @@ public enum DayType
    ),
    NO_SCHOOL(new Time[] {new Time(0,0)}, new Time[] {new Time(23,59)}),
    TEST_DAY(new Time[] {new Time(8,0), new Time(9,29), new Time(11,01), new Time(11,57), new Time(13,26)}, 
-         new Time[] {new Time(9,25), new Time(10,57), new Time(11,53), new Time(13,22), new Time(2,51)});
+         new Time[] {new Time(9,25), new Time(10,57), new Time(11,53), new Time(13,22), new Time(2,51)}),
+   DELAY_ARR(new Time[] {new Time(10,00), new Time(11,22), new Time(12,13), new Time(13,35)}, 
+         new Time[] {new Time(11,18), new Time(12,9), new Time(13,31), new Time(14,53)}),
+   ;
    
    private final Time[] startTimes, endTimes;
    private final Time labSwitch;

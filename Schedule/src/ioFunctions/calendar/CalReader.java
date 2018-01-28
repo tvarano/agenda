@@ -34,10 +34,11 @@ public class CalReader {
    }
    
    public void init() {
-      debug = true;
+      debug = false;
+      long start = System.currentTimeMillis();
       try {
-         rotationDataSite = new URL("https://calendar.google.com/calendar/ical/8368c5a91jog3s32oc6k22f4e8%40group.calendar.google.com/public/basic.ics");
-         urlClear = false;
+         rotationDataSite = new URL(information.Addresses.ICS_URL);
+         urlClear = true;
       } catch (MalformedURLException e) {
          urlClear = false;
          Agenda.logError("error with .ics url", e);
@@ -50,39 +51,35 @@ public class CalReader {
             calClear = false;
             Agenda.logError("exception in cal reading", e);
          }
-      }
+      } else
+         calClear = false;
+      if (debug) System.out.println("calendar import and format took " + (System.currentTimeMillis() - start));
    }
-   
-   /*
+
    public Rotation readTodayRotation() {
-      if (events != null && dates != null) {
-         Integer[] indexes = getTodayDateStringIndexes();
-         if (indexes.length == 0)
-            return Rotation.getRotation(LocalDate.now().getDayOfWeek());
-         for (Integer i : indexes) {
-            String e = events.get(i);
-            if (RotationConstants.getRotation(e) != null) {
-               Agenda.log("ROTATION: "+e + " read from internet");
-               return RotationConstants.getRotation(events.get(i));
+      if (calClear) {
+         for (VEvent e : cal.eventsToday()) {
+            String s = e.getSummary();
+            if (RotationConstants.getRotation(s) != null) {
+               Agenda.log("ROTATION: " + s + " read from internet");
+               return RotationConstants.getRotation(s);
             }
-            if (e.contains("No School"))
+            if (s.contains("No School"))
                return Rotation.NO_SCHOOL;
-            if (e.contains("Half Day")) {
-               Agenda.log("ROTATION: half " + e + " read from internet");
-               return RotationConstants.toHalf(
-                     RotationConstants.getRotation(e.substring(0, e.indexOf('(')-1)));
+            if (s.contains("Half Day")) {
+               Agenda.log("ROTATION: half " + s + " read from internet");
+               return RotationConstants.toHalf(RotationConstants
+                     .getRotation(s.substring(0, s.indexOf('(') - 1)));
             }
-            if (e.contains("Delayed Open")) {
-               Agenda.log("ROTATION: delayed "+e + " read from internet");
-               return RotationConstants.toDelay(
-                     RotationConstants.getRotation(e.substring(0, e.indexOf('(')-1)));
+            if (s.contains("Delayed Open")) {
+               Agenda.log("ROTATION: delayed " + s + " read from internet");
+               return RotationConstants.toDelay(RotationConstants
+                     .getRotation(s.substring(0, s.indexOf('(') - 1)));
             }
          }
       }
-      Agenda.log("ROTATION: read from day, not internet");
       return Rotation.getRotation(LocalDate.now().getDayOfWeek());
    }
-   */
    
    public VCalendar readAndExtractEvents() throws ExecutionException, TimeoutException, InterruptedException {
       return extractEvents(retrieveRfc());
@@ -94,33 +91,47 @@ public class CalReader {
    public static final String END = "END:VEVENT";
    
    public static final String DTSTAMP_PREFIX = "DTSTAMP:";
+   public static final String DTSTART_PREFIX = "DTSTART;VALUE=DATE:";
+   public static final String DTEND_PREFIX = "DTEND;VALUE=DATE:";
    
    public static final String SUMMARY_PREFIX = "SUMMARY:";
    
    public VCalendar extractEvents(String rfc) {
+      long start = System.currentTimeMillis();
+      if (debug) System.out.println("begin extract");
       Scanner s = new Scanner(rfc);
       ArrayList<VEvent> events = new ArrayList<VEvent>();
       while (s.hasNextLine()) {
          String line = s.nextLine();
          if (line.equals(BEGIN)) {
+            if (debug) System.out.println("begin event");
             events.add(new VEvent());
             continue;
-         } else if (line.contains(DTSTAMP_PREFIX)) {
-            events.get(events.size() - 1).setStart(VEvent.translateDate(line.substring(DTSTAMP_PREFIX.length()-1)));
-            events.get(events.size() - 1).setEnd(events.get(events.size() - 1).getStart().plusDays(1));
+         } else if (line.contains(DTSTART_PREFIX)) {
+            if (VEvent.getYear(line.substring(DTSTART_PREFIX.length())) != LocalDate.now().getYear())
+               events.remove(events.size() - 1);
+            if (debug) System.out.println("dtStart");            
+            events.get(events.size() - 1).setStart(VEvent.translateDate(line.substring(DTSTART_PREFIX.length())));
+            continue;
+         } else if (line.contains(DTEND_PREFIX)) {
+            if (debug) System.out.println("dtEnd");            
+            events.get(events.size() - 1).setEnd(VEvent.translateDate(line.substring(DTEND_PREFIX.length())));
             continue;
          } else if (line.contains(SUMMARY_PREFIX)) {
-            events.get(events.size() - 1).setSummary(line.substring(SUMMARY_PREFIX.length()-1));
+            if (debug) System.out.println("summary");            
+            events.get(events.size() - 1).setSummary(line.substring(SUMMARY_PREFIX.length()));
          }
       }
       s.close();
+      Agenda.log("calendar format took "+(System.currentTimeMillis() - start));
       return VCalendar.build(events);
    }
    
-   private static final long MILLIS_TO_WAIT = 4000L;
+   private static final long MILLIS_TO_WAIT = 8000L;
+//   private static final long MILLIS_TO_WAIT = Long.MAX_VALUE;
    public String retrieveRfc() throws ExecutionException, TimeoutException, InterruptedException {
       final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+      long start = System.currentTimeMillis();
       // schedule the work
       final Future<String> future = executor
             .submit(this::readRfc);
@@ -128,6 +139,7 @@ public class CalReader {
          // wait for task to complete
          final String result = future.get(MILLIS_TO_WAIT,
                TimeUnit.MILLISECONDS);
+         Agenda.log("cal read took " + (System.currentTimeMillis() - start));
          return result;
       }
 
@@ -149,23 +161,23 @@ public class CalReader {
 
    private String readRfc() throws IOException {
       BufferedReader in = null;
+      if (debug) System.out.println("begun reading");
       in = new BufferedReader(
             new InputStreamReader(rotationDataSite.openStream()));
       StringBuilder b = new StringBuilder();
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
          b.append(inputLine);
+         b.append("\n");
       }
+      if (debug) System.out.println("done reading");
       in.close();
       return b.toString();
    }
    
    public static void main(String[] args) {
+      System.out.println("hello");
       CalReader c = new CalReader();
-      try {
-         System.out.println(c.readAndExtractEvents().eventsString());
-      } catch (ExecutionException | TimeoutException | InterruptedException e) {
-         e.printStackTrace();
-      }
+      System.out.println(c.readTodayRotation());
    }
 }

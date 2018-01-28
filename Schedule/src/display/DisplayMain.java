@@ -21,7 +21,7 @@ import information.Time;
 import ioFunctions.OrderUtility;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
-import ioFunctions.WebReader;
+import ioFunctions.calendar.CalReader;
 import managers.Agenda;
 import managers.PanelManager;
 import managers.PanelView;
@@ -47,7 +47,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Rotation todayR;
    private DayOfWeek today;
    private LocalDate lastRead;
-   private WebReader web;
+   private CalReader cal;
    private Time currentTime;
    private CurrentClassPane currentClassPane;
    private ToolBar toolbar;
@@ -62,7 +62,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
-      web = new WebReader();
+      cal = new CalReader();
       initTime();
       setLayout(new BorderLayout());
       initComponents();
@@ -76,7 +76,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public Rotation readRotation() {
-      return web.readTodayRotation();
+      return cal.readTodayRotation();
    }
    
    private void initTime() {
@@ -89,7 +89,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
-            todayR = web.readTodayRotation();
+            todayR = cal.readTodayRotation();
             lastRead = LocalDate.now();
          }
       } catch (Throwable e) { 
@@ -199,8 +199,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       if (!LocalDate.now().equals(lastRead)) {
          lastRead = LocalDate.now();
          today = LocalDate.now().getDayOfWeek();
-         web.init();
-         setTodayR(web.readTodayRotation());
+         cal.init();
+         setTodayR(cal.readTodayRotation());
       }
    }
    

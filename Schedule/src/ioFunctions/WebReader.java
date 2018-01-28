@@ -21,6 +21,12 @@ import constants.Rotation;
 import constants.RotationConstants;
 import managers.Agenda;
 
+/**
+ * Has been replaced by CalReader
+ * @see ioFunctions.calendar.CalReader
+ * @author varanoth
+ */
+@Deprecated(since="1.7.1")
 public class WebReader
 {
    public URL rotationDataSite;

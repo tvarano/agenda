@@ -64,7 +64,7 @@ public class Schedule implements Serializable
    }
    
    public void init() {
-      debug = true;
+      debug = false;
       if (debug) System.out.println(getName() + "SCHED 68 GPA = "+gpaClasses);
       if (gpaClasses == null) {
       gpaClasses = new ArrayList<ClassPeriod>();
