@@ -53,7 +53,7 @@ public class SchedReader {
       }
       close();
       ret = formatSchedule(ret);
-      if (Agenda.statusU) Agenda.log(ret.getName()+" read");
+      Agenda.log(ret.getName()+" read");
       if (debug) System.out.println("READ 57 SCHED READ gpa " + ret.getGpaClasses().toString());
       return ret;
    }
@@ -156,7 +156,7 @@ public class SchedReader {
    }
    
    public static void transfer(String localPath, File f) {
-      if (Agenda.statusU) Agenda.log("transferring readme");
+      Agenda.log("transferring readme");
       try {
          if (f.createNewFile()) {
             Scanner in = new Scanner(ResourceAccess.getResourceStream(localPath));

@@ -23,7 +23,7 @@ import managers.Agenda;
 
 public class WebReader
 {
-   public static URL rotationDataSite;
+   public URL rotationDataSite;
    private ArrayList<String> events, dates;
 
    public WebReader() {
@@ -31,20 +31,18 @@ public class WebReader
    }
 
    public void init() {
-      if (Agenda.statusU)
-         Agenda.log("website reader initialized");
+      Agenda.log("website reader initialized");
       try {
          rotationDataSite = new URL("https://agendapascack.weebly.com/");
       } catch (MalformedURLException e) {
-         if (Agenda.statusU)
-            Agenda.logError("URL not traced", e);
+         Agenda.logError("URL not traced", e);
       }
       String total = "";
       long start = System.currentTimeMillis();
       try {
          total = retrieveHtml();
       } catch (Exception e) {
-         if (Agenda.statusU) Agenda.log("Internet Connection Error");
+         Agenda.log("Internet Connection Error");
       }
       long readTime = System.currentTimeMillis() - start;
       start = System.currentTimeMillis();
@@ -53,18 +51,17 @@ public class WebReader
       start = System.currentTimeMillis();
       dates = extractDates(total);
       long dateTime = System.currentTimeMillis() - start;
-      if (Agenda.statusU)
-         Agenda.log("internet read in " + readTime + ". events ordered in "
+      Agenda.log("internet read in " + readTime + ". events ordered in "
                + eventTime + ", dates in " + dateTime);
    }
 
    private static final long MILLIS_TO_WAIT = 4000L;
-   public static String retrieveHtml() throws ExecutionException, TimeoutException, InterruptedException {
+   public String retrieveHtml() throws ExecutionException, TimeoutException, InterruptedException {
       final ExecutorService executor = Executors.newSingleThreadExecutor();
 
       // schedule the work
       final Future<String> future = executor
-            .submit(WebReader::readHtml);
+            .submit(this::readHtml);
       try {
          // wait for task to complete
          final String result = future.get(MILLIS_TO_WAIT,
@@ -73,17 +70,17 @@ public class WebReader
       }
 
       catch (TimeoutException e) {
-         if (Agenda.statusU) Agenda.logError("internet reading timed out", e);
+         Agenda.logError("internet reading timed out", e);
          future.cancel(true);
          throw e;
       }
 
       catch (InterruptedException e) {
-         if (Agenda.statusU) Agenda.logError("internet reading interrupted", e);
+         Agenda.logError("internet reading interrupted", e);
          throw e;
       }
       catch (ExecutionException e) {
-         if (Agenda.statusU) Agenda.logError("internet reading execution error", e);
+         Agenda.logError("internet reading execution error", e);
          throw e;
       }
    }
@@ -98,7 +95,7 @@ public class WebReader
    }
    */
    
-   private static String readHtml() throws IOException {
+   private String readHtml() throws IOException {
       BufferedReader in = null;
       in = new BufferedReader(
             new InputStreamReader(rotationDataSite.openStream()));
@@ -139,24 +136,24 @@ public class WebReader
          for (Integer i : indexes) {
             String e = events.get(i);
             if (RotationConstants.getRotation(e) != null) {
-               if (Agenda.statusU) Agenda.log("ROTATION: "+e + " read from internet");
+               Agenda.log("ROTATION: "+e + " read from internet");
                return RotationConstants.getRotation(events.get(i));
             }
             if (e.contains("No School"))
                return Rotation.NO_SCHOOL;
             if (e.contains("Half Day")) {
-               if (Agenda.statusU) Agenda.log("ROTATION: half "+e + " read from internet");
+               Agenda.log("ROTATION: half " + e + " read from internet");
                return RotationConstants.toHalf(
                      RotationConstants.getRotation(e.substring(0, e.indexOf('(')-1)));
             }
             if (e.contains("Delayed Open")) {
-               if (Agenda.statusU) Agenda.log("ROTATION: delayed "+e + " read from internet");
+               Agenda.log("ROTATION: delayed "+e + " read from internet");
                return RotationConstants.toDelay(
                      RotationConstants.getRotation(e.substring(0, e.indexOf('(')-1)));
             }
          }
       }
-      if (Agenda.statusU) Agenda.log("ROTATION: read from day, not internet");
+      Agenda.log("ROTATION: read from day, not internet");
       return Rotation.getRotation(LocalDate.now().getDayOfWeek());
    }
   
@@ -171,7 +168,7 @@ public class WebReader
                .substring(str.indexOf("/", str.indexOf("/") + 1) + 1);
          return year + "-" + day + "-" + month;
       } catch (StringIndexOutOfBoundsException e) {
-         if (Agenda.statusU)Agenda.logError("unable to order dateString: " + str, e);
+         Agenda.logError("unable to order dateString: " + str, e);
          return null;
       }
    }

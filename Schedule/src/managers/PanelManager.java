@@ -116,8 +116,7 @@ public class PanelManager {
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (Agenda.statusU)
-               Agenda.log("view changed. type = " + parentType);
+            Agenda.log("view changed. type = " + parentType);
             setCurrentPane(parentType);
          }
       };
@@ -154,14 +153,12 @@ public class PanelManager {
    }
 
    public void saveSchedule(Schedule s, Class<?> caller) {
-      if (Agenda.statusU)
-         Agenda.log("NEW schedule save called by " + caller.getSimpleName());
+      Agenda.log("NEW schedule save called by " + caller.getSimpleName());
       new SchedWriter().write(s);
    }
 
    public void saveSchedule(Class<?> caller) {
-      if (Agenda.statusU)
-         Agenda.log("**main schedule save called by " + caller.getSimpleName());
+      Agenda.log("**main schedule save called by " + caller.getSimpleName());
       display.writeMain();
    }
 

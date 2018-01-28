@@ -74,7 +74,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
       }
       else {
          if (debug) System.out.println(getName()+"error in scheduleListAutoSelect");
-         if (Agenda.statusU) Agenda.log("Error in autoSetSelection");
+         Agenda.log("Error in autoSetSelection");
          clearSelection();
       }
    }

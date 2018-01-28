@@ -10,9 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MenuBar;
 import java.awt.RenderingHints;
-import java.awt.desktop.QuitEvent;
-import java.awt.desktop.QuitHandler;
-import java.awt.desktop.QuitResponse;
 import java.awt.desktop.ScreenSleepEvent;
 import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
@@ -65,7 +62,7 @@ public class Agenda extends JPanel
    public Agenda(JFrame frame) {
       setName("main class");
       initialFileWork();
-      if (statusU) log(getClass().getSimpleName()+" began initialization");
+      log(getClass().getSimpleName()+" began initialization");
 
       UIHandler.init();      
       this.parentFrame = frame;
@@ -76,24 +73,28 @@ public class Agenda extends JPanel
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
             manager.beforeClose();
-            if (statusU) log("program closed");
+            log("program closed");
             System.exit(0);
          }
       });
+      desktopSetup();
+   }
+   
+   private void desktopSetup() {
       if (Desktop.isDesktopSupported()) {
-         Desktop.getDesktop().setQuitHandler(new QuitHandler() {
+         Desktop.getDesktop().setQuitHandler(new java.awt.desktop.QuitHandler() {
             @Override
-            public void handleQuitRequestWith(QuitEvent arg0,
-                  QuitResponse arg1) {
+            public void handleQuitRequestWith(java.awt.desktop.QuitEvent arg0,
+                  java.awt.desktop.QuitResponse arg1) {
                manager.beforeClose();
-               if (statusU) log("program quit");
+               log("program quit");
                arg1.performQuit();
             }
          });
          Desktop.getDesktop().addAppEventListener(new SystemSleepListener() {
             @Override
             public void systemAboutToSleep(SystemSleepEvent arg0) {
-               manager.getDisplay().hardStop();;
+               manager.getDisplay().hardStop();
             }
             @Override
             public void systemAwoke(SystemSleepEvent arg0) {
@@ -139,13 +140,13 @@ public class Agenda extends JPanel
             PrintStream logStream = new PrintStream(log);
             System.setOut(logStream);
             System.setErr(logStream);
-            if (statusU) log ("log set");
+            log ("log set");
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
       }
       //logs the time taken (in millis)
-      if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
+      log("filework completed in "+(System.currentTimeMillis()-start));
    }
    
    public PanelManager getManager() {
@@ -231,7 +232,7 @@ public class Agenda extends JPanel
       
       public synchronized static void createFiles() {
          if (new File(RESOURCE_ROUTE).mkdirs()) {
-            if (statusU) log("files created");
+            log("files created");
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;
@@ -250,7 +251,7 @@ public class Agenda extends JPanel
       }
       
       public static boolean moveFiles(String oldLocation) {
-         if (statusU) log("attempting to move files");
+         log("attempting to move files");
          
          return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
       }
@@ -265,11 +266,14 @@ public class Agenda extends JPanel
    }
    
    public static void log(String text) {
-      System.out.println(LocalTime.now() + " : "+text);
+      //FIXME internal update recognition
+      if (statusU)
+         System.out.println(LocalTime.now() + " : "+text);
    }
    
    public static void logError(String message, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
+      if (statusU)
+         System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
    }
    
    public Dimension getMinimumSize() {
@@ -306,7 +310,7 @@ public class Agenda extends JPanel
                      s += ".";
                   g2.drawString(s, 260, 150);
                   dots++;
-                  if (statusU) log("Drawing strings took " + (System.currentTimeMillis() - start));
+                  log("Drawing strings took " + (System.currentTimeMillis() - start));
                }
             };
             frame.add(p);
@@ -329,17 +333,17 @@ public class Agenda extends JPanel
             frame.getContentPane().add(main);
             frame.pack();
             frame.setLocationRelativeTo(null);
-            if (statusU) log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+            log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
          }
       });
    }
    public void restart() {
       manager.getDisplay().writeMain();
-      if (statusU) log("Program Restarted with no arguments\n");
+      log("Program Restarted with no arguments\n");
       restartApplication(new Runnable() {
          @Override
          public void run() {
-            if (statusU) log("Restart Successful.\n");
+            log("Restart Successful.\n");
          }
       });
    }
@@ -401,7 +405,7 @@ public class Agenda extends JPanel
          if (runBeforeRestart != null) {
             runBeforeRestart.run();
          }
-         if (statusU) log("restarting...");
+         log("restarting...");
          // exit
          System.exit(0);
       } catch (Exception e) {
@@ -454,13 +458,13 @@ public class Agenda extends JPanel
       if (runBeforeRestart != null) {
          runBeforeRestart.run();
       }
-     if (statusU) log("restarting...");
+     log("restarting...");
      System.exit(0);
    }
 
    public static void main(String[] args) {
       statusU = true;
-      if (statusU) log("Program Initialized");
+      log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
             createAndShowGUI();

@@ -84,14 +84,14 @@ public class GPAInput extends JPanel implements InputManager, PanelView
          init(sched);
       else 
          init(0);
-      if (Agenda.statusU) Agenda.log("gpa constructed with schedule");
+      Agenda.log("gpa constructed with schedule");
    }
    
    public GPAInput(int amtClasses, PanelManager manager) {
       this.manager = manager;
       setFont(UIHandler.font);
       init(amtClasses);
-      if (Agenda.statusU) Agenda.log("gpa constructed empty");
+      Agenda.log("gpa constructed empty");
    }
    
    public GPAInput(PanelManager manager) {
@@ -118,7 +118,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    }
    
    private void init(Schedule s) {
-      if (Agenda.statusU) Agenda.log("gpa init with "+s.getName());
+      Agenda.log("gpa init with "+s.getName());
       init0();
       initAndAddSlots(s);
    }
@@ -293,7 +293,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       saved = true;
       if (manager != null)
          manager.saveSchedule(sched, getClass());
-      if (Agenda.statusU) Agenda.log("gpa successfully saved");
+      Agenda.log("gpa successfully saved");
    }
    
    public void closeToDisp() {

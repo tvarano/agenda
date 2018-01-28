@@ -14,7 +14,7 @@ public final class OrderUtility
    private static boolean debug = true, detailedDebug = true;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
-      if (Agenda.statusU) Agenda.log("ordering schedule: "+s.getName() + " to "+r);
+      Agenda.log("ordering schedule: "+s.getName() + " to "+r);
       if (debug) System.out.println("ordering schedule: "+s.getName() + " to "+r);
       ClassPeriod[] newArray = reorderClasses(r, s.getClasses());
       s.setClasses(newArray);

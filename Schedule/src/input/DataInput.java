@@ -68,7 +68,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
    public void init(Schedule s) {
       removeAll();
       init0();
-      if (Agenda.statusU) Agenda.log("inputMain initialized");
+      Agenda.log("inputMain initialized");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       amtClasses = s.getClasses().length;
       if (s.getLabs() != null && s.getLabs().length != 0)
@@ -297,7 +297,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       s.setPascackPreferences(pascack.createClass());
       parentManager.saveSchedule(s, getClass());
       if (debug) System.out.println("wrote" + s);
-      if (Agenda.statusU) Agenda.log("saved input");
+      Agenda.log("saved input");
       saved = true;
    }
    
@@ -309,7 +309,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       }
       else 
          ((JFrame)getParent().getParent().getParent().getParent()).dispose();
-      if (Agenda.statusU) Agenda.log("closed input");
+      Agenda.log("closed input");
    }
    
    public void saveAndCloseToDisp() {

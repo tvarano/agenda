@@ -72,7 +72,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       requestFocus();
       timer = new Timer(5000, this);
       timer.start();
-      if (Agenda.statusU) Agenda.log("display main fully initialized");
+      Agenda.log("display main fully initialized");
    }
    
    public Rotation readRotation() {
@@ -130,7 +130,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public synchronized void writeMain() {
-      if (Agenda.statusU) Agenda.log("wrote main Schedule");
+      Agenda.log("wrote main Schedule");
       try {
          SchedWriter w = new SchedWriter();
          w.write(mainSched);
@@ -157,6 +157,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void reinitialize() {
       removeAll();
+      initTime();
       initComponents();
       addComponents();
       resume();

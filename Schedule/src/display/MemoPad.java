@@ -31,7 +31,7 @@ public class MemoPad extends JTextPane implements FocusListener
    }
 
    public void save() {
-      if (Agenda.statusU) Agenda.log("memo saved "+parentClass);
+      Agenda.log("memo saved "+parentClass);
       if (this.parentClass != null)
          this.parentClass.setMemo(getText());
    }

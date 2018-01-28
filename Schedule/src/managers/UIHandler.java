@@ -776,7 +776,7 @@ public final class UIHandler {
       try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
          MetalLookAndFeel.setCurrentTheme(new OceanTheme());
-         if (Agenda.statusU) Agenda.log("LAF set: "+UIManager.getLookAndFeel().getID());
+         Agenda.log("LAF set: "+UIManager.getLookAndFeel().getID());
       } catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e1) {
          ErrorID.showError(e1, true);
