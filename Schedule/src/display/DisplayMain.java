@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.Timer;
 
 import constants.ErrorID;
@@ -20,9 +21,10 @@ import information.Time;
 import ioFunctions.OrderUtility;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
-import ioFunctions.WebReader;
+import ioFunctions.calendar.CalReader;
 import managers.Agenda;
 import managers.PanelManager;
+import managers.PanelView;
 import managers.UIHandler;
 import tools.ToolBar;
 
@@ -37,14 +39,15 @@ import tools.ToolBar;
  * this object.
  * @author Thomas Varano
  */
-public class DisplayMain extends JPanel implements ActionListener
+public class DisplayMain extends JPanel implements ActionListener, PanelView
 {
    private static final long serialVersionUID = 1L;
    private PanelManager parentManager;
    private Schedule mainSched, todaySched;
    private Rotation todayR;
    private DayOfWeek today;
-   private WebReader web;
+   private LocalDate lastRead;
+   private CalReader cal;
    private Time currentTime;
    private CurrentClassPane currentClassPane;
    private ToolBar toolbar;
@@ -59,7 +62,7 @@ public class DisplayMain extends JPanel implements ActionListener
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
-      web = new WebReader();
+      cal = new CalReader();
       initTime();
       setLayout(new BorderLayout());
       initComponents();
@@ -69,7 +72,11 @@ public class DisplayMain extends JPanel implements ActionListener
       requestFocus();
       timer = new Timer(5000, this);
       timer.start();
-      if (Agenda.statusU) Agenda.log("display main fully initialized");
+      Agenda.log("display main fully initialized");
+   }
+   
+   public Rotation readRotation() {
+      return cal.readTodayRotation();
    }
    
    private void initTime() {
@@ -78,11 +85,12 @@ public class DisplayMain extends JPanel implements ActionListener
             currentTime = new Time(9,20);
             today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today); 
-            
+            lastRead = LocalDate.now();
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
-            todayR = web.readTodayRotation();
+            todayR = cal.readTodayRotation();
+            lastRead = LocalDate.now();
          }
       } catch (Throwable e) { 
          e.printStackTrace();
@@ -112,8 +120,9 @@ public class DisplayMain extends JPanel implements ActionListener
    
    private void addComponents() {
       add(toolbar, BorderLayout.NORTH);
-      add(infoSelector, BorderLayout.SOUTH);
-      add(currentClassPane, BorderLayout.CENTER);
+      JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, currentClassPane, infoSelector);
+      
+      add(sp, BorderLayout.CENTER);
    }
    
    public void hardStop() {
@@ -121,7 +130,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public synchronized void writeMain() {
-      if (Agenda.statusU) Agenda.log("wrote main Schedule");
+      Agenda.log("wrote main Schedule");
       try {
          SchedWriter w = new SchedWriter();
          w.write(mainSched);
@@ -133,8 +142,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public void stop() {
-      infoSelector.getMemo().save();
-      writeMain();
+      save();
       showDisp = false;
    }
    
@@ -149,6 +157,7 @@ public class DisplayMain extends JPanel implements ActionListener
    
    public void reinitialize() {
       removeAll();
+      initTime();
       initComponents();
       addComponents();
       resume();
@@ -180,17 +189,19 @@ public class DisplayMain extends JPanel implements ActionListener
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now());
-      if (currentTime.getHour24() == 0 && currentTime.getMinute() < 2)
-            checkAndUpdateDate();
+      checkAndUpdateDate();
       checkInSchool();
       findCurrentClass();
       currentClassPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
-      today = LocalDate.now().getDayOfWeek();
-      web.init();
-      setTodayR(web.readTodayRotation());
+      if (!LocalDate.now().equals(lastRead)) {
+         lastRead = LocalDate.now();
+         today = LocalDate.now().getDayOfWeek();
+         cal.init();
+         setTodayR(cal.readTodayRotation());
+      }
    }
    
    public void pushTodaySchedule() {
@@ -271,7 +282,7 @@ public class DisplayMain extends JPanel implements ActionListener
    }
    
    public ActionListener changeView(int type) {
-      return parentManager.changeView(type);
+      return parentManager.changeViewListener(type);
    }
    
    public Dimension getMinimumSize() {
@@ -293,7 +304,7 @@ public class DisplayMain extends JPanel implements ActionListener
       return todayR;
    }
    public void setTodayR(Rotation todayR) {
-      System.out.println("-----------------NEW ROTATION---------------------");
+      if (Agenda.statusU) System.out.println("-----------------NEW ROTATION---------------------");
       if (updating)
          return;
       if (debug) System.out.println("DISPLAY SETTING ROTATION TO "+ todayR);
@@ -301,6 +312,7 @@ public class DisplayMain extends JPanel implements ActionListener
       this.todayR = todayR;
       todaySched.setLunchLab(todayR);
       toolbar.setRotation(todayR);
+      toolbar.repaint();
       pushTodaySchedule();
       
       update();
@@ -331,5 +343,27 @@ public class DisplayMain extends JPanel implements ActionListener
    
    protected void finalize() {
       hardStop();
+   }
+
+   @Override
+   public void refresh() {
+      reinitialize();
+   }
+
+   @Override
+   public void open() {
+      reinitialize();
+      resume();
+   }
+
+   @Override
+   public void close() {
+      stop();
+   }
+   
+   @Override
+   public void save() {
+      infoSelector.getMemo().save();
+      writeMain();
    }
 }

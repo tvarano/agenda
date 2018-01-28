@@ -46,7 +46,7 @@ public class RotationButton extends JButton implements ActionListener
          if (debug) System.out.println(text+" button parent:"+parentPanel);
          if (parentPanel instanceof DisplayMain) {
             setText(" Today's Rotation ");
-            r = ((DisplayMain) parentPanel).getTodayR();
+            r = ((DisplayMain) parentPanel).readRotation();
          if (debug)
             System.out.println(getText());
          }

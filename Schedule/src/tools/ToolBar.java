@@ -119,6 +119,7 @@ public class ToolBar extends JToolBar implements ActionListener
       
       ButtonGroup bg = new ButtonGroup();
       JRadioButton rb = new JRadioButton("Use Numbers");
+      rb.setForeground(UIHandler.foreground);
       bg.add(rb);
       rb.setFont(UIHandler.getButtonFont());
       rb.addActionListener(new ActionListener() {
@@ -129,6 +130,7 @@ public class ToolBar extends JToolBar implements ActionListener
       });
       add(rb);
       rb = new JRadioButton("Use Letter");
+      rb.setForeground(UIHandler.foreground);
       bg.add(rb);
       rb.setFont(UIHandler.getButtonFont());
       rb.setSelected(true);
@@ -158,6 +160,14 @@ public class ToolBar extends JToolBar implements ActionListener
          if (c instanceof RotationButton) {
             RotationButton r = (RotationButton) c;
             r.setHighlight(r.equals(rotation));
+         }
+      }
+   }
+   
+   public void setBevels() {
+      for (Component c : getComponents()) {
+         if (c instanceof InstanceButton) {
+            ((InstanceButton) c).repaint();
          }
       }
    }
@@ -192,9 +202,16 @@ public class ToolBar extends JToolBar implements ActionListener
       return rotation;
    }
    
+   private void setState() {
+      setHalf(rotation.isHalf());
+      setDelayed(rotation.isDelay());
+   }
+    
    public void setRotation(Rotation r) {
       this.rotation = r;
+      setState();
       setHighlights();
+      setBevels();
    }
 
    @Override

@@ -5,6 +5,8 @@
 package input;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -33,6 +35,7 @@ import information.Schedule;
 import ioFunctions.SchedReader;
 import managers.Agenda;
 import managers.PanelManager;
+import managers.PanelView;
 import managers.UIHandler;
 import tools.ToolBar;
 
@@ -58,12 +61,12 @@ import tools.ToolBar;
  * @author Thomas Varano
  *
  */
-public class GPAInput extends JPanel implements InputManager
+public class GPAInput extends JPanel implements InputManager, PanelView
 {
    private static final long serialVersionUID = 1L;
    private Schedule sched;
    private JPanel center;
-   private boolean hasZero;
+   private boolean hasZero, saved;
    private ArrayList<GPAInputSlot> slots;
    private PanelManager manager;
    private JLabel dispLabel;
@@ -81,14 +84,14 @@ public class GPAInput extends JPanel implements InputManager
          init(sched);
       else 
          init(0);
-      if (Agenda.statusU) Agenda.log("gpa constructed with schedule");
+      Agenda.log("gpa constructed with schedule");
    }
    
    public GPAInput(int amtClasses, PanelManager manager) {
       this.manager = manager;
       setFont(UIHandler.font);
       init(amtClasses);
-      if (Agenda.statusU) Agenda.log("gpa constructed empty");
+      Agenda.log("gpa constructed empty");
    }
    
    public GPAInput(PanelManager manager) {
@@ -99,6 +102,7 @@ public class GPAInput extends JPanel implements InputManager
       removeAll();
       debug = false;
       center = new JPanel();
+      center.setBackground(UIHandler.background);
       center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
       center.add(averageDisplay());
       setLayout(new BorderLayout());
@@ -114,7 +118,7 @@ public class GPAInput extends JPanel implements InputManager
    }
    
    private void init(Schedule s) {
-      if (Agenda.statusU) Agenda.log("gpa init with "+s.getName());
+      Agenda.log("gpa init with "+s.getName());
       init0();
       initAndAddSlots(s);
    }
@@ -203,9 +207,11 @@ public class GPAInput extends JPanel implements InputManager
    
    private JPanel averageDisplay() {
       JPanel p = new JPanel();
+      p.setBackground(UIHandler.background);
       ((FlowLayout) p.getLayout()).setAlignment(FlowLayout.RIGHT);
       
       dispLabel = new JLabel(labelPrefix);
+      dispLabel.setForeground(UIHandler.foreground);
       final int gap = 5;
       dispLabel.setFont(UIHandler.getInputLabelFont());
       dispLabel.setBorder(BorderFactory.createEmptyBorder(gap,0,0,gap));
@@ -239,12 +245,12 @@ public class GPAInput extends JPanel implements InputManager
       return new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            refresh();
+            refreshGPA();
          }
       };
    }
    
-   public void refresh() {
+   public void refreshGPA() {
       save();
       double gpa = calculateGPA(5);
       if (gpa == -1)
@@ -254,7 +260,7 @@ public class GPAInput extends JPanel implements InputManager
    
    public ActionListener changeView(int type) {
       if (manager != null)
-         return manager.changeView(type);
+         return manager.changeViewListener(type);
       
        return new ActionListener() {
          @Override
@@ -284,15 +290,16 @@ public class GPAInput extends JPanel implements InputManager
       for (GPAInputSlot s : slots) {
          s.save();
       }
+      saved = true;
       if (manager != null)
          manager.saveSchedule(sched, getClass());
-      if (Agenda.statusU) Agenda.log("gpa successfully saved");
+      Agenda.log("gpa successfully saved");
    }
    
    public void closeToDisp() {
       if (manager != null) {
          save();
-         manager.reinitDisp();
+         manager.setCurrentPane(PanelManager.DISPLAY);
       }
    }
 
@@ -361,6 +368,34 @@ public class GPAInput extends JPanel implements InputManager
    public void setSchedule(Schedule s) {
       this.sched = s;
       init(s);
+   }
+   
+   @Override
+   public void open() {
+      setSchedule(manager.getMainSched());
+   }
+
+   @Override
+   public void close() {
+      save();
+   }
+   
+   public boolean isSaved() {
+      return saved;
+   }
+   
+   public void setSaved(boolean saved) {
+      this.saved = saved;
+      setBackground((saved) ? Color.GREEN : Color.RED);
+      for (Component c : getComponents()) {
+         c.setBackground(getBackground());
+      }
+      repaint();
+   }
+   
+   @Override
+   public void refresh() {
+      setSchedule(new SchedReader().readAndOrderSchedule(manager.getTodayR()));
    }
    
    public static void main(String[] args) {

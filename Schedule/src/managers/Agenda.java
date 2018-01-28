@@ -1,12 +1,19 @@
 package managers;
 
+import java.awt.CardLayout;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.MenuBar;
-import java.awt.desktop.QuitEvent;
-import java.awt.desktop.QuitHandler;
-import java.awt.desktop.QuitResponse;
+import java.awt.RenderingHints;
+import java.awt.desktop.ScreenSleepEvent;
+import java.awt.desktop.ScreenSleepListener;
+import java.awt.desktop.SystemSleepEvent;
+import java.awt.desktop.SystemSleepListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +33,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
+import information.Addresses;
 import ioFunctions.SchedReader;
+import resources.ResourceAccess;
 
 //Thomas Varano
 //Main class
@@ -41,52 +50,76 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.7.0 (Beta)";
+   public static final String BUILD = "v1.7.1 (Beta)";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
-   public static final String CONTACT_EMAIL = "varanoth@pascack.org";
    private PanelManager manager;
-   private static JFrame parentFrame;
-   private static MenuBar bar;
+   private JFrame parentFrame;
+   private MenuBar bar;
    public static boolean statusU;
-   public static Runnable mainThread;
    public static URI sourceCode;
    
-   public Agenda() {
+   public Agenda(JFrame frame) {
       setName("main class");
       initialFileWork();
-      if (statusU) log(getClass().getSimpleName()+" began initialization");
-      
-      bar = UIHandler.configureMenuBar(parentFrame, this);
+      log(getClass().getSimpleName()+" began initialization");
 
-      if (statusU) log("Main began initialization");
-      UIHandler.init();
+      UIHandler.init();      
+      this.parentFrame = frame;
+      bar = UIHandler.configureMenuBar(frame, this);
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(PanelManager.DISPLAY);
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
             manager.beforeClose();
-            if (statusU) log("program closed");
+            log("program closed");
             System.exit(0);
          }
       });
-      if (Desktop.isDesktopSupported())
-         Desktop.getDesktop().setQuitHandler(new QuitHandler() {
+      desktopSetup();
+   }
+   
+   private void desktopSetup() {
+      if (Desktop.isDesktopSupported()) {
+         Desktop.getDesktop().setQuitHandler(new java.awt.desktop.QuitHandler() {
             @Override
-            public void handleQuitRequestWith(QuitEvent arg0,
-                  QuitResponse arg1) {
+            public void handleQuitRequestWith(java.awt.desktop.QuitEvent arg0,
+                  java.awt.desktop.QuitResponse arg1) {
                manager.beforeClose();
-               if (statusU) log("program quit");
+               log("program quit");
                arg1.performQuit();
             }
          });
+         Desktop.getDesktop().addAppEventListener(new SystemSleepListener() {
+            @Override
+            public void systemAboutToSleep(SystemSleepEvent arg0) {
+               manager.getDisplay().hardStop();
+            }
+            @Override
+            public void systemAwoke(SystemSleepEvent arg0) {
+               manager.getDisplay().hardResume();
+               manager.getDisplay().checkAndUpdateTime();
+               manager.getDisplay().checkAndUpdateDate();
+            }
+         });
+         Desktop.getDesktop().addAppEventListener(new ScreenSleepListener() {
+            @Override
+            public void screenAboutToSleep(ScreenSleepEvent arg0) {
+               manager.getDisplay().stop();
+            }
+            @Override
+            public void screenAwoke(ScreenSleepEvent arg0) {
+               manager.getDisplay().resume();
+            }
+         });
+      }
    }
    
    /**
     * ensure names, users, etc. Initialize file locations if necessary, draw routes.
     */
-   public static synchronized void initialFileWork() {
+   public static void initialFileWork() {
       long start = System.currentTimeMillis();
       try {
          sourceCode = new URI("https://github.com/tvarano54/schedule-new");
@@ -107,13 +140,13 @@ public class Agenda extends JPanel
             PrintStream logStream = new PrintStream(log);
             System.setOut(logStream);
             System.setErr(logStream);
-            if (statusU) log ("log set");
+            log ("streams set to "+FileHandler.LOG_ROUTE);
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
       }
       //logs the time taken (in millis)
-      if (statusU) log("filework completed in "+(System.currentTimeMillis()-start));
+      log("filework completed in "+(System.currentTimeMillis()-start));
    }
    
    public PanelManager getManager() {
@@ -145,14 +178,13 @@ public class Agenda extends JPanel
       }
       
       public static boolean ensureFileRoute() {
-         return new File(System.getProperty("user.home") + "/Applications/Agenda/")
+         return new File(Addresses.AGENDA_HOME)
                .mkdirs();
       }
 
       public static void initAndCreateFiles() {
          // read file and set/
-         String mainFolder = System.getProperty("user.home") + "/Applications/Agenda/"; 
-         initFileNames(mainFolder);
+         initFileNames(Addresses.AGENDA_HOME);
          
          //if you need, create your folder and initialize routes
          createFiles();
@@ -169,7 +201,8 @@ public class Agenda extends JPanel
       }
       
       public static void sendEmail() {
-         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+CONTACT_EMAIL, 
+         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+ 
+               Addresses.CONTACT_EMAIL, 
                Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
                new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
          if (choice == 2 || choice == -1) 
@@ -178,7 +211,7 @@ public class Agenda extends JPanel
             if (Desktop.isDesktopSupported()) {
                try {
                   if (choice == 0)
-                     Desktop.getDesktop().mail(new URI("mailto:"+CONTACT_EMAIL+"?subject=Agenda%20Contact"));
+                     Desktop.getDesktop().mail(new URI("mailto:"+Addresses.CONTACT_EMAIL+"?subject=Agenda%20Contact"));
                   else
                      Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
                } catch (IOException | URISyntaxException e1) {
@@ -199,7 +232,7 @@ public class Agenda extends JPanel
       
       public synchronized static void createFiles() {
          if (new File(RESOURCE_ROUTE).mkdirs()) {
-            if (statusU) log("files created");
+            log("files created");
                SchedReader.transfer("README.txt",
                      new File(ENVELOPING_FOLDER + "README.txt"));
                BufferedWriter bw;
@@ -218,22 +251,28 @@ public class Agenda extends JPanel
       }
       
       public static boolean moveFiles(String oldLocation) {
-         if (statusU) log("attempting to move files");
+         log("attempting to move files");
          
          return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
       }
    }
    
-   public static MenuBar getBar() {
+   public MenuBar getBar() {
       return bar;
    }
    
+   public void show(String name) {
+      ((CardLayout) getLayout()).show(this, name);
+   }
+   
    public static void log(String text) {
-      System.out.println(LocalTime.now() + " : "+text);
+      if (statusU)
+         System.out.println(LocalTime.now() + " : "+text);
    }
    
    public static void logError(String message, Throwable e) {
-      System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
+      if (statusU)
+         System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
    }
    
    public Dimension getMinimumSize() {
@@ -245,27 +284,64 @@ public class Agenda extends JPanel
    
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
-      parentFrame = new JFrame(APP_NAME + " " + BUILD);
+      JFrame frame = new JFrame("LOADING....");
       int frameToPaneAdjustment = 22;
-      parentFrame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-      parentFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-      parentFrame.setVisible(true);
-      parentFrame.setLocationRelativeTo(null);
-      Agenda main = new Agenda();
-      parentFrame.getContentPane().add(main);
-      parentFrame.pack();
-      parentFrame.setLocationRelativeTo(null);
-      if (statusU)
-         log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+      
+      
+      // loading screen, frame adjustments
+      EventQueue.invokeLater(new Runnable() {
+         public void run() {
+            JPanel p = new JPanel() {
+               private static final long serialVersionUID = 1L;
+               int dots = 3;
+               
+               @Override 
+               public void paintComponent(Graphics g) {
+                  super.paintComponent(g);
+                  Graphics2D g2 = (Graphics2D) g;
+                  g2.addRenderingHints(new RenderingHints(
+                        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
+                  g2.drawImage((Image) ResourceAccess.getImage("loading.gif").getImage(), 0, 0, 100, 100, null);
+                  g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
+                  String s = "LOADING";
+                  for (int i = 0; i < dots; i++)
+                     s += ".";
+                  g2.drawString(s, 260, 150);
+                  dots++;
+                  log("Drawing strings took " + (System.currentTimeMillis() - start));
+               }
+            };
+            frame.add(p);
+            frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+         }
+      });
+      frame.setVisible(true);
+      
+      // effective EDT
+      EventQueue.invokeLater(new Runnable() {
+         @Override
+         public void run() {
+            Agenda main = new Agenda(frame);
+            frame.getContentPane().getComponent(0).repaint();
+            frame.setTitle(APP_NAME + " " + BUILD);
+            frame.getContentPane().remove(0);
+            frame.getContentPane().add(main);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+         }
+      });
    }
    public void restart() {
       manager.getDisplay().writeMain();
-      if (statusU) log("Program Restarted with no arguments\n");
+      log("Program Restarted with no arguments\n");
       restartApplication(new Runnable() {
          @Override
          public void run() {
-            if (statusU)
-               log("Restart Successful.\n");
+            log("Restart Successful.\n");
          }
       });
    }
@@ -327,7 +403,7 @@ public class Agenda extends JPanel
          if (runBeforeRestart != null) {
             runBeforeRestart.run();
          }
-         if (statusU) log("restarting...");
+         log("restarting...");
          // exit
          System.exit(0);
       } catch (Exception e) {
@@ -380,13 +456,13 @@ public class Agenda extends JPanel
       if (runBeforeRestart != null) {
          runBeforeRestart.run();
       }
-     if (statusU) log("restarting...");
+     log("restarting...");
      System.exit(0);
    }
 
    public static void main(String[] args) {
       statusU = true;
-      if (statusU) log("Program Initialized");
+      log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
             createAndShowGUI();

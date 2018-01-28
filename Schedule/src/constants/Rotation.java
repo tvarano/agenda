@@ -19,23 +19,26 @@ import information.Time;
  */
 public enum Rotation
 {
-   R1 (getSchedule(RotationConstants.R1), DayType.NORMAL, RotationConstants.R1),
-   R2 (getSchedule(RotationConstants.R2), DayType.NORMAL, RotationConstants.R2),
-   R3 (getSchedule(RotationConstants.R3), DayType.NORMAL, RotationConstants.R3),
-   R4 (getSchedule(RotationConstants.R4), DayType.NORMAL, RotationConstants.R4),
-   ODD_BLOCK (getSchedule(RotationConstants.ODD_BL), DayType.BLOCK, RotationConstants.ODD_BL), 
-   EVEN_BLOCK (getSchedule(RotationConstants.EVEN_BL), DayType.BLOCK, RotationConstants.EVEN_BL),
-   HALF_R1 (getSchedule(RotationConstants.HALF_R1), DayType.HALF_DAY, RotationConstants.HALF_R1),
-   HALF_R3 (getSchedule(RotationConstants.HALF_R3), DayType.HALF_DAY, RotationConstants.HALF_R3),
-   HALF_R4 (getSchedule(RotationConstants.HALF_R4), DayType.HALF_DAY, RotationConstants.HALF_R4),
-   DELAY_R1 (getSchedule(RotationConstants.DELAY_R1), DayType.DELAYED_OPEN, RotationConstants.DELAY_R1),
-   DELAY_R3 (getSchedule(RotationConstants.DELAY_R3), DayType.DELAYED_OPEN, RotationConstants.DELAY_R3),
-   DELAY_R4 (getSchedule(RotationConstants.DELAY_R4), DayType.DELAYED_OPEN, RotationConstants.DELAY_R4),
-   DELAY_ODD (getSchedule(RotationConstants.DELAY_ODD), DayType.DELAY_ODD, RotationConstants.DELAY_ODD),
-   DELAY_EVEN (getSchedule(RotationConstants.DELAY_EVEN), DayType.DELAY_EVEN, RotationConstants.DELAY_EVEN),
-   NO_SCHOOL (getSchedule(RotationConstants.NO_SCHOOL_INDEX), DayType.NO_SCHOOL, RotationConstants.NO_SCHOOL_INDEX),
-   INCORRECT_PARSE(new ClassPeriod[0], DayType.NO_SCHOOL, RotationConstants.INCORRECT_PARSE)
-   ;
+   R1 (DayType.NORMAL),
+   R2 (DayType.NORMAL),
+   R3 (DayType.NORMAL),
+   R4 (DayType.NORMAL),
+   ODD_BLOCK (DayType.BLOCK), 
+   EVEN_BLOCK (DayType.BLOCK),
+   HALF_R1 (DayType.HALF_DAY),
+   HALF_R3 (DayType.HALF_DAY),
+   HALF_R4 (DayType.HALF_DAY),
+   DELAY_R1 (DayType.DELAYED_OPEN),
+   DELAY_R3 (DayType.DELAYED_OPEN),
+   DELAY_R4 (DayType.DELAYED_OPEN),
+   DELAY_ODD (DayType.DELAY_ODD),
+   DELAY_EVEN (DayType.DELAY_EVEN),
+   NO_SCHOOL (DayType.NO_SCHOOL),
+   INCORRECT_PARSE(DayType.NO_SCHOOL),
+   TEST_ONE(DayType.TEST_DAY),
+   TEST_TWO(DayType.TEST_DAY),
+   TEST_THREE(DayType.TEST_DAY),
+   DELAY_ARRIVAL(DayType.DELAY_ARR);
       
    private final int lunchSlot;
    private final ClassPeriod[] times;
@@ -44,9 +47,10 @@ public enum Rotation
    private final int index;
    private final static boolean debug = false;
    
-   private Rotation(ClassPeriod[] times, DayType dt, int index) {
-         this.times = times; this.labSwitch = dt.getLabSwitch(); this.dayType = dt;
-         this.index = index; lunchSlot = calcLunchSlot(); 
+   private Rotation(DayType dt) {
+         this.dayType = dt;
+         this.times = getSchedule(ordinal()+1); this.labSwitch = dt.getLabSwitch();
+         this.index = ordinal()+1; lunchSlot = calcLunchSlot(); 
          if (debug) System.out.println("rotation "+index+" created");
    }
    
@@ -91,6 +95,14 @@ public enum Rotation
             return new int[] {3,4,1,2,6,7,5};
          case RotationConstants.HALF_R4 :
             return new int[] {4,1,2,3,7,5,6};
+         case RotationConstants.TEST_ONE : 
+            return new int[] {1, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 5, RotationConstants.PASCACK_STUDY_2};
+         case RotationConstants.TEST_TWO : 
+            return new int[] {2, 4, RotationConstants.LUNCH, RotationConstants.PASCACK_STUDY_1, 6};
+         case RotationConstants.TEST_THREE : 
+            return new int[] {3, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 7, RotationConstants.PASCACK_STUDY_2};
+         case RotationConstants.DELAY_ARR : 
+            return new int[] {6, lunch, 2, 4};
          default :
             return new int[0];
       }
@@ -117,7 +129,10 @@ public enum Rotation
             return DayType.DELAY_EVEN;
          case RotationConstants.NO_SCHOOL_INDEX : 
             return DayType.NO_SCHOOL;
-            
+         case RotationConstants.TEST_ONE : case RotationConstants.TEST_TWO : case RotationConstants.TEST_THREE :
+            return DayType.TEST_DAY;
+         case RotationConstants.DELAY_ARR :
+            return DayType.DELAY_ARR;
       }
       return null;
    }
@@ -139,6 +154,11 @@ public enum Rotation
          }
          else if (slots[i] == RotationConstants.PASCACK)
             name = "Pascack Period";
+         else if (slots[i] == RotationConstants.PASCACK_STUDY_1)
+            name = RotationConstants.pascack_1_name;
+         else if (slots[i] == RotationConstants.PASCACK_STUDY_2) {
+            name = RotationConstants.pascack_2_name;
+         }
          else 
             name = "Period " + slots[i];
          retval[i].setName(name); retval[i].setStartTime(
@@ -186,9 +206,16 @@ public enum Rotation
       return dayType;
    }
    public boolean isDelay() {
-      return dayType.equals(DayType.DELAYED_OPEN) || dayType.equals(DayType.DELAY_EVEN) || dayType.equals(DayType.DELAY_ODD);
+      return dayType.equals(DayType.DELAYED_OPEN) || dayType.equals(DayType.DELAY_EVEN) 
+            || dayType.equals(DayType.DELAY_ODD) || dayType.equals(DayType.DELAY_ARR);
    }
    public boolean isHalf() {
       return dayType.equals(DayType.HALF_DAY);
+   }
+   public boolean isTestDay() {
+      return dayType.equals(DayType.TEST_DAY);
+   }
+   public boolean isOther() {
+      return !(dayType.equals(DayType.NORMAL) || isDelay() || isHalf() || isTestDay());
    }
 }

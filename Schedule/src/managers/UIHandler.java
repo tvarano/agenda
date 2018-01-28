@@ -10,7 +10,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
-import java.awt.MenuItem; 
+import java.awt.MenuItem;
 import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.PreferencesEvent;
@@ -24,10 +24,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.instrument.IllegalClassFormatException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
+import java.util.zip.DataFormatException;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -47,6 +47,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
 
 import constants.ErrorID;
+import constants.Rotation;
 import constants.RotationConstants;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
@@ -63,12 +64,14 @@ public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
    
-	public static Font font;
+	public static final Font font = new Font("Futura", Font.PLAIN, 16);;
 	private static boolean debug;
 	
+	/**
+	 * must be done for any other use of this class. initializes all variables
+	 */
 	public static void init() { 
 	   debug = false;
-	   font = new Font("Futura", Font.PLAIN, 16);
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -80,9 +83,9 @@ public final class UIHandler {
          
          @Override
          protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
             System.out.println("CALLED PAINT");
             setBackground(Color.BLUE);
-            super.paintComponent(g);
          }
          public Dimension getMinimumSize() {
             return new Dimension(Agenda.MIN_W,Agenda.MIN_H);
@@ -115,13 +118,12 @@ public final class UIHandler {
 	   UIManager.put("List.selectionBackground", tertiary);
 	   UIManager.put("List.selectionForeground", foreground);
 	   UIManager.put("List.foreground", foreground);
-	   UIManager.put("List.disabledText", Color.red);
       UIManager.put("TabbedPane.selected", quaternary);
       UIManager.put("TabbedPane.selectHighlight", quaternary);
       UIManager.put("TabbedPane.foreground", foreground);
       UIManager.put("TabbedPane.insets", secondary);
 	   UIManager.put("ToolTip.font", getToolTipFont());
-	   UIManager.put("ToolTip.background", background);
+	   UIManager.put("ToolTip.background", background.brighter());
 	   UIManager.put("ToolTip.foreground", foreground);
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
@@ -129,7 +131,13 @@ public final class UIHandler {
 	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getImage("WarningIcon.png"));
 	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getImage("InfoIcon.png"));
 	   UIManager.put("OptionPane.questionIcon", ResourceAccess.getImage("QuestionIcon.png"));
-	}
+	   
+	   final int divThickness = 4;
+	   UIManager.put("SplitPane.background", background);
+      UIManager.put("SplitPaneDivider.border", BorderFactory.createLineBorder(titleBorderColor, divThickness));
+      UIManager.put("SplitPaneDivider.draggingColor", titleBorderColor.darker());
+      UIManager.put("SplitPane.dividerSize", divThickness);
+	   }
 	
 	
 	private static class ThemeChooser extends MenuItem {
@@ -333,6 +341,10 @@ public final class UIHandler {
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
+   private static void setRotation(Agenda age, constants.Rotation r) {
+      age.getManager().setRotation(r);
+   }
+   
    public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
       if (Desktop.isDesktopSupported()) {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
@@ -347,10 +359,9 @@ public final class UIHandler {
                      + "Viktor Nakev : Icon Designer\n"
                      + "Matthew Gheduzzi : Alpha Tester\n"
                      + "Michael Ruberto : Conceptual Designer",
-                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
             }
          });
-         
          Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {
             @Override
             public void handlePreferences(PreferencesEvent arg0) {
@@ -369,21 +380,36 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            age.getManager().startInput();
+            age.getManager().setCurrentPane(PanelManager.INPUT);
          }
       });
       mi = m.add(new MenuItem("View GPA"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            age.getManager().startGPA();
+            age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
-      mi = m.add(new MenuItem("Refresh"));
+      Menu rotations = (Menu) m.add(new Menu("Set Rotation"));
+      for (int i = 0; i < RotationConstants.categorizedRotations().length; i++) {
+         Menu rm = (Menu) rotations.add(new Menu(RotationConstants.categoryNames[i]));
+         for (Rotation r : RotationConstants.categorizedRotations()[i]) {
+            if (!r.equals(Rotation.INCORRECT_PARSE)) {
+               MenuItem ri = rm.add(new MenuItem(RotationConstants.getName(r.getIndex())));
+               ri.addActionListener(new ActionListener() {
+                  @Override
+                  public void actionPerformed(ActionEvent arg0) {
+                     setRotation(age, r);
+                  }
+               });
+            }
+         }
+      }
+      mi = m.add(new MenuItem("Reread Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            age.getManager().refresh();
+            age.getManager().reset();
          }
       });
       
@@ -515,7 +541,7 @@ public final class UIHandler {
                         + "The best thing to do is simply send the entire log when this\n"
                         + "occurs. It gives the most information possible and will allow\n"
                         + "for the error to be fixed most quickly.\n"
-                        + "Email the log to "+Agenda.CONTACT_EMAIL,
+                        + "Email the log to "+information.Addresses.CONTACT_EMAIL,
                   Agenda.APP_NAME, JOptionPane.DEFAULT_OPTION,
                   JOptionPane.INFORMATION_MESSAGE, null,
                   new String[]{"Close", "Open Log", "Send Email"}, "Close");
@@ -596,7 +622,7 @@ public final class UIHandler {
                else if (type == LAF_ID)
                   bw.write(UIManager.getSystemLookAndFeelClassName());
                else {
-                  ErrorID.showError(new IllegalClassFormatException("type "+type+" is undefined for writing a UI trait"), true);
+                  ErrorID.showError(new DataFormatException("type "+type+" is undefined for writing a UI trait"), true);
                   bw.write("");
                }
                bw.close();
@@ -750,7 +776,7 @@ public final class UIHandler {
       try {
          UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
          MetalLookAndFeel.setCurrentTheme(new OceanTheme());
-         if (Agenda.statusU) Agenda.log("LAF set: "+UIManager.getLookAndFeel().getID());
+         Agenda.log("LAF set: "+UIManager.getLookAndFeel().getID());
       } catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e1) {
          ErrorID.showError(e1, true);

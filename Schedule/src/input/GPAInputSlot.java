@@ -34,6 +34,7 @@ public class GPAInputSlot extends JPanel
       super();
       this.cp = in;
       setParentPanel(parentPanel);
+      setBackground(UIHandler.background);
       setFont(UIHandler.getInputLabelFont());
       init();
    }
@@ -50,6 +51,15 @@ public class GPAInputSlot extends JPanel
       create();
    }
    
+   private ActionListener checkModification() {
+      return new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            parentPanel.setSaved(false);
+         }
+      };
+   }
+   
    public void create() {
       removeAll();
       ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
@@ -62,6 +72,7 @@ public class GPAInputSlot extends JPanel
       nameField.setToolTipText(cp.getName());
       add(nameField);
       JLabel l = new JLabel("Grade: ");                                             //prompts the grade of the class
+      l.setForeground(UIHandler.foreground);
       l.setFont(UIHandler.getButtonFont());
       add(l);
       honors = cp.isHonors();
@@ -69,19 +80,23 @@ public class GPAInputSlot extends JPanel
          JTextField field = (JTextField) add(new JTextField(cp.getGrade() + ""));   //field for number grades
          field.setFont(UIHandler.getInputFieldFont());
          field.setPreferredSize(new Dimension(60, 25));
+         field.addActionListener(checkModification());
       } else {
          JComboBox<String> chooser = new JComboBox<String>();                       //JCombo for letter grades
          chooser.setFont(UIHandler.getButtonFont());
          DefaultComboBoxModel<String> m = new DefaultComboBoxModel<String>();
          chooser.setModel(m);
+         chooser.addActionListener(checkModification());
          for (String gr : GPAInput.letterGrades)
             m.addElement(gr);
          m.setSelectedItem(cp.getLetterGrade());
          add(chooser);
       }
       JCheckBox hon = new JCheckBox("Honors/AP");                                   //checkbox for honors / ap credit
+      hon.setForeground(UIHandler.foreground);
       hon.setFont(UIHandler.getButtonFont());
       hon.setSelected(honors);
+      hon.addActionListener(checkModification());
       hon.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
@@ -98,6 +113,7 @@ public class GPAInputSlot extends JPanel
       clm.addElement("Half Year");
       clm.addElement("Full Year");
       clm.addElement("Full w/ Lab");
+      courseLen.addActionListener(checkModification());
       courseLen.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
@@ -110,6 +126,7 @@ public class GPAInputSlot extends JPanel
       add(courseLen);
       JButton removal = (JButton) add(new JButton("Remove From GPA"));
       removal.setFont(UIHandler.getButtonFont());
+      removal.addActionListener(checkModification());
       removal.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
@@ -118,6 +135,7 @@ public class GPAInputSlot extends JPanel
       });
       JButton move = (JButton) add(new JButton("Move"));
       move.setFont(UIHandler.getButtonFont());
+      move.addActionListener(checkModification());
       move.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {

@@ -127,7 +127,7 @@ public class Schedule implements Serializable
    }
    
    public Schedule clone() {
-      System.out.println(name + "CLONEDCLONEDCLONED");
+      if (debug) System.out.println(name + "CLONEDCLONEDCLONED");
       if (debug) System.out.println(name+" cloned. showName:"+showName);
       Schedule retval = new Schedule();
       retval.setClasses(new ClassPeriod[classes.length]);
@@ -246,6 +246,7 @@ public class Schedule implements Serializable
    }
    
    public void calculateSchoolDay() {
+      if (debug) System.out.println(name + " CALCULATING "+classString(false));
       if (classes.length > 0)
          schoolDay = new ClassPeriod(
             -1, "schoolDay", classes[0].getStartTime(), 

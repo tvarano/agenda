@@ -60,7 +60,7 @@ public enum ErrorID {
       }
    }
    public static void showUserError(ErrorID error) {
-      if (Agenda.statusU) Agenda.logError("User Error " + error + " : ", new UserError(error.message));
+      Agenda.logError("User Error " + error + " : ", new UserError(error.message));
       JOptionPane
             .showMessageDialog(null,
                   "User Error.\nDetails:\n" + error.message + "\nErrorID: "
@@ -81,7 +81,7 @@ public enum ErrorID {
    }
 
    public static void showGeneral(Throwable e, String ID, boolean copy, boolean recoverable) {
-      if (Agenda.statusU) Agenda.logError(ID, e);
+      Agenda.logError(ID, e);
       e.printStackTrace();
       String newLn = "\n";
       int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE, recoverable);
@@ -183,7 +183,7 @@ public enum ErrorID {
          if (debug) System.out.println("copying "+str+" : "+e);
          Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
          systemClipboard.setContents(new ErrorCopier(str, e), null);
-         if (Agenda.statusU) Agenda.log("copied error " + e.getMessage());
+         Agenda.log("copied error " + e.getMessage());
          if (debug)
             try {
                System.out.println("copied: "+systemClipboard.getData(DataFlavor.stringFlavor));

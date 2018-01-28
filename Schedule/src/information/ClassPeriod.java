@@ -47,12 +47,10 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public ClassPeriod(int slot, String name, Time startTime, Time endTime, String teacher, String roomNumber) {
       setSlot(slot); setName(name); setStartTime(startTime); setEndTime(endTime); 
       setTeacher(teacher); setRoomNumber(roomNumber); setShowName(true); 
-      setCanShowPeriod(slot != RotationConstants.LUNCH && slot != RotationConstants.PASCACK &&
-      slot != RotationConstants.NO_SCHOOL_TYPE);
+      setCanShowPeriod(RotationConstants.canShowPeriod(this));
       if (courseWeight == NO_WEIGHT)
          courseWeight = FULL_YEAR;
-      if (debug)
-         System.out.println("INITIALIZED"+getInfo());
+      if (debug) System.out.println("INITIALIZED"+getInfo());
       duration = Time.calculateDuration(startTime, endTime);  
    }
    
@@ -112,6 +110,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public void setTimeTemplate(ClassPeriod c) {
       if (c == null) return;
       setStartTime(c.getStartTime()); setEndTime(c.getEndTime());
+      calculateDuration();
    }
    public boolean isIncomplete() {
       return (slot == RotationConstants.NO_SLOT || name.equals(" ") || teacher.equals(NO_TEACH) || roomNumber == NO_ROOM);

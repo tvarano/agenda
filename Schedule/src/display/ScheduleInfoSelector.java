@@ -67,17 +67,17 @@ public class ScheduleInfoSelector extends JPanel
       
       scheduleTabs = createTabbedPane();
       scheduleTabs.setOpaque(false);
-      if (Agenda.statusU) Agenda.log("scheduleInfo initializer mk 1");
+      Agenda.log("scheduleInfo initializer mk 1");
       info = new ClassInfoPane(null);
       add(scheduleTabs);
    }
    
    private void addComponents() {
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
-      if (Agenda.statusU) Agenda.log("scheduleInfo initializer mk 2");
+      Agenda.log("scheduleInfo initializer mk 2");
       JScrollPane scroll = new JScrollPane(info);
       scroll.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
-      if (Agenda.statusU) Agenda.log("scheduleInfo initializer mk 3");
+      Agenda.log("scheduleInfo initializer mk 3");
       scroll.setOpaque(false);
       add(scroll);
       scroll = new JScrollPane(memo);
@@ -103,7 +103,7 @@ public class ScheduleInfoSelector extends JPanel
          return;
       }
       information.ClassPeriod selectVal = selected.getSelectedValue();
-      if (Agenda.statusU) Agenda.log("class selection changed to: "+selectVal);
+      Agenda.log("class selection changed to: "+selectVal);
       info.setShowNames(selected.isShowNames());
       info.setClassPeriod(selectVal);
       if (selectVal == null)

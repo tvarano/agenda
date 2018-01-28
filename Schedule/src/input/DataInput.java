@@ -17,15 +17,17 @@ import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
+import ioFunctions.SchedReader;
 import managers.Agenda;
 import managers.PanelManager;
+import managers.PanelView;
 import managers.UIHandler;
 import tools.ToolBar;
 
 //Thomas Varano
 //Aug 31, 2017
 
-public class DataInput extends JPanel implements InputManager
+public class DataInput extends JPanel implements InputManager, PanelView
 {
    private static final long serialVersionUID = 1L;
    public static final int INIT_AMT_CL = 7;
@@ -66,7 +68,7 @@ public class DataInput extends JPanel implements InputManager
    public void init(Schedule s) {
       removeAll();
       init0();
-      if (Agenda.statusU) Agenda.log("inputMain initialized");
+      Agenda.log("inputMain initialized");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       amtClasses = s.getClasses().length;
       if (s.getLabs() != null && s.getLabs().length != 0)
@@ -229,18 +231,6 @@ public class DataInput extends JPanel implements InputManager
       else if (slot == 8)
          setButtonEnabled(ToolBar.EIGHT_BUTTON, true);
    }
-   
-   /*
-   private void cannotCreate() {
-      error = !canCreate();
-      if (debug) System.out.println("cannotCreate");
-      ErrorID.showUserError(ErrorID.INPUT_ERROR);
-   }
-   
-   private void resolve() {
-      error = false;
-   }
-   */
 
    public void reWriteSlotsArray() {
       slots.removeAll(slots);
@@ -270,14 +260,6 @@ public class DataInput extends JPanel implements InputManager
           } 
        };
    }
-   
-//   private boolean canCreate() {
-//      for (Component c : center.getComponents())
-//         if (c instanceof DataInputSlot) 
-//            if (!((DataInputSlot) c).checkCanCreate())
-//               return false;
-//      return true;
-//   }
    
    @Override
    public void save() {
@@ -315,27 +297,24 @@ public class DataInput extends JPanel implements InputManager
       s.setPascackPreferences(pascack.createClass());
       parentManager.saveSchedule(s, getClass());
       if (debug) System.out.println("wrote" + s);
-      if (Agenda.statusU) Agenda.log("saved input");
+      Agenda.log("saved input");
       saved = true;
    }
    
+   @Override
    public void closeToDisp() {
+      //TODO decide if this should be a simple resume or a whole new reading if you haven't saved
       if (hasManager) {
-         if (saved)
-            parentManager.reinitDisp();
-         else 
-            parentManager.resumeDisp();
+         parentManager.setCurrentPane(PanelManager.DISPLAY);
       }
       else 
          ((JFrame)getParent().getParent().getParent().getParent()).dispose();
-      if (Agenda.statusU) Agenda.log("closed input");
+      Agenda.log("closed input");
    }
    
    public void saveAndCloseToDisp() {
       save();
-      /*if (debug) System.out.println("saved. error = "+error);
-      if (!error)*/
-         closeToDisp();
+      closeToDisp();
    }
    
    public void removeAndReOrder(Component c) {
@@ -363,5 +342,28 @@ public class DataInput extends JPanel implements InputManager
 
    public void setLunch(ClassPeriod lunch) {
       this.lunch = lunch;
+   }
+   
+   public boolean isSaved() {
+      return saved;
+   }
+   
+   public void setSaved(boolean saved) {
+      this.saved = saved;
+   }
+
+   @Override
+   public void refresh() {
+      setBeginningSchedule(new SchedReader().readAndOrderSchedule(parentManager.getTodayR()));
+   }
+
+   @Override
+   public void close() {
+      save();
+   }
+   
+   @Override
+   public void open() {
+      setBeginningSchedule(parentManager.getMainSched());
    }
 }
