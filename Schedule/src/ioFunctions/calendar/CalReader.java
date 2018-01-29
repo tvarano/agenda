@@ -49,7 +49,7 @@ public class CalReader {
             calClear = true;
          } catch (Exception e) {
             calClear = false;
-            Agenda.logError("exception in cal reading", e);
+            Agenda.log("exception in cal reading");
          }
       } else
          calClear = false;

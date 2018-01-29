@@ -112,6 +112,10 @@ public class Schedule implements Serializable
       return null;
    }
    
+   public void sort() {
+      setClasses(ioFunctions.OrderUtility.reorderClasses(Rotation.R1, classes));  
+   }
+   
    public void setLunchLab(Rotation r) {
       if (get(RotationConstants.LUNCH) == null)
          return;
