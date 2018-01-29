@@ -32,7 +32,7 @@ public class VCalendar {
       return ret;
    }
    
-   public String eventsString() {
+   public String toString() {
       return getClass().getName() + "["+events.toString() + "]";
    }
 }

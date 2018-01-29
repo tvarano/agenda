@@ -85,10 +85,12 @@ public class PanelManager {
       return bar.getMenu(0);
    }
    public void beforeClose() {
-      if (currentView instanceof input.InputManager)
-         if (!askSave()) {
+      if (currentView instanceof input.InputManager) {
+         if (!((input.InputManager) currentView).isSaved() && !askSave()) {
+            Agenda.log("DO NOT SAVE");
             return;
          }
+      }
       currentView.save();
    }
    
