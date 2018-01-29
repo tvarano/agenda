@@ -126,7 +126,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureFileRoute();
 
@@ -144,6 +144,8 @@ public class Agenda extends JPanel
          } catch (IOException e) {
             ErrorID.showError(e, true);
          }
+      } else {
+         log("logging to console / terminal");
       }
       //logs the time taken (in millis)
       log("filework completed in "+(System.currentTimeMillis()-start));

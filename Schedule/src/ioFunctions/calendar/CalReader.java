@@ -60,6 +60,10 @@ public class CalReader {
       if (calClear) {
          for (VEvent e : cal.eventsToday()) {
             String s = e.getSummary();
+            if (s.contains("10:00")) {
+               Agenda.log("ROTATION: 10:00 open read from internet");
+               return Rotation.DELAY_ARRIVAL;
+            }
             if (RotationConstants.getRotation(s) != null) {
                Agenda.log("ROTATION: " + s + " read from internet");
                return RotationConstants.getRotation(s);
@@ -123,6 +127,7 @@ public class CalReader {
          }
       }
       s.close();
+      events.remove(events.size() - 1);
       Agenda.log("calendar format took "+(System.currentTimeMillis() - start));
       return VCalendar.build(events);
    }
@@ -159,6 +164,12 @@ public class CalReader {
       }
    }
 
+   /**
+    * reads the rfc of the day. 
+    * has one more 
+    * @return
+    * @throws IOException
+    */
    private String readRfc() throws IOException {
       BufferedReader in = null;
       if (debug) System.out.println("begun reading");
@@ -167,6 +178,8 @@ public class CalReader {
       StringBuilder b = new StringBuilder();
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
+         if (inputLine.contains(DTSTART_PREFIX + (LocalDate.now().getYear() - 1)))
+               break;
          b.append(inputLine);
          b.append("\n");
       }
@@ -176,8 +189,13 @@ public class CalReader {
    }
    
    public static void main(String[] args) {
-      System.out.println("hello");
       CalReader c = new CalReader();
+      try {
+         System.out.println(c.retrieveRfc());
+         System.out.println(c.readAndExtractEvents());
+      } catch (ExecutionException | TimeoutException | InterruptedException e) {
+         e.printStackTrace();
+      }
       System.out.println(c.readTodayRotation());
    }
 }

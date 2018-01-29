@@ -290,7 +290,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       for (GPAInputSlot s : slots) {
          s.save();
       }
-      saved = true;
+      setSaved(true);
       if (manager != null)
          manager.saveSchedule(sched, getClass());
       Agenda.log("gpa successfully saved");
@@ -386,7 +386,8 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    
    public void setSaved(boolean saved) {
       this.saved = saved;
-      setBackground((saved) ? Color.GREEN : Color.RED);
+      if (debug) System.out.println("gpa 389 SAVED = "+saved);
+      if (debug) setBackground((saved) ? Color.GREEN : Color.RED);
       for (Component c : getComponents()) {
          c.setBackground(getBackground());
       }
