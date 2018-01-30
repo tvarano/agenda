@@ -7,7 +7,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.MenuBar;
 import java.awt.RenderingHints;
 import java.awt.desktop.ScreenSleepEvent;
@@ -35,7 +34,6 @@ import javax.swing.UIManager;
 import constants.ErrorID;
 import information.Addresses;
 import ioFunctions.SchedReader;
-import resources.ResourceAccess;
 
 //Thomas Varano
 //Main class
@@ -122,11 +120,11 @@ public class Agenda extends JPanel
    public static void initialFileWork() {
       long start = System.currentTimeMillis();
       try {
-         sourceCode = new URI("https://github.com/tvarano54/schedule-new");
+         sourceCode = new URI(Addresses.SOURCE);
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureFileRoute();
 
@@ -295,26 +293,31 @@ public class Agenda extends JPanel
          public void run() {
             JPanel p = new JPanel() {
                private static final long serialVersionUID = 1L;
-               int dots = 3;
                
                @Override 
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
                   Graphics2D g2 = (Graphics2D) g;
                   g2.addRenderingHints(new RenderingHints(
-                        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-                  g2.drawImage((Image) ResourceAccess.getImage("loading.gif").getImage(), 0, 0, 100, 100, null);
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON));
+                  java.awt.Image logo = resources.ResourceAccess
+                        .getImage("Agenda Logo.png").getImage();
+                  // TODO ask jarrett abt this
+                  java.awt.Image loading = resources.ResourceAccess
+                        .getImage("newLoad.gif").getImage();
+                  g2.drawImage(logo, getWidth() / 2 - logo.getWidth(this) / 2,
+                        getHeight() / 2 - logo.getHeight(this) / 2 + 15, this);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
-                  String s = "LOADING";
-                  for (int i = 0; i < dots; i++)
-                     s += ".";
-                  g2.drawString(s, 260, 150);
-                  dots++;
+                  String load = "LOADING.";
+                  g2.drawString(load + "..", getWidth() / 2
+                        - getFontMetrics(g2.getFont()).stringWidth(load) / 2, 150);
                   log("Drawing strings took " + (System.currentTimeMillis() - start));
                }
             };
             frame.add(p);
-            frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+            frame.setMinimumSize(
+                  new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.pack();
             frame.setLocationRelativeTo(null);

@@ -336,6 +336,9 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public void setUpdating(boolean updating) {
       this.updating = updating;
    }
+   public CalReader getReader() {
+      return cal;
+   }
 
    @Override
    public void actionPerformed(ActionEvent e) {

@@ -49,6 +49,7 @@ import javax.swing.plaf.metal.OceanTheme;
 import constants.ErrorID;
 import constants.Rotation;
 import constants.RotationConstants;
+import information.Addresses;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
 import resources.ResourceAccess;
@@ -419,7 +420,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (checkIntentions("Reset your schedule")) {
+            if (checkIntentions("Reset Your Schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
                age.restart();
@@ -518,12 +519,12 @@ public final class UIHandler {
       bar.add(m);
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");
-      m.add(new LinkChooser("Canvas", createURI("https://pascack.instructure.com/")));
-      m.add(new LinkChooser("Genesis", createURI(
-            "https://students.pascack.k12.nj.us/genesis/parents?tab1=studentdata&tab2=studentsummary&studentid=808219&action=form")));
-      m.add(new LinkChooser("PHHS Home", createURI("https://hills.pascack.org/")));
-      m.add(new LinkChooser("Naviance", createURI("http://connection.naviance.com/phhs")));
+      m.add(new LinkChooser("Canvas", createURI(Addresses.CANVAS)));
+      m.add(new LinkChooser("Genesis", createURI(Addresses.GENESIS)));
+      m.add(new LinkChooser("PHHS Home", createURI(Addresses.PHHS_HOME)));
+      m.add(new LinkChooser("Naviance", createURI(Addresses.NAVIANCE)));
       m.add(new LinkChooser("Agenda Source", Agenda.sourceCode));
+      m.add(new LinkChooser("Rotation Calendar", createURI(Addresses.CALENDAR_URL)));
       
       bar.add(m);
       // ---------------------------Help Bar--------------------------

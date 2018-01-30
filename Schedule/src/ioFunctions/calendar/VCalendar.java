@@ -20,6 +20,13 @@ public class VCalendar {
       return new VCalendar(events);
    }
    
+   public static VCalendar test() {
+      ArrayList<VEvent> v = new ArrayList<VEvent>();
+      for (char i = 'A'; i < 'z'; i++)
+         v.add(new VEvent(i + ""));
+      return new VCalendar(v);
+   }
+   
    public ArrayList<VEvent> events() {
       return events;
    }
