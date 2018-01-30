@@ -124,7 +124,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = false;
+      boolean logData = true;
 
       FileHandler.ensureFileRoute();
 
@@ -463,7 +463,7 @@ public class Agenda extends JPanel
    }
 
    public static void main(String[] args) {
-      statusU = false;
+      statusU = true;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

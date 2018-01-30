@@ -6,7 +6,6 @@ package input;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -17,7 +16,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -397,18 +395,20 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       setSchedule(new SchedReader().readAndOrderSchedule(manager.getTodayR()));
    }
    
+   /*
    public static void main(String[] args) {
       Agenda.initialFileWork();
       UIHandler.init();
-      JFrame f = new JFrame(Agenda.APP_NAME + " " + Agenda.BUILD + " GPA TEST");
+      javax.swing.JFrame f = new javax.swing.JFrame(Agenda.APP_NAME + " " + Agenda.BUILD + " GPA TEST");
       final long start = System.currentTimeMillis();
       System.out.println("NOTE gpa run seperately");
       f.getContentPane().add(new GPAInput(new SchedReader().readSched(), null));
       System.out.println(System.currentTimeMillis() - start);
       f.setVisible(true);
-      f.setMinimumSize(new Dimension(Agenda.MIN_W, Agenda.MIN_H));
+      f.setMinimumSize(new java.awt.Dimension(Agenda.MIN_W, Agenda.MIN_H));
       f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       f.setSize(new Dimension(Agenda.PREF_W, Agenda.PREF_H + 22));
       
    }
+   */
 }

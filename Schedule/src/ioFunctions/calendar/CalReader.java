@@ -188,12 +188,7 @@ public class CalReader {
       return b.toString();
    }
    
-   @Deprecated
-   public void showList() {
-      Agenda.log("showing calendar of events");
-      EventList.show(cal);
-   }
-   
+   /*
    public static void main(String[] args) {
       CalReader c = new CalReader();
       try {
@@ -204,4 +199,5 @@ public class CalReader {
       }
       System.out.println(c.readTodayRotation());
    }
+   */
 }
