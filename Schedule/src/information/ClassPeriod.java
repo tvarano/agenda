@@ -107,6 +107,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
             + teacher + ", showName =" + showName + "]";
 
    }
+   public String memoInfo() {
+      return getClass().getName() + "[" + name + ", memo = "+getMemo() + "]";
+   }
+   public String memoryInfo() {
+      return name + " @" + Integer.toHexString(hashCode());
+   }
    public void setTimeTemplate(ClassPeriod c) {
       if (c == null) return;
       setStartTime(c.getStartTime()); setEndTime(c.getEndTime());
@@ -210,7 +216,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       this.canShowPeriod = canShowPeriod;
    }
    public void setBackgroundData(ClassPeriod c) {
-      setGrade(c.getGrade()); setCourseWeight(c.getCourseWeight());
+      setGrade(c.getGrade()); setCourseWeight(c.getCourseWeight()); setMemo(c.getMemo());
    }
    public void setForegroundData(ClassPeriod c) {
       setName(c.getName()); setRoomNumber(c.getRoomNumber()); setTeacher(c.getTeacher()); setSlot(c.getSlot());      

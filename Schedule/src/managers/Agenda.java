@@ -303,9 +303,6 @@ public class Agenda extends JPanel
                         RenderingHints.VALUE_ANTIALIAS_ON));
                   java.awt.Image logo = resources.ResourceAccess
                         .getImage("Agenda Logo.png").getImage();
-                  // TODO ask jarrett abt this
-                  java.awt.Image loading = resources.ResourceAccess
-                        .getImage("newLoad.gif").getImage();
                   g2.drawImage(logo, getWidth() / 2 - logo.getWidth(this) / 2,
                         getHeight() / 2 - logo.getHeight(this) / 2 + 15, this);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
@@ -466,7 +463,7 @@ public class Agenda extends JPanel
    }
 
    public static void main(String[] args) {
-      statusU = true;
+      statusU = false;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

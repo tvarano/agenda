@@ -222,6 +222,7 @@ public final class UIHandler {
 	      addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+               Agenda.log("opening uri "+name);
                Agenda.FileHandler.openURI(link);
             }
 	      });    

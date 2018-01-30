@@ -76,7 +76,7 @@ public final class OrderUtility
                      r.getTimes()[rotationIndex].getEndTime(),
                      unOrderedArray[o].getTeacher(),
                      unOrderedArray[o].getRoomNumber());
-
+               newArray[newArrayIndex].setData(unOrderedArray[o]);
                if (detailedDebug) {
                   System.out.println("new array["+newArrayIndex+"] set to old["+o);
                   System.out.println("\tindex is; "+unOrderedArray[o].getSlot());

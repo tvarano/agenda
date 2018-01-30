@@ -53,11 +53,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private ToolBar toolbar;
    private ScheduleInfoSelector infoSelector;
    private boolean updating, showDisp;
-   private boolean debug, testSituation;
+   private boolean debug, debugSave, testSituation;
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
+      debugSave = false;
       testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
@@ -131,7 +132,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public synchronized void writeMain() {
-      Agenda.log("wrote main Schedule");
+      Agenda.log(getClass().getName()  + " wrote main Schedule");
+      if (debugSave) System.out.println("MAIN SCHED WRITTEN");
       try {
          SchedWriter w = new SchedWriter();
          w.write(mainSched);
@@ -221,6 +223,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public ClassPeriod classForMemo(int slot) {
+//      if (debugSave) System.out.println("memos are "+mainSched.classMemoString());
+      if (debugSave && mainSched.get(slot) != null) System.out.println("\t should be "+mainSched.get(slot).memoryInfo());
       return (slot == RotationConstants.PASCACK) ? mainSched.getPascackPreferences() : mainSched.get(slot);
    }
    
@@ -296,6 +300,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return mainSched;
    }
    public void setMainSched(Schedule mainSched) {
+      if (debugSave) System.out.println("MAINSCHED CHANGED HERE");
       this.mainSched = mainSched;
    }
    public Schedule getTodaySched() {
