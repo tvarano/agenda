@@ -102,7 +102,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void initComponents() {
       SchedReader r = new SchedReader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
-      System.out.println("DISP 104 MAIN IS "+mainSched.classString(false));
+      if (debug) System.out.println("DISP 104 MAIN IS "+mainSched.classString(false));
       if (debug) System.out.println("\tDISP 96 GPA is " + mainSched.getGpaClasses().toString() );
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug && todaySched.get(RotationConstants.LUNCH) != null)

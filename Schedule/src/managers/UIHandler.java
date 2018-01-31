@@ -45,6 +45,8 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
 
 import constants.ErrorID;
 import constants.Rotation;
@@ -352,16 +354,29 @@ public final class UIHandler {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
             public void handleAbout(AboutEvent arg0) {
+               String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> <"
+                     + "p>Agenda is a schedule program for Pascack Hills (and possibly Valley)"
+                     + "<p>that can keep track of time, school schedules, assignments, and GPA"
+                     + "<p>for students."
+                     + "<br><br>"
+                     + "<h2>CREDITS:"
+                     + "<h3>Thomas Varano : Author"
+                     + "<br><br>Viktor Nakev : Icon Designer"
+                     + "<br><br>Matthew Ghedduzi : Alpha Tester"
+                     + "<br><br>Michael Ruberto : Conceptual Designer</html>";
+               javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
+               content.setFont(font);
+               HTMLEditorKit kit = new HTMLEditorKit();
+               content.setEditorKit(kit);
+               kit.getStyleSheet().addRule("body {color:#000; font-family:"+font.getFamily()+"; margin: 4px; }");
+
+               Document doc = kit.createDefaultDocument();
+               content.setDocument(doc);
+               content.setText(html);
+               content.setOpaque(false);
                JOptionPane.showMessageDialog(null, 
-                     "Agenda is a schedule program for Pascack Hills (and possibly Valley)\n"
-                     + "that can keep track of time, school schedules, assignments, and GPA\n"
-                     + "for students.\n"
-                     + "CREDITS:\n"
-                     + "Thomas Varano : Author\n"
-                     + "Viktor Nakev : Icon Designer\n"
-                     + "Matthew Gheduzzi : Alpha Tester\n"
-                     + "Michael Ruberto : Conceptual Designer",
-                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
+                     content, "About " + Agenda.APP_NAME, 
+                     JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
             }
          });
          Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {

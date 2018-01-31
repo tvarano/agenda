@@ -23,7 +23,7 @@ public class MemoPad extends JTextPane implements FocusListener
 
    public MemoPad(ClassPeriod parentClass, ScheduleInfoSelector parentPanel) {
       super();
-      debug = true;
+      debug = false;
       setBackground(UIHandler.quaternary);
       setForeground(UIHandler.foreground);
       setFont(UIHandler.font);
@@ -57,7 +57,7 @@ public class MemoPad extends JTextPane implements FocusListener
    }
    public void setParentClass(ClassPeriod parentClass) {
       save();
-      System.out.println("\tMemo Recieved "+parentClass.memoryInfo());
+      if (debug) System.out.println("\tMemo Recieved "+parentClass.memoryInfo());
       this.parentClass = parentClass;
       checkAccessibility();
       repaint();
