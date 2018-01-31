@@ -19,7 +19,7 @@ import managers.UIHandler;
 public class RotationButton extends JButton implements ActionListener
 {
    private static final long serialVersionUID = 1L;
-   public static final String TODAY_R = "~currentRotation$";
+   public static final String TODAY_R = " Today's Rotation ";
    private Rotation r;
    private JPanel parentPanel;
    private boolean debug, overridingPower, highlight;
@@ -45,7 +45,6 @@ public class RotationButton extends JButton implements ActionListener
          overridingPower = true;
          if (debug) System.out.println(text+" button parent:"+parentPanel);
          if (parentPanel instanceof DisplayMain) {
-            setText(" Today's Rotation ");
             r = ((DisplayMain) parentPanel).readRotation();
          if (debug)
             System.out.println(getText());
@@ -85,7 +84,12 @@ public class RotationButton extends JButton implements ActionListener
       if (o == null)
          return false;
       return (RotationConstants.equalsAllTypes(r, o.r));
-//      return r.equals(o.r);
+   }
+   
+   public void updateTodayR() {
+      if (getText().equals(TODAY_R)) 
+         if (parentPanel instanceof DisplayMain)
+            r = ((DisplayMain) parentPanel).readRotation();
    }
    
    @Override

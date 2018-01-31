@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
@@ -74,7 +75,7 @@ public final class UIHandler {
 	 * must be done for any other use of this class. initializes all variables
 	 */
 	public static void init() { 
-	   debug = false;
+	   debug = true;
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -354,8 +355,9 @@ public final class UIHandler {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
             public void handleAbout(AboutEvent arg0) {
-               String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> <"
-                     + "p>Agenda is a schedule program for Pascack Hills (and possibly Valley)"
+               String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
+                     + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
+                     + "<p>Agenda is a schedule program for Pascack Hills (and possibly Valley)"
                      + "<p>that can keep track of time, school schedules, assignments, and GPA"
                      + "<p>for students."
                      + "<br><br>"
@@ -393,13 +395,14 @@ public final class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
+           
       MenuItem mi = m.add(new MenuItem("Input Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             age.getManager().setCurrentPane(PanelManager.INPUT);
          }
-      });
+      }); 
       mi = m.add(new MenuItem("View GPA"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -407,6 +410,16 @@ public final class UIHandler {
             age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
+      //to test day checking
+      if (debug) {
+         mi = m.add(new MenuItem("TEST DAYCHECK"));
+         mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+               age.getManager().getDisplay().setLastRead(LocalDate.now().minusDays(1));
+            }
+         });
+      }
       Menu rotations = (Menu) m.add(new Menu("Set Rotation"));
       for (int i = 0; i < RotationConstants.categorizedRotations().length; i++) {
          Menu rm = (Menu) rotations.add(new Menu(RotationConstants.categoryNames[i]));
@@ -422,10 +435,11 @@ public final class UIHandler {
             }
          }
       }
-      mi = m.add(new MenuItem("Reread Schedule"));
+      mi = m.add(new MenuItem("Refresh"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
+            Agenda.log("REFRESH");
             age.getManager().reset();
          }
       });
@@ -568,6 +582,7 @@ public final class UIHandler {
                Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
          }
       });
+      mi = m.add(new LinkChooser("Submit Issue", createURI(Addresses.GITHUB_ISSUES)));
       mi = m.add(new MenuItem("Sharing Protocol"));
       mi.addActionListener(new ActionListener() {
          @Override

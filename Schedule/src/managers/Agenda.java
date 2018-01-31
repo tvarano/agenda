@@ -48,7 +48,8 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.3";
+   public static final String BUILD = "1.7.4";
+   public static final String LAST_UPDATED = "Jan 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -92,10 +93,12 @@ public class Agenda extends JPanel
          Desktop.getDesktop().addAppEventListener(new SystemSleepListener() {
             @Override
             public void systemAboutToSleep(SystemSleepEvent arg0) {
+               log("system slept");
                manager.getDisplay().hardStop();
             }
             @Override
             public void systemAwoke(SystemSleepEvent arg0) {
+               log("System awoke");
                manager.getDisplay().hardResume();
                manager.getDisplay().checkAndUpdateTime();
                manager.getDisplay().checkAndUpdateDate();
@@ -104,10 +107,12 @@ public class Agenda extends JPanel
          Desktop.getDesktop().addAppEventListener(new ScreenSleepListener() {
             @Override
             public void screenAboutToSleep(ScreenSleepEvent arg0) {
+               log("screen slept");
                manager.getDisplay().stop();
             }
             @Override
             public void screenAwoke(ScreenSleepEvent arg0) {
+               log("screen awoke");
                manager.getDisplay().resume();
             }
          });
@@ -124,7 +129,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureFileRoute();
 

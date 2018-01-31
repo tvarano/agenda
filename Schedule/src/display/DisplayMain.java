@@ -80,18 +80,23 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return cal.readTodayRotation();
    }
    
+   public void setLastRead(LocalDate d) {
+      lastRead = d;
+      Agenda.log("schedule last read "+d);
+   }
+   
    private void initTime() {
       try {
          if (testSituation) {
             currentTime = new Time(9,20);
             today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today); 
-            lastRead = LocalDate.now();
+            setLastRead(LocalDate.now());
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
             todayR = cal.readTodayRotation();
-            lastRead = LocalDate.now();
+            setLastRead(LocalDate.now());
          }
       } catch (Throwable e) { 
          e.printStackTrace();
@@ -151,6 +156,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void resume() {
       showDisp = true;
+      update();
    }
    
    public void hardResume() {
@@ -171,7 +177,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
   
    public void setBarTime(Time timeLeft) {
-      String prefix = "Time Left In Class: "; 
+      String prefix = "In "+ findCurrentClass() +" for: ";
       setBarText(prefix + timeLeft.durationString());
    }
    
@@ -182,7 +188,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
             setBarText("No School");
       }
        else if (checkInSchool())
-         setBarText("Next Class In: " + timeUntilNextClass().durationString());
+         setBarText(findNextClass() + " Is In: " + timeUntilNextClass().durationString());
        else 
           setBarText("Not In School");
    }
@@ -200,10 +206,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void checkAndUpdateDate() {
       if (!LocalDate.now().equals(lastRead)) {
-         lastRead = LocalDate.now();
+         Agenda.log("READ ROTATION");
+         setLastRead(LocalDate.now());
          today = LocalDate.now().getDayOfWeek();
          cal.init();
          setTodayR(cal.readTodayRotation());
+         toolbar.updateTodayR();
       }
    }
    
@@ -349,14 +357,17 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public void actionPerformed(ActionEvent e) {
       update();
    }
-   
-   protected void finalize() {
-      hardStop();
-   }
 
    @Override
    public void refresh() {
+      hardStop();
       reinitialize();
+      hardResume();
+      currentClassPane.getList().autoSetSelection();
+      revalidate();
+      if (debug)
+         for (java.awt.Component c : getComponents())
+            System.out.println(c);
    }
 
    @Override
@@ -375,4 +386,5 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       infoSelector.getMemo().save();
       writeMain();
    }
+
 }

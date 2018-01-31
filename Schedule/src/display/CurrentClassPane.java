@@ -145,6 +145,9 @@ public class CurrentClassPane extends JPanel
       setSched(s);
       list.setSchedule(s);
    }   
+   public ScheduleList getList() {
+      return list;
+   }
    
    public boolean isInSchool() {
       return inSchool;

@@ -65,13 +65,13 @@ public class PanelManager {
          currentView = gpa;
       } else
          currentView = display;
-      // ((CardLayout) parent.getLayout()).show(parent, display.getName());
       currentView.open();
       parent.show(currentView.getName());
       this.currentType = type;
    }
 
    public void reset() {
+      Agenda.log(currentView + " refreshed");
       currentView.refresh();
    }
 

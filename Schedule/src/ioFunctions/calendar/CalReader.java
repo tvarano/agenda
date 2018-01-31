@@ -47,6 +47,7 @@ public class CalReader {
          try {
             cal = readAndExtractEvents();
             calClear = true;
+            Agenda.log("cal reader successfully initialized");
          } catch (Exception e) {
             calClear = false;
             Agenda.log("exception in cal reading");
