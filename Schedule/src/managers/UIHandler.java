@@ -11,12 +11,14 @@ import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.MenuShortcut;
 import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.PreferencesEvent;
 import java.awt.desktop.PreferencesHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
@@ -75,7 +77,7 @@ public final class UIHandler {
 	 * must be done for any other use of this class. initializes all variables
 	 */
 	public static void init() { 
-	   debug = true;
+	   debug = false;
 	   setLAF();
 	   setColors();
 	   putValues();
@@ -338,7 +340,7 @@ public final class UIHandler {
 	 * @param action a string which specifies the action which will be taken
 	 * @return true if the user wishes to continue
 	 */
-   private static boolean checkIntentions(String action) {
+   public static boolean checkIntentions(String action) {
       return (JOptionPane.showOptionDialog(null,
             "You are about to:\n" + action
                   + ".\nAre you sure you want to do this?",
@@ -403,6 +405,8 @@ public final class UIHandler {
             age.getManager().setCurrentPane(PanelManager.INPUT);
          }
       }); 
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_I));
+      
       mi = m.add(new MenuItem("View GPA"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -410,6 +414,7 @@ public final class UIHandler {
             age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
       //to test day checking
       if (debug) {
          mi = m.add(new MenuItem("TEST DAYCHECK"));
@@ -443,6 +448,7 @@ public final class UIHandler {
             age.getManager().reset();
          }
       });
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_R, true));
       
       m.addSeparator();
       
@@ -572,7 +578,8 @@ public final class UIHandler {
                         + "The best thing to do is simply send the entire log when this\n"
                         + "occurs. It gives the most information possible and will allow\n"
                         + "for the error to be fixed most quickly.\n"
-                        + "Email the log to "+information.Addresses.CONTACT_EMAIL,
+                        + "Email the log to "+information.Addresses.CONTACT_EMAIL + "\n"
+                        + "or submit the problem using Help > Submit Issue",
                   Agenda.APP_NAME, JOptionPane.DEFAULT_OPTION,
                   JOptionPane.INFORMATION_MESSAGE, null,
                   new String[]{"Close", "Open Log", "Send Email"}, "Close");
@@ -595,6 +602,9 @@ public final class UIHandler {
                   Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
+      
+      m.addSeparator();
+      
       mi = m.add(new MenuItem("Installation Instructions"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -606,6 +616,9 @@ public final class UIHandler {
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
+      
+      m.addSeparator();
+      
       mi = m.add(new MenuItem("Contact"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -749,17 +762,17 @@ public final class UIHandler {
 	   } else if (theme.equals(themes[4])) {
 	      // colorful
 	      text = new Color(Integer.decode("#373737"));
-	      Color sky = new Color(Integer.decode("#7cdbd5"));
-	      Color brightCoral = new Color(Integer.decode("#f53240"));
-	      Color golden = new Color(Integer.decode("#f9be02"));
-	      Color aqua = new Color(Integer.decode("#02c8a7"));
+	      Color salmon = new Color(Integer.decode("#ff6f78"));
+	      Color rain = new Color(Integer.decode("#6ec4db"));
+	      Color buttermilk = new Color(Integer.decode("#fff7c0"));
+	      Color leaf = new Color(Integer.decode("#66a8bc"));
 	      
-	      background = sky;
-	      secondary = aqua;
-	      tertiary = brightCoral;
-	      quaternary = golden;
+	      background = buttermilk;
+	      secondary = rain;
+	      tertiary = salmon;
+	      quaternary = salmon;
 	      titleColor = text;
-	      titleBorderColor = golden;
+	      titleBorderColor = leaf;
 	   } else if (theme.equals(themes[5])) {
 	      // minimal
 	      text = Color.BLACK;

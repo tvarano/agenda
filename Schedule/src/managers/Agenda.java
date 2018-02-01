@@ -48,14 +48,14 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.4";
+   public static final String BUILD = "1.7.5";
    public static final String LAST_UPDATED = "Jan 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
    private JFrame parentFrame;
    private MenuBar bar;
-   public static boolean statusU;
+   public static boolean statusU, isApp;
    public static URI sourceCode;
    
    public Agenda(JFrame frame) {
@@ -129,7 +129,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = false;
+      boolean logData = true;
 
       FileHandler.ensureFileRoute();
 
@@ -418,8 +418,16 @@ public class Agenda extends JPanel
          ErrorID.showError(new ExecutionException("Error while trying to restart the application", e), false);
       }
    }
+   
+   public static void runNewInstance() {
+      try {
+         Desktop.getDesktop().open(new File("/Applications/" + APP_NAME + ".app"));
+      } catch (IOException e) {
+         ErrorID.showError(e, false);
+      }
+   }
   
-   public void restartApplication(Runnable runBeforeRestart) {
+   public void restartAppJarCP(Runnable runBeforeRestart) {
       final String javaBin = System.getProperty("java.home") + File.separator
             + "bin" + File.separator + "java";
       File currentJar = null;
@@ -467,8 +475,27 @@ public class Agenda extends JPanel
      System.exit(0);
    }
 
+   /**
+    * runs if it is an application
+    */
+   public static void restartAppApp(Runnable runBeforeRestart) {
+      if (runBeforeRestart != null)
+         runBeforeRestart.run();
+      runNewInstance();
+      // exit
+      System.exit(0);
+   }
+
+   public void restartApplication(Runnable runBeforeRestart) {
+      if (isApp)
+         restartAppApp(runBeforeRestart);
+      else
+         restartAppJarCP(runBeforeRestart);
+   }
+
    public static void main(String[] args) {
       statusU = true;
+      isApp = true;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
