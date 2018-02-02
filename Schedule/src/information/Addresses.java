@@ -31,4 +31,6 @@ public final class Addresses {
    public static final String NAVIANCE = "http://connection.naviance.com/phhs";
    
    public static final String AGENDA_HOME = System.getProperty("user.home") + "/Applications/Agenda/";
+   
+   public static final String DAY_TYPE_HOME = "http://agendapascack.x10host.com/DayTypes/";
 }

@@ -77,7 +77,7 @@ public class CurrentInfo extends JTextPane {
                   (hour) ? parentPanel.getTimeLeft().getHour24()+"" : "",
                   (hour) ? " hour and " : "",
                   parentPanel.getTimeLeft().getMinute()+"",
-                  " minutes"+newLn,
+                  (parentPanel.getTimeLeft().getMinute() == 1) ? "minute" + newLn : "minutes"+newLn,
                   "In "+c.getRoomNumber()+newLn,
                   newLn,
                   c.getStartTime() + " - " + c.getEndTime()+".\t",
