@@ -54,9 +54,9 @@ import javax.swing.text.html.HTMLEditorKit;
 import constants.ErrorID;
 import constants.Rotation;
 import constants.RotationConstants;
-import information.Addresses;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
+import resources.Addresses;
 import resources.ResourceAccess;
 
 //Thomas Varano
@@ -578,7 +578,7 @@ public final class UIHandler {
                         + "The best thing to do is simply send the entire log when this\n"
                         + "occurs. It gives the most information possible and will allow\n"
                         + "for the error to be fixed most quickly.\n"
-                        + "Email the log to "+information.Addresses.CONTACT_EMAIL + "\n"
+                        + "Email the log to "+Addresses.CONTACT_EMAIL + "\n"
                         + "or submit the problem using Help > Submit Issue",
                   Agenda.APP_NAME, JOptionPane.DEFAULT_OPTION,
                   JOptionPane.INFORMATION_MESSAGE, null,

@@ -51,7 +51,7 @@ public enum DayTypeBackup
    
    private DayTypeBackup(Time[] startTimes, Time[] endTimes, Time labSwitch) {
       this.startTimes = startTimes; this.endTimes = endTimes; this.labSwitch = labSwitch;
-      site = information.Addresses.DAY_TYPE_MAIN + name();
+      site = resources.Addresses.DAY_TYPE_HOME + name().toLowerCase() + ".txt";
    }
    
    private DayTypeBackup(Time[] startTimes, Time[] endTimes) {
@@ -82,5 +82,8 @@ public enum DayTypeBackup
    }
    public Time getLabSwitch() {
       return labSwitch;
+   }
+   public String getSite() {
+      return site;
    }
 }

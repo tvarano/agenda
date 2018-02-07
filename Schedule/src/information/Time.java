@@ -6,8 +6,8 @@ import java.time.LocalTime;
 //Aug 31, 2017
 
 /**
- * A simple time class, holdig a few integers. Runs in 24 hour time.
- * @author varanoth
+ * A simple time class, holding a few integers. Runs in 24 hour time.
+ * @author Thomas Varano
  * 
  */
 public class Time implements Comparable<Time>, Serializable
@@ -77,7 +77,7 @@ public class Time implements Comparable<Time>, Serializable
    public Time getTimeUntil(Time t) {
       if (t.compareTo(this) > 0)
          return t.minus(this);
-      int minsToNextDay = new Time(23, 59).minus(this).getTotalMins()+1;
+      int minsToNextDay = new Time(24, 00).minus(this).getTotalMins();
       int midnightToTime = t.getTotalMins();
       return new Time(minsToNextDay + midnightToTime);
    }
@@ -86,11 +86,16 @@ public class Time implements Comparable<Time>, Serializable
       String amString = (am) ? "AM" : "PM";
       return timeString() + " " + amString;
    }
-   
+
    public static Time fromString(String s) {
-      return new Time(Integer.parseInt(s.substring(0, s.indexOf(','))), Integer.parseInt(s.substring(s.indexOf(',')+1)));
+      try {
+         return new Time(Integer.parseInt(s.substring(0, s.indexOf(','))),
+               Integer.parseInt(s.substring(s.indexOf(',') + 1)));
+      } catch (NumberFormatException e) {
+         return null;
+      }
    }
-   
+
    public String durationString() {
       if (hour24 > 0)
          return getHour24() + " hr, " + getMinute() + " min";

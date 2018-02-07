@@ -43,7 +43,6 @@ public class SchedWriter
          return;
       }
       try {
-         //XXX sort the schedule?
          outStream.writeObject(s);
       } catch (IOException e) {
          ErrorID.showError(e, false);

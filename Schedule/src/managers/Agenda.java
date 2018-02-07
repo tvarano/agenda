@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
-import information.Addresses;
 import ioFunctions.SchedReader;
+import resources.Addresses;
 
 //Thomas Varano
 //Main class
