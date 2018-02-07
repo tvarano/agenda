@@ -55,6 +55,7 @@ public class SchedReader {
       ret = formatSchedule(ret);
       Agenda.log(ret.getName()+" read");
       if (debug) System.out.println("READ 57 SCHED READ gpa " + ret.getGpaClasses().toString());
+      ret.sort();
       return ret;
    }
    

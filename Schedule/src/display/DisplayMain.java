@@ -53,11 +53,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private ToolBar toolbar;
    private ScheduleInfoSelector infoSelector;
    private boolean updating, showDisp;
-   private boolean debug, testSituation;
+   private boolean debug, debugSave, testSituation;
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
+      debugSave = false;
       testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
@@ -79,18 +80,23 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return cal.readTodayRotation();
    }
    
+   public void setLastRead(LocalDate d) {
+      lastRead = d;
+      Agenda.log("schedule last read "+d);
+   }
+   
    private void initTime() {
       try {
          if (testSituation) {
             currentTime = new Time(9,20);
             today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today); 
-            lastRead = LocalDate.now();
+            setLastRead(LocalDate.now());
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
             todayR = cal.readTodayRotation();
-            lastRead = LocalDate.now();
+            setLastRead(LocalDate.now());
          }
       } catch (Throwable e) { 
          e.printStackTrace();
@@ -101,6 +107,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void initComponents() {
       SchedReader r = new SchedReader();
       mainSched = r.readSched(); mainSched.setName("mainSched");
+      if (debug) System.out.println("DISP 104 MAIN IS "+mainSched.classString(false));
       if (debug) System.out.println("\tDISP 96 GPA is " + mainSched.getGpaClasses().toString() );
       todaySched = r.readAndOrderSchedule(todayR); todaySched.setName("todaySched");
       if (debug && todaySched.get(RotationConstants.LUNCH) != null)
@@ -130,7 +137,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public synchronized void writeMain() {
-      Agenda.log("wrote main Schedule");
+      Agenda.log(getClass().getName()  + " wrote main Schedule");
+      if (debugSave) System.out.println("MAIN SCHED WRITTEN");
       try {
          SchedWriter w = new SchedWriter();
          w.write(mainSched);
@@ -148,6 +156,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void resume() {
       showDisp = true;
+      update();
    }
    
    public void hardResume() {
@@ -168,7 +177,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
   
    public void setBarTime(Time timeLeft) {
-      String prefix = "Time Left In Class: "; 
+      String prefix = "In "+ findCurrentClass() +" for: ";
       setBarText(prefix + timeLeft.durationString());
    }
    
@@ -179,7 +188,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
             setBarText("No School");
       }
        else if (checkInSchool())
-         setBarText("Next Class In: " + timeUntilNextClass().durationString());
+         setBarText(findNextClass() + " Is In: " + timeUntilNextClass().durationString());
        else 
           setBarText("Not In School");
    }
@@ -197,10 +206,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void checkAndUpdateDate() {
       if (!LocalDate.now().equals(lastRead)) {
-         lastRead = LocalDate.now();
+         Agenda.log("READ ROTATION");
+         setLastRead(LocalDate.now());
          today = LocalDate.now().getDayOfWeek();
          cal.init();
          setTodayR(cal.readTodayRotation());
+         toolbar.updateTodayR();
       }
    }
    
@@ -220,6 +231,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public ClassPeriod classForMemo(int slot) {
+//      if (debugSave) System.out.println("memos are "+mainSched.classMemoString());
+      if (debugSave && mainSched.get(slot) != null) System.out.println("\t should be "+mainSched.get(slot).memoryInfo());
       return (slot == RotationConstants.PASCACK) ? mainSched.getPascackPreferences() : mainSched.get(slot);
    }
    
@@ -295,6 +308,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return mainSched;
    }
    public void setMainSched(Schedule mainSched) {
+      if (debugSave) System.out.println("MAINSCHED CHANGED HERE");
       this.mainSched = mainSched;
    }
    public Schedule getTodaySched() {
@@ -335,19 +349,25 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public void setUpdating(boolean updating) {
       this.updating = updating;
    }
+   public CalReader getReader() {
+      return cal;
+   }
 
    @Override
    public void actionPerformed(ActionEvent e) {
       update();
    }
-   
-   protected void finalize() {
-      hardStop();
-   }
 
    @Override
    public void refresh() {
+      hardStop();
       reinitialize();
+      hardResume();
+      currentClassPane.getList().autoSetSelection();
+      revalidate();
+      if (debug)
+         for (java.awt.Component c : getComponents())
+            System.out.println(c);
    }
 
    @Override
@@ -366,4 +386,5 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       infoSelector.getMemo().save();
       writeMain();
    }
+
 }

@@ -8,8 +8,7 @@ import information.Time;
 public enum DayType
 {
    NORMAL (new Time[]{new Time(8,00), new Time(8,52), new Time(9,46), new Time(10,38), new Time(11,30), new Time(12,21),
-               new Time(13,13), new Time(14,05)
-               }, 
+               new Time(13,13), new Time(14,05)}, 
          new Time[] {new Time(8,48), new Time(9,42), new Time(10,34), new Time(11,26), new Time(12,17), new Time(13,9),
                new Time(14,1), new Time(14,53)
                }, 

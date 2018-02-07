@@ -98,7 +98,7 @@ public class ScheduleInfoSelector extends JPanel
          selected = (ScheduleList) ((JScrollPane)scheduleTabs.getSelectedComponent())
                .getViewport().getView();
       else {
-         ErrorID.showError(new NullPointerException("Cast incorrect for update in ScheduleInfo"), true);
+         ErrorID.showError(new java.lang.ClassCastException("Cast incorrect for update in ScheduleInfo"), true);
          if (debug) System.err.println(getName()+" failed to cast "+scheduleTabs.getSelectedComponent());
          return;
       }

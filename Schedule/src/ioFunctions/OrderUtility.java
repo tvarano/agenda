@@ -1,4 +1,11 @@
 package ioFunctions;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import constants.Rotation;
 import constants.RotationConstants;
 import information.ClassPeriod;
@@ -76,7 +83,7 @@ public final class OrderUtility
                      r.getTimes()[rotationIndex].getEndTime(),
                      unOrderedArray[o].getTeacher(),
                      unOrderedArray[o].getRoomNumber());
-
+               newArray[newArrayIndex].setData(unOrderedArray[o]);
                if (detailedDebug) {
                   System.out.println("new array["+newArrayIndex+"] set to old["+o);
                   System.out.println("\tindex is; "+unOrderedArray[o].getSlot());
@@ -135,5 +142,36 @@ public final class OrderUtility
          for (ClassPeriod c : oldArray)
             System.out.println(c);
          System.out.println("to "+r+"\n--------");
+   }
+   
+   public static String futureStringCall(long millisToWait, java.util.concurrent.Callable<String> method, String description) 
+         throws ExecutionException, TimeoutException, InterruptedException {
+      final ExecutorService executor = Executors.newSingleThreadExecutor();
+      long start = System.currentTimeMillis();
+      // schedule the work
+      final Future<String> future = executor
+            .submit(method);
+      try {
+         // wait for task to complete
+         final String result = future.get(millisToWait,
+               TimeUnit.MILLISECONDS);
+         Agenda.log(description + " took " + (System.currentTimeMillis() - start));
+         return result;
+      }
+
+      catch (TimeoutException e) {
+         Agenda.logError(description + " timed out", e);
+         future.cancel(true);
+         throw e;
+      }
+
+      catch (InterruptedException e) {
+         Agenda.logError(description + " interrupted", e);
+         throw e;
+      }
+      catch (ExecutionException e) {
+         Agenda.logError(description + " execution error", e);
+         throw e;
+      }
    }
 }

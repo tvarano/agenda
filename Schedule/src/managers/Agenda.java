@@ -7,7 +7,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.MenuBar;
 import java.awt.RenderingHints;
 import java.awt.desktop.ScreenSleepEvent;
@@ -33,9 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import constants.ErrorID;
-import information.Addresses;
 import ioFunctions.SchedReader;
-import resources.ResourceAccess;
+import resources.Addresses;
 
 //Thomas Varano
 //Main class
@@ -50,13 +48,14 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "v1.7.1 (Beta)";
+   public static final String BUILD = "1.7.5";
+   public static final String LAST_UPDATED = "Jan 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
    private JFrame parentFrame;
    private MenuBar bar;
-   public static boolean statusU;
+   public static boolean statusU, isApp;
    public static URI sourceCode;
    
    public Agenda(JFrame frame) {
@@ -94,10 +93,12 @@ public class Agenda extends JPanel
          Desktop.getDesktop().addAppEventListener(new SystemSleepListener() {
             @Override
             public void systemAboutToSleep(SystemSleepEvent arg0) {
+               log("system slept");
                manager.getDisplay().hardStop();
             }
             @Override
             public void systemAwoke(SystemSleepEvent arg0) {
+               log("System awoke");
                manager.getDisplay().hardResume();
                manager.getDisplay().checkAndUpdateTime();
                manager.getDisplay().checkAndUpdateDate();
@@ -106,10 +107,12 @@ public class Agenda extends JPanel
          Desktop.getDesktop().addAppEventListener(new ScreenSleepListener() {
             @Override
             public void screenAboutToSleep(ScreenSleepEvent arg0) {
+               log("screen slept");
                manager.getDisplay().stop();
             }
             @Override
             public void screenAwoke(ScreenSleepEvent arg0) {
+               log("screen awoke");
                manager.getDisplay().resume();
             }
          });
@@ -122,11 +125,11 @@ public class Agenda extends JPanel
    public static void initialFileWork() {
       long start = System.currentTimeMillis();
       try {
-         sourceCode = new URI("https://github.com/tvarano54/schedule-new");
+         sourceCode = new URI(Addresses.SOURCE);
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = false;
+      boolean logData = true;
 
       FileHandler.ensureFileRoute();
 
@@ -295,26 +298,28 @@ public class Agenda extends JPanel
          public void run() {
             JPanel p = new JPanel() {
                private static final long serialVersionUID = 1L;
-               int dots = 3;
                
                @Override 
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
                   Graphics2D g2 = (Graphics2D) g;
                   g2.addRenderingHints(new RenderingHints(
-                        RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON));
-                  g2.drawImage((Image) ResourceAccess.getImage("loading.gif").getImage(), 0, 0, 100, 100, null);
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON));
+                  java.awt.Image logo = resources.ResourceAccess
+                        .getImage("Agenda Logo.png").getImage();
+                  g2.drawImage(logo, getWidth() / 2 - logo.getWidth(this) / 2,
+                        getHeight() / 2 - logo.getHeight(this) / 2 + 15, this);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
-                  String s = "LOADING";
-                  for (int i = 0; i < dots; i++)
-                     s += ".";
-                  g2.drawString(s, 260, 150);
-                  dots++;
+                  String load = "LOADING.";
+                  g2.drawString(load + "..", getWidth() / 2
+                        - getFontMetrics(g2.getFont()).stringWidth(load) / 2, 150);
                   log("Drawing strings took " + (System.currentTimeMillis() - start));
                }
             };
             frame.add(p);
-            frame.setMinimumSize(new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
+            frame.setMinimumSize(
+                  new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             frame.pack();
             frame.setLocationRelativeTo(null);
@@ -328,7 +333,7 @@ public class Agenda extends JPanel
          public void run() {
             Agenda main = new Agenda(frame);
             frame.getContentPane().getComponent(0).repaint();
-            frame.setTitle(APP_NAME + " " + BUILD);
+            frame.setTitle(APP_NAME);
             frame.getContentPane().remove(0);
             frame.getContentPane().add(main);
             frame.pack();
@@ -413,8 +418,16 @@ public class Agenda extends JPanel
          ErrorID.showError(new ExecutionException("Error while trying to restart the application", e), false);
       }
    }
+   
+   public static void runNewInstance() {
+      try {
+         Desktop.getDesktop().open(new File("/Applications/" + APP_NAME + ".app"));
+      } catch (IOException e) {
+         ErrorID.showError(e, false);
+      }
+   }
   
-   public void restartApplication(Runnable runBeforeRestart) {
+   public void restartAppJarCP(Runnable runBeforeRestart) {
       final String javaBin = System.getProperty("java.home") + File.separator
             + "bin" + File.separator + "java";
       File currentJar = null;
@@ -462,8 +475,27 @@ public class Agenda extends JPanel
      System.exit(0);
    }
 
+   /**
+    * runs if it is an application
+    */
+   public static void restartAppApp(Runnable runBeforeRestart) {
+      if (runBeforeRestart != null)
+         runBeforeRestart.run();
+      runNewInstance();
+      // exit
+      System.exit(0);
+   }
+
+   public void restartApplication(Runnable runBeforeRestart) {
+      if (isApp)
+         restartAppApp(runBeforeRestart);
+      else
+         restartAppJarCP(runBeforeRestart);
+   }
+
    public static void main(String[] args) {
       statusU = true;
+      isApp = true;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

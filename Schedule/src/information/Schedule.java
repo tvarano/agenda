@@ -6,6 +6,7 @@ import constants.ErrorID;
 import constants.Lab;
 import constants.Rotation;
 import constants.RotationConstants;
+import managers.Agenda;
 
 //Thomas Varano
 //Aug 31, 2017
@@ -110,6 +111,11 @@ public class Schedule implements Serializable
          if (c.contains(t))
             return c;
       return null;
+   }
+   
+   public void sort() {
+      Agenda.log(getName() + " sorted");
+      setClasses(ioFunctions.OrderUtility.reorderClasses(Rotation.R1, classes));  
    }
    
    public void setLunchLab(Rotation r) {
@@ -217,6 +223,13 @@ public class Schedule implements Serializable
       String retval = "";
       for (ClassPeriod c : classes)
          retval += c.getInfo() + ", ";
+      return retval;
+   }
+   
+   public String classMemoString() {
+      String retval = "";
+      for (ClassPeriod c : classes)
+         retval += c.memoInfo() + ", ";
       return retval;
    }
    

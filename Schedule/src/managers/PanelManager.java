@@ -65,13 +65,16 @@ public class PanelManager {
          currentView = gpa;
       } else
          currentView = display;
-      // ((CardLayout) parent.getLayout()).show(parent, display.getName());
       currentView.open();
       parent.show(currentView.getName());
       this.currentType = type;
    }
 
    public void reset() {
+      if (!(currentView instanceof DisplayMain))
+         if (!UIHandler.checkIntentions("Refresh the program.\nYou might lose unsaved data"))
+            return;
+      Agenda.log(currentView + " refreshed");
       currentView.refresh();
    }
 
@@ -98,7 +101,7 @@ public class PanelManager {
       return JOptionPane.showOptionDialog(null, "Do you want to save?",
             Agenda.APP_NAME, JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE, null,
-            null, null) == 0;
+            null, null) != 1;
    }
 
    public information.Schedule getMainSched() {

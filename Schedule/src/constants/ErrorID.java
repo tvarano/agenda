@@ -13,6 +13,7 @@ import java.io.StreamCorruptedException;
 
 import javax.swing.JOptionPane;
 
+import constants.test.DayTypeTest;
 import managers.Agenda;
 
 //Thomas Varano
@@ -71,7 +72,7 @@ public enum ErrorID {
    private static int showInitialMessage(int messageType, boolean recoverable) {
       String fatality = (recoverable) ? "recoverable" : "fatal";
       String defMessage = "A " + fatality + " error has occurred.\nClick \"Info\" for more information.";
-      String usrMessage = "A user "+defMessage.substring(3);
+      String usrMessage = "A user "+ defMessage.substring(3);
       String message = (messageType == JOptionPane.ERROR_MESSAGE) ? 
             defMessage : usrMessage;
       return JOptionPane.showOptionDialog(null,
@@ -95,7 +96,8 @@ public enum ErrorID {
          int choice2 = JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
-               null, (copy) ? new String[]{"Copy & Close", "Copy & Contact", "Close"} : new String[] {"Close"}, "Close");
+               null, (copy) ? new String[]{"Copy & Close", "Copy & Contact", "Close"} : new String[] {"Close", "Contact"}, 
+                     "Close");
          if (choice2 == 0 && copy) {
             ErrorCopier.copy(ID, e);
          } else if (choice2 == 1) {
@@ -175,7 +177,7 @@ public enum ErrorID {
          StringBuilder b = new StringBuilder();
          b.append(str);
          b.append("\n"+getStackTrace(e));
-         if (debug) System.out.println("copyer getting data: "+b.toString());
+         if (debug) System.out.println("copier getting data: "+b.toString());
          return b.toString();
       }
       
@@ -218,7 +220,9 @@ public enum ErrorID {
    }
    
    public static void main(String[] args) {
-      System.out.println(ErrorID.getError("7530"));
-      ErrorID.showError(new NullPointerException(), false);
+//      System.out.println(ErrorID.getError("7530"));
+//      ErrorID.showPrintingError(new IOException());
+//      ErrorID.showError(new NullPointerException(), false);
+      DayTypeTest.main(args);
    }
 }

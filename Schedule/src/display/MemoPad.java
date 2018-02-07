@@ -19,9 +19,11 @@ public class MemoPad extends JTextPane implements FocusListener
    private static final long serialVersionUID = 1L;
    private ClassPeriod parentClass;
    private ScheduleInfoSelector parentPanel;
+   private boolean debug;
 
    public MemoPad(ClassPeriod parentClass, ScheduleInfoSelector parentPanel) {
       super();
+      debug = false;
       setBackground(UIHandler.quaternary);
       setForeground(UIHandler.foreground);
       setFont(UIHandler.font);
@@ -31,9 +33,12 @@ public class MemoPad extends JTextPane implements FocusListener
    }
 
    public void save() {
-      Agenda.log("memo saved "+parentClass);
-      if (this.parentClass != null)
-         this.parentClass.setMemo(getText());
+      if (this.parentClass != null) {
+         Agenda.log("memo saved "+parentClass.memoryInfo());
+         if (debug) System.out.println("memo saved \"" + getText() + "\" to " + parentClass.memoryInfo());
+         parentClass.setMemo(getText());
+      } else
+         Agenda.log("memo saved null");
    }
    
    private void checkAccessibility() {
@@ -52,6 +57,7 @@ public class MemoPad extends JTextPane implements FocusListener
    }
    public void setParentClass(ClassPeriod parentClass) {
       save();
+      if (debug) System.out.println("\tMemo Recieved "+parentClass.memoryInfo());
       this.parentClass = parentClass;
       checkAccessibility();
       repaint();

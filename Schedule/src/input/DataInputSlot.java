@@ -37,7 +37,6 @@ public class DataInputSlot extends JPanel implements ActionListener
    private int slotNumber;
    private Container parentPanel;
    private JCheckBox labBox;
-//   private String memo;
    private ClassPeriod dataHolder;
    private boolean hasParent, hasLab, removable, labFriendly;
    private JTextField[] promptFields;
@@ -52,6 +51,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       if (c == null) c = new ClassPeriod();
       debug = false;
       dataHolder = c.clone();
+      System.out.println("input 56 dataholder\n"+dataHolder.getInfo());
       setFont(UIHandler.getInputLabelFont());
       if (parentPanel != null) {
          setBackground(UIHandler.background);

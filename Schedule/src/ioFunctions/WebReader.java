@@ -11,10 +11,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import constants.Rotation;
@@ -63,32 +59,7 @@ public class WebReader
 
    private static final long MILLIS_TO_WAIT = 4000L;
    public String retrieveHtml() throws ExecutionException, TimeoutException, InterruptedException {
-      final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-      // schedule the work
-      final Future<String> future = executor
-            .submit(this::readHtml);
-      try {
-         // wait for task to complete
-         final String result = future.get(MILLIS_TO_WAIT,
-               TimeUnit.MILLISECONDS);
-         return result;
-      }
-
-      catch (TimeoutException e) {
-         Agenda.logError("internet reading timed out", e);
-         future.cancel(true);
-         throw e;
-      }
-
-      catch (InterruptedException e) {
-         Agenda.logError("internet reading interrupted", e);
-         throw e;
-      }
-      catch (ExecutionException e) {
-         Agenda.logError("internet reading execution error", e);
-         throw e;
-      }
+      return OrderUtility.futureStringCall(MILLIS_TO_WAIT, this::readHtml, "internet reading");
    }
    
    /*

@@ -122,7 +122,7 @@ public class CurrentClassPane extends JPanel
       return new Dimension(100, 200);
    }
    public Dimension getPreferredSize() {
-      return new Dimension(550, (int) parentPane.getPreferredSize().getHeight());
+      return new Dimension((int) parentPane.getPreferredSize().getWidth(), 250);
    }
    public void pushCurrentTime(Time t) {
       setCurrentTime(t);
@@ -145,7 +145,9 @@ public class CurrentClassPane extends JPanel
       setSched(s);
       list.setSchedule(s);
    }   
-   
+   public ScheduleList getList() {
+      return list;
+   }
    public boolean isInSchool() {
       return inSchool;
    }

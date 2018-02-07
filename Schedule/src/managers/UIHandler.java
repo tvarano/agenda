@@ -11,12 +11,14 @@ import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.MenuShortcut;
 import java.awt.desktop.AboutEvent;
 import java.awt.desktop.AboutHandler;
 import java.awt.desktop.PreferencesEvent;
 import java.awt.desktop.PreferencesHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
@@ -26,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
@@ -45,12 +48,15 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.OceanTheme;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLEditorKit;
 
 import constants.ErrorID;
 import constants.Rotation;
 import constants.RotationConstants;
 import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
+import resources.Addresses;
 import resources.ResourceAccess;
 
 //Thomas Varano
@@ -221,6 +227,7 @@ public final class UIHandler {
 	      addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+               Agenda.log("opening uri "+name);
                Agenda.FileHandler.openURI(link);
             }
 	      });    
@@ -333,7 +340,7 @@ public final class UIHandler {
 	 * @param action a string which specifies the action which will be taken
 	 * @return true if the user wishes to continue
 	 */
-   private static boolean checkIntentions(String action) {
+   public static boolean checkIntentions(String action) {
       return (JOptionPane.showOptionDialog(null,
             "You are about to:\n" + action
                   + ".\nAre you sure you want to do this?",
@@ -350,16 +357,30 @@ public final class UIHandler {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
             public void handleAbout(AboutEvent arg0) {
+               String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
+                     + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
+                     + "<p>Agenda is a schedule program for Pascack Hills (and possibly Valley)"
+                     + "<p>that can keep track of time, school schedules, assignments, and GPA"
+                     + "<p>for students."
+                     + "<br><br>"
+                     + "<h2>CREDITS:"
+                     + "<h3>Thomas Varano : Author"
+                     + "<br><br>Viktor Nakev : Icon Designer"
+                     + "<br><br>Matthew Ghedduzi : Alpha Tester"
+                     + "<br><br>Michael Ruberto : Conceptual Designer</html>";
+               javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
+               content.setFont(font);
+               HTMLEditorKit kit = new HTMLEditorKit();
+               content.setEditorKit(kit);
+               kit.getStyleSheet().addRule("body {color:#000; font-family:"+font.getFamily()+"; margin: 4px; }");
+
+               Document doc = kit.createDefaultDocument();
+               content.setDocument(doc);
+               content.setText(html);
+               content.setOpaque(false);
                JOptionPane.showMessageDialog(null, 
-                     "Agenda is a schedule program for Pascack Hills (and possibly Valley)\n"
-                     + "that can keep track of time, school schedules, assignments, and GPA\n"
-                     + "for students.\n"
-                     + "CREDITS:\n"
-                     + "Thomas Varano : Author\n"
-                     + "Viktor Nakev : Icon Designer\n"
-                     + "Matthew Gheduzzi : Alpha Tester\n"
-                     + "Michael Ruberto : Conceptual Designer",
-                     "About " + Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
+                     content, "About " + Agenda.APP_NAME, 
+                     JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
             }
          });
          Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {
@@ -376,13 +397,16 @@ public final class UIHandler {
       
       //---------------------------File Bar--------------------------
       m = new Menu("File");
+           
       MenuItem mi = m.add(new MenuItem("Input Schedule"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             age.getManager().setCurrentPane(PanelManager.INPUT);
          }
-      });
+      }); 
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_I));
+      
       mi = m.add(new MenuItem("View GPA"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -390,6 +414,17 @@ public final class UIHandler {
             age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
+      //to test day checking
+      if (debug) {
+         mi = m.add(new MenuItem("TEST DAYCHECK"));
+         mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+               age.getManager().getDisplay().setLastRead(LocalDate.now().minusDays(1));
+            }
+         });
+      }
       Menu rotations = (Menu) m.add(new Menu("Set Rotation"));
       for (int i = 0; i < RotationConstants.categorizedRotations().length; i++) {
          Menu rm = (Menu) rotations.add(new Menu(RotationConstants.categoryNames[i]));
@@ -405,13 +440,15 @@ public final class UIHandler {
             }
          }
       }
-      mi = m.add(new MenuItem("Reread Schedule"));
+      mi = m.add(new MenuItem("Refresh"));
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
+            Agenda.log("REFRESH");
             age.getManager().reset();
          }
       });
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_R, true));
       
       m.addSeparator();
       
@@ -419,7 +456,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (checkIntentions("Reset your schedule")) {
+            if (checkIntentions("Reset Your Schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
                age.restart();
@@ -518,12 +555,12 @@ public final class UIHandler {
       bar.add(m);
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");
-      m.add(new LinkChooser("Canvas", createURI("https://pascack.instructure.com/")));
-      m.add(new LinkChooser("Genesis", createURI(
-            "https://students.pascack.k12.nj.us/genesis/parents?tab1=studentdata&tab2=studentsummary&studentid=808219&action=form")));
-      m.add(new LinkChooser("PHHS Home", createURI("https://hills.pascack.org/")));
-      m.add(new LinkChooser("Naviance", createURI("http://connection.naviance.com/phhs")));
+      m.add(new LinkChooser("Canvas", createURI(Addresses.CANVAS)));
+      m.add(new LinkChooser("Genesis", createURI(Addresses.GENESIS)));
+      m.add(new LinkChooser("PHHS Home", createURI(Addresses.PHHS_HOME)));
+      m.add(new LinkChooser("Naviance", createURI(Addresses.NAVIANCE)));
       m.add(new LinkChooser("Agenda Source", Agenda.sourceCode));
+      m.add(new LinkChooser("Rotation Calendar", createURI(Addresses.CALENDAR_URL)));
       
       bar.add(m);
       // ---------------------------Help Bar--------------------------
@@ -541,7 +578,8 @@ public final class UIHandler {
                         + "The best thing to do is simply send the entire log when this\n"
                         + "occurs. It gives the most information possible and will allow\n"
                         + "for the error to be fixed most quickly.\n"
-                        + "Email the log to "+information.Addresses.CONTACT_EMAIL,
+                        + "Email the log to "+Addresses.CONTACT_EMAIL + "\n"
+                        + "or submit the problem using Help > Submit Issue",
                   Agenda.APP_NAME, JOptionPane.DEFAULT_OPTION,
                   JOptionPane.INFORMATION_MESSAGE, null,
                   new String[]{"Close", "Open Log", "Send Email"}, "Close");
@@ -551,6 +589,7 @@ public final class UIHandler {
                Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
          }
       });
+      mi = m.add(new LinkChooser("Submit Issue", createURI(Addresses.GITHUB_ISSUES)));
       mi = m.add(new MenuItem("Sharing Protocol"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -563,6 +602,9 @@ public final class UIHandler {
                   Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
+      
+      m.addSeparator();
+      
       mi = m.add(new MenuItem("Installation Instructions"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -574,6 +616,9 @@ public final class UIHandler {
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
+      
+      m.addSeparator();
+      
       mi = m.add(new MenuItem("Contact"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -717,17 +762,17 @@ public final class UIHandler {
 	   } else if (theme.equals(themes[4])) {
 	      // colorful
 	      text = new Color(Integer.decode("#373737"));
-	      Color sky = new Color(Integer.decode("#7cdbd5"));
-	      Color brightCoral = new Color(Integer.decode("#f53240"));
-	      Color golden = new Color(Integer.decode("#f9be02"));
-	      Color aqua = new Color(Integer.decode("#02c8a7"));
+	      Color salmon = new Color(Integer.decode("#ff6f78"));
+	      Color rain = new Color(Integer.decode("#6ec4db"));
+	      Color buttermilk = new Color(Integer.decode("#fff7c0"));
+	      Color leaf = new Color(Integer.decode("#66a8bc"));
 	      
-	      background = sky;
-	      secondary = aqua;
-	      tertiary = brightCoral;
-	      quaternary = golden;
+	      background = buttermilk;
+	      secondary = rain;
+	      tertiary = salmon;
+	      quaternary = salmon;
 	      titleColor = text;
-	      titleBorderColor = golden;
+	      titleBorderColor = leaf;
 	   } else if (theme.equals(themes[5])) {
 	      // minimal
 	      text = Color.BLACK;

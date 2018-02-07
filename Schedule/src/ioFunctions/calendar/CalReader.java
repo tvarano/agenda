@@ -13,14 +13,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import constants.Rotation;
 import constants.RotationConstants;
+import constants.test.DayTypeTest;
+import ioFunctions.OrderUtility;
 import managers.Agenda;
 
 public class CalReader {
@@ -37,7 +35,7 @@ public class CalReader {
       debug = false;
       long start = System.currentTimeMillis();
       try {
-         rotationDataSite = new URL(information.Addresses.ICS_URL);
+         rotationDataSite = new URL(resources.Addresses.ICS_URL);
          urlClear = true;
       } catch (MalformedURLException e) {
          urlClear = false;
@@ -47,9 +45,10 @@ public class CalReader {
          try {
             cal = readAndExtractEvents();
             calClear = true;
+            Agenda.log("cal reader successfully initialized");
          } catch (Exception e) {
             calClear = false;
-            Agenda.logError("exception in cal reading", e);
+            Agenda.log("exception in cal reading");
          }
       } else
          calClear = false;
@@ -135,33 +134,7 @@ public class CalReader {
    private static final long MILLIS_TO_WAIT = 8000L;
 //   private static final long MILLIS_TO_WAIT = Long.MAX_VALUE;
    public String retrieveRfc() throws ExecutionException, TimeoutException, InterruptedException {
-      final ExecutorService executor = Executors.newSingleThreadExecutor();
-      long start = System.currentTimeMillis();
-      // schedule the work
-      final Future<String> future = executor
-            .submit(this::readRfc);
-      try {
-         // wait for task to complete
-         final String result = future.get(MILLIS_TO_WAIT,
-               TimeUnit.MILLISECONDS);
-         Agenda.log("cal read took " + (System.currentTimeMillis() - start));
-         return result;
-      }
-
-      catch (TimeoutException e) {
-         Agenda.logError("ics reading timed out", e);
-         future.cancel(true);
-         throw e;
-      }
-
-      catch (InterruptedException e) {
-         Agenda.logError("ics reading interrupted", e);
-         throw e;
-      }
-      catch (ExecutionException e) {
-         Agenda.logError("ics reading execution error", e);
-         throw e;
-      }
+     return OrderUtility.futureStringCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
    }
 
    /**
@@ -189,6 +162,7 @@ public class CalReader {
    }
    
    public static void main(String[] args) {
+      /*
       CalReader c = new CalReader();
       try {
          System.out.println(c.retrieveRfc());
@@ -197,5 +171,7 @@ public class CalReader {
          e.printStackTrace();
       }
       System.out.println(c.readTodayRotation());
+      */
+      DayTypeTest.main(args);
    }
 }

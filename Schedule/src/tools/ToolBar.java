@@ -65,6 +65,11 @@ public class ToolBar extends JToolBar implements ActionListener
       super.repaint();
    }
    
+   public void updateTodayR() {
+      if (parentType == PanelManager.DISPLAY)
+         ((RotationButton) getComponent(0)).updateTodayR();
+   }
+   
    private ToolBar createToolBarDisplay() {
       removeAll();
       add(new RotationButton(RotationButton.TODAY_R, parentPanel));

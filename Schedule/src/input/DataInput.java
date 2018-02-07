@@ -68,7 +68,6 @@ public class DataInput extends JPanel implements InputManager, PanelView
    public void init(Schedule s) {
       removeAll();
       init0();
-      Agenda.log("inputMain initialized");
       if (debug) System.out.println("INPUTFRAME constructed with classes");
       amtClasses = s.getClasses().length;
       if (s.getLabs() != null && s.getLabs().length != 0)
@@ -80,6 +79,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
    }
    
    private void init0() {
+      Agenda.log("inputMain initialized");
       add(new ToolBar(PanelManager.INPUT, this), BorderLayout.NORTH);
       add(center, BorderLayout.CENTER);
       add(createBottomPanel(), BorderLayout.SOUTH);
