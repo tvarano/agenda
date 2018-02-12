@@ -91,7 +91,7 @@ public class Time implements Comparable<Time>, Serializable
       try {
          return new Time(Integer.parseInt(s.substring(0, s.indexOf(','))),
                Integer.parseInt(s.substring(s.indexOf(',') + 1)));
-      } catch (NumberFormatException e) {
+      } catch (Exception e) {
          return null;
       }
    }

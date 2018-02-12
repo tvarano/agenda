@@ -13,13 +13,26 @@ import java.io.StreamCorruptedException;
 
 import javax.swing.JOptionPane;
 
-import constants.test.DayTypeTest;
 import managers.Agenda;
 
 //Thomas Varano
-//[Program Descripion]
 //Oct 24, 2017
 
+/**
+ * Shows errors through JOptionPanes, and handles everything. if there is an error, simply show it here and everything 
+ * will be taken care of.
+ * <ul>
+ * <li>Go through the enums and change the messages as you see fit. 
+ * They will be used in messages, so you can add as many errors as you want.
+ * Account for them in the {@link #getType(Throwable)} method
+ * <li>change the location for <code>Agenda.FileHandler.LOG_ROUTE</code> so it will work. As of now it is <code>null</code>
+ * <li>change the method for <code>Agenda.FileHandler.sendEmail()</code> so the users can contact you 
+ * </li>
+ * </ul> 
+ * <strong>Notes on this class.</strong> 
+ * <br>Agenda is a main class, just has the capability to log data (you can do whatever you want) 
+ * You use the method showError() to show a fatal error and showUserError() to use a  
+ */
 public enum ErrorID {
    IO_EXCEPTION("Internal Input / Output Error"),
    NULL_POINT("Internal Null Pointer Error"),
@@ -123,6 +136,11 @@ public enum ErrorID {
       showGeneral(e, getID(e), false, false);
    }
    
+   /**
+    * returns the proper {@linkplain ErrorID} when given e, a throwable 
+    * @param e a throwable to retrieve a type from
+    * @return the <code>ErrorID</code> that correlates with the given throwable 
+    */
    private static ErrorID getType(Throwable e) {
       if (e instanceof StreamCorruptedException || e instanceof ClassNotFoundException)
          return SERIALIZE;
@@ -144,6 +162,11 @@ public enum ErrorID {
       return null;
    }
    
+   /**
+    * 
+    * 
+    * @author Thomas Varano
+    */
    public static class ErrorCopier implements Transferable {
       private Throwable e;
       private String str;
@@ -222,7 +245,7 @@ public enum ErrorID {
    public static void main(String[] args) {
 //      System.out.println(ErrorID.getError("7530"));
 //      ErrorID.showPrintingError(new IOException());
-//      ErrorID.showError(new NullPointerException(), false);
-      DayTypeTest.main(args);
+      ErrorID.showError(new NullPointerException(), false);
+//      constants.test.DayTypeTest.main(args);
    }
 }

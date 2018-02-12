@@ -186,7 +186,6 @@ public class DataInputSlot extends JPanel implements ActionListener
       f.setFont(getFont());
       f.setForeground(getForeground());
       add(f);   
-//      promptLabels[index] = f;
       l.putConstraint(SpringLayout.WEST, f, gap, SpringLayout.EAST, c);
       setNorthBound(f);
    }

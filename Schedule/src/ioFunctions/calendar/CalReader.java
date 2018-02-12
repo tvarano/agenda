@@ -17,7 +17,7 @@ import java.util.concurrent.TimeoutException;
 
 import constants.Rotation;
 import constants.RotationConstants;
-import constants.test.DayTypeTest;
+import constants.timeTemplate.DayType;
 import ioFunctions.OrderUtility;
 import managers.Agenda;
 
@@ -134,7 +134,7 @@ public class CalReader {
    private static final long MILLIS_TO_WAIT = 8000L;
 //   private static final long MILLIS_TO_WAIT = Long.MAX_VALUE;
    public String retrieveRfc() throws ExecutionException, TimeoutException, InterruptedException {
-     return OrderUtility.futureStringCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
+     return OrderUtility.futureCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
    }
 
    /**
@@ -172,6 +172,6 @@ public class CalReader {
       }
       System.out.println(c.readTodayRotation());
       */
-      DayTypeTest.main(args);
+      DayType.main(args);
    }
 }

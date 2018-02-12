@@ -57,7 +57,7 @@ public class MemoPad extends JTextPane implements FocusListener
    }
    public void setParentClass(ClassPeriod parentClass) {
       save();
-      if (debug) System.out.println("\tMemo Recieved "+parentClass.memoryInfo());
+      if (debug && parentClass != null) System.out.println("\tMemo Recieved "+parentClass.memoryInfo());
       this.parentClass = parentClass;
       checkAccessibility();
       repaint();
