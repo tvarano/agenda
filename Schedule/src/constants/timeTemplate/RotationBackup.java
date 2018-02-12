@@ -18,6 +18,7 @@ import information.Time;
  *
  * @see RotationConstants
  */
+@Deprecated
 public enum RotationBackup
 {
    R1 (DayTypeBackup.NORMAL),

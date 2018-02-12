@@ -11,6 +11,7 @@ import information.Time;
 import ioFunctions.OrderUtility;
 import managers.Agenda;
 
+@Deprecated
 public class DayType {
    private Time[] startTimes, endTimes;
    private Time labSwitch;

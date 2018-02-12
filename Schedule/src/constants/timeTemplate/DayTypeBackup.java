@@ -3,7 +3,7 @@ import information.Time;
 
 //Thomas Varano
 //Sep 4, 2017
-
+@Deprecated
 public enum DayTypeBackup
 {
    /**

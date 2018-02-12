@@ -10,6 +10,7 @@ import constants.timeTemplate.DayType;
 import information.ClassPeriod;
 import information.Time;
 
+@Deprecated
 public class Rotation {
    private static ArrayList<Rotation> types;
    private DayType dayType;
