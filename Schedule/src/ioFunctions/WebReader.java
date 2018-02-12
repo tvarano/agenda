@@ -59,7 +59,7 @@ public class WebReader
 
    private static final long MILLIS_TO_WAIT = 4000L;
    public String retrieveHtml() throws ExecutionException, TimeoutException, InterruptedException {
-      return OrderUtility.futureStringCall(MILLIS_TO_WAIT, this::readHtml, "internet reading");
+      return OrderUtility.futureCall(MILLIS_TO_WAIT, this::readHtml, "internet reading");
    }
    
    /*

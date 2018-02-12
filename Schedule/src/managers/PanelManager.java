@@ -78,6 +78,11 @@ public class PanelManager {
       currentView.refresh();
    }
 
+   public void update() {
+      if (currentType == DISPLAY)
+         ((DisplayMain) currentView).update();
+   }
+   
    public MenuBar getBar() {
       return bar;
    }
@@ -126,50 +131,25 @@ public class PanelManager {
          }
       };
    }
-
-   /*
-    * public void startGPA() { if (Agenda.statusU) Agenda.log("gpa requested");
-    * if (currentType == GPA) { if (Agenda.statusU) Agenda.log("gpa denied");
-    * return; } else if (currentType == DISPLAY) display.stop(); else
-    * input.save(); if (Agenda.statusU) Agenda.log("gpa granted");
-    * gpa.setSchedule(new SchedReader().readSched()); setCurrentPane(GPA); }
-    */
-
-   /*
-    * public void reinitDisp() { display.reinitialize();
-    * setCurrentPane(DISPLAY); }
-    */
-
+   
    public void dispose() {
       display.hardStop();
       display = null;
       input = null;
    }
 
-   /*
-    * public void resumeDisp() { display.resume(); setCurrentPane(DISPLAY); }
-    */
    public Agenda getParent() {
       return parent;
    }
-
    public void setParent(Agenda parent) {
       this.parent = parent;
    }
-
    public void saveSchedule(Schedule s, Class<?> caller) {
       Agenda.log("NEW schedule save called by " + caller.getSimpleName());
       new SchedWriter().write(s);
    }
-
    public void saveSchedule(Class<?> caller) {
       Agenda.log("**main schedule save called by " + caller.getSimpleName());
       display.writeMain();
-   }
-
-   protected void finalize() {
-      display = null;
-      input = null;
-      bar = null;
    }
 }

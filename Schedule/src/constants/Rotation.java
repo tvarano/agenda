@@ -137,7 +137,7 @@ public enum Rotation
       return null;
    }
 
-   private static ClassPeriod[] getSchedule(int rotationIndex) {
+   public static ClassPeriod[] getSchedule(int rotationIndex) {
       if (debug) System.out.println("index="+rotationIndex);
       DayType dt = getType(rotationIndex);
       if (debug) System.out.println("nosc "+RotationConstants.getNoSchoolClass());

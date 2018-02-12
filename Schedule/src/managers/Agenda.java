@@ -9,6 +9,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MenuBar;
 import java.awt.RenderingHints;
+import java.awt.desktop.AppForegroundEvent;
+import java.awt.desktop.AppForegroundListener;
 import java.awt.desktop.ScreenSleepEvent;
 import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
@@ -36,8 +38,17 @@ import ioFunctions.SchedReader;
 import resources.Addresses;
 
 //Thomas Varano
-//Main class
 //Sep 20, 2017
+
+/*
+ * NOTES BEFORE EXPORT
+ * is logData set to true?
+ * is statusU set to true?
+ * is isApp set to the correct value? 
+ * are all unwanted debug prints not printing?
+ * is the build correct?
+ */
+
 
 /**
  * Main class. Begins the program and initializes all references.
@@ -49,7 +60,7 @@ public class Agenda extends JPanel
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
    public static final String BUILD = "1.7.5";
-   public static final String LAST_UPDATED = "Jan 2018";
+   public static final String LAST_UPDATED = "Feb 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -116,6 +127,17 @@ public class Agenda extends JPanel
                manager.getDisplay().resume();
             }
          });
+         Desktop.getDesktop().addAppEventListener(new AppForegroundListener() {
+
+            @Override
+            public void appMovedToBackground(AppForegroundEvent arg0) {}
+
+            @Override
+            public void appRaisedToForeground(AppForegroundEvent arg0) {
+               manager.update();
+            }
+            
+         });
       }
    }
    
@@ -129,7 +151,7 @@ public class Agenda extends JPanel
       } catch (URISyntaxException e2) {
          ErrorID.showError(e2, true);
       }
-      boolean logData = true;
+      boolean logData = false;
 
       FileHandler.ensureFileRoute();
 
@@ -367,7 +389,7 @@ public class Agenda extends JPanel
     *            some custom code to be run before restarting
     * @throws IOException
     */
-   public void restartAppCP(Runnable runBeforeRestart) {
+   public static void restartCP0(Runnable runBeforeRestart) {
       try {
          // java binary
          String java = System.getProperty("java.home") + "/bin/java";
@@ -427,7 +449,7 @@ public class Agenda extends JPanel
       }
    }
   
-   public void restartAppJarCP(Runnable runBeforeRestart) {
+   private static void restartJarCP0(Runnable runBeforeRestart) {
       final String javaBin = System.getProperty("java.home") + File.separator
             + "bin" + File.separator + "java";
       File currentJar = null;
@@ -440,7 +462,7 @@ public class Agenda extends JPanel
 
       // if not a jar, restart using the classpath way
       if (!currentJar.getName().endsWith(".jar")) {
-         restartAppCP(runBeforeRestart);
+         restartCP0(runBeforeRestart);
       }
 
       // Build command: java -jar application.jar
@@ -478,7 +500,7 @@ public class Agenda extends JPanel
    /**
     * runs if it is an application
     */
-   public static void restartAppApp(Runnable runBeforeRestart) {
+   private static void restartApp0(Runnable runBeforeRestart) {
       if (runBeforeRestart != null)
          runBeforeRestart.run();
       runNewInstance();
@@ -488,13 +510,13 @@ public class Agenda extends JPanel
 
    public void restartApplication(Runnable runBeforeRestart) {
       if (isApp)
-         restartAppApp(runBeforeRestart);
+         restartApp0(runBeforeRestart);
       else
-         restartAppJarCP(runBeforeRestart);
+         restartJarCP0(runBeforeRestart);
    }
 
    public static void main(String[] args) {
-      statusU = true;
+      statusU = false;
       isApp = true;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {

@@ -359,7 +359,7 @@ public final class UIHandler {
             public void handleAbout(AboutEvent arg0) {
                String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
                      + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
-                     + "<p>Agenda is a schedule program for Pascack Hills (and possibly Valley)"
+                     + "<p>Agenda is a schedule program for the Pascack Valley High School District"
                      + "<p>that can keep track of time, school schedules, assignments, and GPA"
                      + "<p>for students."
                      + "<br><br>"

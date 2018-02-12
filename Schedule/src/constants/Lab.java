@@ -2,6 +2,7 @@ package constants;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 
+import constants.Rotation;
 import information.ClassPeriod;
 
 //Thomas Varano

@@ -282,6 +282,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return honors;
    }
    public void setHonors(boolean honors) {
+//      System.out.println(name + "SETTING HONORS");
       this.honors = honors;
    }
 
