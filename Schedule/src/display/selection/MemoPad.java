@@ -2,7 +2,7 @@
 //[Program Descripion]
 //Dec 6, 2017
 
-package display;
+package display.selection;
 
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;

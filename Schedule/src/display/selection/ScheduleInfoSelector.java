@@ -1,4 +1,4 @@
-package display;
+package display.selection;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
@@ -13,6 +13,7 @@ import javax.swing.event.ChangeListener;
 
 import constants.ErrorID;
 import constants.RotationConstants;
+import display.DisplayMain;
 import information.ClassPeriod;
 import information.Schedule;
 import managers.Agenda;

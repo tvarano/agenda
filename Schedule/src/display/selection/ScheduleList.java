@@ -1,4 +1,4 @@
-package display;
+package display.selection;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -7,6 +7,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import constants.ErrorID;
+import display.current.CurrentClassPane;
 import information.ClassPeriod;
 import information.Schedule;
 import managers.Agenda;

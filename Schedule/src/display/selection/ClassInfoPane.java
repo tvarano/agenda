@@ -1,4 +1,4 @@
-package display;
+package display.selection;
 import java.awt.Dimension;
 
 import javax.swing.JTextPane;

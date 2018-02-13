@@ -301,6 +301,9 @@ public class Schedule implements Serializable
    public ArrayList<ClassPeriod> getGpaClasses() {
       return gpaClasses;
    }
+   public void setGpaClasses(ArrayList<ClassPeriod> gpa) {
+      gpaClasses = gpa;
+   }
    public void setPascackPreferences(ClassPeriod pascackPreferences) {
       this.pascackPreferences = pascackPreferences;
       setPascackData();

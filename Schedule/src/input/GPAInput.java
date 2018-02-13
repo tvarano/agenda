@@ -25,7 +25,7 @@ import javax.swing.JScrollPane;
 import constants.ErrorID;
 import constants.Lab;
 import constants.RotationConstants;
-import display.ScheduleList;
+import display.selection.ScheduleList;
 import information.ClassPeriod;
 import information.Schedule;
 import ioFunctions.SchedReader;

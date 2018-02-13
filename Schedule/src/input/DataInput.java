@@ -295,10 +295,20 @@ public class DataInput extends JPanel implements InputManager, PanelView
       // write
       Schedule s = new Schedule(classes, labs.toArray(new Lab[labs.size()]));
       s.setPascackPreferences(pascack.createClass());
+      s.setGpaClasses(formatGPAClasses(s));
       parentManager.saveSchedule(s, getClass());
       if (debug) System.out.println("wrote" + s);
       Agenda.log("saved input");
       saved = true;
+   }
+   
+   private ArrayList<ClassPeriod> formatGPAClasses(Schedule newSched) {
+      ArrayList<ClassPeriod> gpa = new ArrayList<ClassPeriod>(beginningSchedule.getGpaClasses());
+      for (ClassPeriod c : gpa) {
+         if (newSched.get(c.getSlot()) != null)
+            c.setForegroundData(newSched.get(c.getSlot()));
+      }
+      return gpa;
    }
    
    @Override

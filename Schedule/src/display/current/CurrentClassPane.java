@@ -1,4 +1,4 @@
-package display;
+package display.current;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.time.LocalTime;
@@ -7,6 +7,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import display.DisplayMain;
+import display.selection.ScheduleList;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;

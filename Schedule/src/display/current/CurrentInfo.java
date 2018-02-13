@@ -1,4 +1,4 @@
-package display;
+package display.current;
 import java.awt.Color;
 
 import javax.swing.JPanel;

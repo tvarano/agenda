@@ -17,7 +17,6 @@ import java.util.concurrent.TimeoutException;
 
 import constants.Rotation;
 import constants.RotationConstants;
-import constants.timeTemplate.DayType;
 import ioFunctions.OrderUtility;
 import managers.Agenda;
 
@@ -159,19 +158,5 @@ public class CalReader {
       if (debug) System.out.println("done reading");
       in.close();
       return b.toString();
-   }
-   
-   public static void main(String[] args) {
-      /*
-      CalReader c = new CalReader();
-      try {
-         System.out.println(c.retrieveRfc());
-         System.out.println(c.readAndExtractEvents());
-      } catch (ExecutionException | TimeoutException | InterruptedException e) {
-         e.printStackTrace();
-      }
-      System.out.println(c.readTodayRotation());
-      */
-      DayType.main(args);
    }
 }

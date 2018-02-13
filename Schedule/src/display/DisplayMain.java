@@ -7,14 +7,16 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.swing.Timer;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.Timer;
 
 import constants.ErrorID;
 import constants.Lab;
 import constants.Rotation;
 import constants.RotationConstants;
+import display.current.CurrentClassPane;
+import display.selection.ScheduleInfoSelector;
 import information.ClassPeriod;
 import information.Schedule;
 import information.Time;
