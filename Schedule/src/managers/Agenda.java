@@ -205,13 +205,13 @@ public class Agenda extends JPanel
       }
       
       public static boolean ensureFileRoute() {
-         return new File(Addresses.AGENDA_HOME)
+         return new File(Addresses.getHome())
                .mkdirs();
       }
 
       public static void initAndCreateFiles() {
          // read file and set/
-         initFileNames(Addresses.AGENDA_HOME);
+         initFileNames(Addresses.getHome());
          
          //if you need, create your folder and initialize routes
          createFiles();
@@ -287,21 +287,17 @@ public class Agenda extends JPanel
    public MenuBar getBar() {
       return bar;
    }
-   
    public void show(String name) {
       ((CardLayout) getLayout()).show(this, name);
-   }
-   
+   } 
    public static void log(String text) {
       if (statusU)
          System.out.println(LocalTime.now() + " : "+text);
-   }
-   
+   } 
    public static void logError(String message, Throwable e) {
       if (statusU)
          System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
    }
-   
    public Dimension getMinimumSize() {
       return new Dimension(MIN_W,MIN_H);
    }
@@ -312,8 +308,7 @@ public class Agenda extends JPanel
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
       JFrame frame = new JFrame("LOADING....");
-      int frameToPaneAdjustment = 22;
-      
+      int frameToPaneAdjustment = 22; 
       
       // loading screen, frame adjustments
       EventQueue.invokeLater(new Runnable() {
@@ -321,6 +316,7 @@ public class Agenda extends JPanel
             JPanel p = new JPanel() {
                private static final long serialVersionUID = 1L;
                
+               //drawing strings while continuing calculations
                @Override 
                public void paintComponent(Graphics g) {
                   super.paintComponent(g);
@@ -443,7 +439,7 @@ public class Agenda extends JPanel
    
    public static void runNewInstance() {
       try {
-         Desktop.getDesktop().open(new File("/Applications/" + APP_NAME + ".app"));
+         Desktop.getDesktop().open(new File(Addresses.EXEC));
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
@@ -517,7 +513,7 @@ public class Agenda extends JPanel
 
    public static void main(String[] args) {
       statusU = false;
-      isApp = true;
+      isApp = System.getProperty("user.dir").indexOf(".app/Contents") > 0;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

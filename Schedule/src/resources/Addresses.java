@@ -4,6 +4,8 @@
 
 package resources;
 
+import managers.Agenda;
+
 /**
  * Holds addresses for different folders, websites, and locations. 
  * 
@@ -29,8 +31,14 @@ public final class Addresses {
    public static final String PHHS_HOME = "https://hills.pascack.org/";
    
    public static final String NAVIANCE = "http://connection.naviance.com/phhs";
+      
+   public static final String EXEC = System.getProperty("user.dir").substring(0, System.getProperty("user.dir").indexOf(".app"));
    
-   public static final String AGENDA_HOME = System.getProperty("user.home") + "/Applications/Agenda/";
+   public static final String getHome() {
+      if (Agenda.isApp)
+         return EXEC + "/Contents/Resources/Internal/";
+      return System.getProperty("user.home") + "/Applications/Agenda/";
+   }
    
    public static final String DAY_TYPE_HOME = "http://agendapascack.x10host.com/DayTypes/";
 }
