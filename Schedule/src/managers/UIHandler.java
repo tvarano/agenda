@@ -520,7 +520,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            Agenda.FileHandler.openURI(Agenda.sourceCode);
+            Agenda.FileHandler.openURI(createURI(Addresses.SOURCE));
          }  
       });
       bar.add(m);
@@ -559,7 +559,7 @@ public final class UIHandler {
       m.add(new LinkChooser("Genesis", createURI(Addresses.GENESIS)));
       m.add(new LinkChooser("PHHS Home", createURI(Addresses.PHHS_HOME)));
       m.add(new LinkChooser("Naviance", createURI(Addresses.NAVIANCE)));
-      m.add(new LinkChooser("Agenda Source", Agenda.sourceCode));
+      m.add(new LinkChooser("Agenda Source", createURI(Addresses.SOURCE)));
       m.add(new LinkChooser("Rotation Calendar", createURI(Addresses.CALENDAR_URL)));
       
       bar.add(m);

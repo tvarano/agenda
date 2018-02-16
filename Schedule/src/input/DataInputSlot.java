@@ -51,7 +51,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       if (c == null) c = new ClassPeriod();
       debug = false;
       dataHolder = c.clone();
-      System.out.println("input 56 dataholder\n"+dataHolder.getInfo());
+      if (debug) System.out.println("input 56 dataholder\n"+dataHolder.getInfo());
       setFont(UIHandler.getInputLabelFont());
       if (parentPanel != null) {
          setBackground(UIHandler.background);

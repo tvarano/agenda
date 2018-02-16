@@ -22,6 +22,15 @@ public final class Addresses {
    
    public static final String SOURCE = "https://github.com/tvarano54/schedule-new";
    
+   public static final java.net.URI sourceURI() {
+      try {
+         return new java.net.URI(SOURCE);
+      } catch (java.net.URISyntaxException e) {
+         Agenda.logError("source URI failed to load", e);
+         return null;
+      }
+   }
+   
    public static final String GITHUB_ISSUES = SOURCE + "/issues?q=is%3Aopen+is%3Aissue";
    
    public static final String CANVAS = "https://pascack.instructure.com/";
@@ -32,11 +41,15 @@ public final class Addresses {
    
    public static final String NAVIANCE = "http://connection.naviance.com/phhs";
       
-   public static final String EXEC = System.getProperty("user.dir").substring(0, System.getProperty("user.dir").indexOf(".app"));
+   public static final String getExec() {
+      if (Agenda.isApp)
+         return System.getProperty("user.dir").substring(0, System.getProperty("user.dir").indexOf(".app")) + ".app";
+      return System.getProperty("user.dir");
+   }
    
    public static final String getHome() {
       if (Agenda.isApp)
-         return EXEC + "/Contents/Resources/Internal/";
+         return getExec() + "/Contents/Resources/Internal/";
       return System.getProperty("user.home") + "/Applications/Agenda/";
    }
    

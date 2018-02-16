@@ -67,7 +67,6 @@ public class Agenda extends JPanel
    private JFrame parentFrame;
    private MenuBar bar;
    public static boolean statusU, isApp;
-   public static URI sourceCode;
    
    public Agenda(JFrame frame) {
       setName("main class");
@@ -146,12 +145,8 @@ public class Agenda extends JPanel
     */
    public static void initialFileWork() {
       long start = System.currentTimeMillis();
-      try {
-         sourceCode = new URI(Addresses.SOURCE);
-      } catch (URISyntaxException e2) {
-         ErrorID.showError(e2, true);
-      }
-      boolean logData = false;
+      
+      boolean logData = true;
 
       FileHandler.ensureFileRoute();
 
@@ -439,7 +434,7 @@ public class Agenda extends JPanel
    
    public static void runNewInstance() {
       try {
-         Desktop.getDesktop().open(new File(Addresses.EXEC));
+         Desktop.getDesktop().open(new File(Addresses.getExec()));
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
@@ -512,8 +507,8 @@ public class Agenda extends JPanel
    }
 
    public static void main(String[] args) {
-      statusU = false;
-      isApp = System.getProperty("user.dir").indexOf(".app/Contents") > 0;
+      statusU = true;
+      isApp = System.getProperty("user.dir").indexOf(".app") > 0;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

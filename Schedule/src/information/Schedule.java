@@ -115,7 +115,7 @@ public class Schedule implements Serializable
    
    public void sort() {
       Agenda.log(getName() + " sorted");
-      System.out.println("order 118 SORTING SORTING SORTING SORTING AYAYAYAYAYAYAYAY");
+      if (debug) System.out.println("sched 118 SORTING SORTING SORTING SORTING AYAYAYAYAYAYAYAY");
       setClasses(ioFunctions.OrderUtility.reorderClasses(Rotation.R1, classes));  
    }
    
