@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
@@ -232,15 +231,6 @@ public final class UIHandler {
             }
 	      });    
 	   }
-	}
-	
-	private static URI createURI(String path) {
-      try {
-         return new URI(path);
-      } catch (URISyntaxException e) {
-         ErrorID.showError(e, true);
-         return null;
-      }
 	}
 	
 	private static Border getUnFormattedTitleBorder(String title) {
@@ -520,7 +510,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            Agenda.FileHandler.openURI(createURI(Addresses.SOURCE));
+            Agenda.FileHandler.openURI(Addresses.createURI(Addresses.SOURCE));
          }  
       });
       bar.add(m);
@@ -555,12 +545,12 @@ public final class UIHandler {
       bar.add(m);
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");
-      m.add(new LinkChooser("Canvas", createURI(Addresses.CANVAS)));
-      m.add(new LinkChooser("Genesis", createURI(Addresses.GENESIS)));
-      m.add(new LinkChooser("PHHS Home", createURI(Addresses.PHHS_HOME)));
-      m.add(new LinkChooser("Naviance", createURI(Addresses.NAVIANCE)));
-      m.add(new LinkChooser("Agenda Source", createURI(Addresses.SOURCE)));
-      m.add(new LinkChooser("Rotation Calendar", createURI(Addresses.CALENDAR_URL)));
+      m.add(new LinkChooser("Canvas", Addresses.createURI(Addresses.CANVAS)));
+      m.add(new LinkChooser("Genesis", Addresses.createURI(Addresses.GENESIS)));
+      m.add(new LinkChooser("PHHS Home", Addresses.createURI(Addresses.PHHS_HOME)));
+      m.add(new LinkChooser("Naviance", Addresses.createURI(Addresses.NAVIANCE)));
+      m.add(new LinkChooser("Agenda Source", Addresses.createURI(Addresses.SOURCE)));
+      m.add(new LinkChooser("Rotation Calendar", Addresses.createURI(Addresses.CALENDAR_URL)));
       
       bar.add(m);
       // ---------------------------Help Bar--------------------------
@@ -589,7 +579,7 @@ public final class UIHandler {
                Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
          }
       });
-      mi = m.add(new LinkChooser("Submit Issue", createURI(Addresses.GITHUB_ISSUES)));
+      mi = m.add(new LinkChooser("Submit Issue", Addresses.createURI(Addresses.GITHUB_ISSUES)));
       mi = m.add(new MenuItem("Sharing Protocol"));
       mi.addActionListener(new ActionListener() {
          @Override

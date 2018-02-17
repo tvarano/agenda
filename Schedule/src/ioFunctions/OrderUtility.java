@@ -160,10 +160,12 @@ public final class OrderUtility
       final ExecutorService executor = Executors.newSingleThreadExecutor();
       long start = System.currentTimeMillis();
       // schedule the work
+
       final Future<T> future = executor
             .submit(method);
       try {
          // wait for task to complete
+         //HOLDS EVERYTHING UP
          final T result = future.get(millisToWait,
                TimeUnit.MILLISECONDS);
          Agenda.log(description + " took " + (System.currentTimeMillis() - start));

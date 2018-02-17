@@ -1,5 +1,12 @@
 package constants;
+import java.io.EOFException;
+import java.net.URL;
+import java.util.ArrayList;
+
 import information.Time;
+import ioFunctions.OrderUtility;
+import managers.Agenda;
+import resources.Addresses;
 
 //Thomas Varano
 //[Program Descripion]
@@ -45,20 +52,77 @@ public enum DayType
          new Time[] {new Time(11,18), new Time(12,9), new Time(13,31), new Time(14,53)}),
    ;
    
-   private final Time[] startTimes, endTimes;
-   private final Time labSwitch;
+   private Time[] startTimes, endTimes;
+   private Time labSwitch;
    
    private DayType(Time[] startTimes, Time[] endTimes, Time labSwitch) {
-      this.startTimes = startTimes; this.endTimes = endTimes; this.labSwitch = labSwitch;
+      try {
+         if (ordinal() != 6)
+            onlineInit();
+         else
+            offlineInit(startTimes, endTimes, labSwitch);
+      } catch (Exception e) {
+         offlineInit(startTimes, endTimes, labSwitch);
+      }
    }
    
    private DayType(Time[] startTimes, Time[] endTimes) {
       this(startTimes, endTimes, null);
    }
    
+   private void offlineInit(Time[] startTimes, Time[] endTimes, Time labSwitch) {
+      this.startTimes = startTimes; this.endTimes = endTimes; this.labSwitch = labSwitch;         
+
+   }
+   
    public boolean hasLab() {
       return labSwitch != null;
    }
+   //------------------------------- online initialization --------------------------------
+   
+   private void onlineInit() throws Exception {
+      Agenda.log("start "+name() + " at " +getSite());
+      formatString(retrieveHtml(getSite()));
+   }
+   
+   private static final String START = "start ", END = "end", LAB = "lab";
+   private void formatString(String unf)
+         throws NullPointerException, EOFException {
+      java.util.Scanner s = new java.util.Scanner(unf);
+      s.nextLine();
+      ArrayList<Time> starts = new ArrayList<Time>();
+      ArrayList<Time> ends = new ArrayList<Time>();
+      String line = "";
+      if (!s.nextLine().equalsIgnoreCase(START)) {
+         s.close();
+         throw new NullPointerException(
+               "format for " + name() + " dayType incorrect");
+      }
+      while (!(line = s.nextLine()).equalsIgnoreCase(END))
+         starts.add(Time.fromString(line));
+      while (!(line = s.nextLine()).equalsIgnoreCase(LAB))
+         ends.add(Time.fromString(line));
+      labSwitch = Time.fromString(s.nextLine());
+      startTimes = starts.toArray(new Time[starts.size()]);
+      endTimes = ends.toArray(new Time[ends.size()]);
+      s.close();
+   }
+   
+   private static final int MILLIS_TO_WAIT = 250;
+   private static String retrieveHtml(URL site) throws Exception {
+      return OrderUtility.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
+         @Override
+         public String call() throws Exception {
+            return resources.ResourceAccess.readHtml(site);
+         }
+      }, "retreieve dayType");
+   }
+   
+   public URL getSite() {
+      return Addresses.createURL(Addresses.DAY_TYPE_HOME + name().toLowerCase() + ".txt");
+   }
+   
+   //---------------------------------------------------------------------------------------------
 
    public boolean equals(DayType otherDT) {
       for (int i = 0; i < startTimes.length; i++) {

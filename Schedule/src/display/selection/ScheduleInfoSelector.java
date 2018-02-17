@@ -77,7 +77,7 @@ public class ScheduleInfoSelector extends JPanel
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
       Agenda.log("scheduleInfo initializer mk 2");
       JScrollPane scroll = new JScrollPane(info);
-      scroll.setBorder(UIHandler.getTitledBorder("Class Not Chosen"));
+      scroll.setBorder(UIHandler.getTitledBorder("Select Class for Info"));
       Agenda.log("scheduleInfo initializer mk 3");
       scroll.setOpaque(false);
       add(scroll);

@@ -4,8 +4,6 @@
 
 package resources;
 
-import managers.Agenda;
-
 /**
  * Holds addresses for different folders, websites, and locations. 
  * 
@@ -26,7 +24,7 @@ public final class Addresses {
       try {
          return new java.net.URI(SOURCE);
       } catch (java.net.URISyntaxException e) {
-         Agenda.logError("source URI failed to load", e);
+         managers.Agenda.logError("source URI failed to load", e);
          return null;
       }
    }
@@ -42,16 +40,36 @@ public final class Addresses {
    public static final String NAVIANCE = "http://connection.naviance.com/phhs";
       
    public static final String getExec() {
-      if (Agenda.isApp)
+      if (managers.Agenda.isApp)
          return System.getProperty("user.dir").substring(0, System.getProperty("user.dir").indexOf(".app")) + ".app";
       return System.getProperty("user.dir");
    }
    
    public static final String getHome() {
-      if (Agenda.isApp)
+      if (managers.Agenda.isApp)
          return getExec() + "/Contents/Resources/Internal/";
       return System.getProperty("user.home") + "/Applications/Agenda/";
    }
    
-   public static final String DAY_TYPE_HOME = "http://agendapascack.x10host.com/DayTypes/";
+   public static final String DATABASE = "http://agendapascack.x10host.com/";
+   public static final String ROTATION_HOME = DATABASE + "Rotations/";
+   public static final String DAY_TYPE_HOME = DATABASE + "DayTypes/";
+   
+   public static java.net.URI createURI(String path) {
+      try {
+         return new java.net.URI(path);
+      } catch (java.net.URISyntaxException e) {
+         constants.ErrorID.showError(e, true);
+         return null;
+      }
+   }
+   
+   public static java.net.URL createURL(String path) {
+      try {
+         return new java.net.URL(path);
+      } catch (java.net.MalformedURLException e) {
+         constants.ErrorID.showError(e, true);
+         return null;
+      }
+   }
 }

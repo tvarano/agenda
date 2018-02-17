@@ -1,9 +1,13 @@
 package constants;
 
+import java.net.URL;
 import java.time.DayOfWeek;
 
 import information.ClassPeriod;
 import information.Time;
+import ioFunctions.OrderUtility;
+import managers.Agenda;
+import resources.Addresses;
 
 //Thomas Varano
 //Sep 3, 2017
@@ -19,44 +23,87 @@ import information.Time;
  */
 public enum Rotation
 {
-   R1 (DayType.NORMAL),
-   R2 (DayType.NORMAL),
-   R3 (DayType.NORMAL),
-   R4 (DayType.NORMAL),
-   ODD_BLOCK (DayType.BLOCK), 
-   EVEN_BLOCK (DayType.BLOCK),
-   HALF_R1 (DayType.HALF_DAY),
-   HALF_R3 (DayType.HALF_DAY),
-   HALF_R4 (DayType.HALF_DAY),
-   DELAY_R1 (DayType.DELAYED_OPEN),
-   DELAY_R3 (DayType.DELAYED_OPEN),
-   DELAY_R4 (DayType.DELAYED_OPEN),
-   DELAY_ODD (DayType.DELAY_ODD),
-   DELAY_EVEN (DayType.DELAY_EVEN),
-   NO_SCHOOL (DayType.NO_SCHOOL),
-   INCORRECT_PARSE(DayType.NO_SCHOOL),
-   TEST_ONE(DayType.TEST_DAY),
-   TEST_TWO(DayType.TEST_DAY),
-   TEST_THREE(DayType.TEST_DAY),
-   DELAY_ARRIVAL(DayType.DELAY_ARR);
+   R1 (DayType.NORMAL, false),
+   R2 (DayType.NORMAL, false),
+   R3 (DayType.NORMAL, false),
+   R4 (DayType.NORMAL, false),
+   ODD_BLOCK (DayType.BLOCK, false), 
+   EVEN_BLOCK (DayType.BLOCK, false),
+   HALF_R1 (DayType.HALF_DAY, false),
+   HALF_R3 (DayType.HALF_DAY, false),
+   HALF_R4 (DayType.HALF_DAY, false),
+   DELAY_R1 (DayType.DELAYED_OPEN, false),
+   DELAY_R3 (DayType.DELAYED_OPEN, false),
+   DELAY_R4 (DayType.DELAYED_OPEN, false),
+   DELAY_ODD (DayType.DELAY_ODD, false),
+   DELAY_EVEN (DayType.DELAY_EVEN, false),
+   NO_SCHOOL (DayType.NO_SCHOOL, false),
+   INCORRECT_PARSE(DayType.NO_SCHOOL, false),
+   TEST_ONE(DayType.TEST_DAY, true),
+   TEST_TWO(DayType.TEST_DAY, true),
+   TEST_THREE(DayType.TEST_DAY, true),
+   DELAY_ARRIVAL(DayType.DELAY_ARR, true);
       
    private final int lunchSlot;
-   private final ClassPeriod[] times;
+   private ClassPeriod[] times;
    private final DayType dayType;
    private final Time labSwitch;
    private final int index;
    private final static boolean debug = false;
    
-   private Rotation(DayType dt) {
-         this.dayType = dt;
-         this.times = getSchedule(ordinal()+1); this.labSwitch = dt.getLabSwitch();
-         this.index = ordinal()+1; lunchSlot = calcLunchSlot(); 
-         if (debug) System.out.println("rotation "+index+" created");
+   private Rotation(DayType dt, boolean readReccomended) {
+      this.dayType = dt; this.labSwitch = dt.getLabSwitch();
+      this.index = ordinal()+1; lunchSlot = calcLunchSlot(); 
+      try {
+         if (readReccomended)
+            onlineInit();
+         else 
+            offlineInit();
+      } catch (Exception e) {
+         offlineInit();
+      }
+      if (debug) System.out.println("rotation "+index+" created");
    }
    
    public static int[] getSlotRotation (Rotation r) {
       return getSlotRotation(r.index);
    }
+   
+   private void offlineInit() {
+      this.times = getSchedule(ordinal()+1);      
+   }
+   
+   //-------------------------------------- Online Initialization -------------------------------------------
+   private void onlineInit() throws Exception {
+      Agenda.log("online start "+name() + " at " +getSite());
+      times = getSchedule(formatString(retrieveHtml(getSite())), dayType);
+   }
+   
+   private int[] formatString(String unf) throws Exception {
+      java.util.Scanner s = new java.util.Scanner(unf);
+      int[] slots = new int[dayType.getStartTimes().length];
+      for (int i = 0; i < slots.length; i++)
+         slots[i] = Integer.parseInt(s.nextLine());
+      s.nextInt();
+      s.close();
+      return slots;
+   }
+   
+   private static final int MILLIS_TO_WAIT = 300;
+   private static String retrieveHtml(URL site) throws Exception {
+      return OrderUtility.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
+         @Override
+         public String call() throws Exception {
+            return resources.ResourceAccess.readHtml(site);
+         }
+      }, "retreieve dayType");
+   }
+   
+   public java.net.URL getSite() {
+      return Addresses.createURL(Addresses.ROTATION_HOME + name().toLowerCase() + ".txt");
+   }
+   
+   //--------------------------------------------------------------------------------------------------------
    
    private int calcLunchSlot() {
       DayType dt = getDayType();
@@ -139,11 +186,13 @@ public enum Rotation
 
    public static ClassPeriod[] getSchedule(int rotationIndex) {
       if (debug) System.out.println("index="+rotationIndex);
-      DayType dt = getType(rotationIndex);
       if (debug) System.out.println("nosc "+RotationConstants.getNoSchoolClass());
       if (rotationIndex == RotationConstants.NO_SCHOOL_INDEX) 
          return new ClassPeriod[]{RotationConstants.getNoSchoolClass()};
-      int[] slots = getSlotRotation(rotationIndex);
+      return getSchedule(getSlotRotation(rotationIndex), getType(rotationIndex));
+   }
+   
+   public static ClassPeriod[] getSchedule(int[] slots, DayType dt) {
       ClassPeriod[] retval = new ClassPeriod[slots.length];
       String name = "";
       for (int i = 0; i < retval.length; i++){

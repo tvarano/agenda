@@ -44,7 +44,6 @@ import resources.Addresses;
  * NOTES BEFORE EXPORT
  * is logData set to true?
  * is statusU set to true?
- * is isApp set to the correct value? 
  * are all unwanted debug prints not printing?
  * is the build correct?
  */
@@ -146,7 +145,7 @@ public class Agenda extends JPanel
    public static void initialFileWork() {
       long start = System.currentTimeMillis();
       
-      boolean logData = true;
+      boolean logData = isApp;
 
       FileHandler.ensureFileRoute();
 
@@ -381,6 +380,7 @@ public class Agenda extends JPanel
     * @throws IOException
     */
    public static void restartCP0(Runnable runBeforeRestart) {
+      Agenda.log("Restart with ClassPath");
       try {
          // java binary
          String java = System.getProperty("java.home") + "/bin/java";
@@ -433,6 +433,7 @@ public class Agenda extends JPanel
    }
    
    public static void runNewInstance() {
+      Agenda.log("Run New Instance: "+Addresses.getExec());
       try {
          Desktop.getDesktop().open(new File(Addresses.getExec()));
       } catch (IOException e) {
@@ -455,7 +456,7 @@ public class Agenda extends JPanel
       if (!currentJar.getName().endsWith(".jar")) {
          restartCP0(runBeforeRestart);
       }
-
+      Agenda.log("Restart with jar");
       // Build command: java -jar application.jar
       final ArrayList<String> command = new ArrayList<String>();
       command.add(javaBin);
