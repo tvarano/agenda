@@ -48,7 +48,6 @@ import resources.Addresses;
  * is the build correct?
  */
 
-
 /**
  * Main class. Begins the program and initializes all references.
  * 
@@ -134,7 +133,6 @@ public class Agenda extends JPanel
             public void appRaisedToForeground(AppForegroundEvent arg0) {
                manager.update();
             }
-            
          });
       }
    }
@@ -433,12 +431,8 @@ public class Agenda extends JPanel
    }
    
    public static void runNewInstance() {
-      Agenda.log("Run New Instance: "+Addresses.getExec());
-      try {
-         Desktop.getDesktop().open(new File(Addresses.getExec()));
-      } catch (IOException e) {
-         ErrorID.showError(e, false);
-      }
+      Agenda.log("Run New Instance: "+Addresses.getExec() + "\n\tcanExec = "+new File(Addresses.getExec()).canExecute());
+      restarter.RestartCall.callRestart();
    }
   
    private static void restartJarCP0(Runnable runBeforeRestart) {
@@ -508,6 +502,8 @@ public class Agenda extends JPanel
    }
 
    public static void main(String[] args) {
+      runNewInstance();
+      System.exit(0);
       statusU = true;
       isApp = System.getProperty("user.dir").indexOf(".app") > 0;
       log("Program Initialized");
