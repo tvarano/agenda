@@ -6,7 +6,6 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Menu;
 import java.awt.MenuBar;
@@ -53,7 +52,6 @@ import javax.swing.text.html.HTMLEditorKit;
 import constants.ErrorID;
 import constants.Rotation;
 import constants.RotationConstants;
-import ioFunctions.SchedReader;
 import ioFunctions.SchedWriter;
 import resources.Addresses;
 import resources.ResourceAccess;
@@ -80,43 +78,6 @@ public final class UIHandler {
 	   setLAF();
 	   setColors();
 	   putValues();
-	}
-	
-   public static JPanel getLoadingPanel() {
-      JPanel retval = new JPanel() {
-         private static final long serialVersionUID = 1L;
-         
-         @Override
-         protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            System.out.println("CALLED PAINT");
-            setBackground(Color.BLUE);
-         }
-         public Dimension getMinimumSize() {
-            return new Dimension(Agenda.MIN_W,Agenda.MIN_H);
-         }
-         public Dimension getPreferredSize() {
-            return new Dimension(Agenda.PREF_W, Agenda.PREF_H);
-         }
-      };
-      retval.setVisible(true);
-      retval.repaint();
-      return retval;
-   }
-	
-   public static JFrame createEmptyLoad() {
-      return new JFrame(Agenda.APP_NAME + " " + Agenda.BUILD);
-   }
-   
-	public static JFrame createLoadingScreen(JFrame f) {
-	   f.setTitle(Agenda.APP_NAME + " " + Agenda.BUILD);
-	   JPanel p = getLoadingPanel();
-	   f.getContentPane().add(p);
-	   f.setMinimumSize(new Dimension(Agenda.MIN_W, Agenda.MIN_H));
-	   f.pack();
-	   f.setLocationRelativeTo(null);
-	   f.setVisible(true);
-	   return f;
 	}
 	
 	public static void putValues() {
@@ -167,7 +128,7 @@ public final class UIHandler {
 	   }
       public void writeData() {
          try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(FileHandler.THEME_ROUTE));
             bw.write(themeName);
             bw.close();
             
@@ -197,7 +158,7 @@ public final class UIHandler {
       
       public void writeData() {
          try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.RESOURCE_ROUTE+"look.txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(FileHandler.RESOURCE_ROUTE+"look.txt"));
             bw.write(look.getClassName());
             bw.close();
          } catch (IOException e1) {
@@ -227,7 +188,7 @@ public final class UIHandler {
             @Override
             public void actionPerformed(ActionEvent e) {
                Agenda.log("opening uri "+name);
-               Agenda.FileHandler.openURI(link);
+               FileHandler.openURI(link);
             }
 	      });    
 	   }
@@ -457,13 +418,13 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (checkIntentions("Clear Preferences.\nThis Requires a restart")) {
+            if (checkIntentions("Clear Preferences (Look and Theme).\nThis Requires a restart")) {
                BufferedWriter bw;
                try {
-                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.THEME_ROUTE));
+                  bw = new BufferedWriter(new FileWriter(FileHandler.THEME_ROUTE));
                   bw.write(themes[0]);
                   bw.close();
-                  bw = new BufferedWriter(new FileWriter(Agenda.FileHandler.LAF_ROUTE));
+                  bw = new BufferedWriter(new FileWriter(FileHandler.LAF_ROUTE));
                   bw.write(UIManager.getSystemLookAndFeelClassName());
                   bw.close();
                   age.restart();
@@ -489,10 +450,10 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (JOptionPane.showOptionDialog(null, "Your files are kept at:\n"+Agenda.FileHandler.ENVELOPING_FOLDER,
+            if (JOptionPane.showOptionDialog(null, "Your files are kept at:\n"+FileHandler.ENVELOPING_FOLDER,
                   Agenda.APP_NAME + " File Location", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                   new String[] {"View In Finder", "Close"}, "Close") == 0) {
-               Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.ENVELOPING_FOLDER);
+               FileHandler.openDesktopFile(FileHandler.ENVELOPING_FOLDER);
             }
          }
       });
@@ -501,7 +462,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
+            FileHandler.openDesktopFile(FileHandler.LOG_ROUTE);
          }
       });
 
@@ -510,7 +471,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            Agenda.FileHandler.openURI(Addresses.createURI(Addresses.SOURCE));
+            FileHandler.openURI(Addresses.createURI(Addresses.SOURCE));
          }  
       });
       bar.add(m);
@@ -562,7 +523,7 @@ public final class UIHandler {
             int choice = JOptionPane.showOptionDialog(null,
                   "Error logging helps the efficiency and ease of use for \n"
                         + "this program. Logs are kept at:\n"
-                        + Agenda.FileHandler.LOG_ROUTE + "\n"
+                        + FileHandler.LOG_ROUTE + "\n"
                         + "and keep internal information about the program as it runs.\n"
                         + "If an error occurs, its message will be printed in the log.\n"
                         + "The best thing to do is simply send the entire log when this\n"
@@ -574,9 +535,9 @@ public final class UIHandler {
                   JOptionPane.INFORMATION_MESSAGE, null,
                   new String[]{"Close", "Open Log", "Send Email"}, "Close");
             if (choice == 2)
-               Agenda.FileHandler.sendEmail();
+               FileHandler.sendEmail();
             else if (choice == 1)
-               Agenda.FileHandler.openDesktopFile(Agenda.FileHandler.LOG_ROUTE);
+               FileHandler.openDesktopFile(FileHandler.LOG_ROUTE);
          }
       });
       mi = m.add(new LinkChooser("Submit Issue", Addresses.createURI(Addresses.GITHUB_ISSUES)));
@@ -599,8 +560,8 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            SchedReader.transfer("Installation Instructions.txt", 
-                  new File(System.getProperty("user.home") + "/Desktop/README.txt"));
+            FileHandler.transfer("Installation Instructions.txt", 
+                  new File(System.getProperty("user.home") + "/Desktop/README.txt"), 0);
             JOptionPane.showMessageDialog(null, 
                   "Installation instructions (README.txt) have been created on your desktop.",
                         Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
@@ -613,7 +574,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            Agenda.FileHandler.sendEmail();
+            FileHandler.sendEmail();
          }
       });
       bar.setHelpMenu(m);
@@ -643,7 +604,7 @@ public final class UIHandler {
    
    private static String readDoc(String fileName, int type) {
       try {
-         Scanner s = new Scanner(new File(Agenda.FileHandler.RESOURCE_ROUTE+fileName));
+         Scanner s = new Scanner(new File(FileHandler.RESOURCE_ROUTE+fileName));
          String ret = s.nextLine();
          s.close();
          return ret;
@@ -651,7 +612,7 @@ public final class UIHandler {
       } catch (IOException e) {
          if (e instanceof FileNotFoundException) {
             try {
-               BufferedWriter bw = new BufferedWriter(new FileWriter(new File(Agenda.FileHandler.RESOURCE_ROUTE+fileName)));
+               BufferedWriter bw = new BufferedWriter(new FileWriter(new File(FileHandler.RESOURCE_ROUTE+fileName)));
                if (type == THEME_ID)
                   bw.write(themes[0]);
                else if (type == LAF_ID)
@@ -663,7 +624,7 @@ public final class UIHandler {
                bw.close();
             } catch (IOException e1) {
                e1.printStackTrace();
-               Agenda.FileHandler.initAndCreateFiles();
+               FileHandler.initAndCreateFiles();
             }
          }
          return themes[0];
@@ -832,11 +793,6 @@ public final class UIHandler {
 	public static Border getTitledBorder(String title, int justification, int position) {
       return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 2),
             title, justification, position, font, titleColor);
-	}
-	
-	
-	public static Color getScrollColor() {
-	   return new Color(foreground.getRed(), foreground.getBlue(), foreground.getGreen(), 150);
 	}
 	
 	public static Border getTitledBorder(String title) {

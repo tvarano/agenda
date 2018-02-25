@@ -1,11 +1,8 @@
 package ioFunctions;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.Scanner;
 
 import constants.ErrorID;
 import constants.Lab;
@@ -14,7 +11,7 @@ import constants.RotationConstants;
 import information.ClassPeriod;
 import information.Schedule;
 import managers.Agenda;
-import resources.ResourceAccess;
+import managers.FileHandler;
 
 public class SchedReader {
    private ObjectInputStream reader;
@@ -27,8 +24,8 @@ public class SchedReader {
    
    private void init() {
       try {
-         reader = new ObjectInputStream(new FileInputStream(Agenda.FileHandler.FILE_ROUTE));
-         if (debug) System.out.println(new File(Agenda.FileHandler.FILE_ROUTE).getAbsolutePath());
+         reader = new ObjectInputStream(new FileInputStream(FileHandler.FILE_ROUTE));
+         if (debug) System.out.println(new File(FileHandler.FILE_ROUTE).getAbsolutePath());
       } catch (IOException e) {
          if (debug) e.printStackTrace();
          reWriteSched();
@@ -153,24 +150,6 @@ public class SchedReader {
          reader.close();
       } catch (IOException e) {
          Agenda.log("error in schedReader finalization");
-      }
-   }
-   
-   public static void transfer(String localPath, File f) {
-      Agenda.log("transferring readme");
-      try {
-         if (f.createNewFile()) {
-            Scanner in = new Scanner(ResourceAccess.getResourceStream(localPath));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-            while (in.hasNextLine()) {
-               bw.write(in.nextLine()+"\r\n");
-            }
-            f.setWritable(false);
-            in.close();
-            bw.close();
-         }
-      } catch (IOException | NullPointerException e) {
-         ErrorID.showError(e, true);
       }
    }
 }

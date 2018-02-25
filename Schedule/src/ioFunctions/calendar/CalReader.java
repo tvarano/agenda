@@ -58,13 +58,9 @@ public class CalReader {
       if (calClear) {
          for (VEvent e : cal.eventsToday()) {
             String s = e.getSummary();
-            if (s.contains("10:00")) {
+            if (s.contains("10:00") || s.contains("Arrival")) {
                Agenda.log("ROTATION: 10:00 open read from internet");
                return Rotation.DELAY_ARRIVAL;
-            }
-            if (RotationConstants.getRotation(s) != null) {
-               Agenda.log("ROTATION: " + s + " read from internet");
-               return RotationConstants.getRotation(s);
             }
             if (s.contains("No School"))
                return Rotation.NO_SCHOOL;
@@ -78,8 +74,13 @@ public class CalReader {
                return RotationConstants.toDelay(RotationConstants
                      .getRotation(s.substring(0, s.indexOf('(') - 1)));
             }
+            if (RotationConstants.getRotation(s) != null) {
+               Agenda.log("ROTATION: " + s + " read from internet");
+               return RotationConstants.getRotation(s);
+            }
          }
       }
+      Agenda.log("no valid events found. rotation read from day.");
       return Rotation.getRotation(LocalDate.now().getDayOfWeek());
    }
    

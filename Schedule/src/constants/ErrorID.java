@@ -104,7 +104,7 @@ public enum ErrorID {
          String internalMessage = (e.getMessage() == null) ? "" : e.getMessage() + newLn;
          String causeMessage = (e.getCause() == null) ? "" : "Caused by: " + getID(e.getCause());
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
-         String prompt = "Go to" + newLn + Agenda.FileHandler.LOG_ROUTE + "\nFor your log data.";
+         String prompt = "Go to" + newLn + managers.FileHandler.LOG_ROUTE + "\nFor your log data.";
          String text = "Details:\n" + message + newLn + importantText + prompt;
          int choice2 = JOptionPane.showOptionDialog(null,
                text,
@@ -115,7 +115,7 @@ public enum ErrorID {
             ErrorCopier.copy(ID, e);
          } else if (choice2 == 1) {
             ErrorCopier.copy(ID, e);
-            Agenda.FileHandler.sendEmail();
+            managers.FileHandler.sendEmail();
          }
       }
    }

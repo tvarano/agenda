@@ -41,8 +41,8 @@ public final class Addresses {
       
    public static final String getExec() {
       if (managers.Agenda.isApp)
-         return System.getProperty("user.dir").substring(0, System.getProperty("user.dir").indexOf(".app")) + ".app";
-      return System.getProperty("user.dir");
+         return System.getProperty("java.class.path").substring(0, System.getProperty("java.class.path").indexOf(".app")) + ".app";
+      return System.getProperty("java.class.path");
    }
    
    public static final String getHome() {

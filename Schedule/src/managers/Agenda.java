@@ -15,34 +15,21 @@ import java.awt.desktop.ScreenSleepEvent;
 import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
 import java.awt.desktop.SystemSleepListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.management.ManagementFactory;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import constants.ErrorID;
-import ioFunctions.SchedReader;
-import resources.Addresses;
 
 //Thomas Varano
 //Sep 20, 2017
 
 /*
  * NOTES BEFORE EXPORT
- * is logData set to true?
  * is statusU set to true?
  * are all unwanted debug prints not printing?
  * is the build correct?
@@ -64,7 +51,8 @@ public class Agenda extends JPanel
    private PanelManager manager;
    private JFrame parentFrame;
    private MenuBar bar;
-   public static boolean statusU, isApp;
+   public static boolean statusU;
+   public static final boolean isApp = System.getProperty("user.dir").indexOf(".app") > 0; 
    
    public Agenda(JFrame frame) {
       setName("main class");
@@ -172,110 +160,6 @@ public class Agenda extends JPanel
       return manager;
    }
    
-   /**
-    * Everything that has to handle files
-    * @author varanoth
-    */
-   public static class FileHandler {
-      public static String ENVELOPING_FOLDER;
-      public static String RESOURCE_ROUTE;
-      public static String LOG_ROUTE;
-      public static String FILE_ROUTE;
-      public static String THEME_ROUTE, LAF_ROUTE;
-      public static final String NO_LOCATION = "noLoc";
-      
-      public static void openURI(URI uri) {
-         if (Desktop.isDesktopSupported()) {
-            try {
-               Desktop.getDesktop().browse(uri);
-            } catch (IOException e) {
-               ErrorID.showError(e, true);
-            }
-         } else {
-            ErrorID.showUserError(ErrorID.IO_EXCEPTION);
-         }
-      }
-      
-      public static boolean ensureFileRoute() {
-         return new File(Addresses.getHome())
-               .mkdirs();
-      }
-
-      public static void initAndCreateFiles() {
-         // read file and set/
-         initFileNames(Addresses.getHome());
-         
-         //if you need, create your folder and initialize routes
-         createFiles();
-      }
-      
-      public static void openDesktopFile(String path) {
-         if (Desktop.isDesktopSupported()) {
-            try {
-               Desktop.getDesktop().open(new File(path));
-            } catch (IOException e1) {
-               ErrorID.showError(e1, true);
-            }
-        }
-      }
-      
-      public static void sendEmail() {
-         int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+ 
-               Addresses.CONTACT_EMAIL, 
-               Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
-               new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
-         if (choice == 2 || choice == -1) 
-            return;
-         else {
-            if (Desktop.isDesktopSupported()) {
-               try {
-                  if (choice == 0)
-                     Desktop.getDesktop().mail(new URI("mailto:"+Addresses.CONTACT_EMAIL+"?subject=Agenda%20Contact"));
-                  else
-                     Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
-               } catch (IOException | URISyntaxException e1) {
-                  ErrorID.showError(e1, true);
-               }
-            }
-         }
-      }
-   
-      public static void initFileNames(String envelop) {
-         ENVELOPING_FOLDER = envelop;
-         RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
-         LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
-         FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
-         THEME_ROUTE = RESOURCE_ROUTE + "theme.txt";
-         LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
-      }
-      
-      public synchronized static void createFiles() {
-         if (new File(RESOURCE_ROUTE).mkdirs()) {
-            log("files created");
-               SchedReader.transfer("README.txt",
-                     new File(ENVELOPING_FOLDER + "README.txt"));
-               BufferedWriter bw;
-               try {
-                  bw = new BufferedWriter(
-                        new FileWriter(THEME_ROUTE));
-                  bw.write(UIHandler.themes[0]);
-                  bw.close();
-                  bw = new BufferedWriter(new FileWriter(LAF_ROUTE));
-                  bw.write(UIManager.getSystemLookAndFeelClassName());
-                  bw.close();
-               } catch (IOException e) {
-                  ErrorID.showError(e, false);
-               }
-            }
-      }
-      
-      public static boolean moveFiles(String oldLocation) {
-         log("attempting to move files");
-         
-         return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
-      }
-   }
-   
    public MenuBar getBar() {
       return bar;
    }
@@ -355,7 +239,7 @@ public class Agenda extends JPanel
    public void restart() {
       manager.getDisplay().writeMain();
       log("Program Restarted with no arguments\n");
-      restartApplication(new Runnable() {
+      restarter.RestartHandler.restartApplication(new Runnable() {
          @Override
          public void run() {
             log("Restart Successful.\n");
@@ -363,149 +247,9 @@ public class Agenda extends JPanel
       });
    }
    
-   /**
-    * Sun property pointing the main class and its arguments. Might not be defined
-    * on non Hotspot VM implementations.
-    */
-   public static final String SUN_JAVA_COMMAND = "sun.java.command";
-
-   /**
-    * Restart the current Java application
-    * however, only if the program is run through eclipse or with a classPath
-    * 
-    * @param runBeforeRestart
-    *            some custom code to be run before restarting
-    * @throws IOException
-    */
-   public static void restartCP0(Runnable runBeforeRestart) {
-      Agenda.log("Restart with ClassPath");
-      try {
-         // java binary
-         String java = System.getProperty("java.home") + "/bin/java";
-         // vm arguments
-         List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-         StringBuffer vmArgsOneLine = new StringBuffer();
-         for (String arg : vmArguments) {
-            // if it's the agent argument : we ignore it otherwise the
-            // address of the old application and the new one will be in conflict
-            if (!arg.contains("-agentlib")) {
-               vmArgsOneLine.append(arg);
-               vmArgsOneLine.append(" ");
-            }
-         }
-         // init the command to execute, add the vm args
-         final StringBuffer cmd = new StringBuffer("" + java + " " + vmArgsOneLine);
-
-         // program main and program arguments
-         String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
-         // only running if its a classpath
-         cmd.append("-cp " + System.getProperty("java.class.path") + " " + mainCommand[0]);
-         // finally add program arguments
-         for (int i = 1; i < mainCommand.length; i++) {
-            cmd.append(" ");
-            cmd.append(mainCommand[i]);
-         }
-         // execute the command in a shutdown hook, to be sure that all the
-         // resources have been disposed before restarting the application
-         Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-               try {
-                  Runtime.getRuntime().exec(cmd.toString());
-               } catch (IOException e) {
-                  e.printStackTrace();
-               }
-            }
-         });
-         // execute some custom code before restarting
-         if (runBeforeRestart != null) {
-            runBeforeRestart.run();
-         }
-         log("restarting...");
-         // exit
-         System.exit(0);
-      } catch (Exception e) {
-         // something went wrong
-         ErrorID.showError(new ExecutionException("Error while trying to restart the application", e), false);
-      }
-   }
    
-   public static void runNewInstance() {
-      Agenda.log("Run New Instance: "+Addresses.getExec() + "\n\tcanExec = "+new File(Addresses.getExec()).canExecute());
-      restarter.RestartCall.callRestart();
-   }
-  
-   private static void restartJarCP0(Runnable runBeforeRestart) {
-      final String javaBin = System.getProperty("java.home") + File.separator
-            + "bin" + File.separator + "java";
-      File currentJar = null;
-      try {
-         currentJar = new File(Agenda.class.getProtectionDomain()
-               .getCodeSource().getLocation().toURI());
-      } catch (URISyntaxException e) {
-         ErrorID.showError(e, false);
-      }
-
-      // if not a jar, restart using the classpath way
-      if (!currentJar.getName().endsWith(".jar")) {
-         restartCP0(runBeforeRestart);
-      }
-      Agenda.log("Restart with jar");
-      // Build command: java -jar application.jar
-      final ArrayList<String> command = new ArrayList<String>();
-      command.add(javaBin);
-      command.add("-jar");
-      command.add(currentJar.getPath());
-
-      final ProcessBuilder builder = new ProcessBuilder(command);
-      try {
-         builder.start();
-      } catch (IOException e) {
-         ErrorID.showError(e, false);
-      }
-      // execute the command in a shutdown hook, to be sure that all the
-      // resources have been disposed before restarting the application
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-         @Override
-         public void run() {
-            try {
-               Runtime.getRuntime().exec(builder.toString());
-            } catch (IOException e) {
-               e.printStackTrace();
-            }
-         }
-      });
-      // run the custom code
-      if (runBeforeRestart != null) {
-         runBeforeRestart.run();
-      }
-     log("restarting...");
-     System.exit(0);
-   }
-
-   /**
-    * runs if it is an application
-    */
-   private static void restartApp0(Runnable runBeforeRestart) {
-      if (runBeforeRestart != null)
-         runBeforeRestart.run();
-      runNewInstance();
-      // exit
-      System.exit(0);
-   }
-
-   public void restartApplication(Runnable runBeforeRestart) {
-      if (isApp)
-         restartApp0(runBeforeRestart);
-      else
-         restartJarCP0(runBeforeRestart);
-   }
-
    public static void main(String[] args) {
-      runNewInstance();
-      System.exit(0);
       statusU = true;
-      isApp = System.getProperty("user.dir").indexOf(".app") > 0;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

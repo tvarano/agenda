@@ -6,7 +6,6 @@ import java.io.ObjectOutputStream;
 
 import constants.ErrorID;
 import information.Schedule;
-import managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -25,7 +24,7 @@ public class SchedWriter
    private void init() {
       fileStream = null;
       try {
-         fileStream = new FileOutputStream(Agenda.FileHandler.FILE_ROUTE);
+         fileStream = new FileOutputStream(managers.FileHandler.FILE_ROUTE);
       } catch (FileNotFoundException e) {
          ErrorID.showError(e, false);
       }

@@ -147,7 +147,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          w.close();
       } catch (Exception e) {
          ErrorID.showUserError(ErrorID.FILE_TAMPER);
-         Agenda.FileHandler.initAndCreateFiles();
+         managers.FileHandler.initAndCreateFiles();
       }
    }
    
