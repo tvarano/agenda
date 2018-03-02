@@ -45,6 +45,10 @@ public final class Addresses {
       return System.getProperty("java.class.path");
    }
    
+   public static final String getDir() {
+      return getExec().substring(0, getExec().indexOf("Agenda.app"));
+   }
+   
    public static final String getHome() {
       if (managers.Agenda.isApp)
          return getExec() + "/Contents/Resources/Internal/";

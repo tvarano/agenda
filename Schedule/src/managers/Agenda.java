@@ -16,7 +16,6 @@ import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
 import java.awt.desktop.SystemSleepListener;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalTime;
 
@@ -45,7 +44,7 @@ public class Agenda extends JPanel
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
    public static final String BUILD = "1.7.5";
-   public static final String LAST_UPDATED = "Feb 2018";
+   public static final String LAST_UPDATED = "March 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -146,8 +145,9 @@ public class Agenda extends JPanel
             System.setOut(logStream);
             System.setErr(logStream);
             log ("streams set to "+FileHandler.LOG_ROUTE);
-         } catch (IOException e) {
-            ErrorID.showError(e, true);
+         } catch (java.io.FileNotFoundException e) {
+            ErrorID.showError(e, true, "Make sure you downloaded Agenda and it is in an\n"
+                  + "accessable folder (Applications, Desktop, etc.)");
          }
       } else {
          log("logging to console / terminal");

@@ -82,30 +82,30 @@ public enum ErrorID {
                   ERROR_NAME, JOptionPane.WARNING_MESSAGE);
    }
    
-   private static int showInitialMessage(int messageType, boolean recoverable) {
+   private static int showInitialMessage(String message, int messageType, boolean recoverable) {
       String fatality = (recoverable) ? "recoverable" : "fatal";
       String defMessage = "A " + fatality + " error has occurred.\nClick \"Info\" for more information.";
       String usrMessage = "A user "+ defMessage.substring(3);
-      String message = (messageType == JOptionPane.ERROR_MESSAGE) ? 
+      String givenMessage = (messageType == JOptionPane.ERROR_MESSAGE) ? 
             defMessage : usrMessage;
       return JOptionPane.showOptionDialog(null,
-            message,
+            givenMessage + "\n" + message,
             ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, messageType,
             null, new String[]{"Info", "Close"}, "Close");
    }
 
-   public static void showGeneral(Throwable e, String ID, boolean copy, boolean recoverable) {
+   public static void showGeneral(Throwable e, String message, String ID, boolean copy, boolean recoverable) {
       Agenda.logError(ID, e);
       e.printStackTrace();
       String newLn = "\n";
-      int choice = showInitialMessage(JOptionPane.ERROR_MESSAGE, recoverable);
+      int choice = showInitialMessage(message, JOptionPane.ERROR_MESSAGE, recoverable);
       if (choice == 0) {
-         String message = getType(e).message;
+         String throwMessage = getType(e).message;
          String internalMessage = (e.getMessage() == null) ? "" : e.getMessage() + newLn;
          String causeMessage = (e.getCause() == null) ? "" : "Caused by: " + getID(e.getCause());
          String importantText = "ErrorID: " + ID + newLn + causeMessage + newLn + internalMessage;
          String prompt = "Go to" + newLn + managers.FileHandler.LOG_ROUTE + "\nFor your log data.";
-         String text = "Details:\n" + message + newLn + importantText + prompt;
+         String text = "Details:\n" + throwMessage + newLn + importantText + prompt;
          int choice2 = JOptionPane.showOptionDialog(null,
                text,
                ERROR_NAME, JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE, 
@@ -120,11 +120,15 @@ public enum ErrorID {
       }
    }
 
-   public static void showError(Throwable e, boolean recover) {
+   public static void showError(Throwable e, boolean recover, String message) {
       String ID = getID(e);
-      showGeneral(e, ID, true, recover);
+      showGeneral(e, ID, message, true, recover);
       if (!recover)
          System.exit(0);
+   }
+   
+   public static void showError(Throwable e, boolean recover) {
+      showError(e, recover, "");
    }
    
    public static String getID(Throwable e) {
@@ -133,7 +137,7 @@ public enum ErrorID {
    }
    
    public static void showPrintingError(Throwable e) {
-      showGeneral(e, getID(e), false, false);
+      showGeneral(e, getID(e), "Error Printing Data.", false , false);
    }
    
    /**

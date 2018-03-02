@@ -138,7 +138,8 @@ public class RestartHandler {
       if (runBeforeRestart != null) runBeforeRestart.run();
       Agenda.log("Run New Instance: " + Addresses.getExec() + "\n\tcanExec = " + new File(Addresses.getExec()).canExecute());
       // adds shutdown hook and exits
-      restarter.RestartCall.callRestart();
+//      restarter.RestartCall.callRestart();
+      restarter.RestartCall.callRestartScript();
    }
 
    public static void restartApplication(Runnable runBeforeRestart) {

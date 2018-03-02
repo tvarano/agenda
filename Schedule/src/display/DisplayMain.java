@@ -200,21 +200,20 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now());
-      checkAndUpdateDate();
+      if (!LocalDate.now().equals(lastRead))
+         checkAndUpdateDate();
       checkInSchool();
       findCurrentClass();
       currentClassPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
-      if (!LocalDate.now().equals(lastRead)) {
-         Agenda.log("READ ROTATION");
+         Agenda.log("date updated, rotation read");
          setLastRead(LocalDate.now());
          today = LocalDate.now().getDayOfWeek();
          cal.init();
          setTodayR(cal.readTodayRotation());
          toolbar.updateTodayR();
-      }
    }
    
    public void pushTodaySchedule() {

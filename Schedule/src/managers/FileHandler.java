@@ -95,31 +95,29 @@ public class FileHandler {
       RESTARTER_ROUTE = RESOURCE_ROUTE+"RestarterSrc.java";
       SCRIPT_ROUTE = RESOURCE_ROUTE + "Restart.sh";
    }
-   
+
    public synchronized static void createFiles() {
       if (new File(RESOURCE_ROUTE).mkdirs()) {
          Agenda.log("files created");
-            transfer("README.txt",
-                  new File(ENVELOPING_FOLDER + "README.txt"), 0);
-            transfer("Restart.txt", new File(SCRIPT_ROUTE), 1);
-            BufferedWriter bw;
-            try {
-               bw = new BufferedWriter(
-                     new FileWriter(THEME_ROUTE));
-               bw.write(UIHandler.themes[0]);
-               bw.close();
-               bw = new BufferedWriter(new FileWriter(LAF_ROUTE));
-               bw.write(UIManager.getSystemLookAndFeelClassName());
-               bw.close();
-            } catch (IOException e) {
-               ErrorID.showError(e, false);
-            }
+         transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
+         transfer("Restart.sh", new File(SCRIPT_ROUTE), 1);
+         BufferedWriter bw;
+         try {
+            bw = new BufferedWriter(new FileWriter(THEME_ROUTE));
+            bw.write(UIHandler.themes[0]);
+            bw.close();
+            bw = new BufferedWriter(new FileWriter(LAF_ROUTE));
+            bw.write(UIManager.getSystemLookAndFeelClassName());
+            bw.close();
+         } catch (IOException e) {
+            ErrorID.showError(e, false);
          }
+      }
    }
-   
+
    public static boolean moveFiles(String oldLocation) {
       Agenda.log("attempting to move files");
-      
+
       return new File(oldLocation).renameTo(new File(ENVELOPING_FOLDER));
    }
    

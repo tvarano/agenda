@@ -145,11 +145,4 @@ public class SchedReader {
       w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
    }
    
-   protected void finalize() {
-      try {
-         reader.close();
-      } catch (IOException e) {
-         Agenda.log("error in schedReader finalization");
-      }
-   }
 }
