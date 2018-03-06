@@ -5,10 +5,10 @@ package restarter;
 
 import java.io.IOException;
 
-import constants.ErrorID;
-import managers.Agenda;
-import managers.FileHandler;
-import resources.Addresses;
+import com.varano.constants.ErrorID;
+import com.varano.managers.Agenda;
+import com.varano.managers.FileHandler;
+import com.varano.resources.Addresses;
 
 /**
  * Actually calls the restart method, used in Agenda

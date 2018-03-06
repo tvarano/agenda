@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import constants.ErrorID;
-import managers.Agenda;
-import resources.Addresses;
+import com.varano.constants.ErrorID;
+import com.varano.managers.Agenda;
+import com.varano.resources.Addresses;
 
 public class RestartHandler {
    /**
