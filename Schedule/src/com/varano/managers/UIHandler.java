@@ -55,6 +55,7 @@ import com.varano.constants.RotationConstants;
 import com.varano.resources.Addresses;
 import com.varano.resources.ResourceAccess;
 import com.varano.resources.ioFunctions.SchedWriter;
+import com.varano.ui.MutableColor;
 
 //Thomas Varano
 
@@ -113,20 +114,19 @@ public final class UIHandler {
 
       public ThemeChooser(String themeName, Agenda a) {
 	      super(themeName);
-	      this.themeName = themeName;
-	      addActionListener(new ActionListener() {
+         this.themeName = themeName;
+         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               writeData();
-               if (JOptionPane.showOptionDialog(null,
-                     "Changing the theme requires a restart", Agenda.APP_NAME,
-                     JOptionPane.YES_NO_OPTION,
-                     JOptionPane.INFORMATION_MESSAGE, null,
-                     new String[]{"Restart", "Close"}, "Restart") == 0)
-                  a.restart();
-            } 
-	      });
-	   }
+               performAction(a);
+            }
+         });
+      }
+      public void performAction(Agenda a) {
+         writeData();
+         setColors();
+         a.repaint();         
+      }
       public void writeData() {
          try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(FileHandler.THEME_ROUTE));
@@ -169,12 +169,8 @@ public final class UIHandler {
       
       public void performAction(Agenda a) {
             writeData();
-            if (JOptionPane.showOptionDialog(null,
-                  "Changing the look requires a restart", Agenda.APP_NAME,
-                  JOptionPane.YES_NO_OPTION,
-                  JOptionPane.INFORMATION_MESSAGE, null,
-                  new String[]{"Restart", "Close"}, "Restart") == 0)
-               a.restart();
+            setLAF0(look.getClassName());
+            javax.swing.SwingUtilities.updateComponentTreeUI(a.getParent());
       }
       public String toString() {
          return look.getName();
@@ -208,7 +204,8 @@ public final class UIHandler {
 	   p.setPreferredSize(new Dimension(w, h));
 	   p.setLayout(new BorderLayout());
 	   JPanel top = new JPanel();
-	   JLabel l = new JLabel("Input your preferences");
+	   JLabel l = new JLabel("Input your preferences"/*, com.varano.resources.ResourceAccess.getImage("Agenda Logo.png"), 
+	         javax.swing.SwingConstants.LEADING*/);
 	   l.setFont(font);
 	   top.add(l);
 	   top.setPreferredSize(new Dimension(w,30));
@@ -259,14 +256,13 @@ public final class UIHandler {
          }
 	   });
 	   bottom.add(b);
-	   b = new JButton("Apply and Restart");
+	   b = new JButton("Apply");
 	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	   b.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            lookList.getSelectedValue().writeData();
-            themeList.getSelectedValue().writeData();
-            age.restart();
+            lookList.getSelectedValue().performAction(age);;
+            themeList.getSelectedValue().performAction(age);;
          }
       });
 	   b.setSelected(true);
@@ -411,7 +407,8 @@ public final class UIHandler {
             if (checkIntentions("Reset Your Schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
-               age.restart();
+               //TODO handle restart
+               age.getManager().reset();
             }
          }
       });
@@ -419,30 +416,23 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            if (checkIntentions("Clear Preferences (Look and Theme).\nThis Requires a restart")) {
+            if (checkIntentions("Clear Preferences (Look and Theme).")) {
                BufferedWriter bw;
                try {
+                  setLAF0(UIManager.getSystemLookAndFeelClassName());
                   bw = new BufferedWriter(new FileWriter(FileHandler.THEME_ROUTE));
                   bw.write(themes[0]);
                   bw.close();
                   bw = new BufferedWriter(new FileWriter(FileHandler.LAF_ROUTE));
                   bw.write(UIManager.getSystemLookAndFeelClassName());
                   bw.close();
-                  age.restart();
+                  setColors();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
             }
          }
          
-      });
-      mi = m.add(new MenuItem("Restart"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            if (checkIntentions("Restart the applicaiton"))
-               age.restart();
-         }
       });
       
       m.addSeparator();
@@ -635,34 +625,40 @@ public final class UIHandler {
 	/**
     * used for text
     */
-   public static Color foreground;
+   public static MutableColor foreground;
    /**
     * used for a vast majority of backgrounds, is the solid back
     */
-   public static Color background;
+   public static MutableColor background;
    /**
     * used for the borders of titled borders. 
     */
-   public static Color titleBorderColor;
+   public static MutableColor titleBorderColor;
    /**
     * used as background of list and disabled buttons
     */
-   public static Color secondary;
+   public static MutableColor secondary;
    /**
     * used for highlights - JMenubar, selected items in list, etc
     */
-   public static Color tertiary;
+   public static MutableColor tertiary;
    /**
     * background for info panes, tabs, etc
     */
-   public static Color quaternary;
+   public static MutableColor quaternary;
    /**
     * used for the titles of titled borders.
     */
-   public static Color titleColor;
-	
+   public static MutableColor titleColor;
+   
    public static void initColors() {
-      
+      foreground = new MutableColor();
+      background = new MutableColor();
+      secondary = new MutableColor();
+      tertiary = new MutableColor();
+      quaternary = new MutableColor();
+      titleColor = new MutableColor();
+      titleBorderColor = new MutableColor();
    }
    
 	public static void setColors() {
@@ -682,12 +678,12 @@ public final class UIHandler {
 	      Color gray = new Color(Integer.decode("#5a666b"));
 	      Color indigo = new Color(13, 74, 108);
 	      
-	      background = noir;
-	      secondary = gray;
-	      tertiary = navy;
-	      quaternary = navy;
-	      titleColor = royal;
-	      titleBorderColor = indigo;
+	      background.setValue(noir);
+	      secondary.setValue(gray);
+	      tertiary.setValue(navy);
+	      quaternary.setValue(navy);
+	      titleColor.setValue(royal);
+	      titleBorderColor.setValue(indigo);
 	   } else if (theme.equals(themes[2])) {
 	      // neutral
 	      Color noir = new Color(Integer.decode("#1d2731"));
@@ -696,12 +692,12 @@ public final class UIHandler {
 	      text = noir;
 	      Color neutral = new Color(Integer.decode("#efefef"));
 	      
-	      background = neutral;
-	      secondary = carbon;
-	      tertiary = gray;
-	      quaternary = carbon;
-	      titleColor = noir;
-	      titleBorderColor = noir;
+	      background.setValue(neutral);
+	      secondary.setValue(carbon);
+	      tertiary.setValue(gray);
+	      quaternary.setValue(carbon);
+	      titleColor.setValue(noir);
+	      titleBorderColor.setValue(noir);
 	   } else if (theme.equals(themes[3])) {
 	     // muted
 	      text = new Color(Integer.decode("#373737"));
@@ -709,12 +705,12 @@ public final class UIHandler {
 	      Color silk = new Color(Integer.decode("#dcd0c0"));
 	      Color paper = new Color(Integer.decode("#f4f4f4"));
 	      
-	      background = paper;
-	      secondary = silk;
-	      tertiary = paleGold;
-	      quaternary = paleGold;
-	      titleColor = text;
-	      titleBorderColor = silk;
+	      background.setValue(paper);
+	      secondary.setValue(silk);
+	      tertiary.setValue(paleGold);
+	      quaternary.setValue(paleGold);
+	      titleColor.setValue(text);
+	      titleBorderColor.setValue(silk);
 	   } else if (theme.equals(themes[4])) {
 	      // colorful
 	      text = new Color(Integer.decode("#373737"));
@@ -723,12 +719,12 @@ public final class UIHandler {
 	      Color buttermilk = new Color(Integer.decode("#fff7c0"));
 	      Color leaf = new Color(Integer.decode("#66a8bc"));
 	      
-	      background = buttermilk;
-	      secondary = rain;
-	      tertiary = salmon;
-	      quaternary = salmon;
-	      titleColor = text;
-	      titleBorderColor = leaf;
+	      background.setValue(buttermilk);
+	      secondary.setValue(rain);
+	      tertiary.setValue(salmon);
+	      quaternary.setValue(salmon);
+	      titleColor.setValue(text);
+	      titleBorderColor.setValue(leaf);
 	   } else if (theme.equals(themes[5])) {
 	      // minimal
 	      text = Color.BLACK;
@@ -736,24 +732,24 @@ public final class UIHandler {
 	      Color tropacana = new Color(Integer.decode("#FF8A65"));
 	      Color chalk = new Color(Integer.decode("#F5F5F5"));
 	      
-	      background = chalk;
-	      secondary = chalk;
-	      tertiary = tropacana;
-	      quaternary = chalk;
-	      titleColor = text;
-         titleBorderColor = tangerine;
+	      background.setValue(chalk);
+	      secondary.setValue(chalk);
+	      tertiary.setValue(tropacana);
+	      quaternary.setValue(chalk);
+	      titleColor.setValue(text);
+         titleBorderColor.setValue(tangerine);
       } else if (theme.equals(themes[6])) {
          // bare
          text = Color.BLACK;
          Color neutral = new Color(Integer.decode("#efefef"));
          Color carbon = Color.LIGHT_GRAY;
 
-         background = neutral;
-         secondary = neutral;
-         tertiary = carbon;
-         quaternary = neutral;
-         titleColor = text;
-         titleBorderColor = carbon;
+         background.setValue(neutral);
+         secondary.setValue(neutral);
+         tertiary.setValue(carbon);
+         quaternary.setValue(neutral);
+         titleColor.setValue(text);
+         titleBorderColor.setValue(carbon);
       } else {
          // default
          text = new Color(40, 40, 40);
@@ -763,14 +759,17 @@ public final class UIHandler {
          Color watermelon = new Color(Integer.decode("#ff6a5c"));
          Color neutral = new Color(Integer.decode("#efefef"));
 
-         background = neutral;
-         secondary = carbon;
-         tertiary = watermelon;
-         quaternary = sky;
-         titleColor = noir;
-         titleBorderColor = carbon;
+         background .setValue(neutral);
+         secondary.setValue(carbon);
+         tertiary.setValue(watermelon);
+         quaternary.setValue(sky);
+         titleColor.setValue(noir);
+         titleBorderColor.setValue(carbon);
       }
-	   foreground = text;
+      if (debug) 
+         System.out.println("uih 784 background: " + tertiary + " and location "
+               + Integer.toHexString(tertiary.hashCode()));
+	   foreground.setValue(text);
 	}
 	
 	public static void setLAFOcean() {
@@ -785,14 +784,18 @@ public final class UIHandler {
       if (debug) System.out.println("UI DONE");
 	}
 	
-	public synchronized static void setLAF() {
-	   String name = readDoc("look.txt", LAF_ID);
+	private synchronized static void setLAF0(String name) {
 	   try {
          UIManager.setLookAndFeel(name);
       } catch (ClassNotFoundException | InstantiationException
             | IllegalAccessException | UnsupportedLookAndFeelException e) {
          ErrorID.showError(e, true);
       }
+	}
+	
+	public synchronized static void setLAF() {
+	   String name = readDoc("look.txt", LAF_ID);
+	   setLAF0(name);
 	}
 	
 	public static Border getTitledBorder(String title, int justification, int position) {

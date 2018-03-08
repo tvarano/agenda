@@ -281,6 +281,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       
    public void update() {
       setUpdating(true);
+      System.out.println("DISP 284 background: "+getBackground() + " and location " + 
+            Integer.toHexString(getBackground().hashCode()));
       checkAndUpdateTime();
       ClassPeriod current = findCurrentClass();
       configureBarTime(current);
@@ -294,6 +296,11 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          repaint();
       }
       setUpdating(false);
+   }
+   
+   public void repaint() {
+      if (toolbar != null) toolbar.setHighlights();
+      super.repaint();
    }
    
    public ActionListener changeView(int type) {

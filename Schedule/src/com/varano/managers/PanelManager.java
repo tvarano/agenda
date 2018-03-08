@@ -74,8 +74,15 @@ public class PanelManager {
       if (!(currentView instanceof DisplayMain))
          if (!UIHandler.checkIntentions("Refresh the program.\nYou might lose unsaved data"))
             return;
-      Agenda.log(currentView + " refreshed");
+      Agenda.log(currentView.getClass().getName() + " refreshed");
       currentView.refresh();
+      currentView.revalidate();
+   }
+   
+   public void repaint() {
+      if (display != null) display.repaint();
+      if (input != null) input.repaint();
+      if (gpa != null) gpa.repaint();
    }
 
    public void update() {

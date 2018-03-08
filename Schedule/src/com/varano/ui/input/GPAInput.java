@@ -383,16 +383,12 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    public void setSaved(boolean saved) {
       this.saved = saved;
       if (debug) System.out.println("gpa 389 SAVED = "+saved);
-//      if (debug) setBackground((saved) ? java.awt.Color.GREEN : java.awt.Color.RED);
-//      for (java.awt.Component c : getComponents()) {
-//         c.setBackground(getBackground());
-//      }
       repaint();
    }
    
    @Override
    public void refresh() {
-      setSchedule(new SchedReader().readAndOrderSchedule(manager.getTodayR()));
+      setSchedule(new SchedReader().readSched());
    }
    
    /*

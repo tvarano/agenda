@@ -43,7 +43,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.5";
+   public static final String BUILD = "1.7.6";
    public static final String LAST_UPDATED = "March 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
@@ -181,6 +181,12 @@ public class Agenda extends JPanel
       return new Dimension(PREF_W, PREF_H);
    }
    
+   public void repaint() {
+      super.repaint();
+      if (manager != null)
+         manager.repaint();
+   }
+   
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
       JFrame frame = new JFrame("LOADING....");
@@ -233,16 +239,6 @@ public class Agenda extends JPanel
             frame.pack();
             frame.setLocationRelativeTo(null);
             log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
-         }
-      });
-   }
-   public void restart() {
-      manager.getDisplay().writeMain();
-      log("Program Restarted with no arguments\n");
-      restarter.RestartHandler.restartApplication(new Runnable() {
-         @Override
-         public void run() {
-            log("Restart Successful.\n");
          }
       });
    }

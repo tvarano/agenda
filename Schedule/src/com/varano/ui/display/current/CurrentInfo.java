@@ -100,9 +100,7 @@ public class CurrentInfo extends JTextPane {
                   "You are not in school."+newLn,
                   "School starts in ",
                   parentPanel.getParentPane().timeUntilSchool()
-                  .durationString()+newLn,
-                  "Incorrect? "+newLn+"Make sure your schedule is inputted correctly or"+newLn+
-                        "email me at varanoth@pascack.org"
+                  .durationString()+newLn
             };
          }
          return new String[]{
@@ -142,7 +140,6 @@ public class CurrentInfo extends JTextPane {
                   "h2",
                   "regular",
                   "h2",
-                  "regular"
             };
          }
          return new String[] {

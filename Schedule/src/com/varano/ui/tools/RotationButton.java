@@ -74,6 +74,7 @@ public class RotationButton extends JButton implements ActionListener
       return highlight;
    }
    public void setHighlight(boolean highlight) {
+      setBackground(UIHandler.tertiary.brighter());
       this.highlight = highlight;
    }
    public boolean equals(Rotation o) {

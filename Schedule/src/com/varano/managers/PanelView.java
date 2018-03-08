@@ -15,4 +15,6 @@ public interface PanelView
    String getName();
    
    void save();
+   
+   void revalidate();
 }

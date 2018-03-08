@@ -364,7 +364,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
 
    @Override
    public void refresh() {
-      setBeginningSchedule(new SchedReader().readAndOrderSchedule(parentManager.getTodayR()));
+      setBeginningSchedule(new SchedReader().readSched());
    }
 
    @Override
