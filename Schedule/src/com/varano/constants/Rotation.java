@@ -42,7 +42,8 @@ public enum Rotation
    TEST_ONE(DayType.TEST_DAY, true),
    TEST_TWO(DayType.TEST_DAY, true),
    TEST_THREE(DayType.TEST_DAY, true),
-   DELAY_ARRIVAL(DayType.DELAY_ARR, true);
+   DELAY_ARRIVAL(DayType.DELAY_ARR, true),
+   SPECIAL(DayType.SPECIAL, true);
       
    private final int lunchSlot;
    private ClassPeriod[] times;
@@ -60,6 +61,7 @@ public enum Rotation
          else 
             offlineInit();
       } catch (Exception e) {
+         Agenda.logError("error with "+name(), e);
          offlineInit();
       }
       if (debug) System.out.println("rotation "+index+" created");
@@ -67,6 +69,13 @@ public enum Rotation
    
    public static int[] getSlotRotation (Rotation r) {
       return getSlotRotation(r.index);
+   }
+   
+   public int[] slotRotation() {
+      int[] ret = new int[times.length];
+      for (int i = 0; i < ret.length; i++)
+         ret[i] = times[i].getSlot();
+      return ret;
    }
    
    private void offlineInit() {
@@ -77,6 +86,14 @@ public enum Rotation
    private void onlineInit() throws Exception {
       Agenda.log("online start "+name() + " at " +getSite());
       times = getSchedule(formatString(retrieveHtml(getSite())), dayType);
+      
+      if (debug) { 
+         System.out.println("--------------------"+name() + "TIMES-----------------");
+         for (ClassPeriod c : times) {
+            System.out.println(c.getInfo());
+         }
+         System.out.println("daytype "+dayType);
+      }
    }
    
    private int[] formatString(String unf) throws Exception {
@@ -84,7 +101,6 @@ public enum Rotation
       int[] slots = new int[dayType.getStartTimes().length];
       for (int i = 0; i < slots.length; i++)
          slots[i] = Integer.parseInt(s.nextLine());
-      s.nextInt();
       s.close();
       return slots;
    }
@@ -150,6 +166,8 @@ public enum Rotation
             return new int[] {3, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 7, RotationConstants.PASCACK_STUDY_2};
          case RotationConstants.DELAY_ARR : 
             return new int[] {6, lunch, 2, 4};
+         case RotationConstants.SPECIAL :
+            return new int[] {1};
          default :
             return new int[0];
       }
@@ -180,6 +198,8 @@ public enum Rotation
             return DayType.TEST_DAY;
          case RotationConstants.DELAY_ARR :
             return DayType.DELAY_ARR;
+         case RotationConstants.SPECIAL : 
+            return DayType.SPECIAL;
       }
       return null;
    }

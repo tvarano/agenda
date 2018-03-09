@@ -56,6 +56,10 @@ public class DataInput extends JPanel implements InputManager, PanelView
       requestFocus();
    }
    
+   public Agenda getMain() {
+      return parentManager.getMain();
+   }
+   
    public void init(int amtSlots) {
       removeAll();
       if (debug) System.out.println("INPUTFRAME construted empty");

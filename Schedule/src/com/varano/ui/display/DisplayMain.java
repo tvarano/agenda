@@ -79,6 +79,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       Agenda.log("display main fully initialized");
    }
    
+   public Agenda getMain() {
+      return parentManager.getMain();
+   }
+   
    public Rotation readRotation() {
       return cal.readTodayRotation();
    }
@@ -281,7 +285,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       
    public void update() {
       setUpdating(true);
-      System.out.println("DISP 284 background: "+getBackground() + " and location " + 
+      if (debug) System.out.println("DISP 284 background: "+getBackground() + " and location " + 
             Integer.toHexString(getBackground().hashCode()));
       checkAndUpdateTime();
       ClassPeriod current = findCurrentClass();
@@ -336,6 +340,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       todaySched.setLunchLab(todayR);
       toolbar.setRotation(todayR);
       toolbar.repaint();
+      toolbar.setHighlights();
       pushTodaySchedule();
       
       update();

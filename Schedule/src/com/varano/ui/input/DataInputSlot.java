@@ -170,7 +170,8 @@ public class DataInputSlot extends JPanel implements ActionListener
 
          @Override
          public void focusLost(FocusEvent e) {
-          setToolTipField((JTextField)e.getSource());      
+            setToolTipField((JTextField)e.getSource());
+            f.revalidate();
          }
 
          private void setToolTipField(JTextField f) {

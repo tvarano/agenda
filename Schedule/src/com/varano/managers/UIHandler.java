@@ -247,7 +247,7 @@ public final class UIHandler {
 	   
 	   JPanel bottom = new JPanel();
 	   bottom.setLayout(new GridLayout(1,2));
-	   JButton b = new JButton("Cancel");
+	   JButton b = new JButton("Close");
 	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	   b.addActionListener(new ActionListener() {
          @Override
@@ -296,7 +296,7 @@ public final class UIHandler {
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
-   private static void setRotation(Agenda age, com.varano.constants.Rotation r) {
+   public static void setRotation(Agenda age, com.varano.constants.Rotation r) {
       age.getManager().setRotation(r);
    }
    
@@ -407,7 +407,6 @@ public final class UIHandler {
             if (checkIntentions("Reset Your Schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
-               //TODO handle restart
                age.getManager().reset();
             }
          }

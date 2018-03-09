@@ -132,7 +132,6 @@ public class CalReader {
    }
    
    private static final long MILLIS_TO_WAIT = 8000L;
-//   private static final long MILLIS_TO_WAIT = Long.MAX_VALUE;
    public String retrieveRfc() throws ExecutionException, TimeoutException, InterruptedException {
      return OrderUtility.futureCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
    }

@@ -1,5 +1,4 @@
 package com.varano.constants;
-import java.io.EOFException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -50,7 +49,7 @@ public enum DayType
          new Time[] {new Time(9,25), new Time(10,57), new Time(11,53), new Time(13,22), new Time(2,51)}),
    DELAY_ARR(new Time[] {new Time(10,00), new Time(11,22), new Time(12,13), new Time(13,35)}, 
          new Time[] {new Time(11,18), new Time(12,9), new Time(13,31), new Time(14,53)}),
-   ;
+   SPECIAL(new Time[] {new Time(0,0)}, new Time[] {new Time(0,1)});
    
    private Time[] startTimes, endTimes;
    private Time labSwitch;
@@ -71,6 +70,7 @@ public enum DayType
    }
    
    private void offlineInit(Time[] startTimes, Time[] endTimes, Time labSwitch) {
+      Agenda.log(name() + " initialized offline");
       this.startTimes = startTimes; this.endTimes = endTimes; this.labSwitch = labSwitch;         
 
    }
@@ -85,9 +85,9 @@ public enum DayType
       formatString(retrieveHtml(getSite()));
    }
    
-   private static final String START = "start ", END = "end", LAB = "lab";
+   private static final String START = "start", END = "end", LAB = "lab";
    private void formatString(String unf)
-         throws NullPointerException, EOFException {
+         throws Exception {
       java.util.Scanner s = new java.util.Scanner(unf);
       s.nextLine();
       ArrayList<Time> starts = new ArrayList<Time>();
@@ -95,7 +95,7 @@ public enum DayType
       String line = "";
       if (!s.nextLine().equalsIgnoreCase(START)) {
          s.close();
-         throw new NullPointerException(
+         throw new java.util.zip.DataFormatException(
                "format for " + name() + " dayType incorrect");
       }
       while (!(line = s.nextLine()).equalsIgnoreCase(END))
@@ -108,9 +108,13 @@ public enum DayType
       s.close();
    }
    
+   private int millisToWait() {
+      return (ordinal() == 9) ? 700 : MILLIS_TO_WAIT;
+   }
+   
    private static final int MILLIS_TO_WAIT = 250;
-   private static String retrieveHtml(URL site) throws Exception {
-      return OrderUtility.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
+   private String retrieveHtml(URL site) throws Exception {
+      return OrderUtility.futureCall(millisToWait(), new java.util.concurrent.Callable<String>() {
          @Override
          public String call() throws Exception {
             return com.varano.resources.ResourceAccess.readHtml(site);
@@ -124,13 +128,13 @@ public enum DayType
    
    //---------------------------------------------------------------------------------------------
 
-   public boolean equals(DayType otherDT) {
-      for (int i = 0; i < startTimes.length; i++) {
-         if(!startTimes[i].equals(otherDT.getStartTimes()[i]) || !endTimes[i].equals(otherDT.getEndTimes()[i]))
-            return false;
-      }
-      return true;
-   }
+//   public boolean equals(DayType otherDT) {
+//      for (int i = 0; i < startTimes.length; i++) {
+//         if(!startTimes[i].equals(otherDT.getStartTimes()[i]) || !endTimes[i].equals(otherDT.getEndTimes()[i]))
+//            return false;
+//      }
+//      return true;
+//   }
    
    public Time getDayDuration() {
       return Time.calculateDuration(startTimes[0], endTimes[endTimes.length-1]);

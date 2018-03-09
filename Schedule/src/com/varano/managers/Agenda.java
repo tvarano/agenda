@@ -238,7 +238,7 @@ public class Agenda extends JPanel
             frame.getContentPane().add(main);
             frame.pack();
             frame.setLocationRelativeTo(null);
-            log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis");
+            log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis\n");
          }
       });
    }

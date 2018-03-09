@@ -50,7 +50,7 @@ public final class OrderUtility
             totalAmt--;
       }
       ClassPeriod[] newArray = new ClassPeriod[totalAmt];
-      int[] order = Rotation.getSlotRotation(r);
+      int[] order = r.slotRotation();
       
       //check for zero period, etc.
       int arrayStart = 0; 

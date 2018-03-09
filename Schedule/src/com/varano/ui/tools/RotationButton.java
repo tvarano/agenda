@@ -4,10 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 
 import com.varano.constants.Rotation;
 import com.varano.constants.RotationConstants;
+import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
 import com.varano.ui.display.DisplayMain;
 
@@ -20,14 +20,14 @@ public class RotationButton extends JButton implements ActionListener
    private static final long serialVersionUID = 1L;
    public static final String TODAY_R = " Today's Rotation ";
    private Rotation r;
-   private JPanel parentPanel;
+   private PanelView parentPanel;
    private boolean debug, overridingPower, highlight;
    
    /**
     * @param text
     * @param parentPanel
     */
-   public RotationButton(String text, JPanel parentPanel) {
+   public RotationButton(String text, PanelView parentPanel) {
       super(" "+text+" ");
       debug = false;
       setParentPanel(parentPanel);
@@ -58,16 +58,16 @@ public class RotationButton extends JButton implements ActionListener
       super.repaint();
    }
    
-   public RotationButton(int i, JPanel parentPanel) {
+   public RotationButton(int i, PanelView parentPanel) {
       this(RotationConstants.getName(i), parentPanel);  
    }
-   public RotationButton(Rotation r, JPanel parentPanel) {
+   public RotationButton(Rotation r, PanelView parentPanel) {
       this(RotationConstants.getName(r.getIndex()), parentPanel);
    }
-   public JPanel getParentPanel() {
+   public PanelView getParentPanel() {
       return parentPanel;
    }
-   public void setParentPanel(JPanel parentPanel) {
+   public void setParentPanel(PanelView parentPanel) {
       this.parentPanel = parentPanel;
    }
    public boolean isHighlighted() {
@@ -116,6 +116,7 @@ public class RotationButton extends JButton implements ActionListener
             }
             parentBar.setRotation(r);
             parentBar.repaint();
+            parentBar.setHighlights();
             if (debug)  System.out.println("set rotation to + "+r);
          }
       }

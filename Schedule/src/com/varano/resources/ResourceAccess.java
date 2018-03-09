@@ -33,6 +33,7 @@ public final class ResourceAccess
       java.lang.StringBuilder b = new java.lang.StringBuilder();
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
+//         System.out.println(inputLine);
          b.append(inputLine);
          b.append("\n");
       }

@@ -7,31 +7,34 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 
 import com.varano.constants.Rotation;
+import com.varano.constants.RotationConstants;
 import com.varano.managers.PanelManager;
+import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
 import com.varano.ui.display.DisplayMain;
 import com.varano.ui.input.GPAInput;
 import com.varano.ui.input.InputManager;
 
 //Thomas Varano
-//[Program Description]
 //Sep 19, 2017
 
-public class ToolBar extends JToolBar implements ActionListener
+public class ToolBar extends JToolBar 
 {
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
    private boolean delayed, half;
    private Rotation rotation;
    private int parentType;
-   private JPanel parentPanel;
+   private PanelView parentPanel;
 
-   public ToolBar(int parentType, JPanel parentPanel) {
+   public ToolBar(int parentType, PanelView parentPanel) {
       setParentPanel(parentPanel);
       setParentType(parentType);
       setBorderPainted(false);
@@ -85,7 +88,7 @@ public class ToolBar extends JToolBar implements ActionListener
       b = new InstanceButton(InstanceButton.HALF);
       b.setParentBar(this);
       add(b);
-      JButton input = new JButton("View GPA");
+      JButton input = new JButton("All Rotations");
       input.setForeground(UIHandler.foreground);
       input.setFocusable(false);
       input.setBorderPainted(false);
@@ -93,7 +96,27 @@ public class ToolBar extends JToolBar implements ActionListener
       input.setOpaque(false);
       input.setFont(UIHandler.getButtonFont());
       input.addMouseListener(UIHandler.buttonPaintListener(input));
-      input.addActionListener(((DisplayMain) parentPanel).changeView(PanelManager.GPA));
+      input.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            JPopupMenu pop = new JPopupMenu("Select a Rotation");
+            pop.setFocusable(true);
+            for (int i = 0; i < RotationConstants.categorizedRotations().length; i++) {
+               JMenu m = (JMenu) pop.add(new JMenu(RotationConstants.categoryNames[i]));
+               for (Rotation r : RotationConstants.categorizedRotations()[i])
+                  if (!r.equals(Rotation.INCORRECT_PARSE)) {
+                     JMenuItem ri = m.add(new JMenuItem(RotationConstants.getName(r.getIndex())));
+                     ri.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent arg0) {
+                           UIHandler.setRotation(parentPanel.getMain(), r);
+                        }
+                     });
+                  }
+            }
+            pop.show(input, 0, input.getHeight());
+         }
+      });
       add(input);
       setHighlights();
       return this;
@@ -196,31 +219,23 @@ public class ToolBar extends JToolBar implements ActionListener
    public void setHalf(boolean half) {
       this.half = half;
    }
-   public JPanel getParentPanel() {
+   public PanelView getParentPanel() {
       return parentPanel;
    }
-   public void setParentPanel(JPanel parentPanel) {
+   public void setParentPanel(PanelView parentPanel) {
       this.parentPanel = parentPanel;
    }
-
    public Rotation getRotation() {
       return rotation;
    }
-   
    private void setState() {
       setHalf(rotation.isHalf());
       setDelayed(rotation.isDelay());
    }
-    
    public void setRotation(Rotation r) {
       this.rotation = r;
       setState();
       setHighlights();
       setBevels();
-   }
-
-   @Override
-   public void actionPerformed(ActionEvent e) {
-      System.out.println(parentPanel.getWidth()+","+parentPanel.getHeight());
    }
 }

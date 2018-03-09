@@ -94,6 +94,10 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       this(0, manager);
    }
    
+   public Agenda getMain() {
+      return manager.getMain();
+   }
+   
    private void init0() {
       removeAll();
       debug = false;

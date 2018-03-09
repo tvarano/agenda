@@ -55,6 +55,10 @@ public class PanelManager {
       currentView = display;
    }
 
+   public Agenda getMain() {
+      return parent;
+   }
+   
    public void setCurrentPane(int type) {
       if (currentType == type)
          return;
