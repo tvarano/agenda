@@ -2,10 +2,10 @@ package com.varano.information;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.varano.constants.ErrorID;
-import com.varano.constants.Lab;
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
+import com.varano.information.constants.ErrorID;
+import com.varano.information.constants.Lab;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 
 //Thomas Varano

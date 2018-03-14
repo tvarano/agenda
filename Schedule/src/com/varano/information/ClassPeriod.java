@@ -4,8 +4,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 
-import com.varano.constants.Lab;
-import com.varano.constants.RotationConstants;
+import com.varano.information.constants.Lab;
+import com.varano.information.constants.RotationConstants;
 import com.varano.ui.input.GPAInput;
 
 //Thomas Varano

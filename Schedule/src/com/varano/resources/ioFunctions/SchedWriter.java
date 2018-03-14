@@ -4,8 +4,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import com.varano.constants.ErrorID;
 import com.varano.information.Schedule;
+import com.varano.information.constants.ErrorID;
 
 //Thomas Varano
 //[Program Descripion]

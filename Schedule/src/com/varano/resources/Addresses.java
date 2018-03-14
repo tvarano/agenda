@@ -35,7 +35,7 @@ public final class Addresses {
    
    public static final String GENESIS = "https://students.pascack.k12.nj.us/genesis/";
    
-   public static final String PHHS_HOME = "https://hills.pascack.org/";
+   public static final String PHHS_HOME = "http://hills.pascack.org/";
    
    public static final String NAVIANCE = "http://connection.naviance.com/phhs";
       
@@ -63,7 +63,7 @@ public final class Addresses {
       try {
          return new java.net.URI(path);
       } catch (java.net.URISyntaxException e) {
-         com.varano.constants.ErrorID.showError(e, true);
+         com.varano.information.constants.ErrorID.showError(e, true);
          return null;
       }
    }
@@ -72,7 +72,7 @@ public final class Addresses {
       try {
          return new java.net.URL(path);
       } catch (java.net.MalformedURLException e) {
-         com.varano.constants.ErrorID.showError(e, true);
+         com.varano.information.constants.ErrorID.showError(e, true);
          return null;
       }
    }

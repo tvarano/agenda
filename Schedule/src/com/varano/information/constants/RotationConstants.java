@@ -1,4 +1,4 @@
-package com.varano.constants;
+package com.varano.information.constants;
 import java.util.ArrayList;
 
 import com.varano.information.ClassPeriod;
@@ -127,13 +127,28 @@ public final class RotationConstants
       }
    }
    
-   public static Rotation toDelay(Rotation r) {
+   public static Rotation toDelay(Rotation r, boolean quiet, Rotation preferred) {
       Rotation ret = toDelay0(r);
       if (ret.equals(Rotation.INCORRECT_PARSE)) {
-         ErrorID.showUserError(ErrorID.WRONG_DELAY_SELECTED);
-         return Rotation.DELAY_R1;
+         if (!quiet)
+            ErrorID.showUserError(ErrorID.WRONG_DELAY_SELECTED);
+         return preferred;
       }
-      return ret;
+      return ret;      
+   }
+   
+   public static Rotation toDelay(Rotation r) {
+      return toDelay(r, false, Rotation.DELAY_R1);
+   }
+   
+   public static Rotation toHalf(Rotation r, boolean quiet, Rotation preferred) {
+      Rotation ret = toHalf0(r);
+      if (ret.equals(Rotation.INCORRECT_PARSE)) {
+         if (!quiet)
+            ErrorID.showUserError(ErrorID.WRONG_HALF_SELECTED);
+         return preferred;
+      }
+      return ret;      
    }
    
    private static Rotation toHalf0(Rotation r) {
@@ -147,12 +162,11 @@ public final class RotationConstants
    }
    
    public static Rotation toHalf(Rotation r) {
-      Rotation ret = toHalf0(r);
-      if (ret.equals(Rotation.INCORRECT_PARSE)) {
-         ErrorID.showUserError(ErrorID.WRONG_HALF_SELECTED);
-         return Rotation.HALF_R1;
-      }
-      return ret;
+      return toHalf(r, false, Rotation.HALF_R1);
+   }
+   
+   public static Rotation todayRotation() {
+      return Rotation.getRotation(java.time.LocalDate.now().getDayOfWeek());
    }
    
    public static boolean equalsAllTypes(Rotation a, Rotation b) {

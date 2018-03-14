@@ -22,7 +22,7 @@ import java.time.LocalTime;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.varano.constants.ErrorID;
+import com.varano.information.constants.ErrorID;
 
 //Thomas Varano
 //Sep 20, 2017
@@ -172,7 +172,8 @@ public class Agenda extends JPanel
    } 
    public static void logError(String message, Throwable e) {
       if (statusU)
-         System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" + e.getMessage());
+         System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" 
+      + e.getClass().getName() + " - "+ e.getMessage());
    }
    public Dimension getMinimumSize() {
       return new Dimension(MIN_W,MIN_H);

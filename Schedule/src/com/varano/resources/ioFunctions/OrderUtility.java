@@ -6,10 +6,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 
 //Thomas Varano

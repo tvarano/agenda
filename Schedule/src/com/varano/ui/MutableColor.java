@@ -12,7 +12,7 @@ import java.awt.Color;
  * @author Thomas Varano
  *
  */
-public class MutableColor extends Color implements java.io.Serializable {
+public class MutableColor extends java.awt.Color implements java.io.Serializable {
    private static final long serialVersionUID = 8016610396226834080L;
    private int argb;
    
@@ -63,6 +63,18 @@ public class MutableColor extends Color implements java.io.Serializable {
    
    public void setAlpha(int a) {
       setValue(getRed(), getGreen(), getBlue(), a);
+   }
+   
+   public void setRed(int r) {
+      setValue(r, getGreen(), getBlue(), getAlpha());
+   }
+   
+   public void setBlue(int b) {
+      setValue(getRed(), getGreen(), b, getAlpha());
+   }
+   
+   public void setGreen(int g) {
+      setValue(getRed(), g, getBlue(), getAlpha());
    }
    
 }

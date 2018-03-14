@@ -1,4 +1,4 @@
-package com.varano.constants;
+package com.varano.information.constants;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;

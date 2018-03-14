@@ -15,18 +15,21 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
+import com.varano.resources.ioFunctions.AlertReader;
 import com.varano.resources.ioFunctions.OrderUtility;
 
 public class CalReader {
    private static URL rotationDataSite;
    private static boolean urlClear, calClear;
+   private AlertReader alerts;
    private VCalendar cal;
    private boolean debug;
 
-   public CalReader() {
+   public CalReader(AlertReader alert) {
+      alerts = alert;
       init();
    }
    
@@ -58,6 +61,18 @@ public class CalReader {
       if (calClear) {
          for (VEvent e : cal.eventsToday()) {
             String s = e.getSummary();
+            String alert;
+            if ((alert = alerts.checkAlerts()) != null) {
+               Agenda.log("alert found : " + alert);
+               if (alert.equals(AlertReader.delayKey))
+                  return RotationConstants.toDelay(checkPerfectSyntax(s), true, 
+                        RotationConstants.toDelay(RotationConstants.todayRotation(), true, Rotation.DELAY_R1));
+               if (alert.equals(AlertReader.halfKey))
+                  return RotationConstants.toHalf(checkPerfectSyntax(s), true, 
+                        RotationConstants.toHalf(RotationConstants.todayRotation(), true, Rotation.HALF_R1));
+               if (alert.equals(AlertReader.noSchoolKey))
+                  return Rotation.NO_SCHOOL;
+            }
             if (s.contains("10:00") || s.contains("Arrival")) {
                Agenda.log("ROTATION: 10:00 open read from internet");
                return Rotation.DELAY_ARRIVAL;
@@ -81,7 +96,13 @@ public class CalReader {
          }
       }
       Agenda.log("no valid events found. rotation read from day.");
-      return Rotation.getRotation(LocalDate.now().getDayOfWeek());
+      return RotationConstants.todayRotation();
+   }
+   
+   private static Rotation checkPerfectSyntax(String s) {
+      if (RotationConstants.getRotation(s) != null)
+         return RotationConstants.getRotation(s);
+      return RotationConstants.todayRotation();      
    }
    
    public VCalendar readAndExtractEvents() throws ExecutionException, TimeoutException, InterruptedException {

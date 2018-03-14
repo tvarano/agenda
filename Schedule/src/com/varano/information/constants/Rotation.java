@@ -1,4 +1,4 @@
-package com.varano.constants;
+package com.varano.information.constants;
 
 import java.net.URL;
 import java.time.DayOfWeek;
@@ -50,9 +50,11 @@ public enum Rotation
    private final DayType dayType;
    private final Time labSwitch;
    private final int index;
+   private final boolean readReccomended;
    private final static boolean debug = false;
    
    private Rotation(DayType dt, boolean readReccomended) {
+      this.readReccomended = readReccomended;
       this.dayType = dt; this.labSwitch = dt.getLabSwitch();
       this.index = ordinal()+1; lunchSlot = calcLunchSlot(); 
       try {
@@ -83,6 +85,18 @@ public enum Rotation
    }
    
    //-------------------------------------- Online Initialization -------------------------------------------
+   
+   public static void reread() {
+      for (Rotation r : values()) {
+         if (r.readReccomended)
+            try {
+               r.onlineInit();
+            } catch (Exception e) {
+               r.offlineInit();
+            }
+      }
+   }
+   
    private void onlineInit() throws Exception {
       Agenda.log("online start "+name() + " at " +getSite());
       times = getSchedule(formatString(retrieveHtml(getSite())), dayType);
@@ -285,6 +299,6 @@ public enum Rotation
       return dayType.equals(DayType.TEST_DAY);
    }
    public boolean isOther() {
-      return !(dayType.equals(DayType.NORMAL) || isDelay() || isHalf() || isTestDay());
+      return !(dayType.equals(DayType.NORMAL) || dayType.equals(DayType.BLOCK)|| isDelay() || isHalf() || isTestDay());
    }
 }

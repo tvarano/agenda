@@ -6,9 +6,9 @@ import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.varano.constants.ErrorID;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
+import com.varano.information.constants.ErrorID;
 import com.varano.managers.Agenda;
 import com.varano.managers.UIHandler;
 import com.varano.ui.display.current.CurrentClassPane;

@@ -22,11 +22,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import com.varano.constants.ErrorID;
-import com.varano.constants.Lab;
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
+import com.varano.information.constants.ErrorID;
+import com.varano.information.constants.Lab;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
 import com.varano.managers.PanelView;

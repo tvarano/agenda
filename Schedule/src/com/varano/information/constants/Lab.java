@@ -1,9 +1,9 @@
-package com.varano.constants;
+package com.varano.information.constants;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 
-import com.varano.constants.Rotation;
 import com.varano.information.ClassPeriod;
+import com.varano.information.constants.Rotation;
 
 //Thomas Varano
 //[Program Descripion]

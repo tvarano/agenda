@@ -9,8 +9,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.UIHandler;
 
 public class CurrentInfo extends JTextPane {
