@@ -60,7 +60,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
-      debug = false;
+      debug = true;
       debugSave = false;
       testSituation = false;
       showDisp = true;
@@ -73,6 +73,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       addComponents();
       update();
       requestFocus();
+      if (debug) {
+         System.out.println("DELAY_EVEN TIMESSSS");
+         for (ClassPeriod c : Rotation.DELAY_EVEN.getTimes())
+            System.out.println(c.getInfo());
+         System.out.println();
+      }
       timer = new Timer(5000, this);
       timer.start();
       Agenda.log("display main fully initialized");
@@ -244,6 +250,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
     * @return
     */
    public ClassPeriod findNextClass() {
+      System.out.println("disp 247 sched: " + todaySched.classString(true));
       if (checkInSchool())
          return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
       return null;

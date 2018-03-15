@@ -18,7 +18,7 @@ import com.varano.managers.Agenda;
 
 public final class OrderUtility
 {
-   private static boolean debug = false, detailedDebug = false;
+   private static boolean debug = false, detailedDebug = true;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       Agenda.log("ordering schedule: "+s.getName() + " to "+r);

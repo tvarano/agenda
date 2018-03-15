@@ -30,7 +30,7 @@ public class CurrentClassPane extends JPanel
    private Schedule sched;
    private final int LIST_W = 200;
    private boolean inSchool; 
-   private boolean debug = false;
+   private boolean debug = true;
    
    public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");
@@ -98,7 +98,6 @@ public class CurrentClassPane extends JPanel
    }
 
    public Time getTimeLeft() {
-      if (debug) System.out.println(parentPane.labToday().getTimeAtLab().getStartTime().compareTo(getCurrentTime()));
       if (classPeriod.getSlot() == RotationConstants.LUNCH
             && parentPane.labToday() != null
             && parentPane.labToday().getTimeAtLab().getStartTime().compareTo(getCurrentTime()) > 0) {
