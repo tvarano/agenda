@@ -10,6 +10,7 @@ import javax.swing.JScrollPane;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
 import com.varano.information.Time;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.UIHandler;
 import com.varano.ui.display.DisplayMain;
 import com.varano.ui.display.selection.ScheduleList;
@@ -29,7 +30,7 @@ public class CurrentClassPane extends JPanel
    private Schedule sched;
    private final int LIST_W = 200;
    private boolean inSchool; 
-   private boolean debug = false;
+   private boolean debug = true;
    
    public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");
@@ -95,17 +96,23 @@ public class CurrentClassPane extends JPanel
    public ClassPeriod findNextClass() {
       return parentPane.findNextClass();
    }
-   
+
    public Time getTimeLeft() {
+      if (classPeriod.getSlot() == RotationConstants.LUNCH
+            && parentPane.labToday() != null
+            && parentPane.labToday().getTimeAtLab().getStartTime().compareTo(getCurrentTime()) > 0) {
+         return currentTime.getTimeUntil(parentPane.labToday().getTimeAtLab().getStartTime());
+      }
       return currentTime.getTimeUntil(classPeriod.getEndTime());
+
    }
    
    public Time timeUntilNextClass() {
-      return ((DisplayMain)parentPane).timeUntilNextClass();
+      return parentPane.timeUntilNextClass();
    }
    
    public Time timeUntilSchool() {
-      return ((DisplayMain)parentPane).timeUntilSchool();
+      return parentPane.timeUntilSchool();
    }
    
    public ClassPeriod findPreviousClass() {

@@ -124,11 +124,11 @@ public class PanelManager {
       return display.getMainSched();
    }
 
-   public com.varano.constants.Rotation getTodayR() {
+   public com.varano.information.constants.Rotation getTodayR() {
       return display.getTodayR();
    }
 
-   public void setRotation(com.varano.constants.Rotation r) {
+   public void setRotation(com.varano.information.constants.Rotation r) {
       // if (currentType == DISPLAY)
       display.setTodayR(r);
    }

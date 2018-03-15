@@ -16,8 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.UIHandler;
 

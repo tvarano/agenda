@@ -49,9 +49,9 @@ import javax.swing.plaf.metal.OceanTheme;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 
-import com.varano.constants.ErrorID;
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
+import com.varano.information.constants.ErrorID;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.resources.Addresses;
 import com.varano.resources.ResourceAccess;
 import com.varano.resources.ioFunctions.SchedWriter;
@@ -296,7 +296,7 @@ public final class UIHandler {
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
 
-   public static void setRotation(Agenda age, com.varano.constants.Rotation r) {
+   public static void setRotation(Agenda age, com.varano.information.constants.Rotation r) {
       age.getManager().setRotation(r);
    }
    
@@ -394,6 +394,21 @@ public final class UIHandler {
          public void actionPerformed(ActionEvent arg0) {
             Agenda.log("REFRESH");
             age.getManager().reset();
+         }
+      });
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_R));
+
+      mi = m.add(new MenuItem("Hard Refresh"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            Agenda.log("HARD REFRESH");
+            if (checkIntentions("Reread and refresh data.")) {
+               age.getManager().setCurrentPane(PanelManager.DISPLAY);
+               com.varano.information.constants.DayType.reread();
+               Rotation.reread();
+               age.getManager().getDisplay().hardRefresh();
+            }
          }
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_R, true));

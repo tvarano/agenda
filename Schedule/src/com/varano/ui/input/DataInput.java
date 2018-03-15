@@ -12,11 +12,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.varano.constants.Lab;
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
+import com.varano.information.constants.Lab;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
 import com.varano.managers.PanelView;

@@ -1,4 +1,4 @@
-package com.varano.constants;
+package com.varano.information.constants;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -71,14 +71,22 @@ public enum DayType
    
    private void offlineInit(Time[] startTimes, Time[] endTimes, Time labSwitch) {
       Agenda.log(name() + " initialized offline");
-      this.startTimes = startTimes; this.endTimes = endTimes; this.labSwitch = labSwitch;         
-
+      this.startTimes = startTimes; this.endTimes = endTimes; this.labSwitch = labSwitch;
    }
    
    public boolean hasLab() {
       return labSwitch != null;
    }
    //------------------------------- online initialization --------------------------------
+   
+   public static void reread() {
+      for (DayType d : values()) {
+         try {
+            if (d.ordinal() != 6)
+               d.onlineInit();
+         } catch (Exception e) {}
+      }
+   }
    
    private void onlineInit() throws Exception {
       Agenda.log("start "+name() + " at " +getSite());

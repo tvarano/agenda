@@ -6,10 +6,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 
 //Thomas Varano
@@ -18,7 +18,7 @@ import com.varano.managers.Agenda;
 
 public final class OrderUtility
 {
-   private static boolean debug = false, detailedDebug = false;
+   private static boolean debug = false, detailedDebug = true;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       Agenda.log("ordering schedule: "+s.getName() + " to "+r);

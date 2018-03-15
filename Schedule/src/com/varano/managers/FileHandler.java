@@ -15,7 +15,7 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import com.varano.constants.ErrorID;
+import com.varano.information.constants.ErrorID;
 import com.varano.resources.Addresses;
 import com.varano.resources.ResourceAccess;
 

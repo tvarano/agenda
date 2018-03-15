@@ -13,8 +13,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.PanelManager;
 import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;

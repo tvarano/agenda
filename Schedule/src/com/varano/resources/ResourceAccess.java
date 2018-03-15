@@ -10,7 +10,7 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 
-import com.varano.constants.ErrorID;
+import com.varano.information.constants.ErrorID;
 
 public final class ResourceAccess
 {

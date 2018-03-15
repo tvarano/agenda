@@ -7,19 +7,22 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.Timer;
 
-import com.varano.constants.ErrorID;
-import com.varano.constants.Lab;
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
 import com.varano.information.Time;
+import com.varano.information.constants.ErrorID;
+import com.varano.information.constants.Lab;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
 import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
+import com.varano.resources.ioFunctions.AlertReader;
 import com.varano.resources.ioFunctions.OrderUtility;
 import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.resources.ioFunctions.SchedWriter;
@@ -27,9 +30,6 @@ import com.varano.resources.ioFunctions.calendar.CalReader;
 import com.varano.ui.display.current.CurrentClassPane;
 import com.varano.ui.display.selection.ScheduleInfoSelector;
 import com.varano.ui.tools.ToolBar;
-
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 
 //Thomas Varano
 //Aug 31, 2017
@@ -60,20 +60,25 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
-      debug = false;
+      debug = true;
       debugSave = false;
       testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
-      cal = new CalReader();
-      initTime();
+      initCalReader();
       setLayout(new BorderLayout());
       initComponents();
      
       addComponents();
       update();
       requestFocus();
+      if (debug) {
+         System.out.println("DELAY_EVEN TIMESSSS");
+         for (ClassPeriod c : Rotation.DELAY_EVEN.getTimes())
+            System.out.println(c.getInfo());
+         System.out.println();
+      }
       timer = new Timer(5000, this);
       timer.start();
       Agenda.log("display main fully initialized");
@@ -81,6 +86,17 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public Agenda getMain() {
       return parentManager.getMain();
+   }
+   
+   private void initCalReader() {
+      AlertReader alert = new AlertReader();
+      java.awt.EventQueue.invokeLater(new Runnable() {
+         public void run() {
+            alert.init();
+         }
+      });
+      cal = new CalReader(alert);
+      initTime();      
    }
    
    public Rotation readRotation() {
@@ -95,14 +111,14 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void initTime() {
       try {
          if (testSituation) {
-            currentTime = new Time(9,20);
+            currentTime = new Time(11,25);
             today = DayOfWeek.MONDAY;
             todayR = Rotation.getRotation(today); 
             setLastRead(LocalDate.now());
          } else {
             currentTime = new Time(LocalTime.now());
             today = LocalDate.now().getDayOfWeek();
-            todayR = cal.readTodayRotation();
+            todayR = readRotation();
             setLastRead(LocalDate.now());
          }
       } catch (Throwable e) { 
@@ -215,10 +231,13 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public void checkAndUpdateDate() {
          Agenda.log("date updated, rotation read");
          setLastRead(LocalDate.now());
+         DayOfWeek oldDay = today;
          today = LocalDate.now().getDayOfWeek();
-         cal.init();
-         setTodayR(cal.readTodayRotation());
-         toolbar.updateTodayR();
+         if (!today.equals(oldDay)) {
+            cal.init();
+            setTodayR(cal.readTodayRotation());
+            toolbar.updateTodayR();
+         }
    }
    
    public void pushTodaySchedule() {
@@ -231,6 +250,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
     * @return
     */
    public ClassPeriod findNextClass() {
+      System.out.println("disp 247 sched: " + todaySched.classString(true));
       if (checkInSchool())
          return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
       return null;
@@ -256,6 +276,13 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return todaySched.getSchoolDay().contains(currentTime);
    }
 
+   public Lab labToday() {
+      for (Lab l : todaySched.getLabs())
+         if (todayR.equals(l.getRotation())) 
+            return l;
+      return null;
+   }
+   
    public ClassPeriod findCurrentClass(){
       // searching labs
       for (Lab l : todaySched.getLabs())
@@ -382,6 +409,11 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       if (debug)
          for (java.awt.Component c : getComponents())
             System.out.println(c);
+   }
+   
+   public void hardRefresh() {
+      initCalReader();
+      refresh();
    }
 
    @Override

@@ -5,8 +5,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
-import com.varano.constants.Rotation;
-import com.varano.constants.RotationConstants;
+import com.varano.information.constants.Rotation;
+import com.varano.information.constants.RotationConstants;
 import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
 import com.varano.ui.display.DisplayMain;
