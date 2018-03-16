@@ -280,7 +280,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
                if (debug) System.out.println("filling lunch");
                classIndex++;
                if (lunch == null) {
-                  classes[classIndex] = Rotation.R1.get("Lunch");
+                  classes[classIndex] = Rotation.R1.get(RotationConstants.LUNCH);
                }
                else {
                   classes[classIndex] = lunch;

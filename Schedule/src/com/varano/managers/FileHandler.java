@@ -25,8 +25,8 @@ public class FileHandler {
    public static String LOG_ROUTE;
    public static String FILE_ROUTE;
    public static String THEME_ROUTE, LAF_ROUTE;
-   public static String RESTARTER_ROUTE;
    public static String SCRIPT_ROUTE;
+   public static String FIRST_RUN_ROUTE;
    public static final String NO_LOCATION = "noLoc";
    
    public static void openURI(URI uri) {
@@ -92,27 +92,36 @@ public class FileHandler {
       FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
       THEME_ROUTE = RESOURCE_ROUTE + "theme.txt";
       LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
-      RESTARTER_ROUTE = RESOURCE_ROUTE+"RestarterSrc.java";
       SCRIPT_ROUTE = RESOURCE_ROUTE + "Restart.sh";
+      FIRST_RUN_ROUTE = RESOURCE_ROUTE + "firstRun.txt"; 
    }
 
-   public synchronized static void createFiles() {
-      if (new File(RESOURCE_ROUTE).mkdirs()) {
-         Agenda.log("files created");
-         transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
-         transfer("Restart.sh", new File(SCRIPT_ROUTE), 1);
-         BufferedWriter bw;
-         try {
+   public synchronized static boolean createFiles() {
+      boolean created = new File(RESOURCE_ROUTE).mkdirs();
+      Agenda.log("files created");
+      transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
+      transfer("Restart.sh", new File(SCRIPT_ROUTE), 1);
+      BufferedWriter bw;
+      try {
+         if (new File(THEME_ROUTE).createNewFile()) {
             bw = new BufferedWriter(new FileWriter(THEME_ROUTE));
             bw.write(UIHandler.themes[0]);
             bw.close();
+         }
+         if (new File(LAF_ROUTE).createNewFile()) {
             bw = new BufferedWriter(new FileWriter(LAF_ROUTE));
             bw.write(UIManager.getSystemLookAndFeelClassName());
             bw.close();
-         } catch (IOException e) {
-            ErrorID.showError(e, false);
          }
+         if (new File(FIRST_RUN_ROUTE).createNewFile()) {
+            bw = new BufferedWriter(new FileWriter(FIRST_RUN_ROUTE));
+            bw.write("t");
+            bw.close();
+         }
+      } catch (IOException e) {
+         ErrorID.showError(e, false);
       }
+      return created;
    }
 
    public static boolean moveFiles(String oldLocation) {

@@ -71,8 +71,10 @@ public class AlertReader {
    private static String readHtml(URL site) throws IOException {
       BufferedReader in = null;
       in = new BufferedReader(new InputStreamReader(site.openStream()));
-      if (!in.readLine().contains("<!DOCTYPE html>"))
+      if (!in.readLine().contains("<!DOCTYPE html>")) {
+         Agenda.log(Addresses.PHHS_HOME + " html not read correctly");
          return "";
+      }
       StringBuilder b = new StringBuilder();
       String inputLine;
       while ((inputLine = in.readLine()) != null && !inputLine.contains(stopKey)) {

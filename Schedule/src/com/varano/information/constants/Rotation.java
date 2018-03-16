@@ -234,13 +234,14 @@ public enum Rotation
          if (slots[i] == RotationConstants.LUNCH) {
             name = "Lunch";
             retval[i].setRoomNumber("Cafe");
+            retval[i].setTeacher(ClassPeriod.UNREQ_TEACH);
          }
          else if (slots[i] == RotationConstants.PASCACK)
             name = "Pascack Period";
          else if (slots[i] == RotationConstants.PASCACK_STUDY_1)
-            name = RotationConstants.pascack_1_name;
+            name = RotationConstants.pascackStudyName;
          else if (slots[i] == RotationConstants.PASCACK_STUDY_2) {
-            name = RotationConstants.pascack_2_name;
+            name = RotationConstants.pascackStudyName;
          }
          else 
             name = "Period " + slots[i];
@@ -252,9 +253,9 @@ public enum Rotation
       return retval;
    }
    
-   public ClassPeriod get(String name) {
+   public ClassPeriod get(int slot) {
       for (ClassPeriod c : times) 
-         if (c.getName().equalsIgnoreCase(name))
+         if (c.getSlot() == slot)
             return c;
       return null;
    }

@@ -68,7 +68,7 @@ public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
    
-	public static final Font font = new Font("Futura", Font.PLAIN, 16);;
+	public static final Font font = new Font("Futura", Font.PLAIN, 16);
 	private static boolean debug;
 	
 	/**
@@ -295,6 +295,70 @@ public final class UIHandler {
             Agenda.APP_NAME + " WARNING", JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
+   
+   public static void showWelcome() {
+      String html = "<html> <h1> Welcome to " + Agenda.APP_NAME + " </h1>"
+            + "<h2>Version " + Agenda.BUILD + "</h2> "
+            + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
+            + "<br>at " + FileHandler.LOG_ROUTE + ""
+            + "<br>email log or any ideas to " + Addresses.CONTACT_EMAIL + "***"
+            + "<br>You can use this program to keep track of classes, schedules, assignments, or grades"
+            + "<br>in Pascack Hills or Valley."
+            + "<ul>"
+            + "<li>On the home screen, you can see the current class's data "
+            + "<br>on the top panel and view other classes' data and memos in the bottom panel</li>"
+            + "<li>To edit your classes, click File > Input Schedule.</li>"
+            + "<li>To edit grades, click File > View GPA.</li>"
+            + "<li>To change the look of the program, either go to preferences (\u2318 + ,) or the View Menu"
+            + "</ul>"
+            + "<p>Feel free to look at the source code (Useful Links > Agenda Source) to suggest any improvements."
+            + "<br> - Thomas Varano"
+            + "</html>";
+      javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
+      content.setFont(font);
+      HTMLEditorKit kit = new HTMLEditorKit();
+      content.setEditorKit(kit);
+      kit.getStyleSheet().addRule("body {color:#000; font-family:"
+            + font.getFamily() + "; margin: 4px; }");
+
+      Document doc = kit.createDefaultDocument();
+      content.setDocument(doc);
+      content.setText(html);
+      content.setOpaque(false);
+      JOptionPane.showMessageDialog(null, content, "Welcome",
+            JOptionPane.INFORMATION_MESSAGE,
+            ResourceAccess.getImage("Agenda Logo.png"));
+   }
+   
+   public static void showAbout() {
+      String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
+            + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
+            + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
+            + "<p>at "+FileHandler.LOG_ROUTE
+            + "<p>email at "+Addresses.CONTACT_EMAIL + "***"
+            + "<p>Agenda is a schedule program for the Pascack Valley High School District"
+            + "<p>that can keep track of time, school schedules, assignments, and GPA"
+            + "<p>for students."
+            + "<br><br>"
+            + "<h2>CREDITS:"
+            + "<h3>Thomas Varano : Author"
+            + "<br><br>Viktor Nakev : Icon Designer"
+            + "<br><br>Matthew Ghedduzi : Alpha Tester"
+            + "<br><br>Michael Ruberto : Conceptual Designer</html>";
+      javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
+      content.setFont(font);
+      HTMLEditorKit kit = new HTMLEditorKit();
+      content.setEditorKit(kit);
+      kit.getStyleSheet().addRule("body {color:#000; font-family:"+font.getFamily()+"; margin: 4px; }");
+
+      Document doc = kit.createDefaultDocument();
+      content.setDocument(doc);
+      content.setText(html);
+      content.setOpaque(false);
+      JOptionPane.showMessageDialog(null, 
+            content, "About " + Agenda.APP_NAME, 
+            JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
+   }
 
    public static void setRotation(Agenda age, com.varano.information.constants.Rotation r) {
       age.getManager().setRotation(r);
@@ -305,30 +369,7 @@ public final class UIHandler {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
             public void handleAbout(AboutEvent arg0) {
-               String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
-                     + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
-                     + "<p>Agenda is a schedule program for the Pascack Valley High School District"
-                     + "<p>that can keep track of time, school schedules, assignments, and GPA"
-                     + "<p>for students."
-                     + "<br><br>"
-                     + "<h2>CREDITS:"
-                     + "<h3>Thomas Varano : Author"
-                     + "<br><br>Viktor Nakev : Icon Designer"
-                     + "<br><br>Matthew Ghedduzi : Alpha Tester"
-                     + "<br><br>Michael Ruberto : Conceptual Designer</html>";
-               javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
-               content.setFont(font);
-               HTMLEditorKit kit = new HTMLEditorKit();
-               content.setEditorKit(kit);
-               kit.getStyleSheet().addRule("body {color:#000; font-family:"+font.getFamily()+"; margin: 4px; }");
-
-               Document doc = kit.createDefaultDocument();
-               content.setDocument(doc);
-               content.setText(html);
-               content.setOpaque(false);
-               JOptionPane.showMessageDialog(null, 
-                     content, "About " + Agenda.APP_NAME, 
-                     JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
+               showAbout();
             }
          });
          Desktop.getDesktop().setPreferencesHandler(new PreferencesHandler() {

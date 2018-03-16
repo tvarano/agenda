@@ -60,7 +60,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
-      debug = true;
+      debug = false;
       debugSave = false;
       testSituation = false;
       showDisp = true;

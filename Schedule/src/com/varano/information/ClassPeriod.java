@@ -18,7 +18,8 @@ import com.varano.ui.input.GPAInput;
  */
 public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
 {
-   private static final long serialVersionUID = -8853513886388469596L;
+   private static final long serialVersionUID = -8853513886388469596L;   
+   public static final String UNREQ_TEACH = "None";
    public static final String NO_TEACH = "Teacher Name";
    public static final String NO_ROOM = "000";
    public static final int NO_WEIGHT = 0, HALF_YEAR = 1, FULL_YEAR = 2, FULL_LAB = 3;
@@ -117,9 +118,6 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       if (c == null) return;
       setStartTime(c.getStartTime()); setEndTime(c.getEndTime());
       calculateDuration();
-   }
-   public boolean isIncomplete() {
-      return (slot == RotationConstants.NO_SLOT || name.equals(" ") || teacher.equals(NO_TEACH) || roomNumber == NO_ROOM);
    }
    public String toString() {
       return (showName || !canShowPeriod) ? getTrimmedName() : "Period "+slot;

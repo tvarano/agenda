@@ -30,7 +30,7 @@ public class CurrentClassPane extends JPanel
    private Schedule sched;
    private final int LIST_W = 200;
    private boolean inSchool; 
-   private boolean debug = true;
+   private boolean debug = false;
    
    public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");

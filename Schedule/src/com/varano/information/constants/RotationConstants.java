@@ -35,6 +35,7 @@ public final class RotationConstants
          "Day Three", "10:00 Opening", "Special"};
    
    public static final String pascack_1_name = "PAS_STUD_ONE", pascack_2_name = "PAS_STUD_TWO";
+   public static final String pascackStudyName = "Pascack Study Period";
    public static final String getName(int rotationIndex) {
       return NAMES[rotationIndex-1];
    }
@@ -103,10 +104,10 @@ public final class RotationConstants
    }
    
    public static final ClassPeriod getPascackStudyOne() {
-      return new ClassPeriod(PASCACK_STUDY_1, "Pascack Study Period", Time.NO_TIME, Time.NO_TIME, "No Teacher", "None");
+      return new ClassPeriod(PASCACK_STUDY_1, pascackStudyName, Time.NO_TIME, Time.NO_TIME, "No Teacher", "None");
    }
    public static final ClassPeriod getPascackStudyTwo() {
-      return new ClassPeriod(PASCACK_STUDY_2, "Pascack Study Period", Time.NO_TIME, Time.NO_TIME, "No Teacher", "None");
+      return new ClassPeriod(PASCACK_STUDY_2, pascackStudyName, Time.NO_TIME, Time.NO_TIME, "No Teacher", "None");
    }
    
    public static final ClassPeriod getNoSchoolClass() {

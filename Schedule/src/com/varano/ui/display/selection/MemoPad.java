@@ -43,7 +43,7 @@ public class MemoPad extends JTextPane implements FocusListener
    
    private void checkAccessibility() {
       if (parentClass == null) {
-         setText("Class Not Selected");
+         setText("Cannot Write Memo");
          parentPanel.setMemoBorderTitle("UnDeclared Class");
          setEnabled(false);
       }

@@ -18,7 +18,7 @@ import com.varano.managers.Agenda;
 
 public final class OrderUtility
 {
-   private static boolean debug = false, detailedDebug = true;
+   private final static boolean debug = false, detailedDebug = false;
    
    public static Schedule reorderClasses(Rotation r, Schedule s, ClassPeriod[] template) {
       Agenda.log("ordering schedule: "+s.getName() + " to "+r);
@@ -101,12 +101,12 @@ public final class OrderUtility
          
          } else if (order[i] == RotationConstants.PASCACK_STUDY_1) {
             newArray[newArrayIndex] = RotationConstants.getPascackStudyOne();
-            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.pascack_1_name));
+            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.PASCACK_STUDY_1));
             newArrayIndex++;
             rotationIndex++;
          } else if (order[i] == RotationConstants.PASCACK_STUDY_2) {
             newArray[newArrayIndex] = RotationConstants.getPascackStudyTwo();
-            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.pascack_2_name));
+            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.PASCACK_STUDY_2));
             newArrayIndex++;
             rotationIndex++;
           

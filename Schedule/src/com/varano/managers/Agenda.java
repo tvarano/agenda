@@ -15,7 +15,12 @@ import java.awt.desktop.ScreenSleepEvent;
 import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
 import java.awt.desktop.SystemSleepListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalTime;
 
@@ -43,7 +48,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.6";
+   public static final String BUILD = "1.7.6.1";
    public static final String LAST_UPDATED = "March 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
@@ -72,6 +77,24 @@ public class Agenda extends JPanel
          }
       });
       desktopSetup();
+   }
+   
+   public static void showWelcome() {
+      BufferedReader br;
+      try {
+         br = new BufferedReader(new FileReader(new File(FileHandler.FIRST_RUN_ROUTE)));
+         String line = br.readLine();
+         br.close();
+         System.out.println(line);
+         if (line == null || line.equals("t")) {
+            UIHandler.showWelcome();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(FileHandler.FIRST_RUN_ROUTE)));
+            bw.write("f");
+            bw.close();
+         }
+      } catch (IOException e) {
+         Agenda.logError("error with welcome", e);
+      }
    }
    
    private void desktopSetup() {
@@ -240,13 +263,14 @@ public class Agenda extends JPanel
             frame.pack();
             frame.setLocationRelativeTo(null);
             log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis\n");
+            showWelcome();
          }
       });
    }
    
    
    public static void main(String[] args) {
-      statusU = false;
+      statusU = true;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
