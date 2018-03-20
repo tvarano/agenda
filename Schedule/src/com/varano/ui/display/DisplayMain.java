@@ -49,7 +49,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Schedule mainSched, todaySched;
    private Rotation todayR;
    private DayOfWeek today;
-   private LocalDate lastRead;
+   private int lastRead;
    private CalReader cal;
    private Time currentTime;
    private CurrentClassPane currentClassPane;
@@ -104,7 +104,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public void setLastRead(LocalDate d) {
-      lastRead = d;
+      lastRead = d.getDayOfYear();
       Agenda.log("schedule last read "+d);
    }
    
@@ -221,7 +221,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now());
-      if (!LocalDate.now().equals(lastRead))
+      if (LocalDate.now().getDayOfYear() != lastRead)
          checkAndUpdateDate();
       checkInSchool();
       findCurrentClass();
@@ -230,13 +230,13 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void checkAndUpdateDate() {
          Agenda.log("date updated, rotation read");
-         setLastRead(LocalDate.now());
          DayOfWeek oldDay = today;
          today = LocalDate.now().getDayOfWeek();
          if (!today.equals(oldDay)) {
             cal.init();
             setTodayR(cal.readTodayRotation());
             toolbar.updateTodayR();
+            setLastRead(LocalDate.now());
          }
    }
    
@@ -250,7 +250,6 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
     * @return
     */
    public ClassPeriod findNextClass() {
-      System.out.println("disp 247 sched: " + todaySched.classString(true));
       if (checkInSchool())
          return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
       return null;

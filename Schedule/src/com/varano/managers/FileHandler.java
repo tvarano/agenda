@@ -26,7 +26,7 @@ public class FileHandler {
    public static String FILE_ROUTE;
    public static String THEME_ROUTE, LAF_ROUTE;
    public static String SCRIPT_ROUTE;
-   public static String FIRST_RUN_ROUTE;
+   public static String WELCOME_ROUTE;
    public static final String NO_LOCATION = "noLoc";
    
    public static void openURI(URI uri) {
@@ -93,14 +93,13 @@ public class FileHandler {
       THEME_ROUTE = RESOURCE_ROUTE + "theme.txt";
       LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
       SCRIPT_ROUTE = RESOURCE_ROUTE + "Restart.sh";
-      FIRST_RUN_ROUTE = RESOURCE_ROUTE + "firstRun.txt"; 
+      WELCOME_ROUTE = RESOURCE_ROUTE + "showWelcome.txt"; 
    }
 
    public synchronized static boolean createFiles() {
       boolean created = new File(RESOURCE_ROUTE).mkdirs();
       Agenda.log("files created");
       transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
-      transfer("Restart.sh", new File(SCRIPT_ROUTE), 1);
       BufferedWriter bw;
       try {
          if (new File(THEME_ROUTE).createNewFile()) {
@@ -113,8 +112,8 @@ public class FileHandler {
             bw.write(UIManager.getSystemLookAndFeelClassName());
             bw.close();
          }
-         if (new File(FIRST_RUN_ROUTE).createNewFile()) {
-            bw = new BufferedWriter(new FileWriter(FIRST_RUN_ROUTE));
+         if (new File(WELCOME_ROUTE).createNewFile()) {
+            bw = new BufferedWriter(new FileWriter(WELCOME_ROUTE));
             bw.write("t");
             bw.close();
          }

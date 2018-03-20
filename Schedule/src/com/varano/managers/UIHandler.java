@@ -34,6 +34,7 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -68,7 +69,6 @@ public final class UIHandler {
 
    private static final int THEME_ID = 0, LAF_ID = 1;
    
-	public static final Font font = new Font("Futura", Font.PLAIN, 16);
 	private static boolean debug;
 	
 	/**
@@ -95,10 +95,10 @@ public final class UIHandler {
 	   UIManager.put("ToolTip.foreground", foreground);
 	   UIManager.put("Button.disabledText", secondary);
 	   UIManager.put("OptionPane.font", getButtonFont());
-	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getImage("ErrorIcon.png"));
-	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getImage("WarningIcon.png"));
-	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getImage("InfoIcon.png"));
-	   UIManager.put("OptionPane.questionIcon", ResourceAccess.getImage("QuestionIcon.png"));
+	   UIManager.put("OptionPane.errorIcon", ResourceAccess.getIcon("ErrorIcon.png"));
+	   UIManager.put("OptionPane.warningIcon", ResourceAccess.getIcon("WarningIcon.png"));
+	   UIManager.put("OptionPane.informationIcon", ResourceAccess.getIcon("InfoIcon.png"));
+	   UIManager.put("OptionPane.questionIcon", ResourceAccess.getIcon("QuestionIcon.png"));
 	   
 	   final int divThickness = 4;
 	   UIManager.put("SplitPane.background", background);
@@ -296,7 +296,7 @@ public final class UIHandler {
             JOptionPane.WARNING_MESSAGE, null, null, null) == 0);
    }
    
-   public static void showWelcome() {
+   public static boolean showWelcome() {
       String html = "<html> <h1> Welcome to " + Agenda.APP_NAME + " </h1>"
             + "<h2>Version " + Agenda.BUILD + "</h2> "
             + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
@@ -314,20 +314,30 @@ public final class UIHandler {
             + "<p>Feel free to look at the source code (Useful Links > Agenda Source) to suggest any improvements."
             + "<br> - Thomas Varano"
             + "</html>";
-      javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
-      content.setFont(font);
+      javax.swing.JEditorPane text = new javax.swing.JEditorPane("text/html", html);
+      text.setFont(font);
       HTMLEditorKit kit = new HTMLEditorKit();
-      content.setEditorKit(kit);
+      text.setEditorKit(kit);
       kit.getStyleSheet().addRule("body {color:#000; font-family:"
             + font.getFamily() + "; margin: 4px; }");
-
+      JPanel content = new JPanel(new BorderLayout());
       Document doc = kit.createDefaultDocument();
-      content.setDocument(doc);
-      content.setText(html);
-      content.setOpaque(false);
+      text.setDocument(doc);
+      text.setText(html);
+      text.setOpaque(false);
+      text.setEditable(false);
+      JCheckBox check = new JCheckBox("Don't Show This Again");
+      check.setFont(UIHandler.getButtonFont());
+      content.add(text);
+      content.add(check, BorderLayout.SOUTH);
       JOptionPane.showMessageDialog(null, content, "Welcome",
             JOptionPane.INFORMATION_MESSAGE,
-            ResourceAccess.getImage("Agenda Logo.png"));
+            ResourceAccess.getIcon("Agenda Logo.png"));
+      return !check.isSelected();
+   }
+   
+   public static void main(String[] args) {
+      showWelcome();
    }
    
    public static void showAbout() {
@@ -355,9 +365,10 @@ public final class UIHandler {
       content.setDocument(doc);
       content.setText(html);
       content.setOpaque(false);
+      content.setEditable(false);
       JOptionPane.showMessageDialog(null, 
             content, "About " + Agenda.APP_NAME, 
-            JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getImage("Agenda Logo.png"));
+            JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getIcon("Agenda Logo.png"));
    }
 
    public static void setRotation(Agenda age, com.varano.information.constants.Rotation r) {
@@ -861,6 +872,8 @@ public final class UIHandler {
 	public static Border getTitledBorder(String title) {
 	   return getTitledBorder(title, TitledBorder.LEADING, TitledBorder.ABOVE_TOP);
 	}
+
+	public static final Font font = new Font("Futura", Font.PLAIN, 16);
 	
 	public static Font getInputLabelFont() {
 	   return font.deriveFont(15F);

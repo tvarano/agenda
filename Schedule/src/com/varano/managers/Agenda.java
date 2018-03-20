@@ -48,7 +48,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.6.1";
+   public static final String BUILD = "1.7.7";
    public static final String LAST_UPDATED = "March 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
@@ -82,14 +82,16 @@ public class Agenda extends JPanel
    public static void showWelcome() {
       BufferedReader br;
       try {
-         br = new BufferedReader(new FileReader(new File(FileHandler.FIRST_RUN_ROUTE)));
+         br = new BufferedReader(new FileReader(new File(FileHandler.WELCOME_ROUTE)));
          String line = br.readLine();
          br.close();
-         System.out.println(line);
+         Agenda.log("show welcome: " + line);
          if (line == null || line.equals("t")) {
-            UIHandler.showWelcome();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(FileHandler.FIRST_RUN_ROUTE)));
-            bw.write("f");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(new File(FileHandler.WELCOME_ROUTE)));
+            if (UIHandler.showWelcome())
+               bw.write("t");
+            else
+               bw.write("f");
             bw.close();
          }
       } catch (IOException e) {
@@ -231,7 +233,7 @@ public class Agenda extends JPanel
                         RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON));
                   java.awt.Image logo = com.varano.resources.ResourceAccess
-                        .getImage("Agenda Logo.png").getImage();
+                        .getIcon("Agenda Logo.png").getImage();
                   g2.drawImage(logo, getWidth() / 2 - logo.getWidth(this) / 2,
                         getHeight() / 2 - logo.getHeight(this) / 2 + 15, this);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));

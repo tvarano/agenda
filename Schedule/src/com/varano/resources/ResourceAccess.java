@@ -18,7 +18,7 @@ public final class ResourceAccess
       return ResourceAccess.class.getResourceAsStream(localPath);
    }
    
-   public static ImageIcon getImage(String localPath) {
+   public static ImageIcon getIcon(String localPath) {
       try {
          return new ImageIcon(ResourceAccess.class.getResource(localPath));
       } catch (NullPointerException e) {
@@ -33,7 +33,6 @@ public final class ResourceAccess
       java.lang.StringBuilder b = new java.lang.StringBuilder();
       String inputLine;
       while ((inputLine = in.readLine()) != null) {
-//         System.out.println(inputLine);
          b.append(inputLine);
          b.append("\n");
       }

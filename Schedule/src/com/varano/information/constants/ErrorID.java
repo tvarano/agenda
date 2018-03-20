@@ -74,9 +74,9 @@ public enum ErrorID {
       }
    }
    public static void showUserError(ErrorID error) {
+      java.awt.Toolkit.getDefaultToolkit().beep();
       Agenda.logError("User Error " + error + " : ", new UserError(error.message));
-      JOptionPane
-            .showMessageDialog(null,
+      JOptionPane.showMessageDialog(null,
                   "User Error.\nDetails:\n" + error.message + "\nErrorID: "
                         + error.getID(),
                   ERROR_NAME, JOptionPane.WARNING_MESSAGE);
@@ -95,6 +95,7 @@ public enum ErrorID {
    }
 
    public static void showGeneral(Throwable e, String message, String ID, boolean copy, boolean recoverable) {
+      java.awt.Toolkit.getDefaultToolkit().beep();
       Agenda.logError(ID, e);
       e.printStackTrace();
       String newLn = "\n";
