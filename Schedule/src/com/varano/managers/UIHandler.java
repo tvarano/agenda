@@ -465,6 +465,16 @@ public final class UIHandler {
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_R, true));
       
+      mi = m.add(new MenuItem("Check for Updates"));
+      mi.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent arg0) {
+            if (!com.varano.managers.UpdateHandler.updateInquiry())
+               JOptionPane.showMessageDialog(null, "No Updates Available.", Agenda.APP_NAME,
+                     JOptionPane.INFORMATION_MESSAGE, null);
+         }
+      });
+      
       m.addSeparator();
       
       mi = m.add(new MenuItem("Clear Schedule"));

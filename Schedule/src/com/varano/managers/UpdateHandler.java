@@ -85,16 +85,21 @@ public class UpdateHandler {
             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null) == 0;
    }
    
-   public static void updateInquiry() {
+   public static boolean updateInquiry() {
       try {
          if (updateAvailable()) {
             Agenda.log("update available");
             if (askUpdate())
                update();
-         } else Agenda.log("no updates available");
+            return true;
+         } else {
+            Agenda.log("no updates available");
+            return false;
+         }
       } catch (Exception e) {
          Agenda.logError("unable to check for updates", e);
       }
+      return false;
    }
    
    public static void main(String[] args) {
