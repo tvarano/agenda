@@ -11,8 +11,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import com.varano.managers.Agenda;
 import com.varano.resources.Addresses;
@@ -86,7 +84,7 @@ public class AlertReader {
    }
    
    private static final int MILLIS_TO_WAIT = 2000;
-   private static String retrieveHtml() throws ExecutionException, TimeoutException, InterruptedException {
+   private static String retrieveHtml() throws Exception {
       return OrderUtility.futureCall(MILLIS_TO_WAIT, new Callable<String>() {
          @Override
          public String call() throws Exception {

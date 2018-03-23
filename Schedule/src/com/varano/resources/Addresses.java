@@ -58,6 +58,7 @@ public final class Addresses {
    public static final String DATABASE = "http://agendapascack.x10host.com/";
    public static final String ROTATION_HOME = DATABASE + "Rotations/";
    public static final String DAY_TYPE_HOME = DATABASE + "DayTypes/";
+   public static final String UPDATES_HOME = DATABASE + "updates/";
    
    public static java.net.URI createURI(String path) {
       try {

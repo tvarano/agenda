@@ -156,7 +156,7 @@ public final class OrderUtility
     * @throws InterruptedException if the method is interrupted
     */
    public static <T> T futureCall(long millisToWait, java.util.concurrent.Callable<T> method, String description) 
-         throws ExecutionException, TimeoutException, InterruptedException {
+         throws ExecutionException, TimeoutException, InterruptedException, Exception {
       final ExecutorService executor = Executors.newSingleThreadExecutor();
       long start = System.currentTimeMillis();
       // schedule the work

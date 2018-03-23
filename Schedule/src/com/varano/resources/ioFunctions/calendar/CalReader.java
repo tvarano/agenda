@@ -12,8 +12,6 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
@@ -105,7 +103,7 @@ public class CalReader {
       return RotationConstants.todayRotation();      
    }
    
-   public VCalendar readAndExtractEvents() throws ExecutionException, TimeoutException, InterruptedException {
+   public VCalendar readAndExtractEvents() throws Exception {
       return extractEvents(retrieveRfc());
    }
    
@@ -153,7 +151,7 @@ public class CalReader {
    }
    
    private static final long MILLIS_TO_WAIT = 8000L;
-   public String retrieveRfc() throws ExecutionException, TimeoutException, InterruptedException {
+   public String retrieveRfc() throws Exception {
      return OrderUtility.futureCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
    }
 
