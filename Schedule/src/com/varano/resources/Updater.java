@@ -18,10 +18,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class Updater {
-   //get error logging working
-   
-   //copy file works
-   //even from inside package
    
    static String home = System.getProperty("user.home");
    
@@ -44,10 +40,11 @@ public class Updater {
       f.setPreferredSize(new java.awt.Dimension(350, 25));
       p.add(userHome); p.add(f); p.add(suffix);
       JOptionPane.showMessageDialog(null, p, "Where is the Application Kept?", JOptionPane.INFORMATION_MESSAGE, null);
-      return f.getText();
+      return Updater.home + "/" + f.getText() + suffix;
    }
    
    private static String otherVersion() {
+      System.out.println("ask version");
       return "1.7.6";
    }
    

@@ -94,6 +94,7 @@ public class GPAInputSlot extends JPanel
       }
       JCheckBox hon = new JCheckBox("Honors/AP");                                   //checkbox for honors / ap credit
       hon.setForeground(UIHandler.foreground);
+      hon.setOpaque(false);
       hon.setFont(UIHandler.getButtonFont());
       hon.setSelected(honors);
       hon.addActionListener(checkModification());

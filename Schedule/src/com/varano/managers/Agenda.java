@@ -118,7 +118,7 @@ public class Agenda extends JPanel
             }
             @Override
             public void systemAwoke(SystemSleepEvent arg0) {
-               log("System awoke");
+               log("System awoke on "+java.time.LocalDate.now() + "\n");
                manager.getDisplay().hardResume();
                manager.getDisplay().checkAndUpdateTime();
                manager.getDisplay().checkAndUpdateDate();
@@ -132,7 +132,7 @@ public class Agenda extends JPanel
             }
             @Override
             public void screenAwoke(ScreenSleepEvent arg0) {
-               log("screen awoke");
+               log("screen awoke on "+java.time.LocalDate.now());
                manager.getDisplay().resume();
             }
          });

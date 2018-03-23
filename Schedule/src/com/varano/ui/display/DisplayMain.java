@@ -48,7 +48,6 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private PanelManager parentManager;
    private Schedule mainSched, todaySched;
    private Rotation todayR;
-   private DayOfWeek today;
    private int lastRead;
    private CalReader cal;
    private Time currentTime;
@@ -112,12 +111,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       try {
          if (testSituation) {
             currentTime = new Time(11,25);
-            today = DayOfWeek.MONDAY;
-            todayR = Rotation.getRotation(today); 
+            todayR = Rotation.getRotation(DayOfWeek.MONDAY); 
             setLastRead(LocalDate.now());
          } else {
             currentTime = new Time(LocalTime.now());
-            today = LocalDate.now().getDayOfWeek();
             todayR = readRotation();
             setLastRead(LocalDate.now());
          }
@@ -221,22 +218,16 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          currentTime = currentTime.plus(1);
       else 
          currentTime = new Time(LocalTime.now());
-      if (LocalDate.now().getDayOfYear() != lastRead)
-         checkAndUpdateDate();
+      checkAndUpdateDate();
       checkInSchool();
       findCurrentClass();
       currentClassPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
-         Agenda.log("date updated, rotation read");
-         DayOfWeek oldDay = today;
-         today = LocalDate.now().getDayOfWeek();
-         if (!today.equals(oldDay)) {
-            cal.init();
-            setTodayR(cal.readTodayRotation());
-            toolbar.updateTodayR();
-            setLastRead(LocalDate.now());
+         if (LocalDate.now().getDayOfYear() != lastRead) {
+            Agenda.log("day changed. read rotation");
+            refresh();
          }
    }
    
@@ -256,7 +247,6 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    }
    
    public ClassPeriod classForMemo(int slot) {
-//      if (debugSave) System.out.println("memos are "+mainSched.classMemoString());
       if (debugSave && mainSched.get(slot) != null) System.out.println("\t should be "+mainSched.get(slot).memoryInfo());
       return (slot == RotationConstants.PASCACK) ? mainSched.getPascackPreferences() : mainSched.get(slot);
    }
@@ -357,7 +347,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return todayR;
    }
    public void setTodayR(Rotation todayR) {
-      if (Agenda.statusU) System.out.println("-----------------NEW ROTATION---------------------");
+      if (Agenda.statusU) System.out.println("-----------------NEW ROTATION-----------------");
       if (updating)
          return;
       if (debug) System.out.println("DISPLAY SETTING ROTATION TO "+ todayR);
@@ -370,12 +360,6 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       pushTodaySchedule();
       
       update();
-   }
-   public DayOfWeek getToday() {
-      return today;
-   }
-   public void setToday(DayOfWeek today) {
-      this.today = today;
    }
    public PanelManager getParentManager() {
       return parentManager;

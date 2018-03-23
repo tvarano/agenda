@@ -444,7 +444,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            Agenda.log("REFRESH");
+            Agenda.log("REFRESH\n");
             age.getManager().reset();
          }
       });
@@ -454,7 +454,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
-            Agenda.log("HARD REFRESH");
+            Agenda.log("HARD REFRESH\n");
             if (checkIntentions("Reread and refresh data.")) {
                age.getManager().setCurrentPane(PanelManager.DISPLAY);
                com.varano.information.constants.DayType.reread();

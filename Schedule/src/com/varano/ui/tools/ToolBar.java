@@ -147,6 +147,7 @@ public class ToolBar extends JToolBar
       
       ButtonGroup bg = new ButtonGroup();
       JRadioButton rb = new JRadioButton("Use Numbers");
+      rb.setOpaque(false);
       rb.setForeground(UIHandler.foreground);
       bg.add(rb);
       rb.setFont(UIHandler.getButtonFont());
@@ -158,6 +159,7 @@ public class ToolBar extends JToolBar
       });
       add(rb);
       rb = new JRadioButton("Use Letter");
+      rb.setOpaque(false);
       rb.setForeground(UIHandler.foreground);
       bg.add(rb);
       rb.setFont(UIHandler.getButtonFont());

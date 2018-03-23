@@ -142,7 +142,7 @@ public class SchedReader {
    public void reWriteSched() {
       if (debug) System.out.println("rewriting sched");
       SchedWriter w = new SchedWriter();
-      w.write(new Schedule(Rotation.R1.getTimes(), Lab.LAB1));
+      w.write(RotationConstants.defaultSchedule());
    }
    
 }

@@ -49,7 +49,7 @@ public final class RotationConstants
    }
    
    public static final Schedule defaultSchedule() {
-      return new Schedule(Rotation.R1.getTimes(), Lab.LAB1);
+      return new Schedule(Rotation.R1.getTimes(), new Lab[0]);
    }
    
    public static boolean isPascack(ClassPeriod c) {
