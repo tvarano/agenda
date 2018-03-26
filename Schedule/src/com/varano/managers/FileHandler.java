@@ -113,14 +113,18 @@ public class FileHandler {
             bw.close();
          }
          if (new File(WELCOME_ROUTE).createNewFile()) {
-            bw = new BufferedWriter(new FileWriter(WELCOME_ROUTE));
-            bw.write("t");
-            bw.close();
+            writeWelcomeTrue();
          }
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
       return created;
+   }
+   
+   public static void writeWelcomeTrue() throws IOException {
+      BufferedWriter bw = new BufferedWriter(new FileWriter(WELCOME_ROUTE));
+      bw.write("t");
+      bw.close(); 
    }
 
    public static boolean moveFiles(String oldLocation) {
