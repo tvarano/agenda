@@ -65,10 +65,12 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    private boolean hasZero, saved;
    private ArrayList<GPAInputSlot> slots;
    private PanelManager manager;
-   private JLabel dispLabel;
-   private static final String labelPrefix = "Weighted GPA: ";
+   private JLabel weightLabel, unWeightLabel;
+   private static final String weightedPrefix = "Weighted GPA: ";
+   private static final String unWeightedPrefix = "UnWeighted GPA: ";
    public static final String[] letterGrades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"}; 
-   public static final double[] gradePoints = {4.33, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67}; 
+   public static final double[] gradePoints = {4.33, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1};
+   public static final double[] unWeightedGradePoints = {4, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1};
    private boolean debug, error;
    
    public GPAInput(Schedule sched, PanelManager manager) {
@@ -210,12 +212,17 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       p.setBackground(UIHandler.background);
       ((FlowLayout) p.getLayout()).setAlignment(FlowLayout.RIGHT);
       
-      dispLabel = new JLabel(labelPrefix);
-      dispLabel.setForeground(UIHandler.foreground);
       final int gap = 5;
-      dispLabel.setFont(UIHandler.getInputLabelFont());
-      dispLabel.setBorder(BorderFactory.createEmptyBorder(gap,0,0,gap));
-      p.add(dispLabel);
+      weightLabel = new JLabel(weightedPrefix + "--");
+      weightLabel.setForeground(UIHandler.foreground);
+      weightLabel.setFont(UIHandler.getInputLabelFont());
+      weightLabel.setBorder(BorderFactory.createEmptyBorder(gap,0,0,gap));
+      p.add(weightLabel);
+      unWeightLabel = new JLabel(unWeightedPrefix + "--");
+      unWeightLabel.setForeground(UIHandler.foreground);
+      unWeightLabel.setFont(UIHandler.getInputLabelFont());
+      unWeightLabel.setBorder(BorderFactory.createEmptyBorder(gap,0,0,gap));
+      p.add(unWeightLabel);
       return p;
    }
    
@@ -252,10 +259,12 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    
    public void refreshGPA() {
       save();
-      double gpa = calculateGPA(5);
-      if (gpa == -1)
+      double gpa = calculateWeightedGPA();
+      double unw = calculateUnWeightedGPA();
+      if (gpa == -1 || unw == -1)
          return;
-      dispLabel.setText(labelPrefix + gpa);
+      weightLabel.setText(weightedPrefix + gpa);
+      unWeightLabel.setText(unWeightedPrefix + unw);
    }
    
    public ActionListener changeView(int type) {
@@ -303,7 +312,20 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       }
    }
 
-   public double calculateGPA(double outOf) {
+   public double calculateUnWeightedGPA() {
+      int sum = 0;
+      for (GPAInputSlot g : slots) {
+         if (!g.canCreate()) {
+            if (debug) System.out.println(g);
+            ErrorID.showUserError(ErrorID.INPUT_ERROR);
+            return -1;
+         }
+         sum += g.getUnweightedGradePoint();
+      }
+      return (int) (sum / slots.size() * 10_000) / 10_000.0; 
+   }
+   
+   public double calculateWeightedGPA() {
       if (error)
          return -1;
       double sumWeights = 0;
@@ -314,8 +336,8 @@ public class GPAInput extends JPanel implements InputManager, PanelView
             ErrorID.showUserError(ErrorID.INPUT_ERROR);
             return -1;
          }
-         sumWeights += g.getWeight(outOf);
-         sumCredits += g.finish(outOf);
+         sumWeights += g.getWeight();
+         sumCredits += g.finish();
       }
       return (int) (sumCredits / sumWeights * 10_000) / 10_000.0;
    }

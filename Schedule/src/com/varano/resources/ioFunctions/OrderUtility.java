@@ -165,7 +165,6 @@ public final class OrderUtility
             .submit(method);
       try {
          // wait for task to complete
-         //HOLDS EVERYTHING UP
          final T result = future.get(millisToWait,
                TimeUnit.MILLISECONDS);
          Agenda.log(description + " took " + (System.currentTimeMillis() - start));
@@ -173,12 +172,6 @@ public final class OrderUtility
       } catch (TimeoutException e) {
          Agenda.logError(description + " timed out", e);
          future.cancel(true);
-         throw e;
-      } catch (InterruptedException e) {
-         Agenda.logError(description + " interrupted", e);
-         throw e;
-      } catch (ExecutionException e) {
-         Agenda.logError(description + " execution error", e);
          throw e;
       }
    }

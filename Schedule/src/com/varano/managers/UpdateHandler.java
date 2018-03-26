@@ -19,13 +19,15 @@ import com.varano.resources.ioFunctions.OrderUtility;
 
 public class UpdateHandler {
    
-   public static final String SOURCE_PATH = "http://agendapascack.x10host.com/updates/updater-src.txt";
+   public static final String SOURCE_PATH = "http://agendapascack.x10host.com/updates/updater-src.jar";
    public static final String DOWNLOAD_PATH = System.getProperty("user.home") + "/Downloads/Agenda-Update.jar";
    
    public static void update() throws Exception {
+      final int toWait = 10_000;
       try {
-         OrderUtility.futureCall(10000, UpdateHandler::download, "download updater jar");
-         Process run = new ProcessBuilder("java", "-jar", DOWNLOAD_PATH).start();
+         OrderUtility.futureCall(toWait, UpdateHandler::download, "download updater jar");
+         Agenda.log("calling jar: \"java -jar "+ DOWNLOAD_PATH + " " +  Addresses.getExec() + "\"");
+         Process run = new ProcessBuilder("java", "-jar", DOWNLOAD_PATH, Addresses.getExec()).start();
          InputStream in = run.getInputStream();
          byte[] bts = in.readAllBytes();
          for (byte b : bts)
@@ -34,8 +36,12 @@ public class UpdateHandler {
          
       } catch (IOException | InterruptedException e) {
          Agenda.logError("error in downloading or running updater jar", e);
+         JOptionPane.showMessageDialog(null, "Unable to update Agenda. Cannot download files." + 
+         "\nPlease check your connection and try again.", "Agenda Updater", JOptionPane.ERROR_MESSAGE, null);
       }
    }
+   
+   
    
    private static int download() throws Exception{      
       URL sourceURL = new URL(SOURCE_PATH);
@@ -62,7 +68,8 @@ public class UpdateHandler {
    }
    
    public static String version() throws Exception {
-      return OrderUtility.futureCall(100, UpdateHandler::version0, "retrieve version");
+      int toWait = 1000;
+      return OrderUtility.futureCall(toWait, UpdateHandler::version0, "retrieve version");
    }
    
    private static String version0() throws Exception {      

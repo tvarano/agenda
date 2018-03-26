@@ -170,18 +170,26 @@ public class GPAInputSlot extends JPanel
       return gradePoint;
    }
    
-   public double getCredits(double gradePoint, double outOf) {
-      return gradePoint * getWeight(outOf);
+   public double getUnweightedGradePoint() {
+      for (int i = 0; i < GPAInput.letterGrades.length; i++)
+         if (cp.getLetterGrade().equals(GPAInput.letterGrades[i])) {
+            return (i < GPAInput.unWeightedGradePoints.length)
+                  ? GPAInput.unWeightedGradePoints[i]
+                  : GPAInput.unWeightedGradePoints[GPAInput.unWeightedGradePoints.length - 1];
+         }
+      return -1;
    }
    
-   public double getWeight(double outOf) {
-      double weight = outOf;
-      if (outOf != 4) {
-         if (cp.getCourseWeight() == ClassPeriod.FULL_LAB)
-            weight++;
-         else if (cp.getCourseWeight() == ClassPeriod.HALF_YEAR)
-            weight/=2;
-      }
+   public double getCredits(double gradePoint) {
+      return gradePoint * getWeight();
+   }
+   
+   public double getWeight() {
+      double weight = 5;
+      if (cp.getCourseWeight() == ClassPeriod.FULL_LAB)
+         weight++;
+      else if (cp.getCourseWeight() == ClassPeriod.HALF_YEAR)
+         weight/=2;
       return weight;
    }
    
@@ -235,9 +243,9 @@ public class GPAInputSlot extends JPanel
       return cp;
    }
    
-   public double finish(double outOf) {
+   public double finish() {
       save();
-      return getCredits(getGradePoint(), outOf);
+      return getCredits(getGradePoint());
    }
    
    public String toString() {

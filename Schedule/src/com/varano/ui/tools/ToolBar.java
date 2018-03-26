@@ -15,6 +15,7 @@ import javax.swing.JToolBar;
 
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
+import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
 import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
@@ -69,6 +70,7 @@ public class ToolBar extends JToolBar
    }
    
    public void updateTodayR() {
+      Agenda.log("toolbar updating today's rotation");
       if (parentType == PanelManager.DISPLAY)
          ((RotationButton) getComponent(0)).updateTodayR();
    }
