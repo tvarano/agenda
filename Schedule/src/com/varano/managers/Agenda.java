@@ -48,8 +48,8 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.8";
-   public static final String LAST_UPDATED = "March 2018";
+   public static final String BUILD = "1.7.9";
+   public static final String LAST_UPDATED = "April 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -60,7 +60,8 @@ public class Agenda extends JPanel
    
    public Agenda(JFrame frame) {
       setName("main class");
-      initialFileWork();
+      
+      FileHandler.initialFileWork();
       log(getClass().getSimpleName()+" began initialization");
 
       UIHandler.init();      
@@ -149,38 +150,6 @@ public class Agenda extends JPanel
       }
    }
    
-   /**
-    * ensure names, users, etc. Initialize file locations if necessary, draw routes.
-    */
-   public static void initialFileWork() {
-      long start = System.currentTimeMillis();
-      
-      boolean logData = isApp;
-
-      FileHandler.ensureFileRoute();
-
-      //check parameters, draw routes, create files if needed 
-      FileHandler.initAndCreateFiles();
-      
-      //set system.out to the log file
-      if (logData) {
-         try {
-            File log = new File(FileHandler.LOG_ROUTE);
-            PrintStream logStream = new PrintStream(log);
-            System.setOut(logStream);
-            System.setErr(logStream);
-            log ("streams set to "+FileHandler.LOG_ROUTE);
-         } catch (java.io.FileNotFoundException e) {
-            ErrorID.showError(e, true, "Make sure you downloaded Agenda and it is in an\n"
-                  + "accessable folder (Applications, Desktop, etc.)");
-         }
-      } else {
-         log("logging to console / terminal");
-      }
-      //logs the time taken (in millis)
-      log("filework completed in "+(System.currentTimeMillis()-start));
-   }
-   
    public PanelManager getManager() {
       return manager;
    }
@@ -199,6 +168,9 @@ public class Agenda extends JPanel
       if (statusU)
          System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" 
       + e.getClass().getName() + " - "+ e.getMessage());
+   }
+   public JFrame getFrame() {
+      return parentFrame;
    }
    public Dimension getMinimumSize() {
       return new Dimension(MIN_W,MIN_H);
@@ -219,6 +191,8 @@ public class Agenda extends JPanel
       int frameToPaneAdjustment = 22; 
       
       // loading screen, frame adjustments
+      // setting visible outside of the drawing, strings take just as long to draw anyways
+         //might as well give a loading screen
       EventQueue.invokeLater(new Runnable() {
          public void run() {
             JPanel p = new JPanel() {
@@ -237,12 +211,13 @@ public class Agenda extends JPanel
                   g2.drawImage(logo, getWidth() / 2 - logo.getWidth(this) / 2,
                         getHeight() / 2 - logo.getHeight(this) / 2 + 15, this);
                   g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
-                  String load = "LOADING.";
-                  g2.drawString(load + "..", getWidth() / 2
+                  String load = "LOADING...";
+                  g2.drawString(load, getWidth() / 2
                         - getFontMetrics(g2.getFont()).stringWidth(load) / 2, 150);
                   log("Drawing strings took " + (System.currentTimeMillis() - start));
                }
             };
+            p.setDoubleBuffered(true);
             frame.add(p);
             frame.setMinimumSize(
                   new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
@@ -252,7 +227,6 @@ public class Agenda extends JPanel
          }
       });
       frame.setVisible(true);
-      
       // effective EDT
       EventQueue.invokeLater(new Runnable() {
          @Override
@@ -262,6 +236,7 @@ public class Agenda extends JPanel
             frame.setTitle(APP_NAME);
             frame.getContentPane().remove(0);
             frame.getContentPane().add(main);
+            frame.setExtendedState(JFrame.NORMAL);
             frame.pack();
             frame.setLocationRelativeTo(null);
             log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis\n");

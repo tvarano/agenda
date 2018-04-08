@@ -1,8 +1,10 @@
 package com.varano.ui.display.current;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.IOException;
 import java.time.LocalTime;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -11,7 +13,10 @@ import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
 import com.varano.information.Time;
 import com.varano.information.constants.RotationConstants;
+import com.varano.managers.Agenda;
 import com.varano.managers.UIHandler;
+import com.varano.resources.ResourceAccess;
+import com.varano.ui.Notif;
 import com.varano.ui.display.DisplayMain;
 import com.varano.ui.display.selection.ScheduleList;
 
@@ -29,7 +34,8 @@ public class CurrentClassPane extends JPanel
    private ClassPeriod classPeriod;
    private Schedule sched;
    private final int LIST_W = 200;
-   private boolean inSchool; 
+   private boolean inSchool, notifUp; 
+   private Notif notif;
    private boolean debug = false;
    
    public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
@@ -98,13 +104,13 @@ public class CurrentClassPane extends JPanel
    }
 
    public Time getTimeLeft() {
+      if (classPeriod == null) return Time.NO_TIME;
       if (classPeriod.getSlot() == RotationConstants.LUNCH
             && parentPane.labToday() != null
             && parentPane.labToday().getTimeAtLab().getStartTime().compareTo(getCurrentTime()) > 0) {
          return currentTime.getTimeUntil(parentPane.labToday().getTimeAtLab().getStartTime());
       }
       return currentTime.getTimeUntil(classPeriod.getEndTime());
-
    }
    
    public Time timeUntilNextClass() {
@@ -124,7 +130,40 @@ public class CurrentClassPane extends JPanel
    public void update() {
       list.autoSetSelection();
       info.repaintText();
+      checkAndShowNotification();
       revalidate();
+   }
+
+   public void checkAndShowNotification() {
+      if (inSchool) {
+         if (getTimeLeft().getTotalMins() == 5) {
+            if (!notifUp) {
+               try {
+                  Agenda.log("showing notification");
+                  String nameText = (parentPane.findClassAfter() == null)
+                        ? ""
+                        : parentPane.findClassAfter().getTrimmedName() + " is next.";
+                  notif = new com.varano.ui.Notif(parentPane.getParentManager().getParent().getFrame(), 
+                        "There are 5 Minutes Left.\n"+nameText,
+                        ImageIO.read(ResourceAccess
+                              .getResourceStream("Agenda Logo.png")));
+                  notifUp = true;
+                  parentPane.getParentManager().getParent().revalidate();
+                  parentPane.getParentManager().getParent().requestFocus();
+               } catch (IOException e) {
+                  Agenda.logError("error in showing notification", e);
+               }
+            }
+         } else {
+            collapseNotif();
+         }
+      }
+   }
+   
+   public void collapseNotif() {      
+      notifUp = false;
+      if (notif != null) notif.disappear();
+      notif = null;
    }
    
    public Dimension getMinimumSize() {
@@ -192,5 +231,14 @@ public class CurrentClassPane extends JPanel
    }
    public int getCurrentSlot() {
       return classPeriod.getSlot();
+   }
+   public boolean isNotifUp() {
+      return notifUp;
+   }
+   public void setNotifUp(boolean notifUp) {
+      this.notifUp = notifUp;
+   }
+   public Notif getNotif() {
+      return notif;
    }
 }

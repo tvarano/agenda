@@ -19,9 +19,9 @@ import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
-import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
 import com.varano.resources.ioFunctions.SchedReader;
+import com.varano.ui.PanelView;
 import com.varano.ui.tools.ToolBar;
 
 //Thomas Varano

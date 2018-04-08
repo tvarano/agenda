@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import com.varano.information.Schedule;
 import com.varano.resources.ioFunctions.SchedWriter;
+import com.varano.ui.PanelView;
 import com.varano.ui.display.DisplayMain;
 import com.varano.ui.input.DataInput;
 import com.varano.ui.input.GPAInput;
@@ -90,8 +91,7 @@ public class PanelManager {
    }
 
    public void update() {
-      if (currentType == DISPLAY)
-         ((DisplayMain) currentView).update();
+      display.update();
    }
    
    public MenuBar getBar() {

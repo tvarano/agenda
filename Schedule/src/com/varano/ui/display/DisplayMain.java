@@ -20,13 +20,13 @@ import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
-import com.varano.managers.PanelView;
 import com.varano.managers.UIHandler;
 import com.varano.resources.ioFunctions.AlertReader;
 import com.varano.resources.ioFunctions.OrderUtility;
 import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.resources.ioFunctions.SchedWriter;
 import com.varano.resources.ioFunctions.calendar.CalReader;
+import com.varano.ui.PanelView;
 import com.varano.ui.display.current.CurrentClassPane;
 import com.varano.ui.display.selection.ScheduleInfoSelector;
 import com.varano.ui.tools.ToolBar;
@@ -61,7 +61,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -110,7 +110,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void initTime() {
       try {
          if (testSituation) {
-            currentTime = new Time(11,25);
+            currentTime = new Time(10,23);
             todayR = Rotation.getRotation(DayOfWeek.MONDAY); 
             setLastRead(LocalDate.now());
          } else {
@@ -246,6 +246,16 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return null;
    }
    
+   /**
+    * assumes the user is in between classes
+    * @return
+    */
+   public ClassPeriod findClassAfter() {
+      if (checkInSchool())
+         return todaySched.classAt(new Time(currentTime.getTotalMins()+20));
+      return null;
+   }
+   
    public ClassPeriod classForMemo(int slot) {
       if (debugSave && mainSched.get(slot) != null) System.out.println("\t should be "+mainSched.get(slot).memoryInfo());
       return (slot == RotationConstants.PASCACK) ? mainSched.getPascackPreferences() : mainSched.get(slot);
@@ -314,7 +324,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       if (showDisp) {
          currentClassPane.update();
          repaint();
-      }
+      } else currentClassPane.checkAndShowNotification();
       setUpdating(false);
    }
    
@@ -351,6 +361,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       if (updating)
          return;
       if (debug) System.out.println("DISPLAY SETTING ROTATION TO "+ todayR);
+      currentClassPane.collapseNotif();
       todaySched.setData(OrderUtility.reorderAndClone(todayR, mainSched, mainSched.getClasses()));
       this.todayR = todayR;
       todaySched.setLunchLab(todayR);

@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
@@ -39,6 +40,38 @@ public class FileHandler {
       } else {
          ErrorID.showUserError(ErrorID.IO_EXCEPTION);
       }
+   }
+   
+   /**
+    * ensure names, users, etc. Initialize file locations if necessary, draw routes.
+    */
+   public static void initialFileWork() {
+      long start = System.currentTimeMillis();
+      
+      boolean logData = Agenda.isApp;
+
+      FileHandler.ensureFileRoute();
+
+      //check parameters, draw routes, create files if needed 
+      FileHandler.initAndCreateFiles();
+      
+      //set system.out to the log file
+      if (logData) {
+         try {
+            File log = new File(FileHandler.LOG_ROUTE);
+            PrintStream logStream = new PrintStream(log);
+            System.setOut(logStream);
+            System.setErr(logStream);
+            Agenda.log ("streams set to "+FileHandler.LOG_ROUTE);
+         } catch (java.io.FileNotFoundException e) {
+            ErrorID.showError(e, true, "Make sure you downloaded Agenda and it is in an\n"
+                  + "accessable folder (Applications, Desktop, etc.)");
+         }
+      } else {
+         Agenda.log("logging to console / terminal");
+      }
+      //logs the time taken (in millis)
+      Agenda.log("filework completed in "+(System.currentTimeMillis()-start));
    }
    
    public static boolean ensureFileRoute() {
