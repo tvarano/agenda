@@ -184,7 +184,7 @@ public class Agenda extends JPanel
    
    private static void createAndShowGUI() {
       long start = System.currentTimeMillis();
-      JFrame frame = new JFrame("LOADING....");
+      JFrame frame = new JFrame("Agenda -- LOADING....");
       int frameToPaneAdjustment = 22; 
       
       // loading screen, frame adjustments
