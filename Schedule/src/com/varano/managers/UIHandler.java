@@ -299,19 +299,14 @@ public final class UIHandler {
    public static boolean showWelcome() {
       String html = "<html> <h1> Welcome to " + Agenda.APP_NAME + " </h1>"
             + "<h2>Version " + Agenda.BUILD + "</h2> "
-            + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
-            + "<br>at " + FileHandler.LOG_ROUTE + ""
-            + "<br>email log or any ideas to " + Addresses.CONTACT_EMAIL + "***"
-            + "<br>You can use this program to keep track of classes, schedules, assignments, or grades"
-            + "<br>in Pascack Hills or Valley."
+            + "<p>Agenda is a program for staying on top of classes in the Pascack Valley District."
             + "<ul>"
-            + "<li>On the home screen, you can see the current class's data "
-            + "<br>on the top panel and view other classes' data and memos in the bottom panel</li>"
+            + "<li>On the home screen, you can see the current class's data on the top panel"
+            + "<br>and view other classes' data and memos in the bottom panel</li>"
             + "<li>To edit your classes, click File > Input Schedule.</li>"
             + "<li>To edit grades, click File > View GPA.</li>"
             + "<li>To change the look of the program, either go to preferences (\u2318 + ,) or the View Menu"
             + "</ul>"
-            + "<p>Feel free to look at the source code (Useful Links > Agenda Source) to suggest any improvements."
             + "<br> - Thomas Varano"
             + "</html>";
       javax.swing.JEditorPane text = new javax.swing.JEditorPane("text/html", html);
@@ -343,9 +338,6 @@ public final class UIHandler {
    public static void showAbout() {
       String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
             + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
-            + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
-            + "<p>at "+FileHandler.LOG_ROUTE
-            + "<p>email at "+Addresses.CONTACT_EMAIL + "***"
             + "<p>Agenda is a schedule program for the Pascack Valley High School District"
             + "<p>that can keep track of time, school schedules, assignments, and GPA"
             + "<p>for students."
@@ -354,7 +346,8 @@ public final class UIHandler {
             + "<h3>Thomas Varano : Author"
             + "<br><br>Viktor Nakev : Icon Designer"
             + "<br><br>Matthew Ghedduzi : Alpha Tester"
-            + "<br><br>Michael Ruberto : Conceptual Designer</html>";
+//            + "<br><br>Michael Ruberto : Conceptual Designer"
+            + "</html>";
       javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
       content.setFont(font);
       HTMLEditorKit kit = new HTMLEditorKit();
@@ -415,7 +408,7 @@ public final class UIHandler {
          }
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
-      //to test day checking
+      //to test day checking and rotation updating
       if (debug) {
          mi = m.add(new MenuItem("TEST DAYCHECK"));
          mi.addActionListener(new ActionListener() {
@@ -508,7 +501,6 @@ public final class UIHandler {
                }
             }
          }
-         
       });
       
       m.addSeparator();
@@ -608,32 +600,36 @@ public final class UIHandler {
          }
       });
       mi = m.add(new LinkChooser("Submit Issue", Addresses.createURI(Addresses.GITHUB_ISSUES)));
-      mi = m.add(new MenuItem("Sharing Protocol"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, 
-                  "To share this application, please share the entire folder\n"
-                  + "this application came in. The program comes with a README\n"
-                  + "file, which will help users who do not have all the \n"
-                  + "necessary items on their computer for running this program.",
-                  Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
-         }
-      });
       
-      m.addSeparator();
-      
-      mi = m.add(new MenuItem("Installation Instructions"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            FileHandler.transfer("Installation Instructions.txt", 
-                  new File(System.getProperty("user.home") + "/Desktop/README.txt"), 0);
-            JOptionPane.showMessageDialog(null, 
-                  "Installation instructions (README.txt) have been created on your desktop.",
-                        Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
-         }
-      });
+      //if the program is a full release, there is no need for sharing protocol, as users will just get the program from self-service
+      if (!Agenda.fullRelease) {
+         mi = m.add(new MenuItem("Sharing Protocol"));
+         mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               JOptionPane.showMessageDialog(null, 
+                     "To share this application, please share the entire folder\n"
+                     + "this application came in. The program comes with a README\n"
+                     + "file, which will help users who do not have all the \n"
+                     + "necessary items on their computer for running this program.",
+                     Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+         
+         m.addSeparator();
+         
+         mi = m.add(new MenuItem("Installation Instructions"));
+         mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               FileHandler.transfer("Installation Instructions.txt", 
+                     new File(System.getProperty("user.home") + "/Desktop/README.txt"), 0);
+               JOptionPane.showMessageDialog(null, 
+                     "Installation instructions (README.txt) have been created on your desktop.",
+                           Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+      }
       
       m.addSeparator();
       
@@ -651,6 +647,7 @@ public final class UIHandler {
       return bar;
 	}
    
+   //allows for rollover animations for buttons.
    public static MouseListener buttonPaintListener(AbstractButton parent) {
       return new MouseListener() {
          @Override public void mouseClicked(MouseEvent e) {}

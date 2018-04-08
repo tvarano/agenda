@@ -53,6 +53,7 @@ public class Agenda extends JPanel
    private JFrame parentFrame;
    private MenuBar bar;
    public static boolean statusU;
+   public static final boolean fullRelease = true;
    public static final boolean isApp = System.getProperty("user.dir").indexOf(".app") > 0; 
    
    public Agenda(JFrame frame) {
