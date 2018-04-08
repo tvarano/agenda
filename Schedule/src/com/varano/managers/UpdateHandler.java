@@ -41,8 +41,6 @@ public class UpdateHandler {
       }
    }
    
-   
-   
    private static int download() throws Exception{      
       URL sourceURL = new URL(SOURCE_PATH);
       File download = new File(DOWNLOAD_PATH);
@@ -87,9 +85,12 @@ public class UpdateHandler {
     * @return true if the user wants to update.
     */
    public static boolean askUpdate() {
-      Agenda.log("asking if update");
-      return JOptionPane.showConfirmDialog(null, "An update is available.\nWould you like to install?", Agenda.APP_NAME,
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null) == 0;
+      Agenda.log("asking for update permission");
+      return JOptionPane.showConfirmDialog(null,
+            "An update is available.\nWould you like to install?"
+                  + "\nAgenda will need to restart.",
+            Agenda.APP_NAME, JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null) == 0;
    }
    
    public static boolean updateInquiry() {
