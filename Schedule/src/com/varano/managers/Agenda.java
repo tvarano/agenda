@@ -21,13 +21,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.time.LocalTime;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import com.varano.information.constants.ErrorID;
 
 //Thomas Varano
 //Sep 20, 2017
