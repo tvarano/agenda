@@ -111,7 +111,8 @@ public final class RotationConstants
    }
    
    public static final ClassPeriod getNoSchoolClass() {
-      return new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), "", "");
+      return new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), 
+            ClassPeriod.UNREQ_TEACH, ClassPeriod.NO_ROOM);
    }
    
    private static Rotation toDelay0(Rotation r) {

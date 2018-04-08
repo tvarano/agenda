@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
@@ -33,7 +35,7 @@ public class DataInputSlot extends JPanel implements ActionListener
 
    private static final Dimension NAME_SIZE = new Dimension(115, F_HEIGHT);
    private static final Dimension TEACH_SIZE = new Dimension(135, F_HEIGHT);
-   private static final Dimension ROOM_SIZE = new Dimension(40, F_HEIGHT);
+   private static final Dimension ROOM_SIZE = new Dimension(50, F_HEIGHT);
    private int slotNumber;
    private String beginName;
    private Container parentPanel;
@@ -108,6 +110,16 @@ public class DataInputSlot extends JPanel implements ActionListener
       addLabel(currentLabel, labelLeft, l, index);
       
       JTextField currentField = new JTextField(c.getName());      //class name field
+      currentField.addKeyListener(new KeyListener() {
+         @Override
+         public void keyPressed(KeyEvent arg0) {}
+         @Override
+         public void keyReleased(KeyEvent arg0) {
+            checkScience();
+         }
+         @Override
+         public void keyTyped(KeyEvent arg0) {}
+      });
       addField(currentField, currentLabel, l, index);
       index++;
       
@@ -204,22 +216,26 @@ public class DataInputSlot extends JPanel implements ActionListener
             f.setText("unspecified");
    }
    
-   private void checkText() {
+   private void checkScience() {
+      String text = promptFields[0].getText().toLowerCase();
+      String[] sciences = {"chem", "science", "bio", "physics"};
+      for (String s : sciences)
+         if (text.contains(s))
+            labBox.setSelected(true);      
+   }
+   
+   private void checkHonorsText() {
       String text = promptFields[0].getText().toLowerCase();
       if (text.equalsIgnoreCase(beginName))
          return;
       System.out.println(text);
       if (text.contains("honors") || text.contains("ap"))
          dataHolder.setHonors(true);
-      String[] sciences = {"chem", "science", "bio", "physics"};
-      for (String s : sciences)
-         if (text.contains(s))
-            labBox.setSelected(true);
    }
    
    public ClassPeriod createClass() {
       forceNames();
-      checkText();
+      checkHonorsText();
       if (hasParent && hasLab) {
          ((DataInput) parentPanel).addLab(slotNumber);
          if (debug) System.out.println("\tslot" + slotNumber + "Added lab");

@@ -872,7 +872,8 @@ public final class UIHandler {
 	}
 	
 	public static Border getTitledBorder(String title, int justification, int position) {
-      return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 2),
+      return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 1),
+//            BorderFactory.createEmptyBorder(2, 2, 2, 2),
             title, justification, position, font, titleColor);
 	}
 	
