@@ -35,6 +35,7 @@ public class DataInputSlot extends JPanel implements ActionListener
    private static final Dimension TEACH_SIZE = new Dimension(135, F_HEIGHT);
    private static final Dimension ROOM_SIZE = new Dimension(40, F_HEIGHT);
    private int slotNumber;
+   private String beginName;
    private Container parentPanel;
    private JCheckBox labBox;
    private ClassPeriod dataHolder;
@@ -51,6 +52,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       if (c == null) c = new ClassPeriod();
       debug = false;
       dataHolder = c.clone();
+      beginName = c.getName();
       if (debug) System.out.println("input 56 dataholder\n"+dataHolder.getInfo());
       setFont(UIHandler.getInputLabelFont());
       if (parentPanel != null) {
@@ -202,8 +204,22 @@ public class DataInputSlot extends JPanel implements ActionListener
             f.setText("unspecified");
    }
    
+   private void checkText() {
+      String text = promptFields[0].getText().toLowerCase();
+      if (text.equalsIgnoreCase(beginName))
+         return;
+      System.out.println(text);
+      if (text.contains("honors") || text.contains("ap"))
+         dataHolder.setHonors(true);
+      String[] sciences = {"chem", "science", "bio", "physics"};
+      for (String s : sciences)
+         if (text.contains(s))
+            labBox.setSelected(true);
+   }
+   
    public ClassPeriod createClass() {
       forceNames();
+      checkText();
       if (hasParent && hasLab) {
          ((DataInput) parentPanel).addLab(slotNumber);
          if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
@@ -213,6 +229,8 @@ public class DataInputSlot extends JPanel implements ActionListener
             promptFields[2].getText());
       retval.setBackgroundData(dataHolder);
       if (debug) System.out.println("created:" + retval.getInfo());
+      if (dataHolder.isHonors())
+         System.out.println(retval.getName() + " honors");
       return retval;
    }
    

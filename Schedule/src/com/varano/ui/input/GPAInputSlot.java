@@ -225,6 +225,10 @@ public class GPAInputSlot extends JPanel
    public int getSlot() {
       return cp.getSlot();
    }
+   
+   public boolean isHonors() {
+      return honors;
+   }
 
    @SuppressWarnings("unchecked")
    public void save() {

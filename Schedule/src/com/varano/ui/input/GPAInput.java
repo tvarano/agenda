@@ -30,7 +30,6 @@ import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
 import com.varano.managers.UIHandler;
-import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.ui.PanelView;
 import com.varano.ui.display.selection.ScheduleList;
 import com.varano.ui.tools.ToolBar;
@@ -298,7 +297,10 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       }
       for (GPAInputSlot s : slots) {
          s.save();
+         if (sched.get(s.getSlot()) != null)
+            sched.get(s.getSlot()).setHonors(s.isHonors());
       }
+      
       setSaved(true);
       if (manager != null)
          manager.saveSchedule(sched, getClass());
@@ -409,28 +411,10 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    public void setSaved(boolean saved) {
       this.saved = saved;
       if (debug) System.out.println("gpa 389 SAVED = "+saved);
-      repaint();
    }
    
    @Override
    public void refresh() {
-      setSchedule(new SchedReader().readSched());
+      open();
    }
-   
-   /*
-   public static void main(String[] args) {
-      Agenda.initialFileWork();
-      UIHandler.init();
-      javax.swing.JFrame f = new javax.swing.JFrame(Agenda.APP_NAME + " " + Agenda.BUILD + " GPA TEST");
-      final long start = System.currentTimeMillis();
-      System.out.println("NOTE gpa run seperately");
-      f.getContentPane().add(new GPAInput(new SchedReader().readSched(), null));
-      System.out.println(System.currentTimeMillis() - start);
-      f.setVisible(true);
-      f.setMinimumSize(new java.awt.Dimension(Agenda.MIN_W, Agenda.MIN_H));
-      f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      f.setSize(new Dimension(Agenda.PREF_W, Agenda.PREF_H + 22));
-      
-   }
-   */
 }

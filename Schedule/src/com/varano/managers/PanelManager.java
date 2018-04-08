@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import com.varano.information.Schedule;
+import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.resources.ioFunctions.SchedWriter;
 import com.varano.ui.PanelView;
 import com.varano.ui.display.DisplayMain;
@@ -121,7 +122,7 @@ public class PanelManager {
    }
 
    public com.varano.information.Schedule getMainSched() {
-      return display.getMainSched();
+      return new SchedReader().readSched();
    }
 
    public com.varano.information.constants.Rotation getTodayR() {
@@ -129,7 +130,6 @@ public class PanelManager {
    }
 
    public void setRotation(com.varano.information.constants.Rotation r) {
-      // if (currentType == DISPLAY)
       display.setTodayR(r);
    }
 

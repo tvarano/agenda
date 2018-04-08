@@ -141,7 +141,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       button.addActionListener(changeView());
       p.add(button);
       
-      button = new JButton("Submit");
+      button = new JButton("Save");
       button.setToolTipText("Save Your Schedule");
       button.setSelected(true);
       button.setFont(UIHandler.getButtonFont());
@@ -309,8 +309,10 @@ public class DataInput extends JPanel implements InputManager, PanelView
    private ArrayList<ClassPeriod> formatGPAClasses(Schedule newSched) {
       ArrayList<ClassPeriod> gpa = new ArrayList<ClassPeriod>(beginningSchedule.getGpaClasses());
       for (ClassPeriod c : gpa) {
-         if (newSched.get(c.getSlot()) != null)
+         if (newSched.get(c.getSlot()) != null) {
             c.setForegroundData(newSched.get(c.getSlot()));
+            c.setHonors(newSched.get(c.getSlot()).isHonors());
+         }
       }
       return gpa;
    }
