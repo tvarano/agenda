@@ -137,6 +137,7 @@ public class CurrentClassPane extends JPanel
    public void checkAndShowNotification() {
       if (inSchool) {
          if (getTimeLeft().getTotalMins() == 5) {
+            if (classPeriod.equals(RotationConstants.getNoSchoolClass())) return;
             if (!notifUp) {
                try {
                   Agenda.log("showing notification");

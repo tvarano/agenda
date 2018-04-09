@@ -180,9 +180,8 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       ArrayList<ClassPeriod> unSignedClasses = new ArrayList<ClassPeriod>();
       for (int i = 0; i < sched.getClasses().length; i++) {
          ClassPeriod c = sched.getClasses()[i];
-         if (c.getSlot() != RotationConstants.LUNCH && c.getSlot() != RotationConstants.PASCACK)
-            if (sched.getGpaClasses().indexOf(sched.getClasses()[i]) < 0)
-               unSignedClasses.add(sched.getClasses()[i]);
+         if (isApplicable(c) && !gpaContains(c))
+            unSignedClasses.add(sched.getClasses()[i]);
       }
       if (unSignedClasses.isEmpty()) {
          JOptionPane.showMessageDialog(null, "There are no unused\n"
@@ -196,6 +195,20 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       
       JOptionPane.showMessageDialog(null, sl, "Select a Class", JOptionPane.QUESTION_MESSAGE, null);
       return sl.getSelectedValue();
+   }
+   
+   private boolean gpaContains(ClassPeriod c) {
+      for (int j = 0; j < sched.getGpaClasses().size(); j++)
+         if (sched.getGpaClasses().get(j).equals(c))
+               return true;
+      return false;
+   }
+   
+   private static boolean isApplicable(ClassPeriod c) {
+      int sl = c.getSlot();
+      return sl != RotationConstants.LUNCH && sl != RotationConstants.PASCACK 
+            && sl != RotationConstants.PASCACK_STUDY_1 && sl != RotationConstants.PASCACK_STUDY_2;
+            
    }
    
    private void addSlot(ClassPeriod c, boolean hasZero) {
