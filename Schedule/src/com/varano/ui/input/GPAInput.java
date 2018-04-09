@@ -328,7 +328,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    }
 
    public double calculateUnWeightedGPA() {
-      int sum = 0;
+      double sum = 0;
       for (GPAInputSlot g : slots) {
          if (!g.canCreate()) {
             if (debug) System.out.println(g);
