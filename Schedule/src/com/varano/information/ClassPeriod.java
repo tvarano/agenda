@@ -174,7 +174,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return duration;
    }
    public String getTrimmedRoomNumber() {
-      return trimString(getRoomNumber(), 10);
+      return trimString(getRoomNumber());
    }
    public String getRoomNumber() {
       return roomNumber;

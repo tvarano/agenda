@@ -274,7 +274,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public Time timeUntilNextClass() {
       if (checkInSchool())
          return currentTime.getTimeUntil(findNextClass().getStartTime());
-      return new Time();
+      return Time.NO_TIME;
    }
    
    public Time timeUntilSchool() {
