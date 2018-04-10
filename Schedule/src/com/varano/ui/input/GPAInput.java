@@ -1,5 +1,4 @@
 //Thomas Varano
-//[Program Descripion]
 //Dec 18, 2017
 
 package com.varano.ui.input;

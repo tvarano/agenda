@@ -78,7 +78,7 @@ public class CurrentInfo extends JTextPane {
                   (hour) ? " hour and " : "",
                   parentPanel.getTimeLeft().getMinute()+"",
                   (parentPanel.getTimeLeft().getMinute() == 1) ? " minute" + newLn : " minutes"+newLn,
-                  "In "+c.getRoomNumber()+newLn,
+                  (c.getRoomNumber().equals(ClassPeriod.NO_ROOM)) ? "" : "In "+c.getRoomNumber()+newLn,
                   newLn,
                   c.getStartTime() + " - " + c.getEndTime()+".\t",
                   "The class is " + durationHour +c.getDuration().getMinute() + " minutes long." 
@@ -89,7 +89,7 @@ public class CurrentInfo extends JTextPane {
                return new String[] {"ERROR"};
             return new String[] {
                   "You are in between classes."+newLn,
-                  parentPanel.getParentPane().findNextClass().getName(),
+                  parentPanel.getParentPane().findNextClass().getTrimmedName(),
                   " is next" + newLn +"in ",
                   ""+parentPanel.getParentPane().timeUntilNextClass().getMinute(),
                   " minutes."

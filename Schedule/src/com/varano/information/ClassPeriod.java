@@ -174,7 +174,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return duration;
    }
    public String getTrimmedRoomNumber() {
-      return trimString(getRoomNumber());
+      return trimString(getRoomNumber(), 10);
    }
    public String getRoomNumber() {
       return roomNumber;
@@ -280,7 +280,6 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return honors;
    }
    public void setHonors(boolean honors) {
-//      System.out.println(name + "SETTING HONORS");
       this.honors = honors;
    }
 

@@ -141,13 +141,18 @@ public class CurrentClassPane extends JPanel
             if (!notifUp) {
                try {
                   Agenda.log("showing notification");
-                  String nameText = (parentPane.findClassAfter() == null)
+                  ClassPeriod after = parentPane.findClassAfter();
+                  String nameText = (after == null)
                         ? ""
-                        : parentPane.findClassAfter().getTrimmedName() + " is next.";
+                        : after.getTrimmedName() + " is next";
+                  String roomText = (after == null || after.getRoomNumber().equals(ClassPeriod.NO_ROOM)) 
+                        ? "" : "\nIn " + after.getTrimmedRoomNumber();
+                  parentPane.findClassAfter().getRoomNumber();
                   notif = new com.varano.ui.Notif(parentPane.getParentManager().getParent().getFrame(), 
-                        "There are 5 Minutes Left.\n"+nameText,
+                        "There are 5 Minutes Left.\n"+nameText + roomText,
                         ImageIO.read(ResourceAccess
                               .getResourceStream("Agenda Logo.png")));
+                  if (roomText.equals("")) notif.setPreferredSize(Notif.TWO_LINE_SIZE);
                   notifUp = true;
                   parentPane.getParentManager().getParent().revalidate();
                   parentPane.getParentManager().getParent().requestFocus();
@@ -167,8 +172,15 @@ public class CurrentClassPane extends JPanel
       notif = null;
    }
    
-   public Dimension getMinimumSize() {
-      return new Dimension(100, 200);
+//   public Dimension getMinimumSize() {
+//      return new Dimension(100, 200);
+//   }
+   public Dimension getContentSize() {
+      return info.getPreferredScrollableViewportSize();
+   }
+   public double getContentHeight() {
+      if (debug) System.out.println("content height " +getContentSize().getHeight()); 
+      return getContentSize().getHeight() <= 0 ? getPreferredSize().getHeight() : getContentSize().getHeight();
    }
    public Dimension getPreferredSize() {
       return new Dimension((int) parentPane.getPreferredSize().getWidth(), 250);

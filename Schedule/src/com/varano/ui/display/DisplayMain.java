@@ -61,7 +61,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -72,6 +72,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       addComponents();
       update();
       requestFocus();
+      revalidate();
+      moveDivider();
       if (debug) {
          System.out.println("DELAY_EVEN TIMESSSS");
          for (ClassPeriod c : Rotation.DELAY_EVEN.getTimes())
@@ -81,6 +83,14 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       timer = new Timer(5000, this);
       timer.start();
       Agenda.log("display main fully initialized");
+   }
+   
+   private void moveDivider() {
+      JSplitPane sp = (JSplitPane) getComponent(1);
+      if (debug) System.out.println("LOCATION "+sp.getDividerLocation());
+      if (debug) System.out.println("HEIIGHT "+ currentClassPane.getContentHeight());
+      if (sp.getDividerLocation() < currentClassPane.getContentHeight())
+         sp.setDividerLocation((int)currentClassPane.getContentHeight());
    }
    
    public Agenda getMain() {
@@ -148,8 +158,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void addComponents() {
       add(toolbar, BorderLayout.NORTH);
       JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, currentClassPane, infoSelector);
-      
       add(sp, BorderLayout.CENTER);
+      moveDivider();
    }
    
    public void hardStop() {
@@ -323,6 +333,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       
       if (showDisp) {
          currentClassPane.update();
+         moveDivider();
          repaint();
       } else currentClassPane.checkAndShowNotification();
       setUpdating(false);
