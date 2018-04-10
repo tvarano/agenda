@@ -26,8 +26,8 @@ public class FileHandler {
    public static String LOG_ROUTE;
    public static String FILE_ROUTE;
    public static String THEME_ROUTE, LAF_ROUTE;
-   public static String SCRIPT_ROUTE;
    public static String WELCOME_ROUTE;
+   public static String NOTIF_ROUTE;
    public static final String NO_LOCATION = "noLoc";
    
    public static void openURI(URI uri) {
@@ -123,31 +123,27 @@ public class FileHandler {
       RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
       LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
       FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
+      NOTIF_ROUTE = RESOURCE_ROUTE + "notif.txt";
       THEME_ROUTE = RESOURCE_ROUTE + "theme.txt";
       LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
-      SCRIPT_ROUTE = RESOURCE_ROUTE + "Restart.sh";
       WELCOME_ROUTE = RESOURCE_ROUTE + "showWelcome.txt"; 
    }
+   
+   public static final String TRUE = "t", FALSE = "f";
 
    public synchronized static boolean createFiles() {
       boolean created = new File(RESOURCE_ROUTE).mkdirs();
       Agenda.log("files created");
       transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
-      BufferedWriter bw;
       try {
-         if (new File(THEME_ROUTE).createNewFile()) {
-            bw = new BufferedWriter(new FileWriter(THEME_ROUTE));
-            bw.write(UIHandler.themes[0]);
-            bw.close();
-         }
-         if (new File(LAF_ROUTE).createNewFile()) {
-            bw = new BufferedWriter(new FileWriter(LAF_ROUTE));
-            bw.write(UIManager.getSystemLookAndFeelClassName());
-            bw.close();
-         }
-         if (new File(WELCOME_ROUTE).createNewFile()) {
+         if (new File(THEME_ROUTE).createNewFile())
+            write(UIHandler.themes[0], THEME_ROUTE);
+         if (new File(LAF_ROUTE).createNewFile()) 
+            write(UIManager.getSystemLookAndFeelClassName(), LAF_ROUTE);
+         if (new File(WELCOME_ROUTE).createNewFile()) 
             writeWelcomeTrue();
-         }
+         if (new File(NOTIF_ROUTE).createNewFile())
+            write(TRUE, NOTIF_ROUTE);
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
@@ -155,8 +151,12 @@ public class FileHandler {
    }
    
    public static void writeWelcomeTrue() throws IOException {
-      BufferedWriter bw = new BufferedWriter(new FileWriter(WELCOME_ROUTE));
-      bw.write("t");
+      write(TRUE, WELCOME_ROUTE);
+   }
+   
+   public static void write(String text, String route) throws IOException{      
+      BufferedWriter bw = new BufferedWriter(new FileWriter(route));
+      bw.write(text);
       bw.close(); 
    }
 

@@ -135,6 +135,7 @@ public class CurrentClassPane extends JPanel
    }
 
    public void checkAndShowNotification() {
+      if (!parentPane.getParentManager().getParent().shouldShowNotif()) return;
       if (inSchool) {
          if (getTimeLeft().getTotalMins() == 5) {
             if (classPeriod.equals(RotationConstants.getNoSchoolClass())) return;
@@ -155,7 +156,7 @@ public class CurrentClassPane extends JPanel
                   if (roomText.equals("")) notif.setPreferredSize(Notif.TWO_LINE_SIZE);
                   notifUp = true;
                   parentPane.getParentManager().getParent().revalidate();
-                  parentPane.getParentManager().getParent().requestFocus();
+//                  parentPane.getParentManager().getParent().requestFocus();
                } catch (IOException e) {
                   Agenda.logError("error in showing notification", e);
                }

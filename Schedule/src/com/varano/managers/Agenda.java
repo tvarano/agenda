@@ -52,6 +52,7 @@ public class Agenda extends JPanel
    private PanelManager manager;
    private JFrame parentFrame;
    private MenuBar bar;
+   private boolean showNotif;
    public static boolean statusU;
    public static final boolean fullRelease = true;
    public static final boolean isApp = System.getProperty("user.dir").indexOf(".app") > 0; 
@@ -62,7 +63,12 @@ public class Agenda extends JPanel
       FileHandler.initialFileWork();
       log(getClass().getSimpleName()+" began initialization");
 
-      UIHandler.init();      
+      UIHandler.init();  
+      try {
+         showNotif = readForNotif();
+      } catch (IOException e) {
+         showNotif = false;
+      }
       this.parentFrame = frame;
       bar = UIHandler.configureMenuBar(frame, this);
       manager = new PanelManager(this, bar);
@@ -85,12 +91,12 @@ public class Agenda extends JPanel
          String line = br.readLine();
          br.close();
          Agenda.log("show welcome: " + line);
-         if (line == null || line.equals("t")) {
+         if (line == null || line.equals(FileHandler.TRUE)) {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(FileHandler.WELCOME_ROUTE)));
             if (UIHandler.showWelcome())
-               bw.write("t");
+               bw.write(FileHandler.TRUE);
             else
-               bw.write("f");
+               bw.write(FileHandler.FALSE);
             bw.close();
          }
       } catch (IOException e) {
@@ -136,10 +142,8 @@ public class Agenda extends JPanel
             }
          });
          Desktop.getDesktop().addAppEventListener(new AppForegroundListener() {
-
             @Override
             public void appMovedToBackground(AppForegroundEvent arg0) {}
-
             @Override
             public void appRaisedToForeground(AppForegroundEvent arg0) {
                manager.update();
@@ -148,10 +152,32 @@ public class Agenda extends JPanel
       }
    }
    
+   private boolean readForNotif() throws IOException {
+      BufferedReader br = null;
+      try {
+         br = new BufferedReader(new FileReader(FileHandler.NOTIF_ROUTE));
+         return br.readLine().equals(FileHandler.TRUE);
+      } finally {
+         br.close();
+      }
+   }
+   
    public PanelManager getManager() {
       return manager;
    }
-   
+   public boolean shouldShowNotif() {
+      return showNotif;
+   }
+   public void setShowNotif(boolean b) {
+      showNotif = b;
+      try {
+         if (showNotif)
+         FileHandler.write(FileHandler.TRUE, FileHandler.NOTIF_ROUTE);
+         else FileHandler.write(FileHandler.FALSE, FileHandler.NOTIF_ROUTE);
+      } catch (IOException e) {
+         Agenda.logError("cannot write notification showing", e);
+      }
+   }
    public MenuBar getBar() {
       return bar;
    }

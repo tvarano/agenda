@@ -39,6 +39,7 @@ public class DataInputSlot extends JPanel implements ActionListener
    private String beginName;
    private Container parentPanel;
    private JCheckBox labBox;
+   private String nameContent;
    private ClassPeriod dataHolder;
    private boolean hasParent, hasLab, removable, labFriendly;
    private JTextField[] promptFields;
@@ -106,6 +107,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       addLabel(currentLabel, labelLeft);
       
       JTextField currentField = new JTextField(c.getName());      //class name field
+      nameContent = currentField.getText().toLowerCase();
       currentField.addKeyListener(new KeyListener() {
          @Override
          public void keyPressed(KeyEvent arg0) {}
@@ -202,9 +204,15 @@ public class DataInputSlot extends JPanel implements ActionListener
    private void checkScience() {
       String text = promptFields[0].getText().toLowerCase();
       String[] sciences = {"chem", "science", "bio", "physics"};
-      for (String s : sciences)
-         if (text.contains(s))
-            labBox.setSelected(true);      
+      for (String s : sciences) {
+         if (text.contains(s)) {
+            if (!nameContent.contains(s))
+               labBox.setSelected(true);
+         } else 
+            if (nameContent.contains(s))
+               labBox.setSelected(false);
+      }
+      nameContent = text;
    }
    
    private void checkHonorsText() {
@@ -219,9 +227,13 @@ public class DataInputSlot extends JPanel implements ActionListener
    public ClassPeriod createClass() {
       forceNames();
       checkHonorsText();
-      if (hasParent && hasLab) {
-         ((DataInput) parentPanel).addLab(slotNumber);
-         if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
+      if (hasParent) {
+         if (hasLab) {
+            ((DataInput) parentPanel).addLab(slotNumber);
+            if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
+         } else {
+            ((DataInput) parentPanel).removeLab(slotNumber);
+         }
       }
       ClassPeriod retval = new ClassPeriod(slotNumber,
             promptFields[0].getText(), promptFields[1].getText(),

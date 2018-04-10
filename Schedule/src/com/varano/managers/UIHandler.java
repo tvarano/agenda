@@ -200,9 +200,8 @@ public final class UIHandler {
 	   final int w = 300;
 	   final int h = 300;
 	   JFrame f = new JFrame("Preferences");
-	   JPanel p = new JPanel();
+	   JPanel p = new JPanel(new BorderLayout());
 	   p.setPreferredSize(new Dimension(w, h));
-	   p.setLayout(new BorderLayout());
 	   JPanel top = new JPanel();
 	   JLabel l = new JLabel("Input your preferences"/*, com.varano.resources.ResourceAccess.getImage("Agenda Logo.png"), 
 	         javax.swing.SwingConstants.LEADING*/);
@@ -210,9 +209,9 @@ public final class UIHandler {
 	   top.add(l);
 	   top.setPreferredSize(new Dimension(w,30));
 	   p.add(top, BorderLayout.NORTH);
+	   JPanel content = new JPanel(new BorderLayout());
 	   
-	   JPanel center = new JPanel();
-	   center.setLayout(new GridLayout(1, 2));
+	   JPanel center = new JPanel(new GridLayout(1, 2));
 	   JList<LookChooser> lookList = new JList<LookChooser>();
 	   lookList.setBorder(getUnFormattedTitleBorder("Look and Feel"));
 	   DefaultListModel<LookChooser> lookModel = new DefaultListModel<LookChooser>();
@@ -243,10 +242,20 @@ public final class UIHandler {
 	         themeList.setSelectedValue(tc, true);
 	   }
 	   center.add(themeList);
-	   p.add(center, BorderLayout.CENTER);
+	   content.add(center, BorderLayout.CENTER);
 	   
-	   JPanel bottom = new JPanel();
-	   bottom.setLayout(new GridLayout(1,2));
+	   JCheckBox notifCheck = new JCheckBox("Show Notifications");
+	   notifCheck.setSelected(age.shouldShowNotif());
+	   notifCheck.setFont(UIHandler.getButtonFont());
+	   notifCheck.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	         age.setShowNotif(notifCheck.isSelected());
+	      }
+	   });
+	   content.add(notifCheck, BorderLayout.SOUTH);
+	   p.add(content, BorderLayout.CENTER);
+	   
+	   JPanel bottom = new JPanel(new GridLayout(1,2));
 	   JButton b = new JButton("Close");
 	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	   b.addActionListener(new ActionListener() {
