@@ -85,8 +85,9 @@ public class DataInputSlot extends JPanel implements ActionListener
       DataInputSlot in = new DataInputSlot(RotationConstants.NO_SLOT, null);
       in.setLabFriendly(false);
       
-      if (JOptionPane.showOptionDialog(null, in, "CREATE", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
-            null, null, null) == 0)
+      if (JOptionPane.showOptionDialog(null, in, "Create New Class",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+            null, null) == 0)
          return in.createClass();
       if (debug) System.out.println("returning null");
       return null;
@@ -108,6 +109,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       
       JTextField currentField = new JTextField(c.getName());      //class name field
       nameContent = currentField.getText().toLowerCase();
+      //checking the science requirement
       currentField.addKeyListener(new KeyListener() {
          @Override
          public void keyPressed(KeyEvent arg0) {}
@@ -162,6 +164,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       f.setPreferredSize((index == name) ? NAME_SIZE : (index == teacher) ? TEACH_SIZE : ROOM_SIZE);
       f.setFont(UIHandler.getInputFieldFont());
       add(f);   
+      //set the tooltip to the 
       f.setToolTipText(f.getText());
       f.addActionListener(new ActionListener() {
          @Override

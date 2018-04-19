@@ -61,7 +61,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -201,16 +201,18 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       addComponents();
       resume();
    }
-   
+   @Deprecated(since = "1.8")
    public void setBarText(String s) {
       parentManager.getTimeMenu().setLabel(s);
    }
   
+   @Deprecated(since = "1.8")
    public void setBarTime(Time timeLeft) {
       String prefix = "In "+ findCurrentClass() +" for: ";
       setBarText(prefix + timeLeft.durationString());
    }
    
+   @Deprecated(since = "1.8")
    public void configureBarTime(ClassPeriod c) {
       if (c != null) {
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
@@ -324,8 +326,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       if (debug) System.out.println("DISP 284 background: "+getBackground() + " and location " + 
             Integer.toHexString(getBackground().hashCode()));
       checkAndUpdateTime();
-      ClassPeriod current = findCurrentClass();
-      configureBarTime(current);
+      findCurrentClass();
+//      configureBarTime(current);
       if (infoSelector.getMemo().hasChanges()) {
          infoSelector.getMemo().save();
          writeMain();

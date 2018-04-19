@@ -223,7 +223,7 @@ public class Schedule implements Serializable
    public String classInfoString() {
       String retval = "";
       for (ClassPeriod c : classes)
-         retval += c.getInfo() + ", ";
+         retval += c.getInfo() + ", \n";
       return retval;
    }
    

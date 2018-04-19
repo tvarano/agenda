@@ -146,7 +146,9 @@ public class CurrentClassPane extends JPanel
                   String nameText = (after == null)
                         ? ""
                         : after.getTrimmedName() + " is next";
-                  String roomText = (after == null || after.getRoomNumber().equals(ClassPeriod.NO_ROOM)) 
+                  
+                  String roomText = (ClassPeriod.isNum(after.getRoomNumber())) ? "\nIn room " + after.getTrimmedRoomNumber() 
+                  : (after == null || after.getRoomNumber().equals(ClassPeriod.NO_ROOM)) 
                         ? "" : "\nIn " + after.getTrimmedRoomNumber();
                   parentPane.findClassAfter().getRoomNumber();
                   notif = new com.varano.ui.Notif(parentPane.getParentManager().getParent().getFrame(), 

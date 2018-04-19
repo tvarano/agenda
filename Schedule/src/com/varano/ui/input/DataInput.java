@@ -133,7 +133,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
-      JButton button = new JButton("Cancel");
+      JButton button = new JButton("Exit without Saving");
       button.setActionCommand("cancel");
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
@@ -141,7 +141,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       button.addActionListener(changeView());
       p.add(button);
       
-      button = new JButton("Save");
+      button = new JButton("Exit and Save");
       button.setToolTipText("Save Your Schedule");
       button.setSelected(true);
       button.setFont(UIHandler.getButtonFont());

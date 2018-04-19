@@ -242,7 +242,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
-      JButton button = new JButton("Close");
+      JButton button = new JButton("Save and Close");
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
       button.setToolTipText("Exit and Save");
@@ -271,7 +271,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    public void refreshGPA() {
       save();
       double gpa = calculateWeightedGPA();
-      double unw = calculateUnWeightedGPA();
+      double unw = (gpa == -1) ? -1 : calculateUnWeightedGPA();
       if (gpa == -1 || unw == -1)
          return;
       weightLabel.setText(weightedPrefix + gpa);

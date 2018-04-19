@@ -29,6 +29,8 @@ public final class Addresses {
       }
    }
    
+   public static final String NEWS = "http://agendapascack.x10host.com/updates/news.html";
+   
    public static final String GITHUB_ISSUES = SOURCE + "/issues?q=is%3Aopen+is%3Aissue";
    
    public static final String CANVAS = "https://pascack.instructure.com/";

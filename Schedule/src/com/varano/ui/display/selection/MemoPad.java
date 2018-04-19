@@ -27,9 +27,9 @@ public class MemoPad extends JTextPane implements FocusListener
       setBackground(UIHandler.quaternary);
       setForeground(UIHandler.foreground);
       setFont(UIHandler.font);
-      setParentClass(parentClass); setParentPanel(parentPanel);
       this.setMinimumSize(new Dimension(100,100));
       addFocusListener(this);
+      setParentPanel(parentPanel); setParentClass(parentClass); 
    }
 
    public void save() {
@@ -42,6 +42,7 @@ public class MemoPad extends JTextPane implements FocusListener
    }
    
    private void checkAccessibility() {
+      if (parentPanel == null) return;
       if (parentClass == null) {
          setText("Cannot Write Memo");
          parentPanel.setMemoBorderTitle("UnDeclared Class");

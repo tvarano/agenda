@@ -202,7 +202,7 @@ public class Notif extends JDialog {
       if (debug) System.out.println("diss");
       Agenda.log("removing notificaiton");
       dispose();
-      removalChecker.stop();
+      if (removalChecker != null) removalChecker.stop();
       removalChecker = null;
    }
    

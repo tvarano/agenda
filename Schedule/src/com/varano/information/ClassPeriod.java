@@ -176,6 +176,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    public String getTrimmedRoomNumber() {
       return trimString(getRoomNumber());
    }
+   public static Boolean isNum(String s) {
+      for (char c : s.toCharArray())
+         if (c < '0' || c > '9')
+            return false;
+      return true;
+   }
    public String getRoomNumber() {
       return roomNumber;
    }
@@ -235,21 +241,27 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    
    public String getLetterGrade() {
-      int rg = (int) Math.round(getGrade());
-      int grade = 60;
-      for (int i = GPAInput.letterGrades.length - 1; i >= 0; i--) {
-         if (rg <= grade)
-            return GPAInput.letterGrades[i];
-         if (i % 3 == 0)
-            grade += 3;
-         else if (i % 3 == 1)
-            grade += 4;
-         else
-            grade += 3;
-      }      
-      return "ERROR IN GRADING";
+      return findLetterGrade(grade);
+   }
+   
+   public static void main(String[] args) {
+      System.out.println(findLetterGrade(77));
+      
    }
 
+   private static String findLetterGrade(double grd) {
+      int rg = (int) Math.round(grd);
+      int grade = 97;
+      for (int i = 0; i < GPAInput.letterGrades.length - 1; i++) {
+         if (rg >= grade)
+            return GPAInput.letterGrades[i];
+         int lastDig = grade % 10;
+         if (lastDig == 7) grade -= 4;
+         else grade -= 3;
+      }
+      return GPAInput.letterGrades[GPAInput.letterGrades.length - 1];
+   }
+   
    public void setGrade(double grade) {
       this.grade = grade;
    }

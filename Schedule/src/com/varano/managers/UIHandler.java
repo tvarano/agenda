@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 import java.util.zip.DataFormatException;
 
 import javax.swing.AbstractButton;
@@ -55,6 +56,7 @@ import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.resources.Addresses;
 import com.varano.resources.ResourceAccess;
+import com.varano.resources.ioFunctions.OrderUtility;
 import com.varano.resources.ioFunctions.SchedWriter;
 import com.varano.ui.MutableColor;
 
@@ -250,6 +252,7 @@ public final class UIHandler {
 	   notifCheck.addActionListener(new ActionListener() {
 	      public void actionPerformed(ActionEvent e) {
 	         age.setShowNotif(notifCheck.isSelected());
+	         Agenda.log("show notifications toggled to " + notifCheck.isSelected());
 	      }
 	   });
 	   content.add(notifCheck, BorderLayout.SOUTH);
@@ -316,14 +319,13 @@ public final class UIHandler {
             + "<li>To edit grades, click File > View GPA.</li>"
             + "<li>To change the look of the program, either go to preferences (\u2318 + ,) or the View Menu"
             + "</ul>"
-            + "<br> - Thomas Varano"
+            + "<br> - Thomas Varano, Author"
             + "</html>";
       javax.swing.JEditorPane text = new javax.swing.JEditorPane("text/html", html);
       text.setFont(font);
       HTMLEditorKit kit = new HTMLEditorKit();
       text.setEditorKit(kit);
-      kit.getStyleSheet().addRule("body {color:#000; font-family:"
-            + font.getFamily() + "; margin: 4px; }");
+      kit.getStyleSheet().addRule("body {color:#000; font-family:" + font.getFamily() + "; margin: 4px; }");
       JPanel content = new JPanel(new BorderLayout());
       Document doc = kit.createDefaultDocument();
       text.setDocument(doc);
@@ -341,7 +343,7 @@ public final class UIHandler {
    }
    
    public static void main(String[] args) {
-      showWelcome();
+      showNews();
    }
    
    public static void showAbout() {
@@ -355,8 +357,29 @@ public final class UIHandler {
             + "<h3>Thomas Varano : Author"
             + "<br><br>Viktor Nakev : Icon Designer"
             + "<br><br>Matthew Ghedduzi : Alpha Tester"
-//            + "<br><br>Michael Ruberto : Conceptual Designer"
+            + "<br><br>Michael Ruberto : Enforcer"
             + "</html>";
+      showSimplePopUp(html, "About "+Agenda.APP_NAME);
+   }
+
+   public static void showNews() {
+      String html;
+      try {
+         html = OrderUtility.futureCall(2000, new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+               return ResourceAccess.readHtml(Addresses.createURL(Addresses.NEWS));
+            }
+         }, "read news");
+      } catch (Exception e) {
+         Agenda.logError("error retrieving news", e);
+         html = "<html> <body> <h1> Unable to load News."
+               + "<br> Check your internet Connection.</h1></body></html>";
+      }
+      showSimplePopUp(html, Agenda.APP_NAME + " News");
+   }
+   
+   private static void showSimplePopUp(String html, String title) {
       javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
       content.setFont(font);
       HTMLEditorKit kit = new HTMLEditorKit();
@@ -369,15 +392,24 @@ public final class UIHandler {
       content.setOpaque(false);
       content.setEditable(false);
       JOptionPane.showMessageDialog(null, 
-            content, "About " + Agenda.APP_NAME, 
+            content, title, 
             JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getIcon("Agenda Logo.png"));
    }
-
+   
    public static void setRotation(Agenda age, com.varano.information.constants.Rotation r) {
       age.getManager().setRotation(r);
    }
    
-   public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
+   /**
+    * @deprecated Not using time bar
+    * @return
+    */
+   @Deprecated(since = "1.8")
+   public static int timeBarIndex() {
+      return 0;
+   }
+   
+   public static MenuBar configureMenuBar(JFrame frame, Agenda age) {
       if (Desktop.isDesktopSupported()) {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
@@ -392,11 +424,14 @@ public final class UIHandler {
             } 
          });
       }
-	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
-      Menu m = new Menu("Time Left In Class: ");
-      bar.add(m);
+      Menu m;
       
+      /*//not using the time bar anymore as of 1.8f
+      //---------------------------Time Bar--------------------------
+      m = new Menu("Time Left In Class: ");
+      bar.add(m);
+      */
       //---------------------------File Bar--------------------------
       m = new Menu("File");
            
@@ -417,6 +452,13 @@ public final class UIHandler {
          }
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
+      
+      //Placebo button. It autosaves
+      mi = m.add(new MenuItem("Save"));
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_S));
+      
+      m.addSeparator();
+      
       //to test day checking and rotation updating
       if (debug) {
          mi = m.add(new MenuItem("TEST DAYCHECK"));
@@ -495,15 +537,10 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (checkIntentions("Clear Preferences (Look and Theme).")) {
-               BufferedWriter bw;
                try {
                   setLAF0(UIManager.getSystemLookAndFeelClassName());
-                  bw = new BufferedWriter(new FileWriter(FileHandler.THEME_ROUTE));
-                  bw.write(themes[0]);
-                  bw.close();
-                  bw = new BufferedWriter(new FileWriter(FileHandler.LAF_ROUTE));
-                  bw.write(UIManager.getSystemLookAndFeelClassName());
-                  bw.close();
+                  FileHandler.write(themes[0], FileHandler.THEME_ROUTE);
+                  FileHandler.write(UIManager.getSystemLookAndFeelClassName(), FileHandler.LAF_ROUTE);
                   setColors();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
@@ -584,6 +621,13 @@ public final class UIHandler {
       bar.add(m);
       // ---------------------------Help Bar--------------------------
       m = new Menu("Help");
+      mi = m.add(new MenuItem("Agenda News"));
+      mi.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            showNews();
+         }
+      });
+      
       mi = m.add(new MenuItem("Error Help"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -650,6 +694,7 @@ public final class UIHandler {
          }
       });
       bar.setHelpMenu(m);
+      
       frame.setMenuBar(bar);
       if (debug) System.out.println("BARUI "+ bar);
       System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Agenda"); 
