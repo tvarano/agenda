@@ -154,12 +154,12 @@ public final class RotationConstants
       return toDelay(r, false, Rotation.DELAY_R1);
    }
    
-   public static Rotation toHalf(Rotation r, boolean quiet, Rotation preferred) {
+   public static Rotation toHalf(Rotation r, boolean quiet, Rotation failSafe) {
       Rotation ret = toHalf0(r);
       if (ret.equals(Rotation.INCORRECT_PARSE)) {
          if (!quiet)
             ErrorID.showUserError(ErrorID.WRONG_HALF_SELECTED);
-         return preferred;
+         return failSafe;
       }
       return ret;      
    }

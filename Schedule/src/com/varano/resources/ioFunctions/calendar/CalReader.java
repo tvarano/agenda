@@ -87,6 +87,10 @@ public class CalReader {
                return RotationConstants.toDelay(RotationConstants
                      .getRotation(s.substring(0, s.indexOf('(') - 1)));
             }
+            if (s.contains("Parcc") ) {
+               Agenda.log("ROTATION: special read from parcc request");
+               return Rotation.SPECIAL;
+            }
             if (RotationConstants.getRotation(s) != null) {
                Agenda.log("ROTATION: " + s + " read from internet");
                return RotationConstants.getRotation(s);
