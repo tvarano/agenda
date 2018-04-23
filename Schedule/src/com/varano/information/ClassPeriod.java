@@ -56,7 +56,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    
    public ClassPeriod(int slot, String name, String teacher, String roomNumber) {
-      this(slot, name, new Time(), new Time(), teacher, roomNumber);
+      this(slot, name, Time.NO_TIME, Time.NO_TIME, teacher, roomNumber);
    }
    
    public ClassPeriod(int slot, String name, Time startTime, Time endTime) {
@@ -76,19 +76,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       this(anchor.getSlot(), anchor.getName(), anchor.getStartTime(), anchor.getEndTime(), anchor.getTeacher(),
             anchor.getRoomNumber());
    }
-   
-   public void calculateDuration() {
-      duration = Time.calculateDuration(startTime, endTime);        
-   }
-   public boolean contains(Time t) {
-      return (t.getTotalMins() >= startTime.getTotalMins() && t.getTotalMins() < endTime.getTotalMins());
-   }
    public ClassPeriod() {
-      this(" ", new Time(), new Time());
+      this(" ");
    }
    
    public ClassPeriod(String name) {
-      this(name, new Time(), new Time());
+      this(name, Time.NO_TIME, Time.NO_TIME);
    }
 
    public static String trimString(String s) {
@@ -107,6 +100,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
             + startTime + "-" + endTime + ") Rm." + roomNumber + ", teacher= "
             + teacher + ", grade= " + getGrade() + ", honors= " + honors + "]";
 
+   }
+   public void calculateDuration() {
+      duration = Time.calculateDuration(startTime, endTime);        
+   }
+   public boolean contains(Time t) {
+      return (t.getTotalMins() >= startTime.getTotalMins() && t.getTotalMins() < endTime.getTotalMins());
    }
    public String memoInfo() {
       return getClass().getName() + "[" + name + ", memo = "+getMemo() + "]";

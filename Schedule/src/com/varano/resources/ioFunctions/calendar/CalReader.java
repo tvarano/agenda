@@ -16,8 +16,8 @@ import java.util.Scanner;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
+import com.varano.managers.OrderUtility;
 import com.varano.resources.ioFunctions.AlertReader;
-import com.varano.resources.ioFunctions.OrderUtility;
 
 public class CalReader {
    private static URL rotationDataSite;

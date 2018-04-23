@@ -15,7 +15,6 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 
 import com.varano.resources.Addresses;
-import com.varano.resources.ioFunctions.OrderUtility;
 
 public class UpdateHandler {
    

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import com.varano.information.Time;
 import com.varano.managers.Agenda;
+import com.varano.managers.OrderUtility;
 import com.varano.resources.Addresses;
-import com.varano.resources.ioFunctions.OrderUtility;
 
 //Thomas Varano
 //[Program Descripion]

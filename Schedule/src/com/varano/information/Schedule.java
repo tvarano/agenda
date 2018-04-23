@@ -116,7 +116,7 @@ public class Schedule implements Serializable
    public void sort() {
       Agenda.log(getName() + " sorted");
       if (debug) System.out.println("sched 118 SORTING SORTING SORTING SORTING AYAYAYAYAYAYAYAY");
-      setClasses(com.varano.resources.ioFunctions.OrderUtility.reorderClasses(Rotation.R1, classes));  
+      setClasses(com.varano.managers.OrderUtility.reorderClasses(Rotation.R1, classes));  
    }
    
    public void setLunchLab(Rotation r) {

@@ -6,8 +6,8 @@ import java.time.DayOfWeek;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Time;
 import com.varano.managers.Agenda;
+import com.varano.managers.OrderUtility;
 import com.varano.resources.Addresses;
-import com.varano.resources.ioFunctions.OrderUtility;
 
 //Thomas Varano
 //Sep 3, 2017
@@ -181,7 +181,7 @@ public enum Rotation
          case RotationConstants.DELAY_ARR : 
             return new int[] {6, lunch, 2, 4};
          case RotationConstants.SPECIAL :
-            return new int[] {1};
+            return new int[] {RotationConstants.SPECIAL_OFFLINE_INDEX};
          default :
             return new int[0];
       }
@@ -240,9 +240,10 @@ public enum Rotation
             name = "Pascack Period";
          else if (slots[i] == RotationConstants.PASCACK_STUDY_1)
             name = RotationConstants.pascackStudyName;
-         else if (slots[i] == RotationConstants.PASCACK_STUDY_2) {
+         else if (slots[i] == RotationConstants.PASCACK_STUDY_2) 
             name = RotationConstants.pascackStudyName;
-         }
+         else if (slots[i] == RotationConstants.SPECIAL_OFFLINE_INDEX)
+            name = RotationConstants.getSpecialOffline().getName();
          else 
             name = "Period " + slots[i];
          retval[i].setName(name); retval[i].setStartTime(
