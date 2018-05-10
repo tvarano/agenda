@@ -66,7 +66,7 @@ public class CurrentInfo extends JTextPane {
          if (situation == IN_CLASS) {
             boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
             String durationHour = (c.getDuration().getHour24()) > 0 ? c.getDuration().getHour24()+ " hour, " : "";
-            if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
+            if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT)
                return new String[] {"There is no school today."};
             else if (c.getSlot() == RotationConstants.SPECIAL_OFFLINE_INDEX)
                return new String[] {RotationConstants.getSpecialOffline().getName()};
@@ -111,7 +111,7 @@ public class CurrentInfo extends JTextPane {
       
       public String[] getStyles() {
          if (situation == IN_CLASS) {
-            if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE || c.getSlot() == RotationConstants.SPECIAL_OFFLINE_INDEX)
+            if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT || c.getSlot() == RotationConstants.SPECIAL_OFFLINE_INDEX)
                return new String[] {"h1"};
              return new String[] {
                   "regular",

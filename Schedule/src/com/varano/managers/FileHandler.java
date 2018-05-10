@@ -10,10 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Scanner;
 
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.varano.information.constants.ErrorID;
@@ -95,27 +93,6 @@ public class FileHandler {
             ErrorID.showError(e1, true);
          }
      }
-   }
-   
-   public static void sendEmail() {
-      int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+ 
-            Addresses.CONTACT_EMAIL, 
-            Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
-            new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
-      if (choice == 2 || choice == -1) 
-         return;
-      else {
-         if (Desktop.isDesktopSupported()) {
-            try {
-               if (choice == 0)
-                  Desktop.getDesktop().mail(new URI("mailto:"+Addresses.CONTACT_EMAIL+"?subject=Agenda%20Contact"));
-               else
-                  Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
-            } catch (IOException | URISyntaxException e1) {
-               ErrorID.showError(e1, true);
-            }
-         }
-      }
    }
 
    public static void initFileNames(String envelop) {

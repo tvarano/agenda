@@ -73,7 +73,7 @@ public class SchedReader {
       int tempIndex = 0;
       for (int index = 0; index < ret.length; index++) {
          skip = false;
-         for (int i : RotationConstants.SPECIAL_CLASSES)
+         for (int i : RotationConstants.TIME_INSENSITIVE_CLASSES)
             if (ret[index].getSlot() == i) {
                skip = true;
             }

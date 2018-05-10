@@ -119,7 +119,9 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       calculateDuration();
    }
    public String toString() {
-      return (showName || !canShowPeriod) ? getTrimmedName() : "Period "+slot;
+      if (debug) System.out.println(getName() + " canShowPeriod is " + canShowPeriod + 
+            ", showing: "+ ((!canShowPeriod || showName) ? getTrimmedName() : "Period "+slot));
+      return (canShowPeriod && !showName) ? "Period "+slot : getTrimmedName() ;
    }
    
    public String formattedString(Font font, int preferredSize) {
@@ -244,7 +246,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    
    public static void main(String[] args) {
-      System.out.println(findLetterGrade(77));
+      System.out.println(RotationConstants.getParccPeriod(Time.NO_TIME, Time.NO_TIME).canShowPeriod);
       
    }
 

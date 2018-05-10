@@ -51,7 +51,6 @@ public class Notif extends JDialog {
       setUndecorated(true);
       this.millisToShow = millisToShow;
       content = new Content(message, border, icon, DEF_PREF_SIZE);
-      add(content);
       setPreferredSize(THREE_LINE_SIZE);      
       init0();
    }
@@ -181,6 +180,7 @@ public class Notif extends JDialog {
       setAlwaysOnTop(true);
       setFocusable(false);
       setAutoRequestFocus(false);
+      this.setFocusableWindowState(false);
       pack();
       setResizable(false);
       timeStarted = System.currentTimeMillis();

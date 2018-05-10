@@ -61,7 +61,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -216,7 +216,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public void configureBarTime(ClassPeriod c) {
       if (c != null) {
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
-         if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
+         if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT)
             setBarText("No School");
       }
        else if (checkInSchool())

@@ -108,6 +108,7 @@ public final class UIHandler {
       UIManager.put("SplitPane.dividerSize", divThickness);
 	   }
 	
+	public static final int FIELD_HEIGHT = 25;
 	
 	private static class ThemeChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
@@ -292,7 +293,7 @@ public final class UIHandler {
 	/**
 	 * the themes available for the application
 	 */
-	public static final String[] themes = {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Bare"}; 
+	public static final String[] themes = {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Grayscale"}; 
 
 	/**
 	 * asks if the user would wish to continue to pursue the action specified
@@ -646,7 +647,7 @@ public final class UIHandler {
                   JOptionPane.INFORMATION_MESSAGE, null,
                   new String[]{"Close", "Open Log", "Send Email"}, "Close");
             if (choice == 2)
-               FileHandler.sendEmail();
+               EmailHandler.showSendPrompt();
             else if (choice == 1)
                FileHandler.openDesktopFile(FileHandler.LOG_ROUTE);
          }
@@ -689,7 +690,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            FileHandler.sendEmail();
+            EmailHandler.showSendPrompt();
          }
       });
       bar.setHelpMenu(m);

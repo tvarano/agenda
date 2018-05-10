@@ -210,9 +210,9 @@ public class Agenda extends JPanel
    }
    
    private static void createAndShowGUI() {
-      long start = System.currentTimeMillis();
+      final long start = System.currentTimeMillis();
       JFrame frame = new JFrame("Agenda -- LOADING....");
-      int frameToPaneAdjustment = 22; 
+      final int frameToPaneAdjustment = 22; 
       
       // loading screen, frame adjustments
       // setting visible outside of the drawing, strings take just as long to draw anyways

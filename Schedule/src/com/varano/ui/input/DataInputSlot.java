@@ -30,11 +30,11 @@ import com.varano.managers.UIHandler;
 public class DataInputSlot extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;
-   private static final int WIDTH = 615, F_HEIGHT = 25;
+   private static final int WIDTH = 615;
 
-   private static final Dimension NAME_SIZE = new Dimension(115, F_HEIGHT);
-   private static final Dimension TEACH_SIZE = new Dimension(135, F_HEIGHT);
-   private static final Dimension ROOM_SIZE = new Dimension(53, F_HEIGHT);
+   private static final Dimension NAME_SIZE = new Dimension(115, UIHandler.FIELD_HEIGHT);
+   private static final Dimension TEACH_SIZE = new Dimension(135, UIHandler.FIELD_HEIGHT);
+   private static final Dimension ROOM_SIZE = new Dimension(53, UIHandler.FIELD_HEIGHT);
    private int slotNumber;
    private String beginName;
    private Container parentPanel;
@@ -222,7 +222,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       String text = promptFields[0].getText().toLowerCase();
       if (text.equalsIgnoreCase(beginName))
          return;
-      System.out.println(text);
+      if (debug) System.out.println(text);
       if (text.contains("honors") || text.contains("ap"))
          dataHolder.setHonors(true);
    }
@@ -243,8 +243,6 @@ public class DataInputSlot extends JPanel implements ActionListener
             promptFields[2].getText());
       retval.setBackgroundData(dataHolder);
       if (debug) System.out.println("created:" + retval.getInfo());
-      if (dataHolder.isHonors())
-         System.out.println(retval.getName() + " honors");
       return retval;
    }
    
