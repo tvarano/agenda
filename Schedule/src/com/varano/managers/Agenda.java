@@ -11,6 +11,8 @@ import java.awt.MenuBar;
 import java.awt.RenderingHints;
 import java.awt.desktop.AppForegroundEvent;
 import java.awt.desktop.AppForegroundListener;
+import java.awt.desktop.AppHiddenEvent;
+import java.awt.desktop.AppHiddenListener;
 import java.awt.desktop.ScreenSleepEvent;
 import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
@@ -148,6 +150,18 @@ public class Agenda extends JPanel
             public void appRaisedToForeground(AppForegroundEvent arg0) {
                manager.update();
             }
+         });
+         Desktop.getDesktop().addAppEventListener(new AppHiddenListener() {
+            @Override
+            public void appHidden(AppHiddenEvent arg0) {
+               manager.getDisplay().stop();
+            }
+            @Override
+            public void appUnhidden(AppHiddenEvent arg0) {
+               manager.getDisplay().resume();
+               manager.update();
+            }
+            
          });
       }
    }

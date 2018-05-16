@@ -32,7 +32,7 @@ import com.varano.information.constants.ErrorID;
 import com.varano.resources.Addresses;
 
 public class EmailHandler {
-   private static boolean debug = true;
+   private static boolean debug = false;
    
    public static void showThirdPartyUse() {
       Agenda.log("using third party email connection");
@@ -68,8 +68,11 @@ public class EmailHandler {
       JTextField retField = new JTextField();
       retField.setPreferredSize(new Dimension(225, UIHandler.FIELD_HEIGHT));
       JTextArea compose = new JTextArea();
-      compose.setPreferredSize(new Dimension(north.getWidth(), 200));
+      compose.setPreferredSize(new Dimension(content.getWidth(), 200));
+//      compose.setBorder(UIHandler.getTitledBorder("Message"));
       compose.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+//      compose.setOpaque(false);
+      compose.setBackground(Color.white);
       final int gap = 5;
       compose.setMargin(new Insets(gap, gap, gap, gap));
       compose.setTabSize(3);
@@ -83,7 +86,7 @@ public class EmailHandler {
             null, content, "Contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
             null, new String[] {"Cancel", "Send"}, "Cancel");
       
-      if (choice == 0) return false;
+      if (choice != 1) return false;
       
       String message = "CONTACT AT : "+retField.getText() + "\n\n"
             + "MESSAGE :\n"
@@ -93,22 +96,25 @@ public class EmailHandler {
       } catch (Exception e) {
          return false;
       }
+      Agenda.log("email sent");
       return true;
    }
    
    public static final String SUBJECT = "Agenda Contact";
    
    private static boolean connect() {
-      final long wait = 500;
+      final long start = System.currentTimeMillis();
+      final long wait = 3000;
          try {
             return OrderUtility.futureCall(wait, new Callable<Boolean>() {
                public Boolean call() {
                   try {
-                     getSession().getTransport().connect();
-                     Agenda.log("email connection successful");
+                     getSession().getTransport("smtp").connect();
+                     Agenda.log("email connection successful in "+ (System.currentTimeMillis() - start));
                      return true;
                   } catch (MessagingException e) {
                      Agenda.log("unable to connect for email");
+                     if (debug) Agenda.logError("email connection", e);
                      return false;
                   }   
                }
@@ -151,12 +157,6 @@ public class EmailHandler {
       // compose message
       long start = 0;
       try {
-         session.getTransport().connect();
-         System.out.println("IT IS GOOD");
-      } catch (MessagingException e1) {
-         e1.printStackTrace();
-      }
-      try {
          MimeMessage message = new MimeMessage(session);
          message.addRecipient(Message.RecipientType.TO,
                new InternetAddress(Addresses.CONTACT_EMAIL));
@@ -168,16 +168,15 @@ public class EmailHandler {
          Transport.send(message);
          if (debug) System.out.println("message sent successfully");
          if (debug) System.out.println("send took " + (System.currentTimeMillis() - start));
-         JOptionPane.showMessageDialog(null, "message sent");
       } catch (MessagingException e) {
          if (debug) System.out.println("send failed in " + (System.currentTimeMillis() - start));
-         JOptionPane.showMessageDialog(null, "failure");
          throw new RuntimeException(e);
-      }
+      } 
    }
    
    public static void main(String[] args) {
 //      System.out.println(connect());
+      Agenda.statusU = true;
       System.out.println(showSendPrompt());
    }
 }

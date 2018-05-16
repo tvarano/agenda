@@ -286,14 +286,15 @@ public final class UIHandler {
 	   f.getContentPane().add(p);
 	   f.pack();
 	   f.setLocationRelativeTo(age);
-	   f.setVisible(true);
 	   f.setResizable(false);
+	   f.setVisible(true);
 	}
 	
 	/**
 	 * the themes available for the application
 	 */
-	public static final String[] themes = {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Grayscale"}; 
+	public static final String[] themes = 
+	   {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Grayscale"}; 
 
 	/**
 	 * asks if the user would wish to continue to pursue the action specified
