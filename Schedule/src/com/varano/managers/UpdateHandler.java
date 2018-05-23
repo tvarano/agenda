@@ -27,7 +27,7 @@ public class UpdateHandler {
          OrderUtility.futureCall(toWait, UpdateHandler::download, "download updater jar");
          Agenda.log("calling jar: \"java -jar "+ DOWNLOAD_PATH + " " +  Addresses.getExec() + "\"");
 //         Process run = new ProcessBuilder("java", "-jar", DOWNLOAD_PATH, Addresses.getExec()).start();
-         Process run = new ProcessBuilder("open", DOWNLOAD_PATH, "--args", Addresses.getExec()).start();
+         Process run = new ProcessBuilder("open", DOWNLOAD_PATH).start();
          InputStream in = run.getInputStream();
          byte[] bts = in.readAllBytes();
          for (byte b : bts)

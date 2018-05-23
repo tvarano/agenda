@@ -344,7 +344,8 @@ public final class UIHandler {
    }
    
    public static void main(String[] args) {
-      showNews();
+//      showNews();
+      showWelcome();
    }
    
    public static void showAbout() {
@@ -357,7 +358,7 @@ public final class UIHandler {
             + "<h2>CREDITS:"
             + "<h3>Thomas Varano : Author"
             + "<br><br>Viktor Nakev : Icon Designer"
-            + "<br><br>Matthew Ghedduzi : Alpha Tester"
+            + "<br><br>Matthew Gheduzzi : Alpha Tester"
             + "<br><br>Michael Ruberto : Enforcer"
             + "</html>";
       showSimplePopUp(html, "About "+Agenda.APP_NAME);
