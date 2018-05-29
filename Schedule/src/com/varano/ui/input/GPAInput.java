@@ -1,5 +1,4 @@
 //Thomas Varano
-//[Program Descripion]
 //Dec 18, 2017
 
 package com.varano.ui.input;
@@ -180,9 +179,8 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       ArrayList<ClassPeriod> unSignedClasses = new ArrayList<ClassPeriod>();
       for (int i = 0; i < sched.getClasses().length; i++) {
          ClassPeriod c = sched.getClasses()[i];
-         if (c.getSlot() != RotationConstants.LUNCH && c.getSlot() != RotationConstants.PASCACK)
-            if (sched.getGpaClasses().indexOf(sched.getClasses()[i]) < 0)
-               unSignedClasses.add(sched.getClasses()[i]);
+         if (isApplicable(c) && !gpaContains(c))
+            unSignedClasses.add(sched.getClasses()[i]);
       }
       if (unSignedClasses.isEmpty()) {
          JOptionPane.showMessageDialog(null, "There are no unused\n"
@@ -196,6 +194,20 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       
       JOptionPane.showMessageDialog(null, sl, "Select a Class", JOptionPane.QUESTION_MESSAGE, null);
       return sl.getSelectedValue();
+   }
+   
+   private boolean gpaContains(ClassPeriod c) {
+      for (int j = 0; j < sched.getGpaClasses().size(); j++)
+         if (sched.getGpaClasses().get(j).equals(c))
+               return true;
+      return false;
+   }
+   
+   private static boolean isApplicable(ClassPeriod c) {
+      int sl = c.getSlot();
+      return sl != RotationConstants.LUNCH && sl != RotationConstants.PASCACK 
+            && sl != RotationConstants.PASCACK_STUDY_1 && sl != RotationConstants.PASCACK_STUDY_2;
+            
    }
    
    private void addSlot(ClassPeriod c, boolean hasZero) {
@@ -230,7 +242,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
       p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
-      JButton button = new JButton("Close");
+      JButton button = new JButton("Save and Close");
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
       button.setToolTipText("Exit and Save");
@@ -259,7 +271,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    public void refreshGPA() {
       save();
       double gpa = calculateWeightedGPA();
-      double unw = calculateUnWeightedGPA();
+      double unw = (gpa == -1) ? -1 : calculateUnWeightedGPA();
       if (gpa == -1 || unw == -1)
          return;
       weightLabel.setText(weightedPrefix + gpa);
@@ -315,7 +327,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    }
 
    public double calculateUnWeightedGPA() {
-      int sum = 0;
+      double sum = 0;
       for (GPAInputSlot g : slots) {
          if (!g.canCreate()) {
             if (debug) System.out.println(g);

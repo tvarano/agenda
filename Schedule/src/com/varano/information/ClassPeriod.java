@@ -21,7 +21,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    private static final long serialVersionUID = -8853513886388469596L;   
    public static final String UNREQ_TEACH = "None";
    public static final String NO_TEACH = "Teacher Name";
-   public static final String NO_ROOM = "000";
+   public static final String NO_ROOM = "None";
    public static final int NO_WEIGHT = 0, HALF_YEAR = 1, FULL_YEAR = 2, FULL_LAB = 3;
    public static final int DEF_STRING_LENGTH = 20;
    public static final int DEF_STRING_WIDTH = 85;
@@ -56,7 +56,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    
    public ClassPeriod(int slot, String name, String teacher, String roomNumber) {
-      this(slot, name, new Time(), new Time(), teacher, roomNumber);
+      this(slot, name, Time.NO_TIME, Time.NO_TIME, teacher, roomNumber);
    }
    
    public ClassPeriod(int slot, String name, Time startTime, Time endTime) {
@@ -76,19 +76,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       this(anchor.getSlot(), anchor.getName(), anchor.getStartTime(), anchor.getEndTime(), anchor.getTeacher(),
             anchor.getRoomNumber());
    }
-   
-   public void calculateDuration() {
-      duration = Time.calculateDuration(startTime, endTime);        
-   }
-   public boolean contains(Time t) {
-      return (t.getTotalMins() >= startTime.getTotalMins() && t.getTotalMins() < endTime.getTotalMins());
-   }
    public ClassPeriod() {
-      this(" ", new Time(), new Time());
+      this(" ");
    }
    
    public ClassPeriod(String name) {
-      this(name, new Time(), new Time());
+      this(name, Time.NO_TIME, Time.NO_TIME);
    }
 
    public static String trimString(String s) {
@@ -108,6 +101,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
             + teacher + ", grade= " + getGrade() + ", honors= " + honors + "]";
 
    }
+   public void calculateDuration() {
+      duration = Time.calculateDuration(startTime, endTime);        
+   }
+   public boolean contains(Time t) {
+      return (t.getTotalMins() >= startTime.getTotalMins() && t.getTotalMins() < endTime.getTotalMins());
+   }
    public String memoInfo() {
       return getClass().getName() + "[" + name + ", memo = "+getMemo() + "]";
    }
@@ -120,7 +119,9 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       calculateDuration();
    }
    public String toString() {
-      return (showName || !canShowPeriod) ? getTrimmedName() : "Period "+slot;
+      if (debug) System.out.println(getName() + " canShowPeriod is " + canShowPeriod + 
+            ", showing: "+ ((!canShowPeriod || showName) ? getTrimmedName() : "Period "+slot));
+      return (canShowPeriod && !showName) ? "Period "+slot : getTrimmedName() ;
    }
    
    public String formattedString(Font font, int preferredSize) {
@@ -175,6 +176,12 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    public String getTrimmedRoomNumber() {
       return trimString(getRoomNumber());
+   }
+   public static Boolean isNum(String s) {
+      for (char c : s.toCharArray())
+         if (c < '0' || c > '9')
+            return false;
+      return true;
    }
    public String getRoomNumber() {
       return roomNumber;
@@ -235,21 +242,27 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
    }
    
    public String getLetterGrade() {
-      int rg = (int) Math.round(getGrade());
-      int grade = 60;
-      for (int i = GPAInput.letterGrades.length - 1; i >= 0; i--) {
-         if (rg <= grade)
-            return GPAInput.letterGrades[i];
-         if (i % 3 == 0)
-            grade += 3;
-         else if (i % 3 == 1)
-            grade += 4;
-         else
-            grade += 3;
-      }      
-      return "ERROR IN GRADING";
+      return findLetterGrade(grade);
+   }
+   
+   public static void main(String[] args) {
+      System.out.println(RotationConstants.getParccPeriod(Time.NO_TIME, Time.NO_TIME).canShowPeriod);
+      
    }
 
+   private static String findLetterGrade(double grd) {
+      int rg = (int) Math.round(grd);
+      int grade = 97;
+      for (int i = 0; i < GPAInput.letterGrades.length - 1; i++) {
+         if (rg >= grade)
+            return GPAInput.letterGrades[i];
+         int lastDig = grade % 10;
+         if (lastDig == 7) grade -= 4;
+         else grade -= 3;
+      }
+      return GPAInput.letterGrades[GPAInput.letterGrades.length - 1];
+   }
+   
    public void setGrade(double grade) {
       this.grade = grade;
    }
@@ -280,7 +293,6 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       return honors;
    }
    public void setHonors(boolean honors) {
-//      System.out.println(name + "SETTING HONORS");
       this.honors = honors;
    }
 
@@ -288,7 +300,7 @@ public class ClassPeriod implements Comparable<ClassPeriod>, Serializable
       if (c == null)
          return false;
       return c.getName() == name && c.getSlot() == slot && 
-            c.getTeacher().equals(teacher) && grade == c.grade && courseWeight == c.courseWeight;
+            c.getTeacher().equals(teacher);
       }
 
    @Override

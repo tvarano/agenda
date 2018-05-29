@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
 import java.util.zip.DataFormatException;
 
 import javax.swing.AbstractButton;
@@ -107,6 +108,7 @@ public final class UIHandler {
       UIManager.put("SplitPane.dividerSize", divThickness);
 	   }
 	
+	public static final int FIELD_HEIGHT = 25;
 	
 	private static class ThemeChooser extends MenuItem {
       private static final long serialVersionUID = 1L;
@@ -200,9 +202,8 @@ public final class UIHandler {
 	   final int w = 300;
 	   final int h = 300;
 	   JFrame f = new JFrame("Preferences");
-	   JPanel p = new JPanel();
+	   JPanel p = new JPanel(new BorderLayout());
 	   p.setPreferredSize(new Dimension(w, h));
-	   p.setLayout(new BorderLayout());
 	   JPanel top = new JPanel();
 	   JLabel l = new JLabel("Input your preferences"/*, com.varano.resources.ResourceAccess.getImage("Agenda Logo.png"), 
 	         javax.swing.SwingConstants.LEADING*/);
@@ -210,9 +211,9 @@ public final class UIHandler {
 	   top.add(l);
 	   top.setPreferredSize(new Dimension(w,30));
 	   p.add(top, BorderLayout.NORTH);
+	   JPanel content = new JPanel(new BorderLayout());
 	   
-	   JPanel center = new JPanel();
-	   center.setLayout(new GridLayout(1, 2));
+	   JPanel center = new JPanel(new GridLayout(1, 2));
 	   JList<LookChooser> lookList = new JList<LookChooser>();
 	   lookList.setBorder(getUnFormattedTitleBorder("Look and Feel"));
 	   DefaultListModel<LookChooser> lookModel = new DefaultListModel<LookChooser>();
@@ -243,10 +244,21 @@ public final class UIHandler {
 	         themeList.setSelectedValue(tc, true);
 	   }
 	   center.add(themeList);
-	   p.add(center, BorderLayout.CENTER);
+	   content.add(center, BorderLayout.CENTER);
 	   
-	   JPanel bottom = new JPanel();
-	   bottom.setLayout(new GridLayout(1,2));
+	   JCheckBox notifCheck = new JCheckBox("Show Notifications");
+	   notifCheck.setSelected(age.shouldShowNotif());
+	   notifCheck.setFont(UIHandler.getButtonFont());
+	   notifCheck.addActionListener(new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	         age.setShowNotif(notifCheck.isSelected());
+	         Agenda.log("show notifications toggled to " + notifCheck.isSelected());
+	      }
+	   });
+	   content.add(notifCheck, BorderLayout.SOUTH);
+	   p.add(content, BorderLayout.CENTER);
+	   
+	   JPanel bottom = new JPanel(new GridLayout(1,2));
 	   JButton b = new JButton("Close");
 	   b.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	   b.addActionListener(new ActionListener() {
@@ -274,14 +286,15 @@ public final class UIHandler {
 	   f.getContentPane().add(p);
 	   f.pack();
 	   f.setLocationRelativeTo(age);
-	   f.setVisible(true);
 	   f.setResizable(false);
+	   f.setVisible(true);
 	}
 	
 	/**
 	 * the themes available for the application
 	 */
-	public static final String[] themes = {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Bare"}; 
+	public static final String[] themes = 
+	   {"Clean (Default)", "Night Mode", "Neutral", "Muted", "Colorful", "Minimal", "Grayscale"}; 
 
 	/**
 	 * asks if the user would wish to continue to pursue the action specified
@@ -299,27 +312,21 @@ public final class UIHandler {
    public static boolean showWelcome() {
       String html = "<html> <h1> Welcome to " + Agenda.APP_NAME + " </h1>"
             + "<h2>Version " + Agenda.BUILD + "</h2> "
-            + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
-            + "<br>at " + FileHandler.LOG_ROUTE + ""
-            + "<br>email log or any ideas to " + Addresses.CONTACT_EMAIL + "***"
-            + "<br>You can use this program to keep track of classes, schedules, assignments, or grades"
-            + "<br>in Pascack Hills or Valley."
+            + "<p>Agenda is a program for staying on top of classes in the Pascack Valley District."
             + "<ul>"
-            + "<li>On the home screen, you can see the current class's data "
-            + "<br>on the top panel and view other classes' data and memos in the bottom panel</li>"
+            + "<li>On the home screen, you can see the current class's data on the top panel"
+            + "<br>and view other classes' data and memos in the bottom panel</li>"
             + "<li>To edit your classes, click File > Input Schedule.</li>"
             + "<li>To edit grades, click File > View GPA.</li>"
             + "<li>To change the look of the program, either go to preferences (\u2318 + ,) or the View Menu"
             + "</ul>"
-            + "<p>Feel free to look at the source code (Useful Links > Agenda Source) to suggest any improvements."
-            + "<br> - Thomas Varano"
+            + "<br> - Thomas Varano, Author"
             + "</html>";
       javax.swing.JEditorPane text = new javax.swing.JEditorPane("text/html", html);
       text.setFont(font);
       HTMLEditorKit kit = new HTMLEditorKit();
       text.setEditorKit(kit);
-      kit.getStyleSheet().addRule("body {color:#000; font-family:"
-            + font.getFamily() + "; margin: 4px; }");
+      kit.getStyleSheet().addRule("body {color:#000; font-family:" + font.getFamily() + "; margin: 4px; }");
       JPanel content = new JPanel(new BorderLayout());
       Document doc = kit.createDefaultDocument();
       text.setDocument(doc);
@@ -337,15 +344,12 @@ public final class UIHandler {
    }
    
    public static void main(String[] args) {
-      showWelcome();
+      showNews();
    }
    
    public static void showAbout() {
       String html = "<html> <h1> " + Agenda.APP_NAME + " </h1> <h2>Version " + Agenda.BUILD + "</h2> "
             + "<h3>" + Agenda.LAST_UPDATED + "</h3>"
-            + "<p>***Program is still in beta. Please report all errors / bugs by emailing me the log"
-            + "<p>at "+FileHandler.LOG_ROUTE
-            + "<p>email at "+Addresses.CONTACT_EMAIL + "***"
             + "<p>Agenda is a schedule program for the Pascack Valley High School District"
             + "<p>that can keep track of time, school schedules, assignments, and GPA"
             + "<p>for students."
@@ -354,7 +358,29 @@ public final class UIHandler {
             + "<h3>Thomas Varano : Author"
             + "<br><br>Viktor Nakev : Icon Designer"
             + "<br><br>Matthew Ghedduzi : Alpha Tester"
-            + "<br><br>Michael Ruberto : Conceptual Designer</html>";
+            + "<br><br>Michael Ruberto : Enforcer"
+            + "</html>";
+      showSimplePopUp(html, "About "+Agenda.APP_NAME);
+   }
+
+   public static void showNews() {
+      String html;
+      try {
+         html = OrderUtility.futureCall(2000, new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+               return ResourceAccess.readHtml(Addresses.createURL(Addresses.NEWS));
+            }
+         }, "read news");
+      } catch (Exception e) {
+         Agenda.logError("error retrieving news", e);
+         html = "<html> <body> <h1> Unable to load News."
+               + "<br> Check your internet Connection.</h1></body></html>";
+      }
+      showSimplePopUp(html, Agenda.APP_NAME + " News");
+   }
+   
+   private static void showSimplePopUp(String html, String title) {
       javax.swing.JEditorPane content = new javax.swing.JEditorPane("text/html", html);
       content.setFont(font);
       HTMLEditorKit kit = new HTMLEditorKit();
@@ -367,15 +393,24 @@ public final class UIHandler {
       content.setOpaque(false);
       content.setEditable(false);
       JOptionPane.showMessageDialog(null, 
-            content, "About " + Agenda.APP_NAME, 
+            content, title, 
             JOptionPane.INFORMATION_MESSAGE, ResourceAccess.getIcon("Agenda Logo.png"));
    }
-
+   
    public static void setRotation(Agenda age, com.varano.information.constants.Rotation r) {
       age.getManager().setRotation(r);
    }
    
-   public synchronized static MenuBar configureMenuBar(JFrame frame, Agenda age) {
+   /**
+    * @deprecated Not using time bar
+    * @return
+    */
+   @Deprecated(since = "1.8")
+   public static int timeBarIndex() {
+      return 0;
+   }
+   
+   public static MenuBar configureMenuBar(JFrame frame, Agenda age) {
       if (Desktop.isDesktopSupported()) {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
@@ -390,11 +425,14 @@ public final class UIHandler {
             } 
          });
       }
-	   //---------------------------Time Bar--------------------------
       MenuBar bar = new MenuBar();
-      Menu m = new Menu("Time Left In Class: ");
-      bar.add(m);
+      Menu m;
       
+      /*//not using the time bar anymore as of 1.8f
+      //---------------------------Time Bar--------------------------
+      m = new Menu("Time Left In Class: ");
+      bar.add(m);
+      */
       //---------------------------File Bar--------------------------
       m = new Menu("File");
            
@@ -415,7 +453,14 @@ public final class UIHandler {
          }
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
-      //to test day checking
+      
+      //Placebo button. It autosaves
+      mi = m.add(new MenuItem("Save"));
+      mi.setShortcut(new MenuShortcut(KeyEvent.VK_S));
+      
+      m.addSeparator();
+      
+      //to test day checking and rotation updating
       if (debug) {
          mi = m.add(new MenuItem("TEST DAYCHECK"));
          mi.addActionListener(new ActionListener() {
@@ -493,22 +538,16 @@ public final class UIHandler {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (checkIntentions("Clear Preferences (Look and Theme).")) {
-               BufferedWriter bw;
                try {
                   setLAF0(UIManager.getSystemLookAndFeelClassName());
-                  bw = new BufferedWriter(new FileWriter(FileHandler.THEME_ROUTE));
-                  bw.write(themes[0]);
-                  bw.close();
-                  bw = new BufferedWriter(new FileWriter(FileHandler.LAF_ROUTE));
-                  bw.write(UIManager.getSystemLookAndFeelClassName());
-                  bw.close();
+                  FileHandler.write(themes[0], FileHandler.THEME_ROUTE);
+                  FileHandler.write(UIManager.getSystemLookAndFeelClassName(), FileHandler.LAF_ROUTE);
                   setColors();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
             }
          }
-         
       });
       
       m.addSeparator();
@@ -583,6 +622,13 @@ public final class UIHandler {
       bar.add(m);
       // ---------------------------Help Bar--------------------------
       m = new Menu("Help");
+      mi = m.add(new MenuItem("Agenda News"));
+      mi.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            showNews();
+         }
+      });
+      
       mi = m.add(new MenuItem("Error Help"));
       mi.addActionListener(new ActionListener() {
          @Override
@@ -602,38 +648,42 @@ public final class UIHandler {
                   JOptionPane.INFORMATION_MESSAGE, null,
                   new String[]{"Close", "Open Log", "Send Email"}, "Close");
             if (choice == 2)
-               FileHandler.sendEmail();
+               EmailHandler.showSendPrompt();
             else if (choice == 1)
                FileHandler.openDesktopFile(FileHandler.LOG_ROUTE);
          }
       });
       mi = m.add(new LinkChooser("Submit Issue", Addresses.createURI(Addresses.GITHUB_ISSUES)));
-      mi = m.add(new MenuItem("Sharing Protocol"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(null, 
-                  "To share this application, please share the entire folder\n"
-                  + "this application came in. The program comes with a README\n"
-                  + "file, which will help users who do not have all the \n"
-                  + "necessary items on their computer for running this program.",
-                  Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
-         }
-      });
       
-      m.addSeparator();
-      
-      mi = m.add(new MenuItem("Installation Instructions"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-            FileHandler.transfer("Installation Instructions.txt", 
-                  new File(System.getProperty("user.home") + "/Desktop/README.txt"), 0);
-            JOptionPane.showMessageDialog(null, 
-                  "Installation instructions (README.txt) have been created on your desktop.",
-                        Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
-         }
-      });
+      //if the program is a full release, there is no need for sharing protocol, as users will just get the program from self-service
+      if (!Agenda.fullRelease) {
+         mi = m.add(new MenuItem("Sharing Protocol"));
+         mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               JOptionPane.showMessageDialog(null, 
+                     "To share this application, please share the entire folder\n"
+                     + "this application came in. The program comes with a README\n"
+                     + "file, which will help users who do not have all the \n"
+                     + "necessary items on their computer for running this program.",
+                     Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+         
+         m.addSeparator();
+         
+         mi = m.add(new MenuItem("Installation Instructions"));
+         mi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               FileHandler.transfer("Installation Instructions.txt", 
+                     new File(System.getProperty("user.home") + "/Desktop/README.txt"), 0);
+               JOptionPane.showMessageDialog(null, 
+                     "Installation instructions (README.txt) have been created on your desktop.",
+                           Agenda.APP_NAME, JOptionPane.INFORMATION_MESSAGE, null);
+            }
+         });
+      }
       
       m.addSeparator();
       
@@ -641,16 +691,18 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
-            FileHandler.sendEmail();
+            EmailHandler.showSendPrompt();
          }
       });
       bar.setHelpMenu(m);
+      
       frame.setMenuBar(bar);
       if (debug) System.out.println("BARUI "+ bar);
       System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Agenda"); 
       return bar;
 	}
    
+   //allows for rollover animations for buttons.
    public static MouseListener buttonPaintListener(AbstractButton parent) {
       return new MouseListener() {
          @Override public void mouseClicked(MouseEvent e) {}
@@ -875,7 +927,8 @@ public final class UIHandler {
 	}
 	
 	public static Border getTitledBorder(String title, int justification, int position) {
-      return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 2),
+      return BorderFactory.createTitledBorder(BorderFactory.createLineBorder(titleBorderColor, 1),
+//            BorderFactory.createEmptyBorder(2, 2, 2, 2),
             title, justification, position, font, titleColor);
 	}
 	

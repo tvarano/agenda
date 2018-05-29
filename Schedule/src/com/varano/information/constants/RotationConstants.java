@@ -25,9 +25,9 @@ public final class RotationConstants
    public static final int DELAY_R1 = 10, DELAY_R3 = 11, DELAY_R4 = 12, DELAY_ODD = 13, DELAY_EVEN = 14;
    public static final int NO_SCHOOL_INDEX = 15, INCORRECT_PARSE = 16, TEST_ONE = 17, TEST_TWO = 18, TEST_THREE = 19, 
          DELAY_ARR = 20, SPECIAL = 21;
-   public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_TYPE = 11, PASCACK_STUDY_1 = 12, PASCACK_STUDY_2 = 13,
-         NO_SLOT = -1;
-   public static final int[] SPECIAL_CLASSES = {0, 8, PASCACK};
+   public static final int LUNCH = 9, PASCACK = 10, NO_SCHOOL_SLOT = 11, PASCACK_STUDY_1 = 12, PASCACK_STUDY_2 = 13,
+         SPECIAL_OFFLINE_INDEX = 14, PARCC = 15, NO_SLOT = -1;
+   public static final int[] TIME_INSENSITIVE_CLASSES = {0, 8, PASCACK};
    
    public static final String[] NAMES = {"R1", "R2", "R3", "R4", "Odd Block", "Even Block", "R1 Half Day", 
          "R3 Half Day", "R4 Half Day", "R1 Delayed Opening", "R3 Delayed Opening", "R4 Delayed Opening",
@@ -39,6 +39,7 @@ public final class RotationConstants
    public static final String getName(int rotationIndex) {
       return NAMES[rotationIndex-1];
    }
+   
    
    public static Rotation getRotation(String name) {
       for (int i = 0; i < NAMES.length; i++) {
@@ -56,8 +57,11 @@ public final class RotationConstants
       return (c.getSlot() == PASCACK || c.getSlot() == PASCACK_STUDY_1 || c.getSlot() == PASCACK_STUDY_2); 
    }
    
+   public static int[] CANNOT_SHOW_PERIOD = 
+      {LUNCH, PASCACK, PASCACK_STUDY_1, PASCACK_STUDY_2, NO_SCHOOL_SLOT, PARCC, SPECIAL_OFFLINE_INDEX};
+   
    public static boolean canShowPeriod(ClassPeriod c) {
-      return !isPascack(c) && c.getSlot() != LUNCH && c.getSlot() != NO_SCHOOL_TYPE;
+      return c.getSlot() < LUNCH;
    }
    
    public static boolean isZeroFriendly(Rotation r) {
@@ -103,15 +107,27 @@ public final class RotationConstants
             Rotation.ODD_BLOCK.getTimes()[3].getStartTime(), Rotation.ODD_BLOCK.getTimes()[3].getEndTime());
    }
    
-   public static final ClassPeriod getPascackStudyOne() {
-      return new ClassPeriod(PASCACK_STUDY_1, pascackStudyName, Time.NO_TIME, Time.NO_TIME, "No Teacher", "None");
+   public static final ClassPeriod getPascackStudyOne(Time start, Time end) {
+      return new ClassPeriod(
+            PASCACK_STUDY_1, pascackStudyName, start, end, ClassPeriod.UNREQ_TEACH, ClassPeriod.NO_ROOM);
    }
-   public static final ClassPeriod getPascackStudyTwo() {
-      return new ClassPeriod(PASCACK_STUDY_2, pascackStudyName, Time.NO_TIME, Time.NO_TIME, "No Teacher", "None");
+   public static final ClassPeriod getPascackStudyTwo(Time start, Time end) {
+      return new ClassPeriod(
+            PASCACK_STUDY_2, pascackStudyName, start, end, ClassPeriod.UNREQ_TEACH, ClassPeriod.NO_ROOM);
+   }
+   
+   public static final ClassPeriod getSpecialOffline() {
+      return new ClassPeriod(SPECIAL_OFFLINE_INDEX, "Error: Offline", Time.MIDNIGHT, Time.BEFORE_MIDNIGHT, 
+            ClassPeriod.UNREQ_TEACH, ClassPeriod.NO_ROOM);
+   }
+   
+   public static final ClassPeriod getParccPeriod(Time start, Time end) {
+      return new ClassPeriod(PARCC, "Parcc Testing", start, end, ClassPeriod.UNREQ_TEACH, ClassPeriod.NO_ROOM);
    }
    
    public static final ClassPeriod getNoSchoolClass() {
-      return new ClassPeriod(NO_SCHOOL_TYPE, "No School", Time.MIDNIGHT, new Time(23,59), "", "");
+      return new ClassPeriod(NO_SCHOOL_SLOT, "No School", Time.MIDNIGHT, new Time(23,59), 
+            ClassPeriod.UNREQ_TEACH, ClassPeriod.NO_ROOM);
    }
    
    private static Rotation toDelay0(Rotation r) {
@@ -142,12 +158,12 @@ public final class RotationConstants
       return toDelay(r, false, Rotation.DELAY_R1);
    }
    
-   public static Rotation toHalf(Rotation r, boolean quiet, Rotation preferred) {
+   public static Rotation toHalf(Rotation r, boolean quiet, Rotation failSafe) {
       Rotation ret = toHalf0(r);
       if (ret.equals(Rotation.INCORRECT_PARSE)) {
          if (!quiet)
             ErrorID.showUserError(ErrorID.WRONG_HALF_SELECTED);
-         return preferred;
+         return failSafe;
       }
       return ret;      
    }

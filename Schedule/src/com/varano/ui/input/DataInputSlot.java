@@ -1,10 +1,13 @@
 package com.varano.ui.input;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
@@ -14,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
 
 import com.varano.information.ClassPeriod;
 import com.varano.information.constants.RotationConstants;
@@ -28,16 +30,16 @@ import com.varano.managers.UIHandler;
 public class DataInputSlot extends JPanel implements ActionListener
 {
    private static final long serialVersionUID = 1L;
-   private static final int gap = 4;
-   private static final int WIDTH = 615, F_HEIGHT = 25;
+   private static final int WIDTH = 615;
 
-   private static final Dimension NAME_SIZE = new Dimension(115, F_HEIGHT);
-   private static final Dimension TEACH_SIZE = new Dimension(135, F_HEIGHT);
-   private static final Dimension ROOM_SIZE = new Dimension(40, F_HEIGHT);
+   private static final Dimension NAME_SIZE = new Dimension(115, UIHandler.FIELD_HEIGHT);
+   private static final Dimension TEACH_SIZE = new Dimension(135, UIHandler.FIELD_HEIGHT);
+   private static final Dimension ROOM_SIZE = new Dimension(53, UIHandler.FIELD_HEIGHT);
    private int slotNumber;
    private String beginName;
    private Container parentPanel;
    private JCheckBox labBox;
+   private String nameContent;
    private ClassPeriod dataHolder;
    private boolean hasParent, hasLab, removable, labFriendly;
    private JTextField[] promptFields;
@@ -72,7 +74,6 @@ public class DataInputSlot extends JPanel implements ActionListener
       labFriendly = true;
       int amtFields = 3;
       promptFields = new JTextField[amtFields];
-      setLayout(new SpringLayout());
       addComponents(c);  
    }
    
@@ -84,8 +85,9 @@ public class DataInputSlot extends JPanel implements ActionListener
       DataInputSlot in = new DataInputSlot(RotationConstants.NO_SLOT, null);
       in.setLabFriendly(false);
       
-      if (JOptionPane.showOptionDialog(null, in, "CREATE", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
-            null, null, null) == 0)
+      if (JOptionPane.showOptionDialog(null, in, "Create New Class",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+            null, null) == 0)
          return in.createClass();
       if (debug) System.out.println("returning null");
       return null;
@@ -93,7 +95,7 @@ public class DataInputSlot extends JPanel implements ActionListener
    
    private void addComponents(ClassPeriod c) {
       int index = 0;
-      SpringLayout l = (SpringLayout) getLayout();
+      ((FlowLayout)getLayout()).setAlignment(FlowLayout.LEFT);
       //label for the class slot
       JLabel labelLeft = new JLabel((slotNumber == RotationConstants.PASCACK) ? "P-" : slotNumber+"-");
       if (c.getSlot() == RotationConstants.NO_SLOT)
@@ -101,28 +103,38 @@ public class DataInputSlot extends JPanel implements ActionListener
       labelLeft.setFont(getFont());
       labelLeft.setForeground(getForeground());
       add(labelLeft);
-      l.putConstraint(SpringLayout.WEST, labelLeft, gap*2, SpringLayout.WEST, this);
-      setNorthBound(labelLeft);
       
       JLabel currentLabel = new JLabel("Class Name:");            // class name prompt
-      addLabel(currentLabel, labelLeft, l, index);
+      addLabel(currentLabel, labelLeft);
       
       JTextField currentField = new JTextField(c.getName());      //class name field
-      addField(currentField, currentLabel, l, index);
+      nameContent = currentField.getText().toLowerCase();
+      //checking the science requirement
+      currentField.addKeyListener(new KeyListener() {
+         @Override
+         public void keyPressed(KeyEvent arg0) {}
+         @Override
+         public void keyReleased(KeyEvent arg0) {
+            checkScience();
+         }
+         @Override
+         public void keyTyped(KeyEvent arg0) {}
+      });
+      addField(currentField, currentLabel, index);
       index++;
       
       currentLabel = new JLabel("Teacher:");                      //teacher prompt
-      addLabel(currentLabel, currentField, l, index);
+      addLabel(currentLabel, currentField);
       
       currentField = new JTextField(c.getTeacher());              //teacher field
-      addField(currentField, currentLabel, l, index); 
+      addField(currentField, currentLabel, index); 
       index++;
       
       currentLabel = new JLabel("Room:");                          // rm number prompt
-      addLabel(currentLabel, currentField, l, index);
+      addLabel(currentLabel, currentField);
       
       currentField = new JTextField(c.getRoomNumber());                       //rm number field
-      addField(currentField, currentLabel, l, index); 
+      addField(currentField, currentLabel, index); 
 
       labBox = new JCheckBox("Has Lab");              // check box to see if you have lab in that class
       labBox.setActionCommand("lab");
@@ -133,8 +145,6 @@ public class DataInputSlot extends JPanel implements ActionListener
       labBox.setBackground(getBackground());
       if (labFriendly) {
          add(labBox);
-         l.putConstraint(SpringLayout.WEST, labBox, gap*2, SpringLayout.EAST, currentField);
-         setNorthBound(labBox);
       }
       if (debug) System.out.println("slot "+slotNumber+"componentSize:"+getComponents().length);
       
@@ -143,19 +153,18 @@ public class DataInputSlot extends JPanel implements ActionListener
          remove.setFont(UIHandler.getButtonFont());
          remove.setActionCommand("remove");
          remove.addActionListener(this);
-         setNorthBound(remove);
-         l.putConstraint(SpringLayout.WEST, remove, gap*2, SpringLayout.EAST, labBox);
          add(remove);
       }
    }
    
-   private void addField(JTextField f, JComponent c, SpringLayout l, int index) {
+   private void addField(JTextField f, JComponent c, int index) {
       final int name = 0, teacher = 1;
       f.setMinimumSize((index == name) ? NAME_SIZE : (index == teacher) ? TEACH_SIZE : ROOM_SIZE);
       f.setMaximumSize((index == name) ? NAME_SIZE : (index == teacher) ? TEACH_SIZE : ROOM_SIZE);
       f.setPreferredSize((index == name) ? NAME_SIZE : (index == teacher) ? TEACH_SIZE : ROOM_SIZE);
       f.setFont(UIHandler.getInputFieldFont());
       add(f);   
+      //set the tooltip to the 
       f.setToolTipText(f.getText());
       f.addActionListener(new ActionListener() {
          @Override
@@ -181,22 +190,13 @@ public class DataInputSlot extends JPanel implements ActionListener
          }
       });
       promptFields[index] = f;  
-      l.putConstraint(SpringLayout.WEST, f, gap, SpringLayout.EAST, c);
-      setNorthBound(f);
    }
    
-   private void addLabel(JLabel f, JComponent c, SpringLayout l, int index) {
+   private void addLabel(JLabel f, JComponent c) {
       f.setFont(getFont());
       f.setForeground(getForeground());
       add(f);   
-      l.putConstraint(SpringLayout.WEST, f, gap, SpringLayout.EAST, c);
-      setNorthBound(f);
    }
-   
-   private void setNorthBound(JComponent c) {
-      int vgap = (c instanceof JTextField || c instanceof JCheckBox || c instanceof JButton) ? gap : gap*2;
-      ((SpringLayout) getLayout()).putConstraint(SpringLayout.NORTH, c, vgap, SpringLayout.NORTH, this);
-   }   
    
    public void forceNames() {
       for (JTextField f : promptFields)
@@ -204,33 +204,45 @@ public class DataInputSlot extends JPanel implements ActionListener
             f.setText("unspecified");
    }
    
-   private void checkText() {
+   private void checkScience() {
+      String text = promptFields[0].getText().toLowerCase();
+      String[] sciences = {"chem", "science", "bio", "physics"};
+      for (String s : sciences) {
+         if (text.contains(s)) {
+            if (!nameContent.contains(s))
+               labBox.setSelected(true);
+         } else 
+            if (nameContent.contains(s))
+               labBox.setSelected(false);
+      }
+      nameContent = text;
+   }
+   
+   private void checkHonorsText() {
       String text = promptFields[0].getText().toLowerCase();
       if (text.equalsIgnoreCase(beginName))
          return;
-      System.out.println(text);
+      if (debug) System.out.println(text);
       if (text.contains("honors") || text.contains("ap"))
          dataHolder.setHonors(true);
-      String[] sciences = {"chem", "science", "bio", "physics"};
-      for (String s : sciences)
-         if (text.contains(s))
-            labBox.setSelected(true);
    }
    
    public ClassPeriod createClass() {
       forceNames();
-      checkText();
-      if (hasParent && hasLab) {
-         ((DataInput) parentPanel).addLab(slotNumber);
-         if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
+      checkHonorsText();
+      if (hasParent) {
+         if (hasLab) {
+            ((DataInput) parentPanel).addLab(slotNumber);
+            if (debug) System.out.println("\tslot" + slotNumber + "Added lab");
+         } else {
+            ((DataInput) parentPanel).removeLab(slotNumber);
+         }
       }
       ClassPeriod retval = new ClassPeriod(slotNumber,
             promptFields[0].getText(), promptFields[1].getText(),
             promptFields[2].getText());
       retval.setBackgroundData(dataHolder);
       if (debug) System.out.println("created:" + retval.getInfo());
-      if (dataHolder.isHonors())
-         System.out.println(retval.getName() + " honors");
       return retval;
    }
    

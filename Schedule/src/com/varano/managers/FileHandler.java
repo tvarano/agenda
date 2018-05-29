@@ -10,10 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Scanner;
 
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.varano.information.constants.ErrorID;
@@ -26,8 +24,8 @@ public class FileHandler {
    public static String LOG_ROUTE;
    public static String FILE_ROUTE;
    public static String THEME_ROUTE, LAF_ROUTE;
-   public static String SCRIPT_ROUTE;
    public static String WELCOME_ROUTE;
+   public static String NOTIF_ROUTE;
    public static final String NO_LOCATION = "noLoc";
    
    public static void openURI(URI uri) {
@@ -96,58 +94,33 @@ public class FileHandler {
          }
      }
    }
-   
-   public static void sendEmail() {
-      int choice = JOptionPane.showOptionDialog(null, "Make the subject \"Agenda Contact\"\nMail to "+ 
-            Addresses.CONTACT_EMAIL, 
-            Agenda.APP_NAME + " Contact", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, 
-            new String[] {"Use Desktop", "Use Gmail", "Cancel"}, "Use Desktop");
-      if (choice == 2 || choice == -1) 
-         return;
-      else {
-         if (Desktop.isDesktopSupported()) {
-            try {
-               if (choice == 0)
-                  Desktop.getDesktop().mail(new URI("mailto:"+Addresses.CONTACT_EMAIL+"?subject=Agenda%20Contact"));
-               else
-                  Desktop.getDesktop().browse(new URI("https://mail.google.com/mail/u/0/#inbox?compose=new"));
-            } catch (IOException | URISyntaxException e1) {
-               ErrorID.showError(e1, true);
-            }
-         }
-      }
-   }
 
    public static void initFileNames(String envelop) {
       ENVELOPING_FOLDER = envelop;
       RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
       LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
       FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
+      NOTIF_ROUTE = RESOURCE_ROUTE + "notif.txt";
       THEME_ROUTE = RESOURCE_ROUTE + "theme.txt";
       LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
-      SCRIPT_ROUTE = RESOURCE_ROUTE + "Restart.sh";
       WELCOME_ROUTE = RESOURCE_ROUTE + "showWelcome.txt"; 
    }
+   
+   public static final String TRUE = "t", FALSE = "f";
 
    public synchronized static boolean createFiles() {
       boolean created = new File(RESOURCE_ROUTE).mkdirs();
       Agenda.log("files created");
       transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
-      BufferedWriter bw;
       try {
-         if (new File(THEME_ROUTE).createNewFile()) {
-            bw = new BufferedWriter(new FileWriter(THEME_ROUTE));
-            bw.write(UIHandler.themes[0]);
-            bw.close();
-         }
-         if (new File(LAF_ROUTE).createNewFile()) {
-            bw = new BufferedWriter(new FileWriter(LAF_ROUTE));
-            bw.write(UIManager.getSystemLookAndFeelClassName());
-            bw.close();
-         }
-         if (new File(WELCOME_ROUTE).createNewFile()) {
+         if (new File(THEME_ROUTE).createNewFile())
+            write(UIHandler.themes[0], THEME_ROUTE);
+         if (new File(LAF_ROUTE).createNewFile()) 
+            write(UIManager.getSystemLookAndFeelClassName(), LAF_ROUTE);
+         if (new File(WELCOME_ROUTE).createNewFile()) 
             writeWelcomeTrue();
-         }
+         if (new File(NOTIF_ROUTE).createNewFile())
+            write(TRUE, NOTIF_ROUTE);
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }
@@ -155,8 +128,12 @@ public class FileHandler {
    }
    
    public static void writeWelcomeTrue() throws IOException {
-      BufferedWriter bw = new BufferedWriter(new FileWriter(WELCOME_ROUTE));
-      bw.write("t");
+      write(TRUE, WELCOME_ROUTE);
+   }
+   
+   public static void write(String text, String route) throws IOException{      
+      BufferedWriter bw = new BufferedWriter(new FileWriter(route));
+      bw.write(text);
       bw.close(); 
    }
 

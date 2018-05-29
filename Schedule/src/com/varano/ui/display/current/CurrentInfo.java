@@ -66,10 +66,10 @@ public class CurrentInfo extends JTextPane {
          if (situation == IN_CLASS) {
             boolean hour = parentPanel.getTimeLeft().getHour24() > 0;
             String durationHour = (c.getDuration().getHour24()) > 0 ? c.getDuration().getHour24()+ " hour, " : "";
-            if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
-               return new String[] {
-                     "There is no school today."
-               };
+            if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT)
+               return new String[] {"There is no school today."};
+            else if (c.getSlot() == RotationConstants.SPECIAL_OFFLINE_INDEX)
+               return new String[] {RotationConstants.getSpecialOffline().getName()};
             return new String[] {
                   "You are in"+newLn,
                   c+newLn,
@@ -78,7 +78,7 @@ public class CurrentInfo extends JTextPane {
                   (hour) ? " hour and " : "",
                   parentPanel.getTimeLeft().getMinute()+"",
                   (parentPanel.getTimeLeft().getMinute() == 1) ? " minute" + newLn : " minutes"+newLn,
-                  "In "+c.getRoomNumber()+newLn,
+                  (c.getRoomNumber().equals(ClassPeriod.NO_ROOM)) ? "" : "In "+c.getRoomNumber()+newLn,
                   newLn,
                   c.getStartTime() + " - " + c.getEndTime()+".\t",
                   "The class is " + durationHour +c.getDuration().getMinute() + " minutes long." 
@@ -89,7 +89,7 @@ public class CurrentInfo extends JTextPane {
                return new String[] {"ERROR"};
             return new String[] {
                   "You are in between classes."+newLn,
-                  parentPanel.getParentPane().findNextClass().getName(),
+                  parentPanel.getParentPane().findNextClass().getTrimmedName(),
                   " is next" + newLn +"in ",
                   ""+parentPanel.getParentPane().timeUntilNextClass().getMinute(),
                   " minutes."
@@ -111,7 +111,7 @@ public class CurrentInfo extends JTextPane {
       
       public String[] getStyles() {
          if (situation == IN_CLASS) {
-            if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
+            if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT || c.getSlot() == RotationConstants.SPECIAL_OFFLINE_INDEX)
                return new String[] {"h1"};
              return new String[] {
                   "regular",

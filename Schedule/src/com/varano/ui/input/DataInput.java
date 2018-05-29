@@ -11,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
@@ -85,7 +86,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
    private void init0() {
       Agenda.log("inputMain initialized");
       add(new ToolBar(PanelManager.INPUT, this), BorderLayout.NORTH);
-      add(center, BorderLayout.CENTER);
+      add(new JScrollPane(center), BorderLayout.CENTER);
       add(createBottomPanel(), BorderLayout.SOUTH);
       
    }
@@ -133,7 +134,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       p.setBackground(UIHandler.secondary);
       p.setLayout(new GridLayout(1,2));
       Cursor hand = new Cursor(Cursor.HAND_CURSOR);
-      JButton button = new JButton("Cancel");
+      JButton button = new JButton("Exit without Saving");
       button.setActionCommand("cancel");
       button.setFont(UIHandler.getButtonFont());
       button.setCursor(hand);
@@ -141,7 +142,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       button.addActionListener(changeView());
       p.add(button);
       
-      button = new JButton("Save");
+      button = new JButton("Exit and Save");
       button.setToolTipText("Save Your Schedule");
       button.setSelected(true);
       button.setFont(UIHandler.getButtonFont());

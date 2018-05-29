@@ -116,7 +116,7 @@ public enum ErrorID {
             ErrorCopier.copy(ID, e);
          } else if (choice2 == 1) {
             ErrorCopier.copy(ID, e);
-            com.varano.managers.FileHandler.sendEmail();
+            com.varano.managers.EmailHandler.showSendPrompt();
          }
       }
    }

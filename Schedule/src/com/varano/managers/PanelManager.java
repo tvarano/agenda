@@ -101,8 +101,13 @@ public class PanelManager {
    public DisplayMain getDisplay() {
       return display;
    }
+   /**
+    * No longer using the time menu
+    * @return the Menu on the bar that holds the time left in classes.
+    */
+   @Deprecated(since = "1.8")
    public Menu getTimeMenu() {
-      return bar.getMenu(0);
+      return bar.getMenu(UIHandler.timeBarIndex());
    }
    public void beforeClose() {
       if (currentView instanceof com.varano.ui.input.InputManager) {

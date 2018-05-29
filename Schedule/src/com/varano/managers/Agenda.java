@@ -11,6 +11,8 @@ import java.awt.MenuBar;
 import java.awt.RenderingHints;
 import java.awt.desktop.AppForegroundEvent;
 import java.awt.desktop.AppForegroundListener;
+import java.awt.desktop.AppHiddenEvent;
+import java.awt.desktop.AppHiddenListener;
 import java.awt.desktop.ScreenSleepEvent;
 import java.awt.desktop.ScreenSleepListener;
 import java.awt.desktop.SystemSleepEvent;
@@ -45,14 +47,16 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
-   public static final String BUILD = "1.7.9";
+   public static final String BUILD = "1.8.3";
    public static final String LAST_UPDATED = "April 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
    private JFrame parentFrame;
    private MenuBar bar;
+   private boolean showNotif;
    public static boolean statusU;
+   public static final boolean fullRelease = true;
    public static final boolean isApp = System.getProperty("user.dir").indexOf(".app") > 0; 
    
    public Agenda(JFrame frame) {
@@ -61,7 +65,12 @@ public class Agenda extends JPanel
       FileHandler.initialFileWork();
       log(getClass().getSimpleName()+" began initialization");
 
-      UIHandler.init();      
+      UIHandler.init();  
+      try {
+         showNotif = readForNotif();
+      } catch (IOException e) {
+         showNotif = false;
+      }
       this.parentFrame = frame;
       bar = UIHandler.configureMenuBar(frame, this);
       manager = new PanelManager(this, bar);
@@ -84,12 +93,12 @@ public class Agenda extends JPanel
          String line = br.readLine();
          br.close();
          Agenda.log("show welcome: " + line);
-         if (line == null || line.equals("t")) {
+         if (line == null || line.equals(FileHandler.TRUE)) {
             BufferedWriter bw = new BufferedWriter(new FileWriter(new File(FileHandler.WELCOME_ROUTE)));
             if (UIHandler.showWelcome())
-               bw.write("t");
+               bw.write(FileHandler.TRUE);
             else
-               bw.write("f");
+               bw.write(FileHandler.FALSE);
             bw.close();
          }
       } catch (IOException e) {
@@ -135,22 +144,54 @@ public class Agenda extends JPanel
             }
          });
          Desktop.getDesktop().addAppEventListener(new AppForegroundListener() {
-
             @Override
             public void appMovedToBackground(AppForegroundEvent arg0) {}
-
             @Override
             public void appRaisedToForeground(AppForegroundEvent arg0) {
                manager.update();
             }
          });
+         Desktop.getDesktop().addAppEventListener(new AppHiddenListener() {
+            @Override
+            public void appHidden(AppHiddenEvent arg0) {
+               manager.getDisplay().stop();
+            }
+            @Override
+            public void appUnhidden(AppHiddenEvent arg0) {
+               manager.getDisplay().resume();
+               manager.update();
+            }
+            
+         });
+      }
+   }
+   
+   private boolean readForNotif() throws IOException {
+      BufferedReader br = null;
+      try {
+         br = new BufferedReader(new FileReader(FileHandler.NOTIF_ROUTE));
+         return br.readLine().equals(FileHandler.TRUE);
+      } finally {
+         br.close();
       }
    }
    
    public PanelManager getManager() {
       return manager;
    }
-   
+   public boolean shouldShowNotif() {
+      return showNotif;
+   }
+   public void setShowNotif(boolean b) {
+      showNotif = b;
+      try {
+         if (showNotif)
+         FileHandler.write(FileHandler.TRUE, FileHandler.NOTIF_ROUTE);
+         else FileHandler.write(FileHandler.FALSE, FileHandler.NOTIF_ROUTE);
+      } catch (IOException e) {
+         Agenda.logError("cannot write notification showing", e);
+      }
+   }
    public MenuBar getBar() {
       return bar;
    }
@@ -183,9 +224,9 @@ public class Agenda extends JPanel
    }
    
    private static void createAndShowGUI() {
-      long start = System.currentTimeMillis();
+      final long start = System.currentTimeMillis();
       JFrame frame = new JFrame("Agenda -- LOADING....");
-      int frameToPaneAdjustment = 22; 
+      final int frameToPaneAdjustment = 22; 
       
       // loading screen, frame adjustments
       // setting visible outside of the drawing, strings take just as long to draw anyways

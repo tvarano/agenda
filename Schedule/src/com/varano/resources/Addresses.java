@@ -12,7 +12,7 @@ package com.varano.resources;
  */
 public final class Addresses {
    
-   public static final String CONTACT_EMAIL = "varanoth@pascack.org";
+   public static final String CONTACT_EMAIL = "pascackagendamailer@gmail.com";
    
    public static final String ICS_URL = "https://calendar.google.com/calendar/ical/8368c5a91jog3s32oc6k22f4e8%40group.calendar.google.com/public/basic.ics";
    
@@ -28,6 +28,8 @@ public final class Addresses {
          return null;
       }
    }
+   
+   public static final String NEWS = "http://agendapascack.x10host.com/updates/news.html";
    
    public static final String GITHUB_ISSUES = SOURCE + "/issues?q=is%3Aopen+is%3Aissue";
    

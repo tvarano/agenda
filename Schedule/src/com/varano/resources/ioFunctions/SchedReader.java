@@ -6,12 +6,14 @@ import java.io.ObjectInputStream;
 
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
+import com.varano.information.Time;
 import com.varano.information.constants.ErrorID;
 import com.varano.information.constants.Lab;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.FileHandler;
+import com.varano.managers.OrderUtility;
 
 public class SchedReader {
    private ObjectInputStream reader;
@@ -71,7 +73,7 @@ public class SchedReader {
       int tempIndex = 0;
       for (int index = 0; index < ret.length; index++) {
          skip = false;
-         for (int i : RotationConstants.SPECIAL_CLASSES)
+         for (int i : RotationConstants.TIME_INSENSITIVE_CLASSES)
             if (ret[index].getSlot() == i) {
                skip = true;
             }
@@ -100,9 +102,9 @@ public class SchedReader {
             if (s == RotationConstants.PASCACK)
                c.setTimeTemplate(RotationConstants.getPascack());
             else if (s == RotationConstants.PASCACK_STUDY_1)
-               c.setName(RotationConstants.getPascackStudyOne().getName());
+               c.setName(RotationConstants.getPascackStudyOne(Time.NO_TIME, Time.NO_TIME).getName());
             else 
-               c.setName(RotationConstants.getPascackStudyOne().getName());
+               c.setName(RotationConstants.getPascackStudyOne(Time.NO_TIME, Time.NO_TIME).getName());
          } else if (s == RotationConstants.LUNCH)
             c.setName("Lunch");
       }

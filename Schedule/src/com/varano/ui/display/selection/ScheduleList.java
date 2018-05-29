@@ -49,6 +49,7 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
       for (ClassPeriod c : schedule.getClasses()) {
          if (debug) System.out.println(getName()+" added "+c);
          ((DefaultListModel<ClassPeriod>) getModel()).addElement(c);
+         if (debug) System.out.println(c + ", slot " + c.getSlot() + ", is "+c.canShowPeriod());
       }
       if (debug) System.out.println(getName()+" CREATED size:" +getModel().getSize());
    }

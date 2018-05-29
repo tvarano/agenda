@@ -19,10 +19,10 @@ import com.varano.information.constants.Lab;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
+import com.varano.managers.OrderUtility;
 import com.varano.managers.PanelManager;
 import com.varano.managers.UIHandler;
 import com.varano.resources.ioFunctions.AlertReader;
-import com.varano.resources.ioFunctions.OrderUtility;
 import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.resources.ioFunctions.SchedWriter;
 import com.varano.resources.ioFunctions.calendar.CalReader;
@@ -61,7 +61,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = false;
+      testSituation = true;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -72,6 +72,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       addComponents();
       update();
       requestFocus();
+      revalidate();
+      moveDivider();
       if (debug) {
          System.out.println("DELAY_EVEN TIMESSSS");
          for (ClassPeriod c : Rotation.DELAY_EVEN.getTimes())
@@ -81,6 +83,14 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       timer = new Timer(5000, this);
       timer.start();
       Agenda.log("display main fully initialized");
+   }
+   
+   private void moveDivider() {
+      JSplitPane sp = (JSplitPane) getComponent(1);
+      if (debug) System.out.println("LOCATION "+sp.getDividerLocation());
+      if (debug) System.out.println("HEIIGHT "+ currentClassPane.getContentHeight());
+      if (sp.getDividerLocation() < currentClassPane.getContentHeight())
+         sp.setDividerLocation((int)currentClassPane.getContentHeight());
    }
    
    public Agenda getMain() {
@@ -148,8 +158,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void addComponents() {
       add(toolbar, BorderLayout.NORTH);
       JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, currentClassPane, infoSelector);
-      
       add(sp, BorderLayout.CENTER);
+      moveDivider();
    }
    
    public void hardStop() {
@@ -191,20 +201,22 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       addComponents();
       resume();
    }
-   
+   @Deprecated(since = "1.8")
    public void setBarText(String s) {
       parentManager.getTimeMenu().setLabel(s);
    }
   
+   @Deprecated(since = "1.8")
    public void setBarTime(Time timeLeft) {
       String prefix = "In "+ findCurrentClass() +" for: ";
       setBarText(prefix + timeLeft.durationString());
    }
    
+   @Deprecated(since = "1.8")
    public void configureBarTime(ClassPeriod c) {
       if (c != null) {
          setBarTime(currentTime.getTimeUntil(c.getEndTime()));
-         if (c.getSlot() == RotationConstants.NO_SCHOOL_TYPE)
+         if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT)
             setBarText("No School");
       }
        else if (checkInSchool())
@@ -264,7 +276,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public Time timeUntilNextClass() {
       if (checkInSchool())
          return currentTime.getTimeUntil(findNextClass().getStartTime());
-      return new Time();
+      return Time.NO_TIME;
    }
    
    public Time timeUntilSchool() {
@@ -314,8 +326,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       if (debug) System.out.println("DISP 284 background: "+getBackground() + " and location " + 
             Integer.toHexString(getBackground().hashCode()));
       checkAndUpdateTime();
-      ClassPeriod current = findCurrentClass();
-      configureBarTime(current);
+      findCurrentClass();
+//      configureBarTime(current);
       if (infoSelector.getMemo().hasChanges()) {
          infoSelector.getMemo().save();
          writeMain();
@@ -323,6 +335,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       
       if (showDisp) {
          currentClassPane.update();
+         moveDivider();
          repaint();
       } else currentClassPane.checkAndShowNotification();
       setUpdating(false);

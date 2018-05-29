@@ -16,8 +16,8 @@ import java.util.Scanner;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
+import com.varano.managers.OrderUtility;
 import com.varano.resources.ioFunctions.AlertReader;
-import com.varano.resources.ioFunctions.OrderUtility;
 
 public class CalReader {
    private static URL rotationDataSite;
@@ -86,6 +86,10 @@ public class CalReader {
                Agenda.log("ROTATION: delayed " + s + " read from internet");
                return RotationConstants.toDelay(RotationConstants
                      .getRotation(s.substring(0, s.indexOf('(') - 1)));
+            }
+            if (s.contains("Parcc") ) {
+               Agenda.log("ROTATION: special read from parcc request");
+               return Rotation.SPECIAL;
             }
             if (RotationConstants.getRotation(s) != null) {
                Agenda.log("ROTATION: " + s + " read from internet");

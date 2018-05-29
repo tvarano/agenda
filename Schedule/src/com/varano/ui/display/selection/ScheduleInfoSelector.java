@@ -75,9 +75,10 @@ public class ScheduleInfoSelector extends JPanel
    
    private void addComponents() {
       scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info", TitledBorder.LEADING, TitledBorder.TOP));
-      Agenda.log("scheduleInfo initializer mk 2");
+//      scheduleTabs.setBorder(UIHandler.getTitledBorder("Select Class For Info"));
+            Agenda.log("scheduleInfo initializer mk 2");
       JScrollPane scroll = new JScrollPane(info);
-      scroll.setBorder(UIHandler.getTitledBorder("Select Class for Info"));
+      scroll.setBorder(UIHandler.getTitledBorder("Class Information"));
       Agenda.log("scheduleInfo initializer mk 3");
       scroll.setOpaque(false);
       add(scroll);
@@ -112,7 +113,7 @@ public class ScheduleInfoSelector extends JPanel
       else
          setMemoClass(selected.getSelectedValue().getSlot());
 
-      String infoTitle = (info.getClassPeriod() == null) ? "Select Class For Info"
+      String infoTitle = (info.getClassPeriod() == null) ? "Class Information"
             : info.getClassPeriod().getTrimmedName() + " Info";
       ((JComponent) info.getParent().getParent()).setBorder(UIHandler.getTitledBorder(infoTitle));
       parentPane.revalidate();
@@ -167,7 +168,6 @@ public class ScheduleInfoSelector extends JPanel
       scroll.setBackground(todayNameless.getBackground());
       retval.addTab(scroll.getName(), null, scroll, tabTip);
       retval.setMnemonicAt(3, KeyEvent.VK_4);
-      
       
       retval.setBackground(UIHandler.background);
       retval.setFont(UIHandler.getTabFont());

@@ -76,5 +76,4 @@ public class MutableColor extends java.awt.Color implements java.io.Serializable
    public void setGreen(int g) {
       setValue(getRed(), g, getBlue(), getAlpha());
    }
-   
 }

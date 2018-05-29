@@ -1,4 +1,4 @@
-package com.varano.resources.ioFunctions;
+package com.varano.managers;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,7 +10,6 @@ import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
-import com.varano.managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -93,23 +92,20 @@ public final class OrderUtility
             }
          }
          // take special periods 
-         if (order[i] == RotationConstants.PASCACK) {
-            if (detailedDebug) System.out.println("entering pascack...");
-            newArray[newArrayIndex] = RotationConstants.getPascack();
-            newArrayIndex++;
-            rotationIndex++;
+         ClassPeriod specialAddition = null;
+         if (order[i] == RotationConstants.PASCACK) specialAddition = RotationConstants.getPascack();
+         else if (order[i] == RotationConstants.PASCACK_STUDY_1) specialAddition = RotationConstants.getPascackStudyOne(
+               r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime());
+         else if (order[i] == RotationConstants.PASCACK_STUDY_2) specialAddition = RotationConstants.getPascackStudyTwo(
+               r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime());
+         else if (order[i] == RotationConstants.SPECIAL_OFFLINE_INDEX) specialAddition = RotationConstants.getSpecialOffline();
+         else if (order[i] == RotationConstants.PARCC) specialAddition = RotationConstants.getParccPeriod(
+               r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime());
          
-         } else if (order[i] == RotationConstants.PASCACK_STUDY_1) {
-            newArray[newArrayIndex] = RotationConstants.getPascackStudyOne();
-            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.PASCACK_STUDY_1));
+         if (specialAddition != null) {
+            newArray[newArrayIndex] = specialAddition;
             newArrayIndex++;
             rotationIndex++;
-         } else if (order[i] == RotationConstants.PASCACK_STUDY_2) {
-            newArray[newArrayIndex] = RotationConstants.getPascackStudyTwo();
-            newArray[newArrayIndex].setTimeTemplate(r.get(RotationConstants.PASCACK_STUDY_2));
-            newArrayIndex++;
-            rotationIndex++;
-          
          }
       }
       if (detailedDebug) {
@@ -118,6 +114,7 @@ public final class OrderUtility
       }
       return newArray;
    }
+   
    
    public static ClassPeriod[] trim(ClassPeriod[] in) {
       ClassPeriod[] ret;

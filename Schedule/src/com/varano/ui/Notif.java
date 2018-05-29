@@ -34,7 +34,10 @@ import com.varano.resources.ResourceAccess;
 public class Notif extends JDialog {
    private static final long serialVersionUID = -6816539005364067301L;
 
-   private static final Dimension DEFAULT_PREF_SIZE = new Dimension(230,75);
+   private static final int PREF_W = 230;
+   public static final Dimension THREE_LINE_SIZE = new Dimension(PREF_W,90);
+   public static final Dimension TWO_LINE_SIZE = new Dimension(PREF_W, 75);
+   private static final Dimension DEF_PREF_SIZE = TWO_LINE_SIZE;
    private static final int defaultMillisToShow = 10_000;
    
    private Timer removalChecker;
@@ -47,9 +50,8 @@ public class Notif extends JDialog {
       super(parent, "no title", ModalityType.MODELESS);
       setUndecorated(true);
       this.millisToShow = millisToShow;
-      content = new Content(message, border, icon);
-      add(content);
-      setPreferredSize(DEFAULT_PREF_SIZE);      
+      content = new Content(message, border, icon, DEF_PREF_SIZE);
+      setPreferredSize(THREE_LINE_SIZE);      
       init0();
    }
    
@@ -87,7 +89,7 @@ public class Notif extends JDialog {
       private Image image;
       private JPanel text;
       
-      public Content(String message, Border border, Image icon) {
+      public Content(String message, Border border, Image icon, Dimension prefSize) {
          super(new BorderLayout());
          this.message = message; image = icon; 
          setFont(new Font("Futura", Font.BOLD, 13));
@@ -110,6 +112,7 @@ public class Notif extends JDialog {
          add(text, BorderLayout.EAST);
          
          formatMessage();
+         setPreferredSize(prefSize);
          setBorder(border);
       }
       
@@ -135,10 +138,6 @@ public class Notif extends JDialog {
          text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
          int gap = 5;
          text.setBorder(BorderFactory.createEmptyBorder(gap, gap, gap, gap));
-      }
-      
-      public Dimension getPreferredSize() {
-         return DEFAULT_PREF_SIZE;
       }
    }
    
@@ -181,6 +180,7 @@ public class Notif extends JDialog {
       setAlwaysOnTop(true);
       setFocusable(false);
       setAutoRequestFocus(false);
+      this.setFocusableWindowState(false);
       pack();
       setResizable(false);
       timeStarted = System.currentTimeMillis();
@@ -202,7 +202,7 @@ public class Notif extends JDialog {
       if (debug) System.out.println("diss");
       Agenda.log("removing notificaiton");
       dispose();
-      removalChecker.stop();
+      if (removalChecker != null) removalChecker.stop();
       removalChecker = null;
    }
    
