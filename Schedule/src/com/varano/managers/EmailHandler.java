@@ -69,9 +69,7 @@ public class EmailHandler {
       retField.setPreferredSize(new Dimension(225, UIHandler.FIELD_HEIGHT));
       JTextArea compose = new JTextArea();
       compose.setPreferredSize(new Dimension(content.getWidth(), 200));
-//      compose.setBorder(UIHandler.getTitledBorder("Message"));
       compose.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-//      compose.setOpaque(false);
       compose.setBackground(Color.white);
       final int gap = 5;
       compose.setMargin(new Insets(gap, gap, gap, gap));
