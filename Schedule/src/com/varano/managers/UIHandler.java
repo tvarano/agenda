@@ -441,6 +441,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
+            Agenda.log("Input Schedule MenuBar Button Clicked");
             age.getManager().setCurrentPane(PanelManager.INPUT);
          }
       }); 
@@ -450,6 +451,7 @@ public final class UIHandler {
       mi.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent arg0) {
+            Agenda.log("GPA MenuBar Button Clicked");
             age.getManager().setCurrentPane(PanelManager.GPA);
          }
       });
@@ -467,6 +469,7 @@ public final class UIHandler {
          mi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
+               Agenda.log("Day Check Button Clicked");
                age.getManager().getDisplay().setLastRead(LocalDate.now().minusDays(1));
             }
          });
@@ -480,6 +483,7 @@ public final class UIHandler {
                ri.addActionListener(new ActionListener() {
                   @Override
                   public void actionPerformed(ActionEvent arg0) {
+                     Agenda.log("Rotation "+ r + " requested through menu bar");
                      setRotation(age, r);
                   }
                });
