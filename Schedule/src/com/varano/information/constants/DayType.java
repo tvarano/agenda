@@ -90,7 +90,9 @@ public enum DayType
    
    private void onlineInit() throws Exception {
       Agenda.log("start "+name() + " at " +getSite());
-      formatString(retrieveHtml(getSite()));
+      String html = retrieveHtml(getSite());
+      System.out.println(name() +" HAS ACHIEVED SITE READING");
+      formatString(/*retrieveHtml(getSite())*/html);
    }
    
    private static final String START = "start", END = "end", LAB = "lab";
