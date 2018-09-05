@@ -14,13 +14,20 @@ import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -100,7 +107,7 @@ public class EmailHandler {
    
    public static final String SUBJECT = "Agenda Contact";
    
-   private static boolean connect() {
+   public static boolean connect() {
       final long start = System.currentTimeMillis();
       final long wait = 3000;
          try {
@@ -143,14 +150,22 @@ public class EmailHandler {
       props.put("mail.smtp.auth", "true");
       props.put("mail.smtp.port", port);
       props.put("mail.smtp.timeout", "10000");    
-      props.put("mail.smtp.connectiontimeout", "10000");    
+      props.put("mail.smtp.connectiontimeout", "10000");
+      
+      //for oauth2
+//      props.put("mail.imap.ssl.enable", "true"); // required for Gmail
+//      props.put("mail.imap.auth.mechanisms", "XOAUTH2");
       
       return props;
    }
    
    public static void send(String sub, String msg) {
-      // Get properties object
-      // get Session
+   		send(sub, msg, null);
+   }
+   
+   public static void send(String sub, String msg, String attachmentRoute) {
+   	
+   		Agenda.log("Sending message...");
       Session session = getSession();
       // compose message
       long start = 0;
@@ -159,7 +174,27 @@ public class EmailHandler {
          message.addRecipient(Message.RecipientType.TO,
                new InternetAddress(Addresses.CONTACT_EMAIL));
          message.setSubject(sub);
-         message.setText(msg);
+         Agenda.log("Message constructed");
+         
+         if (attachmentRoute == null || attachmentRoute == "")
+         		message.setText(msg);
+         else {
+         		Agenda.log("Attachment present at "+attachmentRoute);
+	         BodyPart messageBodyPart = new MimeBodyPart();
+	         messageBodyPart.setText(msg);
+	
+	         Multipart multipart = new MimeMultipart();
+	         multipart.addBodyPart(messageBodyPart);
+	
+	         messageBodyPart = new MimeBodyPart();
+	         DataSource source = new FileDataSource(attachmentRoute);
+	         Agenda.log("DataSource at "+source.toString());
+	         messageBodyPart.setDataHandler(new DataHandler(source));
+	         messageBodyPart.setFileName(attachmentRoute);
+	         multipart.addBodyPart(messageBodyPart);
+	         message.setContent(multipart);
+         }
+         
          // send message
          start = System.currentTimeMillis();
          if (debug) System.out.println("send begun");
@@ -169,12 +204,19 @@ public class EmailHandler {
       } catch (MessagingException e) {
          if (debug) System.out.println("send failed in " + (System.currentTimeMillis() - start));
          throw new RuntimeException(e);
-      } 
+      }
+      
+      //---------USING OAUTH 2.0 ATTEMPT---------
+//      Properties props = new Properties();
+//      
+//      Store store = session.getStore("imap");
+//      store.connect("imap.gmail.com", Addresses.CONTACT_EMAIL, oauth2_access_token);
    }
    
    public static void main(String[] args) {
 //      System.out.println(connect());
       Agenda.statusU = true;
-      System.out.println(showSendPrompt());
+//      System.out.println(showSendPrompt());
+      send("title", "body", "/Users/varanoth/Desktop/AgendaLog.txt");
    }
 }

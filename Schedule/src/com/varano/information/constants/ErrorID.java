@@ -14,6 +14,8 @@ import java.io.StreamCorruptedException;
 import javax.swing.JOptionPane;
 
 import com.varano.managers.Agenda;
+import com.varano.managers.FileHandler;
+import com.varano.resources.ioFunctions.ErrorReport;
 
 //Thomas Varano
 //Oct 24, 2017
@@ -96,6 +98,7 @@ public enum ErrorID {
 
    public static void showGeneral(Throwable e, String message, String ID, boolean copy, boolean recoverable) {
       java.awt.Toolkit.getDefaultToolkit().beep();
+      ErrorReport.sendError("Sent through ErrorID as a catch in the Initial Message", e);
       Agenda.logError(ID, e);
       e.printStackTrace();
       String newLn = "\n";
@@ -250,6 +253,12 @@ public enum ErrorID {
    public static void main(String[] args) {
 //      System.out.println(ErrorID.getError("7530"));
 //      ErrorID.showPrintingError(new IOException());
+   	FileHandler.initialFileWork();
+   	Agenda.statusU = true;
+   	System.out.println("oi");
+   	Agenda.log("ASDI");
+   	Agenda.log("ASDI");
+   	Agenda.log("ASDI");
       ErrorID.showError(new NullPointerException(), false);
 //      constants.test.DayTypeTest.main(args);
    }

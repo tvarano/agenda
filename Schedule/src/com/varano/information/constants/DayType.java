@@ -90,9 +90,7 @@ public enum DayType
    
    private void onlineInit() throws Exception {
       Agenda.log("start "+name() + " at " +getSite());
-      String html = retrieveHtml(getSite());
-      System.out.println(name() +" HAS ACHIEVED SITE READING");
-      formatString(/*retrieveHtml(getSite())*/html);
+      formatString(retrieveHtml(getSite()));
    }
    
    private static final String START = "start", END = "end", LAB = "lab";
@@ -119,10 +117,12 @@ public enum DayType
    }
    
    private int millisToWait() {
+   		if (ordinal() == 0) return FIRST_CONTACT_WAIT;
       return (ordinal() == 9) ? 700 : MILLIS_TO_WAIT;
    }
    
    private static final int MILLIS_TO_WAIT = 250;
+   private static final int FIRST_CONTACT_WAIT = 1000;
    private String retrieveHtml(URL site) throws Exception {
       return OrderUtility.futureCall(millisToWait(), new java.util.concurrent.Callable<String>() {
          @Override

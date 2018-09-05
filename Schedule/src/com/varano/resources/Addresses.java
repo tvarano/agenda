@@ -29,7 +29,6 @@ public final class Addresses {
       }
    }
    
-   public static final String NEWS = "http://agendapascack.x10host.com/updates/news.html";
    
    public static final String GITHUB_ISSUES = SOURCE + "/issues?q=is%3Aopen+is%3Aissue";
    
@@ -61,6 +60,7 @@ public final class Addresses {
    public static final String ROTATION_HOME = DATABASE + "rotations/";
    public static final String DAY_TYPE_HOME = DATABASE + "daytypes/";
    public static final String UPDATES_HOME = DATABASE + "updates/";
+   public static final String NEWS = UPDATES_HOME + "news.html";
    
    public static java.net.URI createURI(String path) {
       try {
