@@ -10,7 +10,7 @@ import javax.swing.text.StyledDocument;
 
 import com.varano.information.ClassPeriod;
 import com.varano.managers.Agenda;
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]

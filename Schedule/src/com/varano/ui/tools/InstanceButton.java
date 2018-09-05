@@ -9,7 +9,7 @@ import javax.swing.border.Border;
 
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 import com.varano.ui.display.DisplayMain;
 
 //Thomas Varano

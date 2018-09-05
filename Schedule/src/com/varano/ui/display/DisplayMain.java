@@ -21,12 +21,12 @@ import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.OrderUtility;
 import com.varano.managers.PanelManager;
-import com.varano.managers.UIHandler;
 import com.varano.resources.ioFunctions.AlertReader;
 import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.resources.ioFunctions.SchedWriter;
 import com.varano.resources.ioFunctions.calendar.CalReader;
 import com.varano.ui.PanelView;
+import com.varano.ui.UIHandler;
 import com.varano.ui.display.current.CurrentClassPane;
 import com.varano.ui.display.selection.ScheduleInfoSelector;
 import com.varano.ui.tools.ToolBar;
@@ -61,7 +61,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = true;
+      testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);

@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 
 public class GPAInputSlot extends JPanel
 {

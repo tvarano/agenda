@@ -37,6 +37,8 @@ import javax.swing.JTextField;
 
 import com.varano.information.constants.ErrorID;
 import com.varano.resources.Addresses;
+import com.varano.ui.UIHandler;
+import com.varano.ui.UIHandler;
 
 public class EmailHandler {
    private static boolean debug = false;
@@ -213,10 +215,10 @@ public class EmailHandler {
 //      store.connect("imap.gmail.com", Addresses.CONTACT_EMAIL, oauth2_access_token);
    }
    
-   public static void main(String[] args) {
+//   public static void main(String[] args) {
 //      System.out.println(connect());
-      Agenda.statusU = true;
+//      Agenda.statusU = true;
 //      System.out.println(showSendPrompt());
-      send("title", "body", "/Users/varanoth/Desktop/AgendaLog.txt");
-   }
+//      send("title", "body", "/Users/varanoth/Desktop/AgendaLog.txt");
+//   }
 }

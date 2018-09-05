@@ -7,7 +7,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 import com.varano.ui.input.InputManager;
 
 //Thomas Varano

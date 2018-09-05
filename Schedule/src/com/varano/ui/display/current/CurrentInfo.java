@@ -11,7 +11,7 @@ import javax.swing.text.StyledDocument;
 
 import com.varano.information.ClassPeriod;
 import com.varano.information.constants.RotationConstants;
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 
 public class CurrentInfo extends JTextPane {
       private static final long serialVersionUID = 1L;

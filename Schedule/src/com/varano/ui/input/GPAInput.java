@@ -28,8 +28,8 @@ import com.varano.information.constants.Lab;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
 import com.varano.managers.PanelManager;
-import com.varano.managers.UIHandler;
 import com.varano.ui.PanelView;
+import com.varano.ui.UIHandler;
 import com.varano.ui.display.selection.ScheduleList;
 import com.varano.ui.tools.ToolBar;
 

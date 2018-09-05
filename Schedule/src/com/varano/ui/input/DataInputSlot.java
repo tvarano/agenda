@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import com.varano.information.ClassPeriod;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 
 //Thomas Varano
 //[Program Descripion]

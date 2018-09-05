@@ -12,7 +12,7 @@ import javax.swing.JTextPane;
 
 import com.varano.information.ClassPeriod;
 import com.varano.managers.Agenda;
-import com.varano.managers.UIHandler;
+import com.varano.ui.UIHandler;
 
 public class MemoPad extends JTextPane implements FocusListener
 {

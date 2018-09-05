@@ -7,8 +7,8 @@ import javax.swing.JButton;
 
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
-import com.varano.managers.UIHandler;
 import com.varano.ui.PanelView;
+import com.varano.ui.UIHandler;
 import com.varano.ui.display.DisplayMain;
 
 //Thomas Varano

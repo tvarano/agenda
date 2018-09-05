@@ -14,9 +14,9 @@ import com.varano.information.Schedule;
 import com.varano.information.Time;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
-import com.varano.managers.UIHandler;
 import com.varano.resources.ResourceAccess;
 import com.varano.ui.Notif;
+import com.varano.ui.UIHandler;
 import com.varano.ui.display.DisplayMain;
 import com.varano.ui.display.selection.ScheduleList;
 

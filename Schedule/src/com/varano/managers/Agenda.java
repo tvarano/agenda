@@ -28,6 +28,8 @@ import java.time.LocalTime;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.varano.ui.UIHandler;
+
 //Thomas Varano
 //Sep 20, 2017
 
@@ -48,7 +50,7 @@ public class Agenda extends JPanel
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Agenda";
    public static final String BUILD = "1.8.4";
-   public static final String LAST_UPDATED = "April 2018";
+   public static final String LAST_UPDATED = "Sept 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
@@ -72,7 +74,7 @@ public class Agenda extends JPanel
          showNotif = false;
       }
       this.parentFrame = frame;
-      bar = UIHandler.configureMenuBar(frame, this);
+      bar = com.varano.ui.MenuBarHandler.configureMenuBar(frame, this);
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(PanelManager.DISPLAY);
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {

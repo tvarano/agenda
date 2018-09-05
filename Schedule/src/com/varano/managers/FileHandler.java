@@ -17,6 +17,7 @@ import javax.swing.UIManager;
 import com.varano.information.constants.ErrorID;
 import com.varano.resources.Addresses;
 import com.varano.resources.ResourceAccess;
+import com.varano.ui.UIHandler;
 
 public class FileHandler {
    public static String ENVELOPING_FOLDER;
