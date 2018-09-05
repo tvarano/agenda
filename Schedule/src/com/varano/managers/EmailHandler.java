@@ -38,7 +38,6 @@ import javax.swing.JTextField;
 import com.varano.information.constants.ErrorID;
 import com.varano.resources.Addresses;
 import com.varano.ui.UIHandler;
-import com.varano.ui.UIHandler;
 
 public class EmailHandler {
    private static boolean debug = false;
