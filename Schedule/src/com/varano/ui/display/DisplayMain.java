@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -50,18 +49,20 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private Rotation todayR;
    private int lastRead;
    private CalReader cal;
-   private Time currentTime;
    private CurrentClassPane currentClassPane;
    private ToolBar toolbar;
    private ScheduleInfoSelector infoSelector;
    private boolean updating, showDisp;
-   private boolean debug, debugSave, testSituation;
+   private boolean debug, debugSave;
+   
+   public static final boolean testSituation = false;
+   private static Time testTime;
+   
    private Timer timer;
    
    public DisplayMain(PanelManager parentManager) {
       debug = false;
       debugSave = false;
-      testSituation = false;
       showDisp = true;
       setBackground(UIHandler.tertiary);
       setParentManager(parentManager);
@@ -120,11 +121,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void initTime() {
       try {
          if (testSituation) {
-            currentTime = new Time(10,25);
+         		testTime = new Time(10,25);
             todayR = Rotation.getRotation(DayOfWeek.MONDAY); 
             setLastRead(LocalDate.now());
          } else {
-            currentTime = new Time(LocalTime.now());
             todayR = readRotation();
             setLastRead(LocalDate.now());
          }
@@ -132,6 +132,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          e.printStackTrace();
          ErrorID.showError(e, false);
       }
+   }
+   
+   public static Time testTime() {
+   		return testTime;
    }
    
    private void initComponents() {
@@ -152,7 +156,6 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       checkAndUpdateTime();
       currentClassPane.setClassPeriod(findCurrentClass());
       pushTodaySchedule();
-      toolbar.setRotation(todayR);
    }
    
    private void addComponents() {
@@ -215,7 +218,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    @Deprecated(since = "1.8")
    public void configureBarTime(ClassPeriod c) {
       if (c != null) {
-         setBarTime(currentTime.getTimeUntil(c.getEndTime()));
+         setBarTime(Time.now().getTimeUntil(c.getEndTime()));
          if (c.getSlot() == RotationConstants.NO_SCHOOL_SLOT)
             setBarText("No School");
       }
@@ -227,13 +230,12 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void checkAndUpdateTime() {
       if (testSituation) 
-         currentTime = currentTime.plus(1);
-      else 
-         currentTime = new Time(LocalTime.now());
+         testTime = testTime.plus(1);
+//      else 
+//         currentTime = Time.now();
       checkAndUpdateDate();
       checkInSchool();
       findCurrentClass();
-      currentClassPane.pushCurrentTime(currentTime);
    }
    
    public void checkAndUpdateDate() {
@@ -245,7 +247,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public void pushTodaySchedule() {
       currentClassPane.pushTodaySchedule(todaySched);
-      infoSelector.pushTodaySchedule(todaySched);
+      infoSelector.pushTodaySchedule();
    }
    
    /**
@@ -254,7 +256,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
     */
    public ClassPeriod findNextClass() {
       if (checkInSchool())
-         return todaySched.classAt(new Time(currentTime.getTotalMins()+5));
+         return todaySched.classAt(new Time(Time.now().getTotalMins()+5));
       return null;
    }
    
@@ -264,7 +266,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
     */
    public ClassPeriod findClassAfter() {
       if (checkInSchool())
-         return todaySched.classAt(new Time(currentTime.getTotalMins()+20));
+         return todaySched.classAt(new Time(Time.now().getTotalMins()+20));
       return null;
    }
    
@@ -275,16 +277,16 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public Time timeUntilNextClass() {
       if (checkInSchool())
-         return currentTime.getTimeUntil(findNextClass().getStartTime());
+         return Time.now().getTimeUntil(findNextClass().getStartTime());
       return Time.NO_TIME;
    }
    
    public Time timeUntilSchool() {
-      return currentTime.getTimeUntil(todaySched.getSchoolDay().getStartTime());
+      return Time.now().getTimeUntil(todaySched.getSchoolDay().getStartTime());
    }
    
    public boolean checkInSchool() {
-      return todaySched.getSchoolDay().contains(currentTime);
+      return todaySched.getSchoolDay().contains(Time.now());
    }
 
    public Lab labToday() {
@@ -299,7 +301,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       for (Lab l : todaySched.getLabs())
          if (todayR.equals(l.getRotation())) {
             if (debug) System.out.println("today's Lab info: "+l.getTimeAtLab().getInfo());
-            if (l.getTimeAtLab().contains(currentTime)) {
+            if (l.getTimeAtLab().contains(Time.now())) {
                if (debug) System.out.println("DISPLAY SHOULD BE PRINTING LAB");
                currentClassPane.pushClassPeriod(l.getTimeAtLab());
                return l.getTimeAtLab();
@@ -307,10 +309,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
          }
       //then classes
       ClassPeriod[] cp = todaySched.getClasses();
-      if (debug) System.out.println("updating"+currentTime);
+      if (debug) System.out.println("updating"+Time.now());
       for (ClassPeriod c : cp) {
          if (debug) System.out.println("display searching "+ c +"for time");
-         if (c.contains(currentTime)) {
+         if (c.contains(Time.now())) {
             if (debug) System.out.println("display pushing "+c.getInfo());
             if (!c.equals(currentClassPane.getClassPeriod()))
                currentClassPane.pushClassPeriod(c);
@@ -378,9 +380,9 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       todaySched.setData(OrderUtility.reorderAndClone(todayR, mainSched, mainSched.getClasses()));
       this.todayR = todayR;
       todaySched.setLunchLab(todayR);
-      toolbar.setRotation(todayR);
-      toolbar.repaint();
+      toolbar.setRotation();
       toolbar.setHighlights();
+      toolbar.repaint();
       pushTodaySchedule();
       
       update();

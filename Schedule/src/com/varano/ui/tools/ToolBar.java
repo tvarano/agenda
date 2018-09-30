@@ -31,7 +31,7 @@ public class ToolBar extends JToolBar
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
    private boolean delayed, half;
-   private Rotation rotation;
+//   private Rotation rotation;
    private int parentType;
    private PanelView parentPanel;
 
@@ -188,10 +188,11 @@ public class ToolBar extends JToolBar
    }
 
    public void setHighlights() {
+   		if (!(parentPanel instanceof DisplayMain)) return;
       for (Component c : getComponents()) {
          if (c instanceof RotationButton) {
             RotationButton r = (RotationButton) c;
-            r.setHighlight(r.equals(rotation));
+            r.setHighlight(r.equals(((DisplayMain) parentPanel).getTodayR()));
          }
       }
    }
@@ -229,15 +230,13 @@ public class ToolBar extends JToolBar
    public void setParentPanel(PanelView parentPanel) {
       this.parentPanel = parentPanel;
    }
-   public Rotation getRotation() {
-      return rotation;
-   }
    private void setState() {
-      setHalf(rotation.isHalf());
-      setDelayed(rotation.isDelay());
+   		if (parentPanel instanceof DisplayMain) {
+	      setHalf(((DisplayMain) parentPanel).getTodayR().isHalf());
+	      setDelayed(((DisplayMain) parentPanel).getTodayR().isDelay());
+   		}
    }
-   public void setRotation(Rotation r) {
-      this.rotation = r;
+   public void setRotation() {
       setState();
       setHighlights();
       setBevels();

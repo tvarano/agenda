@@ -80,9 +80,13 @@ public class Agenda extends JPanel
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-            manager.beforeClose();
-            log("program closed");
-            System.exit(0);
+         		try {
+         			manager.beforeClose();
+         			log("program closed");
+         			System.exit(0);
+         		} catch (java.util.concurrent.CancellationException e) {
+         			log("program close cancelled");
+         		}
          }
       });
       desktopSetup();

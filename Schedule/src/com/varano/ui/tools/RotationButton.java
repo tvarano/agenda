@@ -114,7 +114,6 @@ public class RotationButton extends JButton implements ActionListener
             else {
                parentPane.setTodayR(r);
             }
-            parentBar.setRotation(r);
             parentBar.repaint();
             parentBar.setHighlights();
             if (debug)  System.out.println("set rotation to + "+r);

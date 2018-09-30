@@ -110,21 +110,29 @@ public class PanelManager {
    public Menu getTimeMenu() {
       return bar.getMenu(UIHandler.timeBarIndex());
    }
-   public void beforeClose() {
+   public void beforeClose() throws java.util.concurrent.CancellationException {
       if (currentView instanceof com.varano.ui.input.InputManager) {
-         if (!((com.varano.ui.input.InputManager) currentView).isSaved() && !askSave()) {
-            Agenda.log("DO NOT SAVE");
-            return;
+         if (!((com.varano.ui.input.InputManager) currentView).isSaved()) {
+         		int save = askSave();
+         		if (save == -1) 
+         			throw new java.util.concurrent.CancellationException("Save Cancelled");
+         		if (save == 1) {
+	            Agenda.log("DO NOT SAVE");
+	            return;
+         		}
          }
       }
       currentView.save();
    }
    
-   public static boolean askSave() {
+   /**
+    * @return 0 for yes, 1 for no, -1 for no decision
+    */
+   public static int askSave() {
       return JOptionPane.showOptionDialog(null, "Do you want to save?",
             Agenda.APP_NAME, JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE, null,
-            null, null) != 1;
+            null, null);
    }
 
    public com.varano.information.Schedule getMainSched() {

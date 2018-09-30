@@ -2,7 +2,6 @@ package com.varano.ui.display.current;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.IOException;
-import java.time.LocalTime;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -28,7 +27,7 @@ public class CurrentClassPane extends JPanel
 {
    private static final long serialVersionUID = 1L;
    private DisplayMain parentPane;
-   private Time currentTime;
+//   private Time currentTime;
    private CurrentInfo info;
    private ScheduleList list;
    private ClassPeriod classPeriod;
@@ -40,7 +39,6 @@ public class CurrentClassPane extends JPanel
    
    public CurrentClassPane(ClassPeriod c, Schedule s, DisplayMain parent) {
       setName("currentClassPane");
-      currentTime = new Time(LocalTime.now().getHour(), LocalTime.now().getMinute());
       inSchool =  parent.checkInSchool();
       setClassPeriod(c); setSched(s); setParentPane(parent);
       setBackground(UIHandler.background);
@@ -107,10 +105,10 @@ public class CurrentClassPane extends JPanel
       if (classPeriod == null) return Time.NO_TIME;
       if (classPeriod.getSlot() == RotationConstants.LUNCH
             && parentPane.labToday() != null
-            && parentPane.labToday().getTimeAtLab().getStartTime().compareTo(getCurrentTime()) > 0) {
-         return currentTime.getTimeUntil(parentPane.labToday().getTimeAtLab().getStartTime());
+            && parentPane.labToday().getTimeAtLab().getStartTime().compareTo(Time.now()) > 0) {
+         return Time.now().getTimeUntil(parentPane.labToday().getTimeAtLab().getStartTime());
       }
-      return currentTime.getTimeUntil(classPeriod.getEndTime());
+      return Time.now().getTimeUntil(classPeriod.getEndTime());
    }
    
    public Time timeUntilNextClass() {
@@ -123,7 +121,7 @@ public class CurrentClassPane extends JPanel
    
    public ClassPeriod findPreviousClass() {
       if (inSchool)
-         return sched.classAt(new Time(currentTime.getTotalMins()-5));
+         return sched.classAt(new Time(Time.now().getTotalMins()-5));
       return null;
    }
    
@@ -188,27 +186,27 @@ public class CurrentClassPane extends JPanel
    public Dimension getPreferredSize() {
       return new Dimension((int) parentPane.getPreferredSize().getWidth(), 250);
    }
-   public void pushCurrentTime(Time t) {
-      setCurrentTime(t);
-      update();
-   }
+   
    public void pushClassPeriod(ClassPeriod c) {
       if (debug) System.out.println(getName() + " pushed " +c);
       setClassPeriod(c);
       checkInSchool();
       info.pushClassPeriod(c);
-      list.setSelectedValue(classPeriod, true);
-         
+      list.setSelectedValue(classPeriod, true);  
    }
    
    public void pushCurrentSlot(int slot) {
       pushClassPeriod(sched.get(slot));
       checkInSchool();
    }
+   
    public void pushTodaySchedule(Schedule s) {
       setSched(s);
+      pushClassPeriod(parentPane.findCurrentClass());
+      info.repaintText();
       list.setSchedule(s);
-   }   
+   }
+   
    public ScheduleList getList() {
       return list;
    }
@@ -238,12 +236,6 @@ public class CurrentClassPane extends JPanel
    }
    public void setParentPane(DisplayMain parent) {
       this.parentPane = parent;
-   }
-   public Time getCurrentTime() {
-      return currentTime;
-   }
-   public void setCurrentTime(Time currentTime) {
-      this.currentTime = currentTime;
    }
    public int getCurrentSlot() {
       return classPeriod.getSlot();

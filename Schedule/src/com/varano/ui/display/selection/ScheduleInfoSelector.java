@@ -26,7 +26,7 @@ import com.varano.ui.display.DisplayMain;
 public class ScheduleInfoSelector extends JPanel
 {
    private static final long serialVersionUID = 1L;
-   private Schedule todaySched, mainSched;
+//   private Schedule todaySched, mainSched;
    private static final int PREF_H = 240;
    private ScheduleList todayList, mainList, todayNameless;
    private MemoPad memo;
@@ -42,7 +42,6 @@ public class ScheduleInfoSelector extends JPanel
       setPreferredSize(new Dimension(parent.getWidth(),PREF_H));
       if (debug) System.out.println("CLASSES\n"+todaySched.classString(true));
       setParentPane(parent);
-      setTodaySched(todaySched); setMainSched(mainSched);
       initComponents();
       if (debug) System.out.println("AFTER "+todaySched.classString(true));
       
@@ -53,12 +52,12 @@ public class ScheduleInfoSelector extends JPanel
    }
    
    private void initComponents() {
-      todayList = new ScheduleList(todaySched, true); todayList.setParentPane(this); todayList.setName("Today's Classes");
+      todayList = new ScheduleList(parentPane.getTodaySched(), true); todayList.setParentPane(this); todayList.setName("Today's Classes");
       todayList.setAutoscrolls(true);
-      mainList = new ScheduleList(mainSched, true);
+      mainList = new ScheduleList(parentPane.getMainSched(), true);
       mainList.setParentPane(this); mainList.setName("Default Rotation");
       mainList.setAutoscrolls(true);
-      todayNameless = new ScheduleList(RotationConstants.getNamelessRotation(todaySched, parentPane.getTodayR()), false);
+      todayNameless = new ScheduleList(RotationConstants.getNamelessRotation(parentPane.getTodaySched(), parentPane.getTodayR()), false);
       todayNameless.setParentPane(this); todayNameless.setName("Today's Rotation");
       todayNameless.setAutoscrolls(true);
       
@@ -134,8 +133,8 @@ public class ScheduleInfoSelector extends JPanel
       ((JScrollPane)memo.getParent().getParent()).setBorder(UIHandler.getTitledBorder(o + " Memo"));
    }
    
-   public void pushTodaySchedule(Schedule s) {
-      setTodaySched(s);
+   public void pushTodaySchedule() {
+      setTodaySched();
    }
    
    private JTabbedPane createTabbedPane() {
@@ -160,7 +159,7 @@ public class ScheduleInfoSelector extends JPanel
       retval.addTab(scroll.getName(), null, scroll, tabTip);
       retval.setMnemonicAt(2, KeyEvent.VK_3);
       
-      ScheduleList allC = new ScheduleList(RotationConstants.getAllClasses(mainSched), false);
+      ScheduleList allC = new ScheduleList(RotationConstants.getAllClasses(parentPane.getMainSched()), false);
       allC.setParentPane(this);
       scroll = new JScrollPane(allC);
       scroll.setName("All Classes");
@@ -179,24 +178,15 @@ public class ScheduleInfoSelector extends JPanel
       });
       return retval;
    }
-   
-   public Schedule getTodaySched() {
-      return todaySched;
-   }
-   public void setTodaySched(Schedule todaySched) {
-      this.todaySched = todaySched;
+   public void setTodaySched() {
       if (todayList != null)
-         todayList.setSchedule(todaySched);
+         todayList.setSchedule(parentPane.getTodaySched());
       if (todayNameless != null)
-      todayNameless.setSchedule(RotationConstants.getNamelessRotation(todaySched, parentPane.getTodayR()));
+      todayNameless.setSchedule(RotationConstants.getNamelessRotation(parentPane.getTodaySched(), parentPane.getTodayR()));
    }
-   public Schedule getMainSched() {
-      return mainSched;
-   }
-   public void setMainSched(Schedule mainSched) {
-      this.mainSched = mainSched;
+   public void setMainSched() {
       if (mainList != null)
-         mainList.setSchedule(mainSched);
+         mainList.setSchedule(parentPane.getMainSched());
    }
 
    public DisplayMain getParentPane() {

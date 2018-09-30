@@ -40,6 +40,11 @@ public class Time implements Comparable<Time>, Serializable
       am = hour24 < 12;
    }
    
+   public static Time now() {
+   		if (com.varano.ui.display.DisplayMain.testSituation) return com.varano.ui.display.DisplayMain.testTime();
+   		return new Time(LocalTime.now());
+   }
+   
    /**
     * Creates the Time with a 12 hour setting. The hours are converted based to a 24 hour scale.
     * 
