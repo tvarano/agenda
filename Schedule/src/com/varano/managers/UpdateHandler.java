@@ -20,6 +20,7 @@ public class UpdateHandler {
    
    public static final String SOURCE_PATH = "http://agendapascack.x10host.com/updates/updater-src.jar";
    public static final String DOWNLOAD_PATH = System.getProperty("user.home") + "/Downloads/Agenda-Update.jar";
+   private static boolean debug = true;
    
    public static void update() throws Exception {
       final int toWait = 10_000;
@@ -30,9 +31,10 @@ public class UpdateHandler {
          Process run = new ProcessBuilder("open", DOWNLOAD_PATH).start();
          InputStream in = run.getInputStream();
          byte[] bts = in.readAllBytes();
+         if (debug) System.out.println("UPDATE INFO: ");
          for (byte b : bts)
-            System.out.print((char)b);
-         System.out.println("run: " + run.waitFor());
+            if (debug) System.out.print((char)b);
+         if (debug) System.out.println("run: " + run.waitFor());
          
       } catch (IOException | InterruptedException e) {
          Agenda.logError("error in downloading or running updater jar", e);
@@ -111,6 +113,10 @@ public class UpdateHandler {
    }
    
    public static void main(String[] args) {
-      askUpdate();
+      try {
+			update();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
    }
 }
