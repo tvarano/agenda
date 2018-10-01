@@ -18,7 +18,7 @@ import com.varano.resources.Addresses;
 
 public class UpdateHandler {
    
-   public static final String SOURCE_PATH = "http://agendapascack.x10host.com/updates/updater-src.jar";
+   public static final String SOURCE_PATH = Addresses.UPDATES_HOME + "updater-src.jar";
    public static final String DOWNLOAD_PATH = System.getProperty("user.home") + "/Downloads/Agenda-Update.jar";
    private static boolean debug = true;
    
@@ -27,8 +27,8 @@ public class UpdateHandler {
       try {
          OrderUtility.futureCall(toWait, UpdateHandler::download, "download updater jar");
          Agenda.log("calling jar: \"java -jar "+ DOWNLOAD_PATH + " " +  Addresses.getExec() + "\"");
-//         Process run = new ProcessBuilder("java", "-jar", DOWNLOAD_PATH, Addresses.getExec()).start();
-         Process run = new ProcessBuilder("open", DOWNLOAD_PATH).start();
+         Process run = new ProcessBuilder("java", "-jar", DOWNLOAD_PATH, Addresses.getExec()).start();
+//         Process run = new ProcessBuilder("open", DOWNLOAD_PATH).start();
          InputStream in = run.getInputStream();
          byte[] bts = in.readAllBytes();
          if (debug) System.out.println("UPDATE INFO: ");
@@ -44,7 +44,7 @@ public class UpdateHandler {
    }
    
    private static int download() throws Exception{      
-      URL sourceURL = new URL(SOURCE_PATH);
+      URL sourceURL = new URL(Addresses.UPDATES_HOME + "updater-src.jar");
       File download = new File(DOWNLOAD_PATH);
       copyFileUsingStream(sourceURL.openStream(), download);
       return 0;

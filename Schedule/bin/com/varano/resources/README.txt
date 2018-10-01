@@ -1,0 +1,2 @@
+# Agenda
+A scheduler program for Pascack Hills and Valley. Using the rotating schedule, the user will be able to determine where they should be in school, how much time is left in their current activity, and their schedule for the day. They can take notes and keep their assignments in order for each class. They can also determine their GPA and customize their schedule. The program is custom to Pascack Hills and Valley, but can be modulated to work with other districts.

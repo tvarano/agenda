@@ -1,0 +1,13 @@
+Hi, 
+Thanks for using Agenda to manage your schedule at school. There are only a few things to go over to make sure everything works properly. 
+
+Transfer Protocol: 
+	When transferring this program, please make sure to deliver these instructions. It is important everyone can get them. If you lose them, look under the help tab when you run Agenda to create a new one on your desktop. 
+
+
+Installation:
+ 	Running the program trips a security notification on the school Macs (don’t worry, this isn’t a virus).
+ 	All you have to do to get around this is go to System Preferences > Security & Privacy > General. You should see a button saying “Run anyway.” That should run the program. 
+
+If you have any issues, please email me at varanoth@pascack.org.
+-Thomas Varano
