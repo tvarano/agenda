@@ -4,6 +4,7 @@
 package com.varano.ui;
 
 import java.awt.BorderLayout;
+import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -19,6 +20,8 @@ import java.awt.desktop.PreferencesEvent;
 import java.awt.desktop.PreferencesHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -50,12 +53,14 @@ import com.varano.managers.FileHandler;
 import com.varano.managers.PanelManager;
 import com.varano.resources.Addresses;
 import com.varano.resources.ioFunctions.SchedWriter;
+import com.varano.ui.input.GPAInput;
 
 public class MenuBarHandler {
 	private static boolean debug = false;
 	
 	
    public static MenuBar configureMenuBar(JFrame frame, Agenda age) {
+   		Agenda.log("CONFIGURING MENU BAR");
       if (Desktop.isDesktopSupported()) {
          Desktop.getDesktop().setAboutHandler(new AboutHandler() {
             @Override
@@ -91,15 +96,17 @@ public class MenuBarHandler {
       }); 
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_I));
       
-      mi = m.add(new MenuItem("View GPA"));
-      mi.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent arg0) {
-            Agenda.log("GPA MenuBar Button Clicked");
-            age.getManager().setCurrentPane(PanelManager.GPA);
-         }
-      });
-      mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
+      if (GPAInput.show) {
+	      mi = m.add(new MenuItem("View GPA"));
+	      mi.addActionListener(new ActionListener() {
+	         @Override
+	         public void actionPerformed(ActionEvent arg0) {
+	            Agenda.log("GPA MenuBar Button Clicked");
+	            age.getManager().setCurrentPane(PanelManager.GPA);
+	         }
+	      });
+	      mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
+      }
       
       //Placebo button. It autosaves
       mi = m.add(new MenuItem("Save"));
@@ -454,7 +461,6 @@ public class MenuBarHandler {
 	   b.setSelected(true);
 	   bottom.add(b);
 	   
-	   
 	   p.add(bottom, BorderLayout.SOUTH);
 	   
 	   f.getContentPane().add(p);
@@ -465,18 +471,19 @@ public class MenuBarHandler {
 	}
 	
 	
-	private static class LookChooser extends MenuItem {
+	private static class LookChooser extends CheckboxMenuItem {
       private static final long serialVersionUID = 1L;
       private UIManager.LookAndFeelInfo look;
 
       public LookChooser(UIManager.LookAndFeelInfo look, Agenda a) {
          super(look.getName());
          this.look = look;
-         addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               performAction(a);
-            }
+         addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent arg0) {
+					Agenda.log("look chooser "+look.getName() + " state changed.");
+					performAction(a);
+				}
          });
       }
       
@@ -494,30 +501,35 @@ public class MenuBarHandler {
             writeData();
             UIHandler.setLAF0(look.getClassName());
             javax.swing.SwingUtilities.updateComponentTreeUI(a.getParent());
+            a.validateLookChecks();
       }
+      
       public String toString() {
          return look.getName();
       }
    }
 	
 	
-	private static class ThemeChooser extends MenuItem {
+	private static class ThemeChooser extends CheckboxMenuItem {
       private static final long serialVersionUID = 1L;
       private String themeName;
 
       public ThemeChooser(String themeName, Agenda a) {
 	      super(themeName);
          this.themeName = themeName;
-         addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               performAction(a);
-            }
+         addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent arg0) {
+					performAction(a);
+				}
+         	
          });
       }
       public void performAction(Agenda a) {
          writeData();
          UIHandler.setColors();
+         a.validateThemeChecks();
          a.repaint();         
       }
       public void writeData() {

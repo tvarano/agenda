@@ -372,7 +372,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       return todayR;
    }
    public void setTodayR(Rotation todayR) {
-      if (Agenda.statusU) System.out.println("-----------------NEW ROTATION-----------------");
+      System.out.println("-----------------NEW ROTATION-----------------");
       if (updating)
          return;
       if (debug) System.out.println("DISPLAY SETTING ROTATION TO "+ todayR);

@@ -43,7 +43,8 @@ public enum Rotation
    TEST_TWO(DayType.TEST_DAY, true),
    TEST_THREE(DayType.TEST_DAY, true),
    DELAY_ARRIVAL(DayType.DELAY_ARR, true),
-   SPECIAL(DayType.SPECIAL, true);
+   SPECIAL(DayType.SPECIAL, true),
+   FLIP_EVEN_BLOCK(DayType.BLOCK, false);
       
    private final int lunchSlot;
    private ClassPeriod[] times;
@@ -173,15 +174,17 @@ public enum Rotation
          case RotationConstants.HALF_R4 :
             return new int[] {4,1,2,3,7,5,6};
          case RotationConstants.TEST_ONE : 
-            return new int[] {1, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 5, RotationConstants.PASCACK_STUDY_2};
+            return new int[] {1, RotationConstants.PASCACK_STUDY, RotationConstants.LUNCH, 5, RotationConstants.PASCACK_STUDY};
          case RotationConstants.TEST_TWO : 
-            return new int[] {2, 4, RotationConstants.LUNCH, RotationConstants.PASCACK_STUDY_1, 6};
+            return new int[] {2, 4, RotationConstants.LUNCH, RotationConstants.PASCACK_STUDY, 6};
          case RotationConstants.TEST_THREE : 
-            return new int[] {3, RotationConstants.PASCACK_STUDY_1, RotationConstants.LUNCH, 7, RotationConstants.PASCACK_STUDY_2};
+            return new int[] {3, RotationConstants.PASCACK_STUDY, RotationConstants.LUNCH, 7, RotationConstants.PASCACK_STUDY};
          case RotationConstants.DELAY_ARR : 
             return new int[] {6, lunch, 2, 4};
          case RotationConstants.SPECIAL :
             return new int[] {RotationConstants.SPECIAL_OFFLINE_INDEX};
+         case RotationConstants.FLIP_EVEN_BLOCK : 
+         		return new int[] {2, 4, lunch, 6, RotationConstants.PASCACK}; 
          default :
             return new int[0];
       }
@@ -196,7 +199,7 @@ public enum Rotation
       switch(rotationType) {
          case RotationConstants.R1 : case RotationConstants.R2 : case RotationConstants.R3  : case RotationConstants.R4 : 
             return DayType.NORMAL;
-         case RotationConstants.ODD_BL : case RotationConstants.EVEN_BL :
+         case RotationConstants.ODD_BL : case RotationConstants.EVEN_BL : case RotationConstants.FLIP_EVEN_BLOCK : 
             return DayType.BLOCK;
          case RotationConstants.HALF_R1 : case RotationConstants.HALF_R3 : case RotationConstants.HALF_R4 : 
             return DayType.HALF_DAY;
@@ -238,9 +241,9 @@ public enum Rotation
          }
          else if (slots[i] == RotationConstants.PASCACK)
             name = "Pascack Period";
-         else if (slots[i] == RotationConstants.PASCACK_STUDY_1)
+         else if (slots[i] == RotationConstants.PASCACK_STUDY)
             name = RotationConstants.pascackStudyName;
-         else if (slots[i] == RotationConstants.PASCACK_STUDY_2) 
+         else if (slots[i] == RotationConstants.PASCACK_STUDY) 
             name = RotationConstants.pascackStudyName;
          else if (slots[i] == RotationConstants.SPECIAL_OFFLINE_INDEX)
             name = RotationConstants.getSpecialOffline().getName();

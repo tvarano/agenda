@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 
 import com.varano.information.ClassPeriod;
 import com.varano.information.Schedule;
-import com.varano.information.Time;
 import com.varano.information.constants.ErrorID;
 import com.varano.information.constants.Lab;
 import com.varano.information.constants.Rotation;
@@ -101,10 +100,8 @@ public class SchedReader {
             c.setData(in.getPascackPreferences());
             if (s == RotationConstants.PASCACK)
                c.setTimeTemplate(RotationConstants.getPascack());
-            else if (s == RotationConstants.PASCACK_STUDY_1)
-               c.setName(RotationConstants.getPascackStudyOne(Time.NO_TIME, Time.NO_TIME).getName());
-            else 
-               c.setName(RotationConstants.getPascackStudyOne(Time.NO_TIME, Time.NO_TIME).getName());
+            else if (s == RotationConstants.PASCACK_STUDY)
+               c.setName(RotationConstants.pascackStudyName);
          } else if (s == RotationConstants.LUNCH)
             c.setName("Lunch");
       }

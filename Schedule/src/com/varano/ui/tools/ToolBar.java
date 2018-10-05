@@ -31,7 +31,6 @@ public class ToolBar extends JToolBar
    private static final long serialVersionUID = 1L;
    public static final int ZERO_BUTTON = 0, EIGHT_BUTTON = 1;
    private boolean delayed, half;
-//   private Rotation rotation;
    private int parentType;
    private PanelView parentPanel;
 

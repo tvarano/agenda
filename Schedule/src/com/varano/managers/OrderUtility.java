@@ -94,16 +94,18 @@ public final class OrderUtility
          // take special periods 
          ClassPeriod specialAddition = null;
          if (order[i] == RotationConstants.PASCACK) specialAddition = RotationConstants.getPascack();
-         else if (order[i] == RotationConstants.PASCACK_STUDY_1) specialAddition = RotationConstants.getPascackStudyOne(
+         else if (order[i] == RotationConstants.PASCACK_STUDY) specialAddition = RotationConstants.getPascackStudy(
                r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime());
-         else if (order[i] == RotationConstants.PASCACK_STUDY_2) specialAddition = RotationConstants.getPascackStudyTwo(
-               r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime());
-         else if (order[i] == RotationConstants.SPECIAL_OFFLINE_INDEX) specialAddition = RotationConstants.getSpecialOffline();
+         else if (order[i] == RotationConstants.SPECIAL_OFFLINE_INDEX) 
+         		specialAddition = RotationConstants.getSpecialOffline();
          else if (order[i] == RotationConstants.PARCC) specialAddition = RotationConstants.getParccPeriod(
                r.getTimes()[rotationIndex].getStartTime(), r.getTimes()[rotationIndex].getEndTime());
          
          if (specialAddition != null) {
             newArray[newArrayIndex] = specialAddition;
+            specialAddition.setStartTime(r.getTimes()[rotationIndex].getStartTime());
+            specialAddition.setEndTime(r.getTimes()[rotationIndex].getEndTime());
+            
             newArrayIndex++;
             rotationIndex++;
          }

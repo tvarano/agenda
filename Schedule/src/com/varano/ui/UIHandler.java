@@ -298,9 +298,17 @@ public final class UIHandler {
       titleBorderColor = new MutableColor();
    }
    
+   public static String readTheme() {
+		return readDoc("theme.txt", THEME_ID);
+   }
+   
+   public static String readLAF() {
+		return readDoc("look.txt", LAF_ID);
+}
+   
 	public static void setColors() {
 	   String theme = themes[0];
-	   String str = readDoc("theme.txt", THEME_ID);
+	   String str = readTheme();
 	   for (String th : themes)
          if (str.equals(th))
             theme = str;
@@ -431,7 +439,7 @@ public final class UIHandler {
 	}
 	
 	public synchronized static void setLAF() {
-	   String name = readDoc("look.txt", LAF_ID);
+	   String name = readLAF();
 	   setLAF0(name);
 	}
 	

@@ -25,7 +25,7 @@ public class FileHandler {
    public static String LOG_ROUTE;
    public static String FILE_ROUTE;
    public static String THEME_ROUTE, LAF_ROUTE;
-   public static String WELCOME_ROUTE;
+   public static String WELCOME_ROUTE, GPA_ROUTE;
    public static String NOTIF_ROUTE;
    public static final String NO_LOCATION = "noLoc";
    
@@ -99,12 +99,13 @@ public class FileHandler {
    public static void initFileNames(String envelop) {
       ENVELOPING_FOLDER = envelop;
       RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
-      LOG_ROUTE = RESOURCE_ROUTE+"AgendaLog.txt";
+      LOG_ROUTE = RESOURCE_ROUTE +"AgendaLog.txt";
       FILE_ROUTE = RESOURCE_ROUTE + "ScheduleHold.txt";
       NOTIF_ROUTE = RESOURCE_ROUTE + "notif.txt";
       THEME_ROUTE = RESOURCE_ROUTE + "theme.txt";
       LAF_ROUTE = RESOURCE_ROUTE + "look.txt";
       WELCOME_ROUTE = RESOURCE_ROUTE + "showWelcome.txt"; 
+      GPA_ROUTE = RESOURCE_ROUTE + "showGPA.txt";
    }
    
    public static final String TRUE = "t", FALSE = "f";
@@ -122,6 +123,8 @@ public class FileHandler {
             writeWelcomeTrue();
          if (new File(NOTIF_ROUTE).createNewFile())
             write(TRUE, NOTIF_ROUTE);
+         if (new File(GPA_ROUTE).createNewFile())
+         		write(FALSE, GPA_ROUTE);
       } catch (IOException e) {
          ErrorID.showError(e, false);
       }

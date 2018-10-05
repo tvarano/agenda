@@ -69,6 +69,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    public static final String[] letterGrades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"}; 
    public static final double[] gradePoints = {4.33, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1};
    public static final double[] unWeightedGradePoints = {4, 4, 3.67, 3.33, 3, 2.67, 2.33, 2, 1.67, 1.33, 1};
+   public static boolean show = false;
    private boolean debug, error;
    
    public GPAInput(Schedule sched, PanelManager manager) {
@@ -206,8 +207,7 @@ public class GPAInput extends JPanel implements InputManager, PanelView
    private static boolean isApplicable(ClassPeriod c) {
       int sl = c.getSlot();
       return sl != RotationConstants.LUNCH && sl != RotationConstants.PASCACK 
-            && sl != RotationConstants.PASCACK_STUDY_1 && sl != RotationConstants.PASCACK_STUDY_2;
-            
+            && sl != RotationConstants.PASCACK_STUDY;
    }
    
    private void addSlot(ClassPeriod c, boolean hasZero) {

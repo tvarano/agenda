@@ -49,12 +49,15 @@ public class PanelManager {
       display.setName("display");
       input = new DataInput(this);
       input.setName("input");
-      gpa = new GPAInput(this);
-      gpa.setName("gpa");
+      
       parent.setLayout(new CardLayout());
       parent.add(display, display.getName());
       parent.add(input, input.getName());
-      parent.add(gpa, gpa.getName());
+      
+      if (GPAInput.show) {
+	      createGPA();
+      }
+      
       currentView = display;
    }
 
@@ -84,6 +87,18 @@ public class PanelManager {
       Agenda.log(currentView.getClass().getName() + " refreshed");
       currentView.refresh();
       currentView.revalidate();
+   }
+   
+   public void createGPA() {
+   		Agenda.log("creating gpa...");
+	   	gpa = new GPAInput(this);
+      gpa.setName("gpa");
+      parent.add(gpa, gpa.getName());
+   }
+   
+   public void destroyGPA() {
+   		parent.remove(gpa);
+   		gpa = null;
    }
    
    public void repaint() {

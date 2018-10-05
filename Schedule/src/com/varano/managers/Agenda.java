@@ -1,12 +1,14 @@
 package com.varano.managers;
 
 import java.awt.CardLayout;
+import java.awt.CheckboxMenuItem;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.RenderingHints;
 import java.awt.desktop.AppForegroundEvent;
@@ -27,8 +29,11 @@ import java.time.LocalTime;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
+import com.varano.information.constants.ErrorID;
 import com.varano.ui.UIHandler;
+import com.varano.ui.input.GPAInput;
 
 //Thomas Varano
 //Sep 20, 2017
@@ -57,7 +62,7 @@ public class Agenda extends JPanel
    private JFrame parentFrame;
    private MenuBar bar;
    private boolean showNotif;
-   public static boolean statusU;
+   private static boolean log;
    public static final boolean fullRelease = true;
    public static final boolean isApp = System.getProperty("user.dir").indexOf(".app") > 0; 
    
@@ -74,7 +79,7 @@ public class Agenda extends JPanel
          showNotif = false;
       }
       this.parentFrame = frame;
-      bar = com.varano.ui.MenuBarHandler.configureMenuBar(frame, this);
+      configureMenuBar();
       manager = new PanelManager(this, bar);
       manager.setCurrentPane(PanelManager.DISPLAY);
       parentFrame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -88,8 +93,11 @@ public class Agenda extends JPanel
          			log("program close cancelled");
          		}
          }
+         
       });
       desktopSetup();
+      
+      toggleGpa(shouldShowGpa());
    }
    
    public static void showWelcome() {
@@ -110,6 +118,36 @@ public class Agenda extends JPanel
       } catch (IOException e) {
          Agenda.logError("error with welcome", e);
       }
+   }
+   
+   private void toggleGpa(boolean show) {
+   		Agenda.log("toggle gpa to: "+show);
+   		if (GPAInput.show == show) return;
+   		GPAInput.show = show;
+   		manager.beforeClose();
+   		manager.setCurrentPane(PanelManager.DISPLAY);
+   		configureMenuBar();
+   		if (show)
+   			manager.createGPA();
+   }
+   
+   private void configureMenuBar() {
+	   	bar = com.varano.ui.MenuBarHandler.configureMenuBar(parentFrame, this);
+      validateThemeChecks();
+      validateLookChecks();
+   }
+   
+   public static boolean shouldShowGpa() {
+   	 BufferedReader br;
+       try {
+			br = new BufferedReader(new FileReader(new File(FileHandler.GPA_ROUTE)));
+			String line = br.readLine();
+			br.close();
+			return line.equals(FileHandler.TRUE);
+		} catch (IOException e) {
+			ErrorID.showError(e, true);
+		}
+       return false;
    }
    
    private void desktopSetup() {
@@ -201,15 +239,35 @@ public class Agenda extends JPanel
    public MenuBar getBar() {
       return bar;
    }
+   
+
+	public void validateThemeChecks() {
+		Agenda.log("validating theme checkboxes");
+		Menu m = (Menu) bar.getMenu(1).getItem(2);
+		String currentTheme = UIHandler.readTheme();
+		for (int i = 0; i < m.getItemCount(); i++) {
+			((CheckboxMenuItem) m.getItem(i)).setState(m.getItem(i).getLabel().equals(currentTheme));
+		}
+	}
+	
+	public void validateLookChecks() {
+		Agenda.log("validating laf checkboxes");
+		Menu m = (Menu) bar.getMenu(1).getItem(3);
+		String currentLook = UIManager.getLookAndFeel().getName();
+		for (int i = 0; i < m.getItemCount(); i++) {
+			((CheckboxMenuItem) m.getItem(i)).setState(m.getItem(i).getLabel().equals(currentLook));
+		}
+	}
+   
    public void show(String name) {
       ((CardLayout) getLayout()).show(this, name);
    } 
    public static void log(String text) {
-      if (statusU)
+      if (log)
          System.out.println(LocalTime.now() + " : "+text);
    } 
    public static void logError(String message, Throwable e) {
-      if (statusU)
+      if (log)
          System.err.println(LocalTime.now() + " : ERROR: " + message + " : \n\t" 
       + e.getClass().getName() + " - "+ e.getMessage());
    }
@@ -292,7 +350,7 @@ public class Agenda extends JPanel
    
    
    public static void main(String[] args) {
-      statusU = true;
+      log = true;
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {

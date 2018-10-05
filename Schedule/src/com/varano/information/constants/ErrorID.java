@@ -254,7 +254,6 @@ public enum ErrorID {
 //      System.out.println(ErrorID.getError("7530"));
 //      ErrorID.showPrintingError(new IOException());
    	FileHandler.initialFileWork();
-   	Agenda.statusU = true;
    	System.out.println("oi");
    	Agenda.log("ASDI");
    	Agenda.log("ASDI");
