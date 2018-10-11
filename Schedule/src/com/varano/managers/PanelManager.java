@@ -79,11 +79,13 @@ public class PanelManager {
       parent.show(currentView.getName());
       this.currentType = type;
    }
-
-   public void reset() {
-      if (!(currentView instanceof DisplayMain))
-         if (!UIHandler.checkIntentions("Refresh the program.\nYou might lose unsaved data"))
-            return;
+   
+   public void reset(boolean suppressWarning) {
+   		if (!suppressWarning) {
+	      if (!(currentView instanceof DisplayMain))
+	         if (!UIHandler.checkIntentions("Refresh the program.\nYou might lose unsaved data"))
+	            return;
+   		}
       Agenda.log(currentView.getClass().getName() + " refreshed");
       currentView.refresh();
       currentView.revalidate();

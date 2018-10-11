@@ -39,6 +39,19 @@ import com.varano.ui.input.GPAInput;
 //Sep 20, 2017
 
 /*
+ * TODO
+ * make new filetype, allow for transfer from old program.  DONE
+ * allow for export. DONE
+ * 		use the cool finder thing with apple script. DONE 
+ * allow for import. 
+ * 		DESIGN
+ * 			have file that says where to look for schedule. 
+ * 				when choosing, (file import), have JOption to open default and then another button to choose an external source
+ * 				obvi change the reference in the file 
+ */
+
+
+/*
  * NOTES BEFORE EXPORT
  * is statusU set to true?
  * are all unwanted debug prints not printing?
@@ -68,7 +81,7 @@ public class Agenda extends JPanel
    
    public Agenda(JFrame frame) {
       setName("main class");
-      
+           
       FileHandler.initialFileWork();
       log(getClass().getSimpleName()+" began initialization");
 

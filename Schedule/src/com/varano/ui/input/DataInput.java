@@ -19,6 +19,7 @@ import com.varano.information.constants.Lab;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
+import com.varano.managers.FileHandler;
 import com.varano.managers.PanelManager;
 import com.varano.resources.ioFunctions.SchedReader;
 import com.varano.ui.PanelView;
@@ -303,7 +304,7 @@ public class DataInput extends JPanel implements InputManager, PanelView
       s.setGpaClasses(formatGPAClasses(s));
       parentManager.saveSchedule(s, getClass());
       if (debug) System.out.println("wrote" + s);
-      Agenda.log("saved input");
+      Agenda.log("saved input to "+FileHandler.SCHED_ROUTE);
       saved = true;
    }
    

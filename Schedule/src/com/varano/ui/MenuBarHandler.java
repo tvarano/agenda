@@ -52,6 +52,7 @@ import com.varano.managers.EmailHandler;
 import com.varano.managers.FileHandler;
 import com.varano.managers.PanelManager;
 import com.varano.resources.Addresses;
+import com.varano.resources.ioFunctions.ImportExportHandler;
 import com.varano.resources.ioFunctions.SchedWriter;
 import com.varano.ui.input.GPAInput;
 
@@ -146,7 +147,7 @@ public class MenuBarHandler {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             Agenda.log("REFRESH\n");
-            age.getManager().reset();
+            age.getManager().reset(false);
          }
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_R));
@@ -185,7 +186,7 @@ public class MenuBarHandler {
             if (UIHandler.checkIntentions("Reset Your Schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
-               age.getManager().reset();
+               age.getManager().reset(false);
             }
          }
       });
@@ -199,11 +200,42 @@ public class MenuBarHandler {
                   FileHandler.write(UIHandler.themes[0], FileHandler.THEME_ROUTE);
                   FileHandler.write(UIManager.getSystemLookAndFeelClassName(), FileHandler.LAF_ROUTE);
                   UIHandler.setColors();
+                  FileHandler.writeWelcomeTrue();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
             }
          }
+      });
+      
+      m.addSeparator();
+      
+      // NOTE this will overwrite the actual schedule being used. make sure to warn.
+      mi = m.add(new MenuItem("Import..."));
+      mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// 0 for default, 1 for another
+				int choice = JOptionPane.showOptionDialog(null,
+						"Would you like to use the default\nschedule location or choose another schedule?",
+						Agenda.APP_NAME + ": Choose Schedule", JOptionPane.YES_NO_OPTION,
+		            JOptionPane.QUESTION_MESSAGE, null, new String[] {"Default", "Another Schedule"}, "Default");
+				
+				if (choice == 0) 
+					ImportExportHandler.reinitializeWith(age, FileHandler.DEFAULT_SCHED_ROUTE);
+				else if (choice == 1)
+					ImportExportHandler.reinitializeWith(age, ImportExportHandler.requestImportFileLocation());
+				
+			}	
+      });
+      
+      
+      mi = m.add(new MenuItem("Export..."));
+      mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ImportExportHandler.export(age.getManager().getMainSched());
+			}	
       });
       
       m.addSeparator();

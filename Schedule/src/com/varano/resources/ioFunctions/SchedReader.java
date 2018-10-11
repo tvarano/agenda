@@ -16,26 +16,58 @@ import com.varano.managers.OrderUtility;
 
 public class SchedReader {
    private ObjectInputStream reader;
+   private String fileRoute;
    private boolean debug;
    
-   public SchedReader() {
-      debug = false;
-      init();
+   public SchedReader(String fileRoute) {
+   		debug = false;
+   		this.fileRoute = fileRoute;
+//   		init(fileRoute);
    }
    
-   private void init() {
+   public SchedReader() {
+   		this(FileHandler.SCHED_ROUTE);
+   }
+   
+   private void init(String fileRoute) {
+   	//read the schedule as normal
       try {
-         reader = new ObjectInputStream(new FileInputStream(FileHandler.FILE_ROUTE));
-         if (debug) System.out.println(new File(FileHandler.FILE_ROUTE).getAbsolutePath());
+         reader = new ObjectInputStream(new FileInputStream(fileRoute));
+         if (debug) System.out.println(new File(fileRoute).getAbsolutePath());
       } catch (IOException e) {
+      	// if the file does not exist or something else happens...
          if (debug) e.printStackTrace();
-         reWriteSched();
-         init();
+         try {
+         	// try reading the old way of holding files and transfer to the new way
+         		reader = new ObjectInputStream(new FileInputStream(FileHandler.OLD_SCHED));
+         		new SchedWriter().write(this.readSched());
+         		reader.close();
+         } catch (Exception e1) {
+         	// if that doesn't work, probably nothing exists. start from scratch.
+	         reWriteSched();
+         } finally {
+         	//after it all, init
+         		init(fileRoute);
+         }
       }
    }
    
+   public boolean checkValidity() {
+   		File file = new File(fileRoute);
+   		if (!file.exists()) return false;
+   		
+   		try {
+   			reader = new ObjectInputStream(new FileInputStream(fileRoute));
+   			@SuppressWarnings("unused")
+				Schedule s = (Schedule)reader.readObject();
+   			return true;
+   		} catch (Exception e) {
+   			return false;
+   		}
+   }
+   
    public Schedule readSched() {
-      init();
+      init(fileRoute);
       Schedule ret = null;
       try {
          ret = (Schedule) reader.readObject();
@@ -51,7 +83,7 @@ public class SchedReader {
       }
       close();
       ret = formatSchedule(ret);
-      Agenda.log(ret.getName()+" read");
+      Agenda.log(ret.getName()+" read from "+fileRoute);
       if (debug) System.out.println("READ 57 SCHED READ gpa " + ret.getGpaClasses().toString());
       ret.sort();
       return ret;
