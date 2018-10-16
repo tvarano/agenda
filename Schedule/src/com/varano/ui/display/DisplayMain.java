@@ -343,6 +343,10 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       setUpdating(false);
    }
    
+   public void showDisp(boolean show) {
+   		showDisp = show;
+   }
+   
    public void repaint() {
       if (toolbar != null) toolbar.setHighlights();
       super.repaint();

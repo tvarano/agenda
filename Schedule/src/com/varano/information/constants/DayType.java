@@ -61,6 +61,8 @@ public enum DayType
          else
             offlineInit(startTimes, endTimes, labSwitch);
       } catch (Exception e) {
+      		if (!(e instanceof java.util.concurrent.TimeoutException)) 
+      			Agenda.logError("Error with "+name(), e);
          offlineInit(startTimes, endTimes, labSwitch);
       }
    }
@@ -97,7 +99,6 @@ public enum DayType
    private void formatString(String unf)
          throws Exception {
       java.util.Scanner s = new java.util.Scanner(unf);
-      s.nextLine();
       ArrayList<Time> starts = new ArrayList<Time>();
       ArrayList<Time> ends = new ArrayList<Time>();
       String line = "";
@@ -122,7 +123,7 @@ public enum DayType
    }
    
    private static final int MILLIS_TO_WAIT = 250;
-   private static final int FIRST_CONTACT_WAIT = 1000;
+   private static final int FIRST_CONTACT_WAIT = 1500;
    private String retrieveHtml(URL site) throws Exception {
       return OrderUtility.futureCall(millisToWait(), new java.util.concurrent.Callable<String>() {
          @Override

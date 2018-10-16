@@ -5,12 +5,8 @@ import java.awt.CheckboxMenuItem;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Menu;
 import java.awt.MenuBar;
-import java.awt.RenderingHints;
 import java.awt.desktop.AppForegroundEvent;
 import java.awt.desktop.AppForegroundListener;
 import java.awt.desktop.AppHiddenEvent;
@@ -39,17 +35,9 @@ import com.varano.ui.input.GPAInput;
 //Sep 20, 2017
 
 /*
- * TODO
- * make new filetype, allow for transfer from old program.  DONE
- * allow for export. DONE
- * 		use the cool finder thing with apple script. DONE 
- * allow for import. 
- * 		DESIGN
- * 			have file that says where to look for schedule. 
- * 				when choosing, (file import), have JOption to open default and then another button to choose an external source
- * 				obvi change the reference in the file 
+ * TODO 
+ * 	import syntax... wording prompts proper?
  */
-
 
 /*
  * NOTES BEFORE EXPORT
@@ -66,7 +54,7 @@ import com.varano.ui.input.GPAInput;
 public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
-   public static final String APP_NAME = "Agenda";
+   public static final String APP_NAME = "Bells";
    public static final String BUILD = "1.8.7";
    public static final String LAST_UPDATED = "Sept 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
@@ -99,7 +87,7 @@ public class Agenda extends JPanel
          @Override
          public void windowClosing(java.awt.event.WindowEvent windowEvent) {
          		try {
-         			manager.beforeClose();
+         			manager.aboutToClose();
          			log("program closed");
          			System.exit(0);
          		} catch (java.util.concurrent.CancellationException e) {
@@ -128,7 +116,7 @@ public class Agenda extends JPanel
                bw.write(FileHandler.FALSE);
             bw.close();
          }
-      } catch (IOException e) {
+      } catch (Exception e) {
          Agenda.logError("error with welcome", e);
       }
    }
@@ -137,7 +125,7 @@ public class Agenda extends JPanel
    		Agenda.log("toggle gpa to: "+show);
    		if (GPAInput.show == show) return;
    		GPAInput.show = show;
-   		manager.beforeClose();
+   		manager.aboutToClose();
    		manager.setCurrentPane(PanelManager.DISPLAY);
    		configureMenuBar();
    		if (show)
@@ -169,7 +157,7 @@ public class Agenda extends JPanel
             @Override
             public void handleQuitRequestWith(java.awt.desktop.QuitEvent arg0,
                   java.awt.desktop.QuitResponse arg1) {
-               manager.beforeClose();
+               manager.aboutToClose();
                log("program quit");
                arg1.performQuit();
             }
@@ -202,19 +190,24 @@ public class Agenda extends JPanel
          });
          Desktop.getDesktop().addAppEventListener(new AppForegroundListener() {
             @Override
-            public void appMovedToBackground(AppForegroundEvent arg0) {}
+            public void appMovedToBackground(AppForegroundEvent arg0) {
+            		manager.getDisplay().showDisp(false);
+            }
             @Override
             public void appRaisedToForeground(AppForegroundEvent arg0) {
+            		manager.getDisplay().showDisp(true);
                manager.update();
             }
          });
          Desktop.getDesktop().addAppEventListener(new AppHiddenListener() {
             @Override
             public void appHidden(AppHiddenEvent arg0) {
+         			manager.getDisplay().showDisp(false);
                manager.getDisplay().stop();
             }
             @Override
             public void appUnhidden(AppHiddenEvent arg0) {
+            		manager.getDisplay().showDisp(true);
                manager.getDisplay().resume();
                manager.update();
             }
@@ -249,11 +242,11 @@ public class Agenda extends JPanel
          Agenda.logError("cannot write notification showing", e);
       }
    }
+   
    public MenuBar getBar() {
       return bar;
    }
    
-
 	public void validateThemeChecks() {
 		Agenda.log("validating theme checkboxes");
 		Menu m = (Menu) bar.getMenu(1).getItem(2);
@@ -300,66 +293,7 @@ public class Agenda extends JPanel
          manager.repaint();
    }
    
-   private static void createAndShowGUI() {
-      final long start = System.currentTimeMillis();
-      JFrame frame = new JFrame("Agenda -- LOADING....");
-      final int frameToPaneAdjustment = 22; 
-      
-      // loading screen, frame adjustments
-      // setting visible outside of the drawing, strings take just as long to draw anyways
-         //might as well give a loading screen
-      EventQueue.invokeLater(new Runnable() {
-         public void run() {
-            JPanel p = new JPanel() {
-               private static final long serialVersionUID = 1L;
-               
-               //drawing strings while continuing calculations
-               @Override 
-               public void paintComponent(Graphics g) {
-                  super.paintComponent(g);
-                  Graphics2D g2 = (Graphics2D) g;
-                  g2.addRenderingHints(new RenderingHints(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON));
-                  java.awt.Image logo = com.varano.resources.ResourceAccess
-                        .getIcon("Agenda Logo.png").getImage();
-                  g2.drawImage(logo, getWidth() / 2 - logo.getWidth(this) / 2,
-                        getHeight() / 2 - logo.getHeight(this) / 2 + 15, this);
-                  g2.setFont(UIHandler.font.deriveFont(36F).deriveFont(Font.BOLD));
-                  String load = "LOADING...";
-                  g2.drawString(load, getWidth() / 2
-                        - getFontMetrics(g2.getFont()).stringWidth(load) / 2, 150);
-                  log("Drawing strings took " + (System.currentTimeMillis() - start));
-               }
-            };
-            p.setDoubleBuffered(true);
-            frame.add(p);
-            frame.setMinimumSize(
-                  new Dimension(MIN_W, MIN_H + frameToPaneAdjustment));
-            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-         }
-      });
-      frame.setVisible(true);
-      // effective EDT
-      EventQueue.invokeLater(new Runnable() {
-         @Override
-         public void run() {
-            Agenda main = new Agenda(frame);
-            frame.getContentPane().getComponent(0).repaint();
-            frame.setTitle(APP_NAME);
-            frame.getContentPane().remove(0);
-            frame.getContentPane().add(main);
-            frame.setExtendedState(JFrame.NORMAL);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            log("Program Initialized in " + (System.currentTimeMillis() - start) + " millis\n");
-            showWelcome();
-            UpdateHandler.updateInquiry();
-         }
-      });
-   }
+
    
    
    public static void main(String[] args) {
@@ -367,7 +301,7 @@ public class Agenda extends JPanel
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
-            createAndShowGUI();
+            LoadingProcessHandler.createAndShowGUI();
          }
       });
    }

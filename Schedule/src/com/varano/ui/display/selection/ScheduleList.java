@@ -81,6 +81,11 @@ public class ScheduleList extends JList<ClassPeriod> implements ListSelectionLis
       }
    }
    
+//   public JToolTip createToolTip() {
+//   		return null;
+////   		return super.createToolTip();
+//   }
+   
    public Schedule getSchedule() {
       return schedule;
    }

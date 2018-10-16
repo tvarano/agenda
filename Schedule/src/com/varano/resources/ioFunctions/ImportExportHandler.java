@@ -48,10 +48,8 @@ public class ImportExportHandler {
 			ArrayList<String> sb = new ArrayList<String>();
 			BufferedReader br = new BufferedReader(
 					new InputStreamReader(p.getInputStream()));
-			while ((s = br.readLine()) != null) {
+			while ((s = br.readLine()) != null) 
 				sb.add(s);
-			}
-			
 			
 			//PRINT ERRORS
 			br = new BufferedReader(

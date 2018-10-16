@@ -127,7 +127,7 @@ public class PanelManager {
    public Menu getTimeMenu() {
       return bar.getMenu(UIHandler.timeBarIndex());
    }
-   public void beforeClose() throws java.util.concurrent.CancellationException {
+   public void aboutToClose() throws java.util.concurrent.CancellationException {
       if (currentView instanceof com.varano.ui.input.InputManager) {
          if (!((com.varano.ui.input.InputManager) currentView).isSaved()) {
          		int save = askSave();

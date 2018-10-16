@@ -210,7 +210,6 @@ public class MenuBarHandler {
       
       m.addSeparator();
       
-      // NOTE this will overwrite the actual schedule being used. make sure to warn.
       mi = m.add(new MenuItem("Import..."));
       mi.addActionListener(new ActionListener() {
 			@Override
@@ -304,13 +303,13 @@ public class MenuBarHandler {
       m.add(new LinkChooser("Genesis", Addresses.createURI(Addresses.GENESIS)));
       m.add(new LinkChooser("PHHS Home", Addresses.createURI(Addresses.PHHS_HOME)));
       m.add(new LinkChooser("Naviance", Addresses.createURI(Addresses.NAVIANCE)));
-      m.add(new LinkChooser("Agenda Source", Addresses.createURI(Addresses.SOURCE)));
+      m.add(new LinkChooser(Agenda.APP_NAME+" Source", Addresses.createURI(Addresses.SOURCE)));
       m.add(new LinkChooser("Rotation Calendar", Addresses.createURI(Addresses.CALENDAR_URL)));
       
       bar.add(m);
       // ---------------------------Help Bar--------------------------
       m = new Menu("Help");
-      mi = m.add(new MenuItem("Agenda News"));
+      mi = m.add(new MenuItem(Agenda.APP_NAME+" News"));
       mi.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             UIHandler.showNews();
@@ -418,8 +417,7 @@ public class MenuBarHandler {
 	   JPanel p = new JPanel(new BorderLayout());
 	   p.setPreferredSize(new Dimension(w, h));
 	   JPanel top = new JPanel();
-	   JLabel l = new JLabel("Input your preferences"/*, com.varano.resources.ResourceAccess.getImage("Agenda Logo.png"), 
-	         javax.swing.SwingConstants.LEADING*/);
+	   JLabel l = new JLabel("Input your preferences");
 	   l.setFont(UIHandler.font);
 	   top.add(l);
 	   top.setPreferredSize(new Dimension(w,30));
