@@ -25,7 +25,7 @@ public class UpdateHandler {
    public static void update() throws Exception {
       final int toWait = 10_000;
       try {
-         OrderUtility.futureCall(toWait, UpdateHandler::download, "download updater jar");
+      		ProcessHandler.futureCall(toWait, UpdateHandler::download, "download updater jar");
          Agenda.log("calling jar: \"java -jar "+ DOWNLOAD_PATH + " " +  Addresses.getExec() + "\"");
          Process run = new ProcessBuilder("java", "-jar", DOWNLOAD_PATH, Addresses.getExec()).start();
 //         Process run = new ProcessBuilder("open", DOWNLOAD_PATH).start();
@@ -69,7 +69,7 @@ public class UpdateHandler {
    
    public static String version() throws Exception {
       int toWait = 1000;
-      return OrderUtility.futureCall(toWait, UpdateHandler::version0, "retrieve version");
+      return ProcessHandler.futureCall(toWait, UpdateHandler::version0, "retrieve version");
    }
    
    private static String version0() throws Exception {      

@@ -191,10 +191,12 @@ public class Agenda extends JPanel
          Desktop.getDesktop().addAppEventListener(new AppForegroundListener() {
             @Override
             public void appMovedToBackground(AppForegroundEvent arg0) {
+            	Agenda.log("dropped to background");
             		manager.getDisplay().showDisp(false);
             }
             @Override
             public void appRaisedToForeground(AppForegroundEvent arg0) {
+            	Agenda.log("raised to foreground");
             		manager.getDisplay().showDisp(true);
                manager.update();
             }
@@ -202,11 +204,13 @@ public class Agenda extends JPanel
          Desktop.getDesktop().addAppEventListener(new AppHiddenListener() {
             @Override
             public void appHidden(AppHiddenEvent arg0) {
+            	Agenda.log("app hidden");
          			manager.getDisplay().showDisp(false);
                manager.getDisplay().stop();
             }
             @Override
             public void appUnhidden(AppHiddenEvent arg0) {
+            	Agenda.log("app unhidden");
             		manager.getDisplay().showDisp(true);
                manager.getDisplay().resume();
                manager.update();
@@ -301,7 +305,7 @@ public class Agenda extends JPanel
       log("Program Initialized");
       EventQueue.invokeLater(new Runnable() {
          public void run() {
-            LoadingProcessHandler.createAndShowGUI();
+            ProcessHandler.createAndShowGUI();
          }
       });
    }

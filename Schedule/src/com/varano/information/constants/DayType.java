@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.varano.information.Time;
 import com.varano.managers.Agenda;
-import com.varano.managers.OrderUtility;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.Addresses;
 
 //Thomas Varano
@@ -125,7 +125,7 @@ public enum DayType
    private static final int MILLIS_TO_WAIT = 250;
    private static final int FIRST_CONTACT_WAIT = 1500;
    private String retrieveHtml(URL site) throws Exception {
-      return OrderUtility.futureCall(millisToWait(), new java.util.concurrent.Callable<String>() {
+      return ProcessHandler.futureCall(millisToWait(), new java.util.concurrent.Callable<String>() {
          @Override
          public String call() throws Exception {
             return com.varano.resources.ResourceAccess.readHtml(site);

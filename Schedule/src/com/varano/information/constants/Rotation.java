@@ -6,7 +6,7 @@ import java.time.DayOfWeek;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Time;
 import com.varano.managers.Agenda;
-import com.varano.managers.OrderUtility;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.Addresses;
 
 //Thomas Varano
@@ -122,7 +122,7 @@ public enum Rotation
    
    private static final int MILLIS_TO_WAIT = 300;
    private static String retrieveHtml(URL site) throws Exception {
-      return OrderUtility.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
+      return ProcessHandler.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
          @Override
          public String call() throws Exception {
             return com.varano.resources.ResourceAccess.readHtml(site);

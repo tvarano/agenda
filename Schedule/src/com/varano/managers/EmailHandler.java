@@ -112,7 +112,7 @@ public class EmailHandler {
       final long start = System.currentTimeMillis();
       final long wait = 3000;
          try {
-            return OrderUtility.futureCall(wait, new Callable<Boolean>() {
+            return ProcessHandler.futureCall(wait, new Callable<Boolean>() {
                public Boolean call() {
                   try {
                      getSession().getTransport("smtp").connect();

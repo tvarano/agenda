@@ -142,36 +142,4 @@ public final class OrderUtility
             System.out.println(c);
          System.out.println("to "+r+"\n--------");
    }
-   /**
-    * Calls for a future method with timeout capabilities.
-    * NOTE: Agenda.logError just prints an error. Change it to whatever you want to print the error.
-    * @param millisToWait How long to wait for the method
-    * @param method the method to call. The easiest way to make this is an anonymous class. You can change the
-    *    parameter in the <> to change the return value
-    * @param description the description of the method in logs
-    * @return the return value of the <code>method</code> parameter
-    * @throws ExecutionException if the method itself is executed incorrectly
-    * @throws TimeoutException if the method is timed out, or takes longer than the given millis to wait
-    * @throws InterruptedException if the method is interrupted
-    */
-   public static <T> T futureCall(long millisToWait, java.util.concurrent.Callable<T> method, String description) 
-         throws Exception {
-      final ExecutorService executor = Executors.newSingleThreadExecutor();
-      long start = System.currentTimeMillis();
-      // schedule the work
-
-      final Future<T> future = executor
-            .submit(method);
-      try {
-         // wait for task to complete
-         final T result = future.get(millisToWait,
-               TimeUnit.MILLISECONDS);
-         Agenda.log(description + " took " + (System.currentTimeMillis() - start));
-         return result;
-      } catch (TimeoutException e) {
-         Agenda.logError(description + " timed out", e);
-         future.cancel(true);
-         throw e;
-      }
-   }
 }

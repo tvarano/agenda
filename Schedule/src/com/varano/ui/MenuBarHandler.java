@@ -108,6 +108,7 @@ public class MenuBarHandler {
 	      });
 	      mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
       }
+
       
       //Placebo button. It autosaves
       mi = m.add(new MenuItem("Save"));
@@ -176,7 +177,7 @@ public class MenuBarHandler {
                      JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
-      
+
       m.addSeparator();
       
       mi = m.add(new MenuItem("Clear Schedule"));
@@ -227,7 +228,6 @@ public class MenuBarHandler {
 				
 			}	
       });
-      
       
       mi = m.add(new MenuItem("Export..."));
       mi.addActionListener(new ActionListener() {
@@ -297,6 +297,7 @@ public class MenuBarHandler {
          if (!laf.getName().equals("Nimbus"))
             looks.add(new LookChooser(laf, age));
       bar.add(m);
+
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");
       m.add(new LinkChooser("Canvas", Addresses.createURI(Addresses.CANVAS)));

@@ -31,7 +31,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import com.varano.information.constants.ErrorID;
 import com.varano.managers.Agenda;
 import com.varano.managers.FileHandler;
-import com.varano.managers.OrderUtility;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.Addresses;
 import com.varano.resources.ResourceAccess;
 
@@ -165,7 +165,7 @@ public final class UIHandler {
    public static void showNews() {
       String html;
       try {
-         html = OrderUtility.futureCall(2000, new Callable<String>() {
+         html = ProcessHandler.futureCall(2000, new Callable<String>() {
             @Override
             public String call() throws Exception {
                return ResourceAccess.readHtml(Addresses.createURL(Addresses.NEWS));
@@ -429,7 +429,8 @@ public final class UIHandler {
       if (debug) System.out.println("UI DONE");
 	}
 	
-	synchronized static void setLAF0(String name) {
+	static void setLAF0(String name) {
+		Agenda.log("set LAF to "+ name);
 	   try {
          UIManager.setLookAndFeel(name);
       } catch (ClassNotFoundException | InstantiationException
@@ -438,7 +439,7 @@ public final class UIHandler {
       }
 	}
 	
-	public synchronized static void setLAF() {
+	public static void setLAF() {
 	   String name = readLAF();
 	   setLAF0(name);
 	}

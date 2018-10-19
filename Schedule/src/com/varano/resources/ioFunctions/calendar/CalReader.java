@@ -16,7 +16,7 @@ import java.util.Scanner;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
-import com.varano.managers.OrderUtility;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.ioFunctions.AlertReader;
 
 public class CalReader {
@@ -156,7 +156,7 @@ public class CalReader {
    
    private static final long MILLIS_TO_WAIT = 8000L;
    public String retrieveRfc() throws Exception {
-     return OrderUtility.futureCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
+     return ProcessHandler.futureCall(MILLIS_TO_WAIT, this::readRfc, "ics reading");
    }
 
    /**
