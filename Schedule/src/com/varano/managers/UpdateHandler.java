@@ -90,7 +90,7 @@ public class UpdateHandler {
       Agenda.log("asking for update permission");
       return JOptionPane.showConfirmDialog(null,
             "An update is available.\nWould you like to install?"
-                  + "\nAgenda will need to restart.",
+                  + "\n" + Agenda.APP_NAME + " will need to restart.",
             Agenda.APP_NAME, JOptionPane.YES_NO_OPTION,
             JOptionPane.QUESTION_MESSAGE, null) == 0;
    }
