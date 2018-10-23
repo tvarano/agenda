@@ -1,7 +1,7 @@
 //Thomas Varano
 //May 10, 2018
 
-package com.varano.managers;
+package com.varano.resources.ioFunctions.email;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,6 +36,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.varano.information.constants.ErrorID;
+import com.varano.managers.Agenda;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.Addresses;
 import com.varano.ui.UIHandler;
 
@@ -112,7 +114,7 @@ public class EmailHandler {
       final long start = System.currentTimeMillis();
       final long wait = 3000;
          try {
-            return OrderUtility.futureCall(wait, new Callable<Boolean>() {
+            return ProcessHandler.futureCall(wait, new Callable<Boolean>() {
                public Boolean call() {
                   try {
                      getSession().getTransport("smtp").connect();

@@ -6,7 +6,7 @@ import java.time.DayOfWeek;
 import com.varano.information.ClassPeriod;
 import com.varano.information.Time;
 import com.varano.managers.Agenda;
-import com.varano.managers.OrderUtility;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.Addresses;
 
 //Thomas Varano
@@ -46,27 +46,22 @@ public enum Rotation
    SPECIAL(DayType.SPECIAL, true),
    FLIP_EVEN_BLOCK(DayType.BLOCK, false);
       
-   private final int lunchSlot;
+   private int lunchSlot;
    private ClassPeriod[] times;
    private final DayType dayType;
-   private final Time labSwitch;
+   private Time labSwitch;
    private final int index;
    private final boolean readReccomended;
+   private final Initializer init;
+   private boolean completed;
    private final static boolean debug = false;
    
    private Rotation(DayType dt, boolean readReccomended) {
       this.readReccomended = readReccomended;
-      this.dayType = dt; this.labSwitch = dt.getLabSwitch();
-      this.index = ordinal()+1; lunchSlot = calcLunchSlot(); 
-      try {
-         if (readReccomended)
-            onlineInit();
-         else 
-            offlineInit();
-      } catch (Exception e) {
-         Agenda.logError("error with "+name(), e);
-         offlineInit();
-      }
+      this.dayType = dt;
+      this.index = ordinal()+1;
+      init = new Initializer();
+      init.start();
       if (debug) System.out.println("rotation "+index+" created");
    }
    
@@ -87,7 +82,78 @@ public enum Rotation
    
    //-------------------------------------- Online Initialization -------------------------------------------
    
-   public static void reread() {
+   Waiter getWaiter() {
+   		return init.waiter;
+   }
+   
+   class Waiter {}
+   
+   class Initializer extends Thread {
+   		private Waiter waiter;
+
+   		@SuppressWarnings("unused")
+			public void run() {
+   			completed = false;
+   			// ok here we go. 
+   			// wait for daytypes to complete so you can work. 
+   	      waiter = new Waiter();
+   	      synchronized (waiter) {
+	   			try {
+						waiter.wait();
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+	   			// just printing for debugging. 
+	   			if (debug && ordinal() == 0) {
+	      			System.out.println("\n\n\nHOLUP....\n\n\n");
+	      			System.out.println("lookit thesse daytypes");
+	      			for (DayType d : DayType.values()) {
+	      				System.out.println(d.name() + ": "+d.getStartTimes());	
+	      			}
+	      			
+	      			System.out.println("\nok\n\n\n");
+	      		}
+	   			
+	   			Agenda.log("STARTING " + name() + " INIT");
+	   			
+	   			labSwitch = dayType.getLabSwitch(); lunchSlot = calcLunchSlot();
+	   			
+	   			try {
+	   	         if (readReccomended)
+	   	            onlineInit();
+	   	         else 
+	   	            offlineInit();
+	   	      } catch (Exception e) {
+	   	         Agenda.logError("error with "+name(), e);
+	   	         offlineInit();
+	   	      } finally {
+	   	      		completed = true;
+	   	      		Agenda.log(name() + " is complete");
+	   	      		if (checkAllCompletion())
+	   	      			notifyLabs();
+	   	      }
+   	      }
+   		}  		
+	}
+
+	private synchronized boolean checkAllCompletion() {
+		for (Rotation r : Rotation.values())
+			if (!r.completed) return false;
+		Agenda.log("ALL ROTATIONS COMPETED");
+		return true;
+	}
+
+
+	private synchronized void notifyLabs() {
+		Agenda.log("notify labs\n");
+		for (Lab l : Lab.values()) {
+			synchronized(l.getWaiter()) {
+				l.getWaiter().notify();
+			}
+		}
+	}
+
+	public static void reread() {
       for (Rotation r : values()) {
          if (r.readReccomended)
             try {
@@ -122,12 +188,12 @@ public enum Rotation
    
    private static final int MILLIS_TO_WAIT = 300;
    private static String retrieveHtml(URL site) throws Exception {
-      return OrderUtility.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
+      return ProcessHandler.futureCall(MILLIS_TO_WAIT, new java.util.concurrent.Callable<String>() {
          @Override
          public String call() throws Exception {
             return com.varano.resources.ResourceAccess.readHtml(site);
          }
-      }, "retreieve dayType");
+      }, "retreieve rotation");
    }
    
    public java.net.URL getSite() {

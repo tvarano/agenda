@@ -79,11 +79,13 @@ public class PanelManager {
       parent.show(currentView.getName());
       this.currentType = type;
    }
-
-   public void reset() {
-      if (!(currentView instanceof DisplayMain))
-         if (!UIHandler.checkIntentions("Refresh the program.\nYou might lose unsaved data"))
-            return;
+   
+   public void reset(boolean suppressWarning) {
+   		if (!suppressWarning) {
+	      if (!(currentView instanceof DisplayMain))
+	         if (!UIHandler.checkIntentions("Refresh the program.\nYou might lose unsaved data"))
+	            return;
+   		}
       Agenda.log(currentView.getClass().getName() + " refreshed");
       currentView.refresh();
       currentView.revalidate();
@@ -125,7 +127,7 @@ public class PanelManager {
    public Menu getTimeMenu() {
       return bar.getMenu(UIHandler.timeBarIndex());
    }
-   public void beforeClose() throws java.util.concurrent.CancellationException {
+   public void aboutToClose() throws java.util.concurrent.CancellationException {
       if (currentView instanceof com.varano.ui.input.InputManager) {
          if (!((com.varano.ui.input.InputManager) currentView).isSaved()) {
          		int save = askSave();

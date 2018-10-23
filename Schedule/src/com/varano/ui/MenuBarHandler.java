@@ -48,11 +48,12 @@ import com.varano.information.constants.ErrorID;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
-import com.varano.managers.EmailHandler;
 import com.varano.managers.FileHandler;
 import com.varano.managers.PanelManager;
 import com.varano.resources.Addresses;
+import com.varano.resources.ioFunctions.ImportExportHandler;
 import com.varano.resources.ioFunctions.SchedWriter;
+import com.varano.resources.ioFunctions.email.EmailHandler;
 import com.varano.ui.input.GPAInput;
 
 public class MenuBarHandler {
@@ -107,6 +108,7 @@ public class MenuBarHandler {
 	      });
 	      mi.setShortcut(new MenuShortcut(KeyEvent.VK_G));
       }
+
       
       //Placebo button. It autosaves
       mi = m.add(new MenuItem("Save"));
@@ -146,7 +148,7 @@ public class MenuBarHandler {
          @Override
          public void actionPerformed(ActionEvent arg0) {
             Agenda.log("REFRESH\n");
-            age.getManager().reset();
+            age.getManager().reset(false);
          }
       });
       mi.setShortcut(new MenuShortcut(KeyEvent.VK_R));
@@ -175,7 +177,7 @@ public class MenuBarHandler {
                      JOptionPane.INFORMATION_MESSAGE, null);
          }
       });
-      
+
       m.addSeparator();
       
       mi = m.add(new MenuItem("Clear Schedule"));
@@ -185,7 +187,7 @@ public class MenuBarHandler {
             if (UIHandler.checkIntentions("Reset Your Schedule")) {
                SchedWriter s = new SchedWriter();
                s.write(RotationConstants.defaultSchedule());
-               age.getManager().reset();
+               age.getManager().reset(false);
             }
          }
       });
@@ -199,11 +201,31 @@ public class MenuBarHandler {
                   FileHandler.write(UIHandler.themes[0], FileHandler.THEME_ROUTE);
                   FileHandler.write(UIManager.getSystemLookAndFeelClassName(), FileHandler.LAF_ROUTE);
                   UIHandler.setColors();
+                  FileHandler.writeWelcomeTrue();
                } catch (IOException e1) {
                   ErrorID.showError(e1, true);
                }
             }
          }
+      });
+      
+      m.addSeparator();
+      
+      mi = m.add(new MenuItem("Import..."));
+      mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ImportExportHandler.completeImport(age);
+				
+			}	
+      });
+      
+      mi = m.add(new MenuItem("Export..."));
+      mi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ImportExportHandler.export(age.getManager().getMainSched());
+			}	
       });
       
       m.addSeparator();
@@ -266,19 +288,20 @@ public class MenuBarHandler {
          if (!laf.getName().equals("Nimbus"))
             looks.add(new LookChooser(laf, age));
       bar.add(m);
+
       //---------------------------Link Bar--------------------------
       m = new Menu("Useful Links");
       m.add(new LinkChooser("Canvas", Addresses.createURI(Addresses.CANVAS)));
       m.add(new LinkChooser("Genesis", Addresses.createURI(Addresses.GENESIS)));
       m.add(new LinkChooser("PHHS Home", Addresses.createURI(Addresses.PHHS_HOME)));
       m.add(new LinkChooser("Naviance", Addresses.createURI(Addresses.NAVIANCE)));
-      m.add(new LinkChooser("Agenda Source", Addresses.createURI(Addresses.SOURCE)));
+      m.add(new LinkChooser(Agenda.APP_NAME+" Source", Addresses.createURI(Addresses.SOURCE)));
       m.add(new LinkChooser("Rotation Calendar", Addresses.createURI(Addresses.CALENDAR_URL)));
       
       bar.add(m);
       // ---------------------------Help Bar--------------------------
       m = new Menu("Help");
-      mi = m.add(new MenuItem("Agenda News"));
+      mi = m.add(new MenuItem(Agenda.APP_NAME+" News"));
       mi.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             UIHandler.showNews();
@@ -386,8 +409,7 @@ public class MenuBarHandler {
 	   JPanel p = new JPanel(new BorderLayout());
 	   p.setPreferredSize(new Dimension(w, h));
 	   JPanel top = new JPanel();
-	   JLabel l = new JLabel("Input your preferences"/*, com.varano.resources.ResourceAccess.getImage("Agenda Logo.png"), 
-	         javax.swing.SwingConstants.LEADING*/);
+	   JLabel l = new JLabel("Input your preferences");
 	   l.setFont(UIHandler.font);
 	   top.add(l);
 	   top.setPreferredSize(new Dimension(w,30));

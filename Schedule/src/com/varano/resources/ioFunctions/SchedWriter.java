@@ -17,14 +17,18 @@ public class SchedWriter
    private FileOutputStream fileStream;
    private boolean debug;
    
-   public SchedWriter() {
-      init();
+   public SchedWriter(String route) {
+      init(route);
    }
    
-   private void init() {
+   public SchedWriter() {
+   		this(com.varano.managers.FileHandler.SCHED_ROUTE);
+   }
+   
+   private void init(String route) {
       fileStream = null;
       try {
-         fileStream = new FileOutputStream(com.varano.managers.FileHandler.FILE_ROUTE);
+         fileStream = new FileOutputStream(route);
       } catch (FileNotFoundException e) {
          ErrorID.showError(e, false);
       }

@@ -13,7 +13,7 @@ import java.time.Month;
 import java.util.concurrent.Callable;
 
 import com.varano.managers.Agenda;
-import com.varano.managers.OrderUtility;
+import com.varano.managers.ProcessHandler;
 import com.varano.resources.Addresses;
 
 public class AlertReader {
@@ -86,7 +86,7 @@ public class AlertReader {
    
    private static final int MILLIS_TO_WAIT = 2000;
    private static String retrieveHtml() throws Exception {
-      return OrderUtility.futureCall(MILLIS_TO_WAIT, new Callable<String>() {
+      return ProcessHandler.futureCall(MILLIS_TO_WAIT, new Callable<String>() {
          @Override
          public String call() throws Exception {
             return readHtml(Addresses.createURL(Addresses.PHHS_HOME));

@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.time.DayOfWeek;
 
 import com.varano.information.ClassPeriod;
-import com.varano.information.constants.Rotation;
+import com.varano.managers.Agenda;
 
 //Thomas Varano
 //[Program Descripion]
@@ -24,29 +24,81 @@ public enum Lab implements Serializable
    public static final boolean HALF_1 = true, HALF_2 = false;
    private final DayOfWeek day;
    private final Rotation rotation;
-   private final ClassPeriod.LabPeriod timeAtLab;
+   private ClassPeriod.LabPeriod timeAtLab;
    private final int classSlot;
-   private final boolean sideOfLunch;
+   private final boolean firstHalfLunch;
    private final String slotDescription;
+   private final Waiter wait;
+   private boolean completed;
 
    private Lab(DayOfWeek day, Rotation rotation, int classSlot, String slotDescription) {
       this.day = day; this.rotation = rotation; this.classSlot = classSlot; this.slotDescription = slotDescription;
-      sideOfLunch = (classSlot < 5) ? HALF_1 : HALF_2;
-      boolean isPascack = (classSlot == 0 || classSlot == 8);
+      completed = false;
+      wait = new Waiter();
+      firstHalfLunch = (classSlot < 5) ? HALF_1 : HALF_2;
+      
+      new Initializer().start();
+   }
+   
+   Waiter getWaiter() {
+   		return wait;
+   }
+   
+   private void init() {
+   		Agenda.log(name() + " begun initialization");
+   		boolean isPascack = (classSlot == 0 || classSlot == 8);
       String clName = (isPascack) ? "Pascack Period (Lab)" : "LAB";
-      timeAtLab = (isPascack)
-            ? new ClassPeriod.LabPeriod(classSlot, clName,
-                  RotationConstants.getPascack().getStartTime(),
-                  RotationConstants.getPascack().getEndTime(), this)
-            : (sideOfLunch)
-                  ? new ClassPeriod.LabPeriod(classSlot, clName,
-                        rotation.getTimes()[rotation.getLunchSlot()]
-                              .getStartTime(),
-                        rotation.getLabSwitch(), this)
-                  : new ClassPeriod.LabPeriod(classSlot, clName,
-                        rotation.getLabSwitch(),
-                        rotation.getTimes()[rotation.getLunchSlot()]
-                              .getEndTime(), this);
+	   	timeAtLab = (isPascack)
+	            ? new ClassPeriod.LabPeriod(classSlot, clName,
+	                  RotationConstants.getPascack().getStartTime(),
+	                  RotationConstants.getPascack().getEndTime(), this)
+	            : (firstHalfLunch)
+	                  ? new ClassPeriod.LabPeriod(classSlot, clName,
+	                        rotation.getTimes()[rotation.getLunchSlot()]
+	                              .getStartTime(),
+	                        rotation.getLabSwitch(), this)
+	                  : new ClassPeriod.LabPeriod(classSlot, clName,
+	                        rotation.getLabSwitch(),
+	                        rotation.getTimes()[rotation.getLunchSlot()]
+	                              .getEndTime(), this);
+	    completed = true;
+	    if (allCompleted()) {
+	   	 	System.out.println("LABS COMPLETED ");
+	    }
+   }
+   
+   private synchronized boolean allCompleted() {
+   		for (Lab l : values()) {
+   			if (!l.completed)
+   				return false;
+   		}
+   		return true;
+   }
+   /*
+   private void notifyMain() {
+   		synchronized(DisplayMain.waiter) {
+   			DisplayMain.waiter.notify();
+   		}
+   }
+   */
+   
+   class Waiter{}
+   
+   private static byte labCount = 0;
+   private class Initializer extends Thread {
+   		public Initializer() {
+   			super("lab-init-"+labCount++);
+   		}
+   		public void run() {
+   			synchronized(wait) {
+   				try {
+						wait.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+   			}
+   			init();
+   		}
    }
       
    public static int toInt(Lab lab) {
@@ -81,7 +133,7 @@ public enum Lab implements Serializable
       return classSlot;
    }
    public boolean getSideOfLunch() {
-      return sideOfLunch;
+      return firstHalfLunch;
    }
    public String getSlotDescription() {
       return slotDescription;

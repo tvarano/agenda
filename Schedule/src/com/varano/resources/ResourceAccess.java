@@ -18,6 +18,10 @@ public final class ResourceAccess
       return ResourceAccess.class.getResourceAsStream(localPath);
    }
    
+   public static URL getResource(String localPath) {
+   		return ResourceAccess.class.getResource(localPath);
+   }
+   
    public static ImageIcon getIcon(String localPath) {
       try {
          return new ImageIcon(ResourceAccess.class.getResource(localPath));
