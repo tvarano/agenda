@@ -35,11 +35,6 @@ import com.varano.ui.input.GPAInput;
 //Sep 20, 2017
 
 /*
- * TODO 
- * 	import syntax... wording prompts proper?
- */
-
-/*
  * NOTES BEFORE EXPORT
  * is statusU set to true?
  * are all unwanted debug prints not printing?
