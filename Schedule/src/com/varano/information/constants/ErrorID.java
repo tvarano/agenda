@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
 
 import com.varano.managers.Agenda;
 import com.varano.managers.FileHandler;
-import com.varano.resources.ioFunctions.ErrorReport;
+import com.varano.resources.ioFunctions.email.EmailHandler;
+import com.varano.resources.ioFunctions.email.ErrorReport;
 
 //Thomas Varano
 //Oct 24, 2017
@@ -119,7 +120,7 @@ public enum ErrorID {
             ErrorCopier.copy(ID, e);
          } else if (choice2 == 1) {
             ErrorCopier.copy(ID, e);
-            com.varano.managers.EmailHandler.showSendPrompt();
+            EmailHandler.showSendPrompt();
          }
       }
    }
@@ -170,11 +171,6 @@ public enum ErrorID {
       return null;
    }
    
-   /**
-    * 
-    * 
-    * @author Thomas Varano
-    */
    public static class ErrorCopier implements Transferable {
       private Throwable e;
       private String str;

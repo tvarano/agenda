@@ -57,6 +57,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    
    public static final boolean testSituation = false;
    private static Time testTime;
+   public static Waiter waiter;
    
    private Timer timer;
    
@@ -68,6 +69,17 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       setParentManager(parentManager);
       initCalReader();
       setLayout(new BorderLayout());
+      waiter = new Waiter();
+//      synchronized (waiter) {
+//      		try {
+//      				System.out.println("WAITING...");
+//					waiter.wait();
+//					System.out.println("DONE WAITIGN");
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//      }
+//      System.out.println("CONTINUE INITIALIZATION");
       initComponents();
      
       addComponents();
@@ -85,6 +97,8 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
       timer.start();
       Agenda.log("display main fully initialized");
    }
+   
+   public static class Waiter {}
    
    private void moveDivider() {
       JSplitPane sp = (JSplitPane) getComponent(1);

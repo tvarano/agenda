@@ -84,8 +84,22 @@ public class ImportExportHandler {
 		} catch (IOException e) {
 			ErrorID.showError(e, true);
 		}
-		
 		age.getManager().reset(true);	
+	}
+	
+	public static void completeImport(Agenda age) {
+		// 0 for default, 1 for another
+		int choice = JOptionPane.showOptionDialog(null,
+				"You are requesting to import a schedule.\n"
+				+ "Would you like to use the default location\n"
+				+ "or choose another schedule?",
+				Agenda.APP_NAME + ": Choose Schedule", JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null, new String[] {"Default", "Another Schedule"}, "Default");
+		
+		if (choice == 0) 
+			ImportExportHandler.reinitializeWith(age, FileHandler.DEFAULT_SCHED_ROUTE);
+		else if (choice == 1)
+			ImportExportHandler.reinitializeWith(age, ImportExportHandler.requestImportFileLocation());
 	}
 	
 	public static void main(String[] args) {

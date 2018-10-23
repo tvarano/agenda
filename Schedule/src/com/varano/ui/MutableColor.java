@@ -10,7 +10,6 @@ import java.awt.Color;
  * so values can be changed and updated as they are changed. This is especially useful for updating GUIs, because references do 
  * not change when the value is changed, so new colors do not need to be set (foreground, background, etc.) 
  * @author Thomas Varano
- *
  */
 public class MutableColor extends java.awt.Color implements java.io.Serializable {
    private static final long serialVersionUID = 8016610396226834080L;

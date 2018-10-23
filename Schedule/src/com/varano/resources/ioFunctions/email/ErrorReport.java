@@ -1,9 +1,8 @@
 //Thomas Varano
 //Sep 4, 2018
 
-package com.varano.resources.ioFunctions;
+package com.varano.resources.ioFunctions.email;
 
-import com.varano.managers.EmailHandler;
 import com.varano.managers.FileHandler;
 
 public class ErrorReport {

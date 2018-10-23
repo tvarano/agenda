@@ -55,7 +55,7 @@ public class Agenda extends JPanel
 {
    private static final long serialVersionUID = 1L;
    public static final String APP_NAME = "Bells";
-   public static final String BUILD = "1.8.7";
+   public static final String BUILD = "1.9";
    public static final String LAST_UPDATED = "Sept 2018";
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
@@ -153,15 +153,20 @@ public class Agenda extends JPanel
    
    private void desktopSetup() {
       if (Desktop.isDesktopSupported()) {
-         Desktop.getDesktop().setQuitHandler(new java.awt.desktop.QuitHandler() {
-            @Override
-            public void handleQuitRequestWith(java.awt.desktop.QuitEvent arg0,
-                  java.awt.desktop.QuitResponse arg1) {
-               manager.aboutToClose();
-               log("program quit");
-               arg1.performQuit();
-            }
-         });
+			Desktop.getDesktop()
+					.setQuitHandler(new java.awt.desktop.QuitHandler() {
+						@Override
+						public void handleQuitRequestWith(
+								java.awt.desktop.QuitEvent arg0, java.awt.desktop.QuitResponse arg1) {
+							try {
+								log("program quit registered");
+								manager.aboutToClose();
+								arg1.performQuit();
+							} catch (java.util.concurrent.CancellationException e) {
+								log("program quit cancelled");
+							}
+						}
+					});
          Desktop.getDesktop().addAppEventListener(new SystemSleepListener() {
             @Override
             public void systemAboutToSleep(SystemSleepEvent arg0) {
@@ -170,7 +175,7 @@ public class Agenda extends JPanel
             }
             @Override
             public void systemAwoke(SystemSleepEvent arg0) {
-               log("System awoke on "+java.time.LocalDate.now() + "\n");
+               log("\nSystem awoke on "+java.time.LocalDate.now());
                manager.getDisplay().hardResume();
                manager.getDisplay().checkAndUpdateTime();
                manager.getDisplay().checkAndUpdateDate();

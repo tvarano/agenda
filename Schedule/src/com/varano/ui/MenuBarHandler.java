@@ -48,12 +48,12 @@ import com.varano.information.constants.ErrorID;
 import com.varano.information.constants.Rotation;
 import com.varano.information.constants.RotationConstants;
 import com.varano.managers.Agenda;
-import com.varano.managers.EmailHandler;
 import com.varano.managers.FileHandler;
 import com.varano.managers.PanelManager;
 import com.varano.resources.Addresses;
 import com.varano.resources.ioFunctions.ImportExportHandler;
 import com.varano.resources.ioFunctions.SchedWriter;
+import com.varano.resources.ioFunctions.email.EmailHandler;
 import com.varano.ui.input.GPAInput;
 
 public class MenuBarHandler {
@@ -215,16 +215,7 @@ public class MenuBarHandler {
       mi.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// 0 for default, 1 for another
-				int choice = JOptionPane.showOptionDialog(null,
-						"Would you like to use the default\nschedule location or choose another schedule?",
-						Agenda.APP_NAME + ": Choose Schedule", JOptionPane.YES_NO_OPTION,
-		            JOptionPane.QUESTION_MESSAGE, null, new String[] {"Default", "Another Schedule"}, "Default");
-				
-				if (choice == 0) 
-					ImportExportHandler.reinitializeWith(age, FileHandler.DEFAULT_SCHED_ROUTE);
-				else if (choice == 1)
-					ImportExportHandler.reinitializeWith(age, ImportExportHandler.requestImportFileLocation());
+				ImportExportHandler.completeImport(age);
 				
 			}	
       });
