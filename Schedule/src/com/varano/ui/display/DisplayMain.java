@@ -55,7 +55,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private boolean updating, showDisp;
    private boolean debug, debugSave;
    
-   public static final boolean testSituation = false;
+   public static final boolean testSituation = true;
    private static Time testTime;
    public static Waiter waiter;
    
@@ -135,7 +135,7 @@ public class DisplayMain extends JPanel implements ActionListener, PanelView
    private void initTime() {
       try {
          if (testSituation) {
-         		testTime = new Time(10,25);
+         		testTime = new Time(14,00);
             todayR = Rotation.getRotation(DayOfWeek.MONDAY); 
             setLastRead(LocalDate.now());
          } else {

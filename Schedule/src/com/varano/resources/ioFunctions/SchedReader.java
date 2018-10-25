@@ -29,8 +29,8 @@ public class SchedReader {
    		this(FileHandler.SCHED_ROUTE);
    }
    
-   private void init(String fileRoute) {
-   	//read the schedule as normal
+   private synchronized void init(String fileRoute) {
+   	// read the schedule as normal
       try {
          reader = new ObjectInputStream(new FileInputStream(fileRoute));
          if (debug) System.out.println(new File(fileRoute).getAbsolutePath());
@@ -46,7 +46,7 @@ public class SchedReader {
          	// if that doesn't work, probably nothing exists. start from scratch.
 	         reWriteSched();
          } finally {
-         	//after it all, init
+         	//after it all, and try for a better outcome with the schedules.
          		init(fileRoute);
          }
       }

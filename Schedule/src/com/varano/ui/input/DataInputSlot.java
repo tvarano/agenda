@@ -209,7 +209,7 @@ public class DataInputSlot extends JPanel implements ActionListener
       String[] sciences = {"chem", "science", "bio", "physics"};
       for (String s : sciences) {
          if (text.contains(s)) {
-            if (!nameContent.contains(s))
+            if (!nameContent.contains(s) && nameContent.toLowerCase().contains("computer"))
                labBox.setSelected(true);
          } else 
             if (nameContent.contains(s))
