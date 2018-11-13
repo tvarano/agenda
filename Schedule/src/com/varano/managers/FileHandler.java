@@ -33,6 +33,7 @@ public class FileHandler {
    
    public static final String SUFFIX = ".sched";
    public static final String NO_LOCATION = "noLoc";
+   // CHANGE THE CODE HERE
    
    public static void openURI(URI uri) {
       if (Desktop.isDesktopSupported()) {
