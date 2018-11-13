@@ -50,15 +50,9 @@ public class Agenda extends JPanel
 {
 	// CHANGE THE CODE HERE
    private static final long serialVersionUID = 1L;
-<<<<<<< HEAD
-   public static final String APP_NAME = "Bells";
-   public static final String BUILD = "1.9";
-   public static final String LAST_UPDATED = "Sept 2018";
-=======
    public static final String APP_NAME = "Agenda";
    public static final String BUILD = "1.9";
    public static final String LAST_UPDATED = "April 2018";
->>>>>>> update code third time
    public static final int MIN_W = 733, MIN_H = 360; 
    public static final int PREF_W = MIN_W, PREF_H = 460;
    private PanelManager manager;
