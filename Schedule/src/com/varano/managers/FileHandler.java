@@ -69,7 +69,7 @@ public class FileHandler {
             System.setErr(logStream);
             Agenda.log ("streams set to "+FileHandler.LOG_ROUTE);
          } catch (java.io.FileNotFoundException e) {
-            ErrorID.showError(e, true, "Make sure you downloaded Agenda and it is in an\n"
+            ErrorID.showError(e, true, "Make sure you downloaded " + Agenda.APP_NAME + " and it is in an\n"
                   + "accessable folder (Applications, Desktop, etc.)");
          }
       } else {
@@ -105,7 +105,7 @@ public class FileHandler {
    public static void initFileNames(String envelop) {
       ENVELOPING_FOLDER = envelop;
       RESOURCE_ROUTE = ENVELOPING_FOLDER+"InternalData/";
-      LOG_ROUTE = RESOURCE_ROUTE +"AgendaLog.txt";
+      LOG_ROUTE = RESOURCE_ROUTE +"Log.txt";
       
       SCHED_FINDER = RESOURCE_ROUTE + "ScheduleRoute.txt";
       DEFAULT_SCHED_ROUTE = RESOURCE_ROUTE + "default" + SUFFIX;

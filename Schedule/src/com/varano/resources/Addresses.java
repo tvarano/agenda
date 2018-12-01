@@ -4,6 +4,8 @@
 
 package com.varano.resources;
 
+import com.varano.managers.Agenda;
+
 /**
  * Holds addresses for different folders, websites, and locations. 
  * 
@@ -47,7 +49,7 @@ public final class Addresses {
    }
    
    public static final String getDir() {
-      return getExec().substring(0, getExec().indexOf("Agenda.app"));
+      return getExec().substring(0, getExec().indexOf(Agenda.APP_NAME + ".app"));
    }
    
    public static final String getHome() {
