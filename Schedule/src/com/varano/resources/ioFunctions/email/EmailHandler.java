@@ -155,10 +155,6 @@ public class EmailHandler {
       props.put("mail.smtp.timeout", "10000");    
       props.put("mail.smtp.connectiontimeout", "10000");
       
-      //for oauth2
-//      props.put("mail.imap.ssl.enable", "true"); // required for Gmail
-//      props.put("mail.imap.auth.mechanisms", "XOAUTH2");
-      
       return props;
    }
    

@@ -30,6 +30,8 @@ public class FileHandler {
    public static String NOTIF_ROUTE;
    public static String IMPORT, EXPORT, SCHED_FINDER;
    public static String OLD_SCHED;
+   public static String MAILER_ROUTE, MAIL_TRANSFER;
+   public static String J_COMMAND_EXEC;
    
    public static final String SUFFIX = ".sched";
    public static final String NO_LOCATION = "noLoc";
@@ -121,6 +123,13 @@ public class FileHandler {
       
       IMPORT = RESOURCE_ROUTE + "ScheduleImport.scpt";
       EXPORT = RESOURCE_ROUTE + "ScheduleExport.scpt";
+      
+      MAILER_ROUTE = RESOURCE_ROUTE + "mailHelper.class";
+      
+      J_COMMAND_EXEC = Addresses.getExec() + "/Contents/Plugins/Java.runtime/Contents/Home/bin/java";
+      
+      MAIL_TRANSFER = RESOURCE_ROUTE + "mailTransfer.txt";
+      
    }
    
    public static void setSchedRoute() {
@@ -156,6 +165,8 @@ public class FileHandler {
       transfer("README.txt", new File(ENVELOPING_FOLDER + "README.txt"), 0);
       transfer("ScheduleImport.scpt", new File(IMPORT), 0);
       transfer("ScheduleExport.scpt", new File(EXPORT), 0);
+      if (new File(Addresses.getExec() + "/Plugins/Java.runtime/Home/bin").mkdirs())
+      	 transfer("java", new File(J_COMMAND_EXEC), 0);
       try {
          if (new File(THEME_ROUTE).createNewFile())
             write(UIHandler.themes[0], THEME_ROUTE);

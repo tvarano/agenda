@@ -50,6 +50,7 @@ public enum ErrorID {
          + "The rotation has been set to a half day R1."),
    WRONG_DELAY_SELECTED("You selected a delayed opening that doesn't exist\n"
          + "The rotation has been set to a delayed opening R1."),
+   NO_INTERNET("Cannot connect to the internet. Please try again."),
    OTHER();
 
    public static final String ERROR_NAME = Agenda.APP_NAME + " ERROR";
@@ -250,11 +251,12 @@ public enum ErrorID {
 //      System.out.println(ErrorID.getError("7530"));
 //      ErrorID.showPrintingError(new IOException());
    	FileHandler.initialFileWork();
-   	System.out.println("oi");
-   	Agenda.log("ASDI");
-   	Agenda.log("ASDI");
-   	Agenda.log("ASDI");
-      ErrorID.showError(new NullPointerException(), false);
+//   	System.out.println("oi");
+//   	Agenda.log("ASDI");
+//   	Agenda.log("ASDI");
+//   	Agenda.log("ASDI");
+//      ErrorID.showError(new NullPointerException(), false);
+   	ErrorID.showUserError(ErrorID.NO_INTERNET);
 //      constants.test.DayTypeTest.main(args);
    }
 }
