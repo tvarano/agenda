@@ -85,7 +85,7 @@ public class AlertReader {
    }
    
    private static final int MILLIS_TO_WAIT = 2000;
-   private static String retrieveHtml() throws Exception {
+   private static String retrieveHtml() throws Exception {   	
       return ProcessHandler.futureCall(MILLIS_TO_WAIT, new Callable<String>() {
          @Override
          public String call() throws Exception {
