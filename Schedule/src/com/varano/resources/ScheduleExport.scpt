@@ -1,1 +1,0 @@
-choose file name with prompt "Save Schedule As..." default name "ScheduleExport" default location path to desktop
