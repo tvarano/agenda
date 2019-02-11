@@ -5,9 +5,10 @@
     --sky: #caebf2;
     --carbon: #a9a9a9;
     --neutral: #efefef;
+    --dark-carbon: #676767;
     --pencil: #fdf600;
     --noir: #1d2731;
-    --header-height: 100px;
+    --nav-height: 100px;
 }
 
 body {
@@ -26,7 +27,7 @@ body {
 
 .blink {
     animation: blinker 1s step-start infinite;
-  }
+}
   
   @keyframes blinker {
     50% {
@@ -71,6 +72,7 @@ nav {
     top: 0px;
     left: 50px;
     font-family: var(--fontfam);
+    white-space: nowrap;
 }
 
 nav ul {
@@ -126,3 +128,9 @@ nav img {
     margin-bottom: 15px;
     width: auto;
 }
+
+@media screen and (max-width: 650px) {
+    nav img {
+        display: none;
+    }
+  }

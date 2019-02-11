@@ -1,0 +1,21 @@
+header, main {
+    font-family: var(--fontfam);
+    font-size: 1.5em;
+    color: var(--noir);
+}
+
+.content {
+    margin-top: var(--nav-height);
+    margin-left: 50px;
+}
+
+main h4 {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    color: var(--dark-carbon);
+}
+
+main h3 {
+    margin-top: 0px;
+    margin-bottom: 15px;
+}
