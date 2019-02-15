@@ -4,7 +4,7 @@
     <title>Agenda Web App</title>
 
     <link rel="stylesheet" type="text/css" href="css/universal.css">
-    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/download.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,16 +32,34 @@
     <meta name="msapplication-config" content="resources/favicons/browserconfig.xml">
   </head>
   <body>
-    <nav>
-        <a href="index.html"><img src="resources/favicons/favicon-310.png"></a>
-        <ul>
-            <a href="index.html"><li>Home</li></a>
-            <a href="webapp.html"><li>Web App</li></a>
-            <a href="download.html"><li class="disabled">Download</li></a>
-            <a href="about.html"><li>About</li></a>
-            <a href="https://github.com/tvarano54/agenda"><li>Source</li></a>
+    <nav id="main-nav">
+        <a href="index.html" class="noselect" id="menu-reveal"><img src="resources/favicons/favicon-310.png"></a>
+        <ul id="menu-list">
+            <a href="index.html" class="menu-elem collapsed"><li>Home</li></a>
+            <a href="webapp.html" class="menu-elem collapsed"><li>Web App</li></a>
+            <a href="download.html" class="menu-elem collapsed"><li class="disabled">Download</li></a>
+            <a href="about.html" class="menu-elem collapsed"><li>About</li></a>
+            <a href="https://github.com/tvarano54/agenda" class="menu-elem collapsed"><li>Source</li></a>
         </ul>
+        <script type="text/javascript" src="js/bring-menu.js"></script>
     </nav>
       
+    <div class="content" style="padding-top: 50px; margin-left: 0px;">
+      <header>
+        <h2 style="text-align: center;">Start using Agenda on your mac.</h2>
+      </header>
+      <main>
+        <div class="button-holder">
+          <a class="noselect" href="resources/Agenda-1.8.5-Installer.dmg" download>Download Now.</a>
+        </div>
+        <!-- <hr> -->
+        <div id="images">
+          <hr>
+        <img src="resources/desktop-screenshot.png" id="desktop">
+        <img src="resources/desktop-screenshot2.png" id="desktop2">
+          <img src="resources/mobile-screenshot2.png" id="mobile">
+        </div>
+      </main>
+    </div>
   </body>
 </html>

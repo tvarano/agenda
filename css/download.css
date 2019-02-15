@@ -1,0 +1,62 @@
+body {
+    /* overflow: hidden; */
+}
+
+main a {
+    transition: 0.25s all ease;
+
+    background-color: var(--watermelon);
+    color: var(--noir);
+    padding: 30px;
+    border-radius: 20px;
+    width: 100%;
+    text-decoration: none;
+    text-align: center;
+}
+
+main a:hover {
+    transition: 0.25s all ease;
+
+    margin-left: -5px;
+    margin-top: -5px;
+
+    box-shadow: 5px 5px var(--carbon);
+}
+
+.button-holder {
+    margin: auto;
+    width: 300px;
+    text-align: center;
+    margin-bottom: 150px;
+}
+
+header, main {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+main{ padding-top: 20px;}
+
+#images {
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    margin-top: 50px;
+}
+
+/* #images img {
+    position: relative;
+    float: top;
+    display: inline-block;
+} */
+
+#desktop {
+    float: right;
+}
+
+#desktop, #desktop2 {
+    width: 45%;
+}
+
+#desktop2 {
+    margin-left: 20px;
+}

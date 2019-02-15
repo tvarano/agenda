@@ -32,22 +32,25 @@
     <meta name="msapplication-config" content="resources/favicons/browserconfig.xml">
   </head>
   <body>
-    <nav>
-        <a href="index.html"><img src="resources/favicons/favicon-310.png"></a>
-        <ul>
-            <a href="index.html"><li>Home</li></a>
-            <a href="webapp.html"><li class="disabled">Web App</li></a>
-            <a href="download.html"><li>Download</li></a>
-            <a href="about.html"><li>About</li></a>
-            <a href="https://github.com/tvarano54/agenda"><li>Source</li></a>
+    <nav id="main-nav">
+        <a href="index.html" class="noselect" id="menu-reveal"><img src="resources/favicons/favicon-310.png"></a>
+        <ul id="menu-list">
+            <a href="index.html" class="menu-elem collapsed"><li>Home</li></a>
+            <a href="webapp.html" class="menu-elem collapsed"><li>Web App</li></a>
+            <a href="download.html" class="menu-elem collapsed"><li class="disabled">Download</li></a>
+            <a href="about.html" class="menu-elem collapsed"><li>About</li></a>
+            <a href="https://github.com/tvarano54/agenda" class="menu-elem collapsed"><li>Source</li></a>
         </ul>
+        <script type="text/javascript" src="js/bring-menu.js"></script>
     </nav>
+
     <div class="content">
         <header>
             <h2 style="margin-bottom: 0px;">Agenda Web App</h2>
             <h4 style="padding-left: 25px; margin-top: 0px;">For Pascack Hills</h4>
         </header>
-        <main>
+        <h1 style="color: red; font-family: var(--fontfam); font-size: 4em;">UNDER CONSTRUCTION</h1>
+        <!-- <main>
             <div class="main-screen">
                 <h4>You are in...</h3>
                 <h3 id="current-class">class</h3>
@@ -58,7 +61,7 @@
             <div class="rotation-change">
                 <div class="rotation-title"></div>
             </div>
-        </main>
+        </main> -->
     </div>
   </body>
 </html>

@@ -1,11 +1,14 @@
 
-var Comparable = require('jsclass/src/comparable').Comparable;
 
-class ClassPeriod {
+var comp = require("./comparable.js");
+var fs = require('file-system');
+
+class ClassPeriod extends comp.Comparable {
     constructor(slot, time, name) {
         this.slot = slot;
         this.time = time;
         this.name = name;
+        h.asdf;
     }
 
     getName() {
@@ -13,9 +16,13 @@ class ClassPeriod {
             return "Period " + this.slot;
         return name;
     }
+
+    compareTo(other) {
+        return this.slot - other.slot;
+    }
 }
 
-class Time extends Comparable {
+class Time extends comp.Comparable {
     constructor(a, b) {
         if (typeOf(a) === String) {
             // using string constructor
@@ -56,9 +63,8 @@ class DayType {
     }
 }
 
-const fs = require('fs') 
 function getDayTypeTimes(name) {
-    fs.readFile('data/'+name +'.txt', (err, data) => { 
+    readFile('data/'+name +'.txt', (err, data) => { 
         if (err) throw err; 
       
         console.log(data);
@@ -101,8 +107,6 @@ function getTodayRotation() {
             return rotations.vals[incorrectParse]
         }
 }
-
-
 
 //main part of script
 getDayTypeTimes("block");
