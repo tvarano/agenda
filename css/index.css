@@ -46,3 +46,7 @@ main {
     height: 100%;
     width: 100%;
 }
+
+nav ul a.home-page {
+    margin-left: -90px;
+}
