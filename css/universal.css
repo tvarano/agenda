@@ -123,7 +123,7 @@ nav ul a.shown {
     
 }
 
-nav ul li.disabled {
+nav ul li.active {
   background: var(--dark-water);
 }
 
