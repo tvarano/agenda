@@ -21,14 +21,30 @@ section {
     display: inline-block;
     vertical-align: top;
     margin-right: 50px;
-
 }
 
 #rotation-info ul {
     list-style: none;
     display: inline-block;
+    margin-left: -7px;
+    padding-left: 0px;
     /* text-align: center; */
 }
+#sched-slots {
+    padding-left: 30px !important;
+}
+
+#sched-slots li {
+    padding-left: 10px;
+    border-radius: 10px 0px 0px 10px;
+}
+
+#sched-times li {
+    padding-left: 25px;
+    padding-right: 10px;
+    border-radius: 0px 10px 10px 0px;
+}
+
 #rotation-change {
     position:relative;
     float:right;
@@ -44,7 +60,7 @@ when on new line, make margins like 10px */
 }
 
 #rotation-info .active {
-    color: red;
+    background: var(--watermelon);
 }
 
 @media screen and (max-width: 1250px) {
@@ -53,7 +69,7 @@ when on new line, make margins like 10px */
     }
 }
 
-@media screen and (max-width: 1120px) {
+@media screen and (max-width: 1015px) {
     #rotation-change {
         float: left;
     }

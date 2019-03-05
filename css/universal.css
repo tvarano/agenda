@@ -14,11 +14,11 @@
 
 @font-face {
   font-family: 'Custom Futura';
-  src: url('resources/fonts/futura.eot'); /* IE9 Compat Modes */
-  src: url('resources/fonts/futura.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('resources/fonts/futura.woff') format('woff'), /* Modern Browsers */
-       url('resources/fonts/futura.ttf')  format('truetype'), /* Safari, Android, iOS */
-       url('resources/fonts/futura.svg#svgFontName') format('svg'); /* Legacy iOS */
+  src: url('../resources/fonts/futura.eot'); /* IE9 Compat Modes */
+  src: url('../resources/fonts/futura.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../resources/fonts/futura.woff') format('woff'), /* Modern Browsers */
+       url('../resources/fonts/futura.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('../resources/fonts/futura.svg#svgFontName') format('svg'); /* Legacy iOS */
 }
 
 body {
@@ -152,6 +152,11 @@ nav ul li:hover {
     margin-bottom: 15px;
 
     box-shadow: 5px 5px var(--carbon);
+}
+
+nav ul a.collapsed li:hover {
+  margin: 10px !important;
+  box-shadow: 0px 0px white !important;
 }
 
 nav img {

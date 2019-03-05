@@ -132,7 +132,14 @@ function toggleLoading() {
 
 function loadSetRotation() {
     var fullHtml = ""
-
+    for (cat of rotationsWithCategories) {
+        fullHtml += "<li class=\"category\">" + cat[0]
+        fullHtml += "<ul>"
+        for (var i = 1; i < cat.length; i++)
+            fullHtml += "<li class=\"rotation-selector\"><button onclick=\"setCurrentRotation(\'" + cat[i].name + "\')\">" + cat[i].name + "</button></li>"
+        fullHtml += "</ul></li>"
+    }
+    document.getElementById("rotation-list").innerHTML = fullHtml
 }
 
 setInterval(updateTime, 2000)
