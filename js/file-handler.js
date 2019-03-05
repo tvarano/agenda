@@ -29,19 +29,27 @@ function handleDayType(req) {
 
     var data = raw.split("\n");
     var i = 0;
-        var starts = [];
-        while (data[i++] != 'END') {
-            starts.push(new Time(data[i]));
-        }
-        i--;
-        var ends = [];
-        while (data[i++] != 'LAB') {
-            ends.push(new Time(data[i]));
-        }
-        var lab = data[i] == "NULL" ? null : data[i];
+    var starts = [];
+    while (data[++i] != 'END') {
+        starts.push(new Time(data[i]));
+    }
+    var ends = [];
+    while (data[++i] != 'LAB') {
+        ends.push(new Time(data[i]));
+    }
+    var lab = data[++i] == "NULL" ? null : new Time(data[i]);
     return [starts, ends, lab];
 }
 
+function handleRotation(req) {
+    var raw = req.responseText;
+
+    var data = raw.split("\n");
+    var ret = []
+    for (slot of data)
+        ret.push(parseInt(slot))
+    return ret
+}
 
 function httpRequest(address, reqType, asyncProc) {
     var req = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
@@ -60,6 +68,10 @@ function httpRequest(address, reqType, asyncProc) {
 
 
 function readDayType(name) {
-    var data = handleDayType(syncRequest(daytypePath + name + ".txt", handleDayType));
+    var data = handleDayType(syncRequest(daytypePath + name + ".txt"));
     return new DayType(name, data[0], data[1], data[2]);
+}
+
+function readRotation(hrefName) {
+    return handleRotation(syncRequest(rotationPath + hrefName + ".txt"))
 }

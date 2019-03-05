@@ -1,7 +1,6 @@
 
 class Comparable {
     constructor() {
-        console.log("comparable constructed");
     }
 
     compareTo(other) {
@@ -10,23 +9,23 @@ class Comparable {
     }
 
     gt(other) {
-        return compareTo(other) > 0;
+        return this.compareTo(other) > 0;
     }
 
     gte(other) {
-        return compareTo(other) >= 0;
+        return this.compareTo(other) >= 0;
     }
 
     lt(other) {
-        return compareTo(other) < 0;
+        return this.compareTo(other) < 0;
     }
     
     lte(other) {
-        return compareTo(other) <= 0;
+        return this.compareTo(other) <= 0;
     }
 
     eq(other) {
-        return compareTo(other) == 0;
+        return this.compareTo(other) == 0;
     }
 
 }
@@ -34,22 +33,29 @@ class Comparable {
 
 class ClassPeriod extends Comparable {
     constructor(slot, start, end, name) {
-        console.log("creating "+name)
+        super()
         this.slot = slot
         this.start = start
         this.end = end
         this.name = name
-        h.asdf;
     }
 
     getName() {
-        if (this.name == null)
-            return "Period " + this.slot
-        return this.name
+        switch (this.slot) {
+            case 9 : return "Lunch"
+            case 10 : return "Pascack Period"
+            case 11 : return "No School"
+            case 12 : return "Pascack Study Period"
+            default : {
+                if (this.name == null)
+                    return "Period " + this.slot
+                return this.name
+            }
+        }
     }
 
     get duration() {
-        return this.end - this.start
+        return this.end.compareTo(this.start)
     }
 
     compareTo(other) {
@@ -67,13 +73,12 @@ class Time extends Comparable {
         super();
         if (typeof a == 'string' || a instanceof String) {
             // using string constructor
-            console.log(a.substring(0, a.indexOf(',')))
             this.hour = parseInt(a.substring(0, a.indexOf(',')), 10)
             this.min = parseInt(a.substring(a.indexOf(',') + 1), 10)
         } else if (b === undefined) {
             //using totalmins constructor
-            this.hour = a % 60;
-            this.min = a / 60;
+            this.hour = Math.floor(a / 60);
+            this.min = a % 60;
         } else {
             //using standard
             this.hour = a;
@@ -82,10 +87,10 @@ class Time extends Comparable {
     }
 
     timeUntil (other) {
-        if (other.gte(self)) {
-            return other - self;
+        if (other.gte(this)) {
+            return other.totalMins - this.totalMins;
         }
-        const timeToMidnight = 1440 - self.totalMins;
+        const timeToMidnight = 1440 - this.totalMins;
         return new Time(timeToMidnight + other.totalMins);
     }
 
@@ -93,13 +98,15 @@ class Time extends Comparable {
         return this.hour * 60 + this.min;
     }
 
-    compareTo() {
+    compareTo(other) {
         return this.totalMins - other.totalMins;
     }
-}
 
-function getNow() {
-    return new Time(new Date().getMinutes, new Date().getMinutes())
+    toString() {
+        var hrStr = this.hour % 13 + 1
+        var minStr = this.min < 10 ? "0" + this.min : this.min
+        return hrStr + ":" + minStr
+    }
 }
 
 class DayType {
@@ -131,7 +138,7 @@ class RotationBundle {
     constructor (name, daytypeName, hrefName) {
         this.name = name;
         this.daytypeName = daytypeName;
-        this.hrefName = (hrefName === null) ? name.toLowerCase().replace(" ", "_") : hrefName;
+        this.hrefName = (hrefName === null || hrefName === undefined) ? name.toLowerCase().replace(" ", "_") : hrefName;
         this.timeArr = []
     }
     retrieveDayType() {
@@ -139,8 +146,7 @@ class RotationBundle {
     }
 
     getTimes() {
-        console.log("getting times "+this.name)
-        if (this.timeArr.length == 0)
+        if (this.timeArr.length == 0) 
             this.makeTimes();
         return this.timeArr
     }
@@ -150,10 +156,10 @@ class RotationBundle {
         if (this.daytype ==  null) {
             this.retrieveDayType()
         }
-        this.timeArr = []
+        // this.timeArr = []
+        var slotArr = readRotation(this.hrefName)
         for (var i = 0; i < this.daytype.starts.length; i++){
-            console.log("creating time slot "+ (i+1))
-            timeArr.push(new ClassPeriod(i+1, this.daytype.starts[i], this.daytype.ends[i]))
+            this.timeArr.push(new ClassPeriod(slotArr[i], this.daytype.starts[i], this.daytype.ends[i]))
         }
     }
 
@@ -174,11 +180,8 @@ class RotationBundle {
 }
 
 function getRotation(name) {
-    console.log(rotationsWithCategories)
     for (arr of rotationsWithCategories) {
-        console.log(arr)
         for (var i = 1; i < arr.length; i++) {
-            console.log("getrotaion search "+arr[i] + " to "+name)
             if (arr[i] instanceof RotationBundle && arr[i].name == name)
                 return arr[i];
         }

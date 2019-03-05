@@ -21,20 +21,40 @@ section {
     display: inline-block;
     vertical-align: top;
     margin-right: 50px;
+
 }
 
+#rotation-info ul {
+    list-style: none;
+    display: inline-block;
+    /* text-align: center; */
+}
 #rotation-change {
-    display:inline-block;
     position:relative;
     float:right;
     margin-right: 100px;
 }
 
 /* RESIZABILITY
-when rotation-change is on new line, move to left.
 when on new line, make margins like 10px */
 
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+#rotation-info .active {
+    color: red;
+}
+
+@media screen and (max-width: 1250px) {
+    #rotation-change {
+        margin-right: 20px;
+    }
+}
+
+@media screen and (max-width: 1120px) {
+    #rotation-change {
+        float: left;
+    }
 }
