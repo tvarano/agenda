@@ -54,7 +54,6 @@ function httpRequest(address, reqType, asyncProc) {
     } 
     req.open(reqType, address, asyncProc);
     req.send();
-    console.log(req.responseText);
     return req;
 }
 

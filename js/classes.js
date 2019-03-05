@@ -146,12 +146,13 @@ class RotationBundle {
     }
 
     makeTimes() {
-        console.log("makign")
+        console.log("make times.")
         if (this.daytype ==  null) {
             this.retrieveDayType()
         }
         this.timeArr = []
         for (var i = 0; i < this.daytype.starts.length; i++){
+            console.log("creating time slot "+ (i+1))
             timeArr.push(new ClassPeriod(i+1, this.daytype.starts[i], this.daytype.ends[i]))
         }
     }
