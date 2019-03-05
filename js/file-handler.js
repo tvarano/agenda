@@ -36,10 +36,10 @@ function handleDayType(req) {
         i--;
         var ends = [];
         while (data[i++] != 'LAB') {
-            ends.push(data[i]);
+            ends.push(new Time(data[i]));
         }
         var lab = data[i] == "NULL" ? null : data[i];
-    // return 
+    return [starts, ends, lab];
 }
 
 
@@ -58,9 +58,9 @@ function httpRequest(address, reqType, asyncProc) {
     return req;
 }
 
-// var req = httpRequest(daytypesPath + "half_day.txt", "GET", false);  
-// alert(req.status == 200 ? "found!" : "failed");
 
-function getDayTypeTimes(name) {
-    return handleDayType(syncRequest(daytypePath + name + ".txt", handleDayType));
+
+function readDayType(name) {
+    var data = handleDayType(syncRequest(daytypePath + name + ".txt", handleDayType));
+    return new DayType(name, data[0], data[1], data[2]);
 }
