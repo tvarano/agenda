@@ -46,6 +46,7 @@ main {
     position: fixed;
     height: 100%;
     width: 100%;
+    z-index: -1;
 }
 
 nav ul a.home-page {
