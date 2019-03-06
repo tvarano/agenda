@@ -103,7 +103,7 @@ class Time extends Comparable {
     }
 
     toString() {
-        var hrStr = this.hour % 13 + 1
+        var hrStr = this.hour > 12 ? this.hour % 12 : this.hour
         var minStr = this.min < 10 ? "0" + this.min : this.min
         return hrStr + ":" + minStr
     }

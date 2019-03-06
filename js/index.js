@@ -67,8 +67,7 @@ function updateUI(statusChanged, current) {
     var timeElems = ""
     
     for (period of rotation.getTimes()) {
-        var name = period.getName()
-        var activePeriod = period.slot == current.slot
+        var activePeriod = current != null && period.slot == current.slot
         var classActive = activePeriod ? " active" : ""
         listElems += "<li class=\"class-info" + classActive + "\">" + period.getName() + "</li>"
         timeElems += "<li class=\"class-time" + classActive + "\">" + period.start + " - " + period.end + "</li>"
@@ -130,11 +129,15 @@ function toggleLoading() {
     }
 }
 
+function revealList(id) {
+    document.getElementById(id).classList.toggle("hidden")
+}
+
 function loadSetRotation() {
     var fullHtml = ""
     for (cat of rotationsWithCategories) {
-        fullHtml += "<li class=\"category\">" + cat[0]
-        fullHtml += "<ul>"
+        fullHtml += "<li class=\"category\"><button onclick=\"revealList(\'" + cat[0] + "\')\">" + cat[0] + "</button>"
+        fullHtml += "<ul class=\"hidden\" id=\"" + cat[0] + "\">"
         for (var i = 1; i < cat.length; i++)
             fullHtml += "<li class=\"rotation-selector\"><button onclick=\"setCurrentRotation(\'" + cat[i].name + "\')\">" + cat[i].name + "</button></li>"
         fullHtml += "</ul></li>"
