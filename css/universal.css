@@ -246,4 +246,5 @@ header, main {
 .content {
   margin-top: var(--nav-height);
   margin-left: 50px;
+  font-family: var(--fontfam);
 }

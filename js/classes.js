@@ -188,3 +188,37 @@ function getRotation(name) {
     }
     return null;
 }
+
+
+class VEvent {
+    constructor(startDate, endDate, summary, detail) {
+        this.startDate = startDate; this.endDate = endDate; this.summary = summary; this.detail = detail;
+    }
+
+    contains(date) {
+        // contains the date
+    }
+}
+
+class VCalendar {
+    constructor(url) {
+        this.events = parseEvents(url);
+    }
+
+    get eventsToday() {
+        var ret = []
+        for (event of this.events) {
+            if (event.contains(new Date()))
+                ret.push(event)
+        }
+        return ret
+    }
+}
+
+const BEGIN = "BEGIN:VEVENT", END = "END:VEVENT", DTSTAMP_PREFIX = "DTSTAMP:", 
+    DTSTART_PREFIX = "DTSTART;VALUE=DATE:", DTEND_PREFIX = "DTEND;VALUE=DATE:", SUMMARY_PREFIX = "SUMMARY:"
+
+function parseEvents(url) {
+    var raw = syncRequest(url).responseText.spilt("\n")
+    var retval = []
+}

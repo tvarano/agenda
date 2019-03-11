@@ -145,4 +145,5 @@ function loadSetRotation() {
     document.getElementById("rotation-list").innerHTML = fullHtml
 }
 
+// fetchTodayRotationName()
 setInterval(updateTime, 2000)

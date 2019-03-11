@@ -65,13 +65,19 @@ function httpRequest(address, reqType, asyncProc) {
     return req;
 }
 
-
-
 function readDayType(name) {
+    console.log("reading "+name)
     var data = handleDayType(syncRequest(daytypePath + name + ".txt"));
     return new DayType(name, data[0], data[1], data[2]);
 }
 
 function readRotation(hrefName) {
+    console.log("reading "+hrefName)
     return handleRotation(syncRequest(rotationPath + hrefName + ".txt"))
+}
+
+function fetchTodayRotationName() {
+    const icsURL = "https://calendar.google.com/calendar/ical/8368c5a91jog3s32oc6k22f4e8%40group.calendar.google.com/public/basic.ics"
+    var raw = syncRequest(icsURL);
+    console.log(raw)
 }
