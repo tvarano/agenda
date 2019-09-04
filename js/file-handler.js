@@ -1,5 +1,5 @@
 
-const rootPath = 'https://tvarano54.github.io/agenda/data/';
+const rootPath = 'https://tvarano.github.io/agenda/data/';
 const daytypePath = rootPath + "daytypes/";
 const rotationPath = rootPath + "rotations/";
 
