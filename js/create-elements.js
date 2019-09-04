@@ -9,7 +9,7 @@ if (nav != null) {
         '<a href="webapp.html" class="menu-elem"><li id="webapp.html-nav">Web App</li></a>' + 
         '<a href="download.html" class="menu-elem"><li id="download.html-nav">Download</li></a>' + 
         '<a href="about.html" class="menu-elem"><li id="about.html-nav">About</li></a>' + 
-        '<a href="https://github.com/tvarano54/agenda" target=\"_blank\" class="menu-elem"><li>Source</li></a>' +
+        '<a href="https://github.com/tvarano/agenda" target=\"_blank\" class="menu-elem"><li>Source</li></a>' +
     '</ul>' 
 }
 
