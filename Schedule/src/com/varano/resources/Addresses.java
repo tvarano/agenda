@@ -18,7 +18,7 @@ public final class Addresses {
    
    public static final String CALENDAR_URL = "https://calendar.google.com/calendar/embed?src=8368c5a91jog3s32oc6k22f4e8%40group.calendar.google.com&ctz=America%2FNew_York";
    
-   public static final String SOURCE = "https://github.com/tvarano54/agenda";
+   public static final String SOURCE = "https://github.com/tvarano/agenda";
    
    public static final java.net.URI sourceURI() {
       try {
